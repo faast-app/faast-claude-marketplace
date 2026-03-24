@@ -1,0 +1,22 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "faast-marketplace",
+  "description": "FAAST team plugins and agents for Claude Code - backend architecture, code review, and financial SaaS tooling",
+  "owner": {
+    "name": "FAAST",
+    "email": "dev@faast.cl"
+  },
+  "plugins": [
+    {
+      "name": "senior-backend-architect",
+      "description": "Expert-level backend architecture analysis, code review, debugging, database design, and technical documentation across .NET, Python, Java, Node.js and more. Includes /architect command.",
+      "category": "development",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/faast-app/senior-backend-architect-plugin.git",
+        "sha": "b843071e7c3c2c7fc9c89f234f5aa7078bcbb4a4"
+      },
+      "homepage": "https://github.com/faast-app/senior-backend-architect-plugin"
+    }
+  ]
+}
