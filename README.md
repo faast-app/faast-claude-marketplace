@@ -5,7 +5,7 @@ Marketplace de plugins y agentes de Claude Code del equipo FAAST.
 ## Instalacion
 
 ```bash
-# 1. Agregar el marketplace
+# 1. Agregar el marketplace (solo una vez)
 claude plugin marketplace add faast-app/faast-claude-marketplace
 
 # 2. Instalar plugins
@@ -20,6 +20,18 @@ claude plugin install senior-backend-architect
 
 ## Agregar un nuevo plugin
 
-1. Crear el repo del plugin con la estructura `.claude-plugin/plugin.json` + `agents/` + `commands/`
-2. Agregar la entrada en `.claude-plugin/marketplace.json` con el SHA del commit
-3. Push y actualizar: `claude plugin marketplace update faast-marketplace`
+1. Crear carpeta en `plugins/nombre-del-plugin/` con la estructura:
+   ```
+   plugins/nombre-del-plugin/
+   ├── .claude-plugin/
+   │   └── plugin.json
+   ├── agents/
+   │   └── mi-agente.md
+   ├── commands/
+   │   └── mi-comando.md
+   ├── README.md
+   └── LICENSE
+   ```
+2. Agregar la entrada en `.claude-plugin/marketplace.json` con source `"./plugins/nombre-del-plugin"`
+3. Push a main
+4. Usuarios actualizan con: `claude plugin marketplace update faast-marketplace`
