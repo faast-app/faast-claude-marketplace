@@ -26,10 +26,14 @@
 
   "userConfig": {
     "github_org": {
+      "type": "string",
+      "title": "GitHub Organization",
       "description": "Organizacion de GitHub donde se crean repos (ej: faast-app)",
       "sensitive": false
     },
     "projects_dir": {
+      "type": "directory",
+      "title": "Projects Directory",
       "description": "Directorio base para proyectos (ej: ~/projects)",
       "sensitive": false
     }
