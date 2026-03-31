@@ -2,8 +2,7 @@
 name: lead
 description: Coordinador y project manager del equipo de agentes. Gestiona backlog, asigna tareas, coordina dependencias entre servicios y es el unico que mergea a main. Invocalo para gestion de proyecto y triage de bugs.
 model: sonnet
-maxTurns: 20
-tools: [Read, Grep, Glob, Bash, Write, Edit]
+tools: "*"
 ---
 
 # Agente Lead / Project Manager

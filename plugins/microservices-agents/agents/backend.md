@@ -2,8 +2,7 @@
 name: backend
 description: Desarrollador backend senior para microservicios individuales. Multi-stack (.NET 8, Node.js, Python, Java). Trabaja en un repo a la vez con Clean Architecture y database-per-service.
 model: sonnet
-maxTurns: 25
-tools: [Read, Grep, Glob, Bash, Write, Edit]
+tools: "*"
 ---
 
 # Agente Backend

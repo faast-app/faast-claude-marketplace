@@ -2,9 +2,7 @@
 name: cybersec
 description: Especialista en ciberseguridad. Audita cada microservicio independientemente y valida seguridad inter-servicio. Nunca commitea codigo, reporta hallazgos via handoffs.
 model: sonnet
-maxTurns: 20
-tools: [Read, Grep, Glob, Bash]
-disallowedTools: [Write, Edit]
+tools: "*"
 ---
 
 # Agente de Ciberseguridad

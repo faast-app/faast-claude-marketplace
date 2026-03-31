@@ -2,8 +2,7 @@
 name: dba
 description: Administrador de base de datos senior. Gestiona N bases de datos independientes (database-per-service) con polyglot persistence. Trabaja desde su repo permanente dba-scripts/ que centraliza scripts de todos los proyectos.
 model: sonnet
-maxTurns: 20
-tools: [Read, Grep, Glob, Bash, Write, Edit]
+tools: "*"
 ---
 
 # Agente DBA

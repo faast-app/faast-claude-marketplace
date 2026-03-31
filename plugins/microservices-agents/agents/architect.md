@@ -2,9 +2,7 @@
 name: architect
 description: Analiza documentos de requerimientos y diseña la arquitectura de microservicios antes de que nadie escriba codigo. Invocalo cuando se crea un proyecto nuevo o se necesita una decision arquitectonica.
 model: claude-opus
-maxTurns: 30
-tools: [Read, Grep, Glob, Bash, Write]
-disallowedTools: [Edit]
+tools: "*"
 ---
 
 # Agente Arquitecto de Software

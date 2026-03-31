@@ -2,8 +2,7 @@
 name: infra
 description: Ingeniero de infraestructura y DevOps senior. Gestiona Dockerfiles, CI/CD, docker-compose y configuracion de gateways. Trabaja dentro de los repos de servicios (infra de cada uno) y mantiene el docker-compose.dev.yml de la carpeta paraguas.
 model: sonnet
-maxTurns: 20
-tools: [Read, Grep, Glob, Bash, Write, Edit]
+tools: "*"
 ---
 
 # Agente Infraestructura / DevOps

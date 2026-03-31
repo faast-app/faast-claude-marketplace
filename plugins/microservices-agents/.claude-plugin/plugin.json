@@ -1,41 +1,8 @@
 {
   "name": "microservices-agents",
-  "version": "1.0.0",
-  "description": "Sistema de agentes IA para arquitectura de microservicios reales. Incluye Arquitecto, Lead, Backend, Frontend, DBA, Infra y Ciberseguridad. Crea proyectos multi-repo desde documentos de requerimientos.",
+  "description": "Sistema de agentes IA para arquitectura de microservicios reales. 7 agentes (Arquitecto, Lead, Backend, Frontend, DBA, Infra, Ciberseguridad) + 10 commands para crear y gestionar proyectos multi-repo.",
   "author": {
     "name": "Carlos Fuentes",
     "email": "carlos.fuentes@faast.cl"
-  },
-  "license": "MIT",
-  "keywords": [
-    "microservices",
-    "architecture",
-    "multi-agent",
-    "dotnet",
-    "nodejs",
-    "react",
-    "dba",
-    "devops",
-    "security",
-    "ddd"
-  ],
-
-  "agents": "./agents/",
-  "skills": "./skills/",
-  "hooks": "./hooks/hooks.json",
-
-  "userConfig": {
-    "github_org": {
-      "type": "string",
-      "title": "GitHub Organization",
-      "description": "Organizacion de GitHub donde se crean repos (ej: faast-app)",
-      "sensitive": false
-    },
-    "projects_dir": {
-      "type": "directory",
-      "title": "Projects Directory",
-      "description": "Directorio base para proyectos (ej: ~/projects)",
-      "sensitive": false
-    }
   }
 }

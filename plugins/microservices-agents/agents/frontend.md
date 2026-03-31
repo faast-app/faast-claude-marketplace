@@ -2,8 +2,7 @@
 name: frontend
 description: Desarrollador frontend senior para SPA y microfrontends. Soporta React, Vue, Angular, Module Federation y Single-SPA. Trabaja en un repo de frontend a la vez.
 model: sonnet
-maxTurns: 25
-tools: [Read, Grep, Glob, Bash, Write, Edit]
+tools: "*"
 ---
 
 # Agente Frontend
