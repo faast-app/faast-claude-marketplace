@@ -82,6 +82,31 @@ No asumir que todo usa el mismo stack. Decidir por servicio:
 - Amazon SQS/SNS — Si la infra es AWS-native
 - Kafka — Solo si hay requerimientos de event sourcing o streaming de alto volumen
 
+### Paso 4b: Elegir patron de arquitectura interna por servicio
+No asumir que todos los servicios usan el mismo patron. Decidir por servicio segun su complejidad:
+
+**Patrones disponibles:**
+
+| Patron | Cuando usarlo | Estructura |
+|--------|--------------|------------|
+| **Clean Architecture** | Servicios con logica de negocio compleja, multiples reglas de dominio, validaciones pesadas | Controllers → UseCases → Entities + Interfaces → Repositories (capas concentricas, dependencias hacia adentro) |
+| **Hexagonal (Ports & Adapters)** | Servicios con muchas integraciones externas (APIs, brokers, BDs multiples), necesidad de testear sin infra | Domain (core) + Ports (interfaces) + Adapters (implementaciones: REST, DB, Messaging) |
+| **Vertical Slice** | Servicios CRUD, equipos que prefieren organizar por feature en vez de por capa tecnica | Cada feature es una carpeta con su handler, validator, model, query — sin capas compartidas |
+| **CQRS** | Servicios donde lectura y escritura tienen patrones muy diferentes (muchas lecturas con proyecciones, escrituras complejas) | Commands (escritura) + Queries (lectura) separados, pueden tener modelos distintos |
+| **CQRS + Event Sourcing** | Servicios donde el historial de cambios ES el negocio (auditoria financiera, trazabilidad regulatoria) | Events como fuente de verdad, projections para lectura, event store |
+| **Minimal API / Simple CRUD** | Microservicios muy pequeños, wrappers de APIs externas, proxies, servicios utilitarios | Un solo archivo o carpeta plana, sin capas, endpoints directos a BD |
+
+**Criterios de decision:**
+- Menos de 5 endpoints y logica trivial → **Minimal API / Simple CRUD**
+- CRUD con algo de logica pero sin integraciones complejas → **Vertical Slice**
+- Logica de negocio compleja con reglas de dominio → **Clean Architecture**
+- Muchas integraciones externas (3+ adaptadores) → **Hexagonal**
+- Read-heavy con proyecciones diferentes a las escrituras → **CQRS**
+- Regulacion exige trazabilidad completa de cambios → **CQRS + Event Sourcing**
+- En caso de duda → **Clean Architecture** (es el mas conocido y facil de refactorizar despues)
+
+**NUNCA usar el mismo patron para todos los servicios por defecto.** Un servicio de notificaciones no necesita la misma arquitectura que un servicio de ordenes financieras.
+
 ### Paso 5: Diseñar la topologia
 Definir:
 - Cuantos servicios y cuales
@@ -108,9 +133,10 @@ Producir `architecture.md` con este formato obligatorio:
 
 ## Servicios propuestos
 
-| Servicio | Stack | BD | Puerto dev | Justificacion |
-|----------|-------|----|------------|---------------|
-| {nombre}-service | .NET 8 | PostgreSQL | :5001 | ... |
+| Servicio | Stack | Patron | BD | Puerto dev | Justificacion |
+|----------|-------|--------|----|------------|---------------|
+| {nombre}-service | .NET 8 | Clean Architecture | PostgreSQL | :5001 | ... |
+| {nombre}-notifications | Node.js | Minimal API | Redis | :5002 | ... |
 
 ## API Gateway
 - Tecnologia: {Traefik/YARP/Ocelot/ninguno}

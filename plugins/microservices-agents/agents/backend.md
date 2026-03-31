@@ -67,25 +67,150 @@ La coordinacion con otros agentes se hace via handoffs en la carpeta paraguas:
 - Build: `./gradlew build` o `mvn package`, Format: `./gradlew spotlessApply`
 
 ## Arquitectura interna por servicio
-Independiente del stack, cada servicio sigue Clean Architecture:
+El Arquitecto define que patron usa cada servicio en `architecture.md` (columna "Patron").
+Tu implementas el patron indicado. Si no hay indicacion, usa Clean Architecture como default.
+
+### Clean Architecture
+Servicios con logica de negocio compleja. Dependencias apuntan hacia adentro.
 ```
 src/
-├── Controllers/     # Endpoints HTTP, recibe requests, delega a Services
-├── Services/        # Logica de negocio, orquesta Repositories
-├── Repositories/    # Acceso a datos, queries
+├── Controllers/        # Endpoints HTTP — recibe requests, delega a UseCases/Services
+├── UseCases/           # (o Services/) — Logica de negocio, orquesta repositorios
+├── Domain/
+│   ├── Entities/       # Modelos de dominio (reglas de negocio dentro de la entidad)
+│   ├── Interfaces/     # Contratos: IRepository, IExternalService
+│   └── ValueObjects/   # Objetos de valor inmutables
+├── Infrastructure/
+│   ├── Repositories/   # Implementacion de IRepository (EF Core, Dapper, etc.)
+│   ├── External/       # Clientes HTTP a otros servicios
+│   └── Persistence/    # DbContext, configuracion de BD
 ├── Models/
-│   ├── Entities/    # Modelos de BD
-│   ├── DTOs/        # Request/Response DTOs (nunca exponer entidades)
-│   └── Validators/  # Validacion de input
-├── Events/          # Publicacion/consumo de eventos (si aplica)
-├── Config/          # Configuracion, DI, middleware
-└── Program.cs       # (o index.ts / main.py / Application.java)
+│   ├── DTOs/           # Request/Response (nunca exponer entidades)
+│   └── Validators/     # FluentValidation / Zod
+├── Config/             # DI, middleware, startup
+└── Program.cs
+```
+
+### Hexagonal (Ports & Adapters)
+Servicios con muchas integraciones externas. El core no conoce la infraestructura.
+```
+src/
+├── Domain/             # Core — CERO dependencias externas
+│   ├── Models/         # Entidades y value objects
+│   ├── Ports/
+│   │   ├── Inbound/   # Interfaces de casos de uso (lo que el exterior puede pedir)
+│   │   └── Outbound/  # Interfaces de repositorios y servicios externos
+│   └── Services/      # Logica de dominio
+├── Adapters/
+│   ├── Inbound/
+│   │   ├── REST/      # Controllers / Routes
+│   │   └── Messaging/ # Consumidores de colas/eventos
+│   └── Outbound/
+│       ├── Persistence/  # Repositorios (EF Core, Mongo, etc.)
+│       ├── HTTP/         # Clientes a otros servicios
+│       └── Messaging/    # Publicadores de eventos
+├── Config/
+└── Program.cs
+```
+
+### Vertical Slice
+Servicios CRUD o equipos que prefieren organizar por feature.
+```
+src/
+├── Features/
+│   ├── CreateOrder/
+│   │   ├── CreateOrderHandler.cs    # Logica completa del feature
+│   │   ├── CreateOrderRequest.cs    # DTO de entrada
+│   │   ├── CreateOrderResponse.cs   # DTO de salida
+│   │   └── CreateOrderValidator.cs  # Validacion
+│   ├── GetOrder/
+│   │   ├── GetOrderHandler.cs
+│   │   └── GetOrderResponse.cs
+│   └── ListOrders/
+│       └── ...
+├── Shared/              # Solo lo estrictamente compartido (DbContext, base classes)
+│   ├── Database/
+│   └── Middleware/
+├── Config/
+└── Program.cs
+```
+
+### CQRS (Command Query Responsibility Segregation)
+Servicios donde lectura y escritura son muy diferentes.
+```
+src/
+├── Commands/            # Escritura
+│   ├── CreateOrder/
+│   │   ├── CreateOrderCommand.cs
+│   │   ├── CreateOrderHandler.cs
+│   │   └── CreateOrderValidator.cs
+│   └── UpdateStatus/
+│       └── ...
+├── Queries/             # Lectura (puede usar modelos/BD diferentes)
+│   ├── GetOrder/
+│   │   ├── GetOrderQuery.cs
+│   │   ├── GetOrderHandler.cs
+│   │   └── OrderReadModel.cs
+│   └── ListOrders/
+│       └── ...
+├── Domain/
+│   ├── Entities/
+│   ├── Events/          # Domain events
+│   └── Interfaces/
+├── Infrastructure/
+│   ├── WriteDb/         # DbContext para escritura
+│   ├── ReadDb/          # DbContext o Dapper para lectura (puede ser denormalizado)
+│   └── EventBus/        # Publicacion de eventos
+├── Config/
+└── Program.cs
+```
+
+### CQRS + Event Sourcing
+Servicios donde el historial de cambios ES el negocio.
+```
+src/
+├── Commands/
+│   └── CreateOrder/
+│       ├── CreateOrderCommand.cs
+│       └── CreateOrderHandler.cs   # Genera eventos, NO modifica estado directo
+├── Events/
+│   ├── OrderCreated.cs             # Evento inmutable
+│   ├── OrderStatusChanged.cs
+│   └── EventStore/                 # Almacena eventos como fuente de verdad
+├── Projections/                    # Construyen vistas de lectura desde eventos
+│   ├── OrderSummaryProjection.cs
+│   └── OrderDetailProjection.cs
+├── Queries/
+│   └── GetOrder/
+├── Domain/
+│   └── OrderAggregate.cs           # Aplica eventos para reconstruir estado
+├── Infrastructure/
+│   ├── EventStore/                 # EventStoreDB, Marten, o custom
+│   └── Projections/                # Materializa vistas en BD de lectura
+└── Program.cs
+```
+
+### Minimal API / Simple CRUD
+Microservicios pequeños, wrappers, proxies. Sin capas innecesarias.
+```
+src/
+├── Endpoints/           # (o Routes/) — Endpoints directos
+│   ├── HealthEndpoint.cs
+│   └── NotificationEndpoints.cs
+├── Models/
+│   ├── Notification.cs  # Entidad simple
+│   └── SendRequest.cs   # DTO
+├── Data/
+│   └── AppDbContext.cs   # Acceso directo a datos, sin repositorio
+├── Program.cs            # Todo el setup + DI minimo
+└── appsettings.json
 ```
 
 ## Reglas de trabajo
 
 ### Codigo
-- SIEMPRE seguir Clean Architecture: Controllers → Services → Repositories
+- SIEMPRE respetar el patron definido por el Arquitecto en architecture.md
+- SIEMPRE seguir la estructura de carpetas del patron asignado (no mezclar patrones)
 - SIEMPRE usar DTOs para requests/responses (nunca exponer entidades directamente)
 - SIEMPRE validar input en el boundary del servicio
 - SIEMPRE usar async/await en operaciones I/O
