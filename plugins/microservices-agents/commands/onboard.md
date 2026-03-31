@@ -122,50 +122,110 @@ Por cada repo, ejecutar:
 
 5. Clasificar cada repo como: **micro** (microservicio), **gw** (gateway), **front** (frontend), **shared** (libreria), **infra** (infraestructura), **otro**
 
-6. **Detectar base de datos** en repos de backend (micro, gw):
-   ```bash
-   # Buscar en connection strings, appsettings, .env, docker-compose
-   grep -ri "mysql\|MySql\|Pomelo" {repo}/src/ --include="*.cs" --include="*.csproj" --include="*.json" -l 2>/dev/null
-   grep -ri "sqlserver\|SqlServer\|Microsoft.EntityFrameworkCore.SqlServer" {repo}/src/ --include="*.cs" --include="*.csproj" --include="*.json" -l 2>/dev/null
-   grep -ri "npgsql\|postgres\|PostgreSQL" {repo}/src/ --include="*.cs" --include="*.csproj" --include="*.json" -l 2>/dev/null
-   grep -ri "mongodb\|MongoClient" {repo}/src/ --include="*.cs" --include="*.ts" --include="*.json" -l 2>/dev/null
+### Paso 2b: Configurar base de datos
 
-   # Buscar en docker-compose
-   grep -i "mysql\|mariadb\|postgres\|sqlserver\|mssql\|mongo" {repo}/docker-compose* 2>/dev/null
+NO auto-detectar la BD. Preguntar al usuario directamente:
 
-   # Buscar en appsettings / .env
-   grep -i "connectionstring\|DB_HOST\|DATABASE_URL" {repo}/src/appsettings*.json {repo}/.env* 2>/dev/null
-   ```
-
-   Clasificar BD detectada:
-   - **MySQL** → Pomelo.EntityFrameworkCore.MySql, mysql en docker-compose, Server= en connection string
-   - **SQL Server** → Microsoft.EntityFrameworkCore.SqlServer, mssql en docker-compose, Data Source= en connection string
-   - **PostgreSQL** → Npgsql.EntityFrameworkCore.PostgreSQL, postgres en docker-compose
-   - **MongoDB** → MongoDB.Driver, mongo en docker-compose
-   - **No detectada** → Preguntar al usuario: "No pude detectar la BD de {repo}. ¿Cual usa? (mysql/sqlserver/postgres/mongodb)"
-
-   Esta informacion se usa en el Paso 2b para configurar la conexion.
-
-### Paso 2b: Configurar conexion a base de datos
-
-Una vez detectado el tipo de BD, preguntar al usuario las credenciales de conexion.
-El appsettings.json puede tener placeholders, variables de entorno, o estar incompleto — no asumir que las credenciales estan ahi.
-
-**Preguntar al usuario:**
 ```
-Detecte que {repo} usa {MySQL/SQL Server/PostgreSQL/MongoDB}.
-Necesito configurar la conexion para que el DBA pueda trabajar.
+¿Que base de datos usa este proyecto?
+  1. MySQL
+  2. SQL Server
+  3. PostgreSQL
+  4. MongoDB
+  5. Otra
+  6. No usa BD (solo frontend/gateway)
 
-¿Cual es la conexion de DESARROLLO?
-  - Host: (ej: localhost, 192.168.1.100, dev-db.faast.cl)
+Si los repos usan BDs diferentes, indicar cual usa cada uno.
+```
+
+Si el usuario elige multiples (ej: "el micro usa MySQL y el otro usa SQL Server"),
+configurar cada una por separado.
+
+### Paso 2c: Validar cliente de BD instalado
+
+Segun la BD elegida, verificar que el cliente de conexion esta instalado:
+
+**MySQL:**
+```bash
+mysql --version 2>/dev/null
+```
+Si NO esta instalado:
+```
+MySQL client no esta instalado. Es necesario para que el DBA pueda trabajar.
+
+Instalar con:
+  Windows:  winget install Oracle.MySQL
+            O descargar: https://dev.mysql.com/downloads/shell/
+  macOS:    brew install mysql-client
+  Linux:    sudo apt install mysql-client
+```
+Preguntar: "¿Lo instalo ahora? (intentare con winget/brew/apt segun tu OS)"
+Si el usuario dice si:
+```bash
+# Windows
+winget install Oracle.MySQL --accept-source-agreements --accept-package-agreements 2>/dev/null
+# macOS
+brew install mysql-client 2>/dev/null
+# Linux
+sudo apt install -y mysql-client 2>/dev/null
+```
+
+**SQL Server:**
+```bash
+sqlcmd --version 2>/dev/null || sqlcmd -? 2>/dev/null
+```
+Si NO esta instalado:
+```
+sqlcmd (SQL Server client) no esta instalado.
+
+Instalar con:
+  Windows:  winget install Microsoft.Sqlcmd
+  macOS:    brew install microsoft/mssql-release/mssql-tools18
+  Linux:    https://learn.microsoft.com/en-us/sql/tools/sqlcmd/sqlcmd-utility
+```
+Preguntar si instalar automaticamente.
+
+**PostgreSQL:**
+```bash
+psql --version 2>/dev/null
+```
+Si NO esta instalado:
+```
+psql (PostgreSQL client) no esta instalado.
+
+Instalar con:
+  Windows:  winget install PostgreSQL.PostgreSQL
+  macOS:    brew install libpq
+  Linux:    sudo apt install postgresql-client
+```
+
+**MongoDB:**
+```bash
+mongosh --version 2>/dev/null
+```
+Si NO esta instalado:
+```
+mongosh (MongoDB Shell) no esta instalado.
+
+Instalar con:
+  Windows:  winget install MongoDB.Shell
+  macOS:    brew install mongosh
+  Linux:    https://www.mongodb.com/docs/mongodb-shell/install/
+```
+
+Despues de instalar, verificar de nuevo que funciona. Si falla, avisar pero continuar.
+
+### Paso 2d: Configurar credenciales de conexion
+
+Preguntar al usuario las credenciales para CADA BD configurada:
+```
+Configurar conexion {MySQL/SQL Server/PostgreSQL/MongoDB} para {repo}:
+  - Host: (ej: localhost, 192.168.1.100, dev-db.empresa.cl)
   - Puerto: (default: MySQL=3306, SQL Server=1433, PostgreSQL=5432, MongoDB=27017)
-  - Base de datos: (nombre)
-  - Usuario: (ej: root, sa, admin)
-  - Password: (se guarda solo localmente en .coordination/, NUNCA se commitea)
+  - Base de datos: (nombre de la BD)
+  - Usuario: 
+  - Password: (se guarda solo localmente, NUNCA se commitea)
 ```
-
-**Si el usuario tiene multiples BDs** (ej: un micro usa MySQL y otro usa SQL Server):
-Preguntar la conexion de cada una por separado.
 
 **Guardar la conexion** en `.coordination/db-connections.json` (NUNCA en git):
 ```json
@@ -194,19 +254,25 @@ micro-backoffice-github=mi_password_dev
 micro-otro-servicio=sa_password
 ```
 
-**Verificar la conexion** si es posible:
+### Paso 2e: Verificar conexion
+
+Intentar conectarse para validar que las credenciales funcionan:
 ```bash
 # MySQL
-mysql -h {host} -P {port} -u {user} -p{password} -e "SELECT 1" {database} 2>/dev/null
+mysql -h {host} -P {port} -u {user} -p{password} -e "SELECT 1" {database}
 
-# SQL Server (si sqlcmd esta disponible)
-sqlcmd -S {host},{port} -U {user} -P {password} -d {database} -Q "SELECT 1" 2>/dev/null
+# SQL Server
+sqlcmd -S {host},{port} -U {user} -P {password} -d {database} -Q "SELECT 1"
 
 # PostgreSQL
-PGPASSWORD={password} psql -h {host} -p {port} -U {user} -d {database} -c "SELECT 1" 2>/dev/null
+PGPASSWORD={password} psql -h {host} -p {port} -U {user} -d {database} -c "SELECT 1"
+
+# MongoDB
+mongosh "mongodb://{user}:{password}@{host}:{port}/{database}" --eval "db.runCommand({ping:1})"
 ```
 
-Si la conexion falla, avisar pero no bloquear — el usuario puede corregir despues.
+- Conexion OK → ✓ mostrar confirmacion
+- Conexion FALLA → mostrar el error exacto y preguntar si quiere corregir credenciales o continuar sin conexion
 
 Esta informacion se pasa al agente DBA para que configure su workspace en `dba-scripts/{proyecto}/`.
 
@@ -218,7 +284,12 @@ Repos detectados:
   front-backoffice-github  → Frontend React + TypeScript
 
 Base de datos:
-  micro-backoffice-github  → MySQL 8 @ dev-db.faast.cl:3306/backoffice_dev (conexion OK ✓)
+  micro-backoffice-github  → MySQL @ dev-db.faast.cl:3306/backoffice_dev (conexion OK ✓)
+
+Herramientas:
+  gh CLI      → OK ✓
+  mysql       → OK ✓ (v8.0.35)
+  git         → OK ✓
 ```
 
 ## Paso 3: Traer tickets de GitHub Issues y Projects
