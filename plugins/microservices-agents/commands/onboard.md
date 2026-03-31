@@ -122,159 +122,108 @@ Por cada repo, ejecutar:
 
 5. Clasificar cada repo como: **micro** (microservicio), **gw** (gateway), **front** (frontend), **shared** (libreria), **infra** (infraestructura), **otro**
 
-### Paso 2b: Configurar base de datos
+### Paso 2b: Configurar acceso del DBA a la base de datos
 
-NO auto-detectar la BD. Preguntar al usuario directamente:
+Esto NO es la conexion del proyecto (eso vive en appsettings.json/.env del repo).
+Esto es el **acceso directo del agente DBA** para poder analizar esquemas, indices,
+slow queries, datos, etc. Son credenciales que el usuario le da al DBA para que trabaje.
 
+**Preguntar al usuario:**
 ```
-¿Que base de datos usa este proyecto?
+El agente DBA necesita acceso directo a la base de datos para poder
+analizar esquemas, optimizar queries e indices, revisar migraciones, etc.
+
+¿Que motor de base de datos usa el proyecto?
   1. MySQL
   2. SQL Server
   3. PostgreSQL
   4. MongoDB
-  5. Otra
-  6. No usa BD (solo frontend/gateway)
-
-Si los repos usan BDs diferentes, indicar cual usa cada uno.
+  5. Multiples (indicar cual usa cada servicio)
+  6. No necesito DBA por ahora (saltar)
 ```
 
-Si el usuario elige multiples (ej: "el micro usa MySQL y el otro usa SQL Server"),
-configurar cada una por separado.
+Si elige saltar, continuar sin configurar BD. El DBA se configura despues con
+`/microservices-agents:db-health` cuando sea necesario.
 
-### Paso 2c: Validar cliente de BD instalado
-
-Segun la BD elegida, verificar que el cliente de conexion esta instalado:
-
-**MySQL:**
-```bash
-mysql --version 2>/dev/null
+Si elige una BD, preguntar las credenciales de acceso del DBA:
 ```
-Si NO esta instalado:
-```
-MySQL client no esta instalado. Es necesario para que el DBA pueda trabajar.
-
-Instalar con:
-  Windows:  winget install Oracle.MySQL
-            O descargar: https://dev.mysql.com/downloads/shell/
-  macOS:    brew install mysql-client
-  Linux:    sudo apt install mysql-client
-```
-Preguntar: "¿Lo instalo ahora? (intentare con winget/brew/apt segun tu OS)"
-Si el usuario dice si:
-```bash
-# Windows
-winget install Oracle.MySQL --accept-source-agreements --accept-package-agreements 2>/dev/null
-# macOS
-brew install mysql-client 2>/dev/null
-# Linux
-sudo apt install -y mysql-client 2>/dev/null
-```
-
-**SQL Server:**
-```bash
-sqlcmd --version 2>/dev/null || sqlcmd -? 2>/dev/null
-```
-Si NO esta instalado:
-```
-sqlcmd (SQL Server client) no esta instalado.
-
-Instalar con:
-  Windows:  winget install Microsoft.Sqlcmd
-  macOS:    brew install microsoft/mssql-release/mssql-tools18
-  Linux:    https://learn.microsoft.com/en-us/sql/tools/sqlcmd/sqlcmd-utility
-```
-Preguntar si instalar automaticamente.
-
-**PostgreSQL:**
-```bash
-psql --version 2>/dev/null
-```
-Si NO esta instalado:
-```
-psql (PostgreSQL client) no esta instalado.
-
-Instalar con:
-  Windows:  winget install PostgreSQL.PostgreSQL
-  macOS:    brew install libpq
-  Linux:    sudo apt install postgresql-client
-```
-
-**MongoDB:**
-```bash
-mongosh --version 2>/dev/null
-```
-Si NO esta instalado:
-```
-mongosh (MongoDB Shell) no esta instalado.
-
-Instalar con:
-  Windows:  winget install MongoDB.Shell
-  macOS:    brew install mongosh
-  Linux:    https://www.mongodb.com/docs/mongodb-shell/install/
-```
-
-Despues de instalar, verificar de nuevo que funciona. Si falla, avisar pero continuar.
-
-### Paso 2d: Configurar credenciales de conexion
-
-Preguntar al usuario las credenciales para CADA BD configurada:
-```
-Configurar conexion {MySQL/SQL Server/PostgreSQL/MongoDB} para {repo}:
-  - Host: (ej: localhost, 192.168.1.100, dev-db.empresa.cl)
+Credenciales de acceso del DBA a {MySQL/SQL Server/PostgreSQL/MongoDB}:
+  - Host: 
   - Puerto: (default: MySQL=3306, SQL Server=1433, PostgreSQL=5432, MongoDB=27017)
-  - Base de datos: (nombre de la BD)
+  - Base de datos: 
   - Usuario: 
-  - Password: (se guarda solo localmente, NUNCA se commitea)
+  - Password: 
 ```
 
-**Guardar la conexion** en `.coordination/db-connections.json` (NUNCA en git):
+### Paso 2c: Validar que el cliente de BD esta instalado
+
+Verificar que el cliente CLI correspondiente existe en el sistema:
+
+| BD | Comando | Si no esta instalado |
+|----|---------|---------------------|
+| MySQL | `mysql --version` | `winget install Oracle.MySQL` / `brew install mysql-client` / `apt install mysql-client` |
+| SQL Server | `sqlcmd --version` | `winget install Microsoft.Sqlcmd` / `brew install microsoft/mssql-release/mssql-tools18` |
+| PostgreSQL | `psql --version` | `winget install PostgreSQL.PostgreSQL` / `brew install libpq` / `apt install postgresql-client` |
+| MongoDB | `mongosh --version` | `winget install MongoDB.Shell` / `brew install mongosh` |
+
+Si NO esta instalado:
+1. Informar al usuario que es necesario
+2. Preguntar: "¿Quieres que intente instalarlo ahora?"
+3. Si dice si → ejecutar el comando de instalacion segun el OS
+4. Si dice no → continuar sin conexion, el DBA no podra ejecutar queries directas
+
+Despues de instalar, verificar de nuevo que funciona.
+
+### Paso 2d: Probar conexion del DBA
+
+```bash
+# MySQL
+mysql -h {host} -P {port} -u {user} -p{password} -e "SELECT 1; SHOW DATABASES;" {database}
+
+# SQL Server
+sqlcmd -S {host},{port} -U {user} -P {password} -d {database} -Q "SELECT 1; SELECT name FROM sys.databases;"
+
+# PostgreSQL
+PGPASSWORD={password} psql -h {host} -p {port} -U {user} -d {database} -c "SELECT 1; \l"
+
+# MongoDB
+mongosh "mongodb://{user}:{password}@{host}:{port}/{database}" --eval "db.runCommand({ping:1}); db.getCollectionNames();"
+```
+
+- Conexion OK → ✓ "DBA conectado a {database} en {host}"
+- Conexion FALLA → mostrar el error exacto, preguntar:
+  - "¿Corregir credenciales?"
+  - "¿Continuar sin conexion de DBA?" (se configura despues)
+
+### Paso 2e: Guardar configuracion del DBA
+
+Guardar en `.coordination/dba-access.json` (NUNCA en git, NUNCA commitear):
 ```json
 {
-  "connections": {
-    "micro-backoffice-github": {
+  "connections": [
+    {
+      "name": "backoffice-dev",
       "type": "mysql",
       "host": "dev-db.faast.cl",
       "port": 3306,
       "database": "backoffice_dev",
-      "user": "dev_user"
-    },
-    "micro-otro-servicio": {
-      "type": "sqlserver",
-      "host": "192.168.1.50",
-      "port": 1433,
-      "database": "otro_dev",
-      "user": "sa"
+      "user": "dba_user",
+      "password": "***",
+      "status": "connected",
+      "repos": ["micro-backoffice-github"]
     }
+  ],
+  "tools": {
+    "mysql": true,
+    "sqlcmd": false,
+    "psql": false,
+    "mongosh": false
   }
 }
 ```
-**El password se guarda aparte** en `.coordination/.db-secrets` (archivo plano, gitignored):
-```
-micro-backoffice-github=mi_password_dev
-micro-otro-servicio=sa_password
-```
 
-### Paso 2e: Verificar conexion
-
-Intentar conectarse para validar que las credenciales funcionan:
-```bash
-# MySQL
-mysql -h {host} -P {port} -u {user} -p{password} -e "SELECT 1" {database}
-
-# SQL Server
-sqlcmd -S {host},{port} -U {user} -P {password} -d {database} -Q "SELECT 1"
-
-# PostgreSQL
-PGPASSWORD={password} psql -h {host} -p {port} -U {user} -d {database} -c "SELECT 1"
-
-# MongoDB
-mongosh "mongodb://{user}:{password}@{host}:{port}/{database}" --eval "db.runCommand({ping:1})"
-```
-
-- Conexion OK → ✓ mostrar confirmacion
-- Conexion FALLA → mostrar el error exacto y preguntar si quiere corregir credenciales o continuar sin conexion
-
-Esta informacion se pasa al agente DBA para que configure su workspace en `dba-scripts/{proyecto}/`.
+El agente DBA lee este archivo para saber como conectarse. El password se guarda
+en el mismo archivo porque es LOCAL y no se commitea. Agregar a .gitignore si existe.
 
 Presentar resumen al usuario:
 ```

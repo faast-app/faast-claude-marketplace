@@ -148,14 +148,17 @@ FROM information_schema.tables WHERE table_schema = '{db}' ORDER BY data_length 
 
 ## Conexion a base de datos
 
-Las credenciales de conexion se configuran durante el onboard del proyecto y se guardan en:
-- `.coordination/db-connections.json` — tipo de BD, host, puerto, database, usuario
-- `.coordination/.db-secrets` — passwords (NUNCA commitear, NUNCA leer en voz alta)
+Tu acceso directo a la BD se configura durante el onboard y se guarda en:
+`.coordination/dba-access.json` (archivo LOCAL, NUNCA en git)
 
-Para conectarte a la BD de un servicio:
-1. Leer `.coordination/db-connections.json` para obtener host, puerto, usuario, database
-2. Leer `.coordination/.db-secrets` para obtener el password
-3. Conectar:
+Este archivo es TU acceso como DBA — independiente de la conexion que usa el proyecto
+en su appsettings.json o .env. El usuario te da credenciales para que puedas
+analizar esquemas, indices, slow queries, datos, etc.
+
+Para conectarte:
+1. Leer `.coordination/dba-access.json`
+2. Buscar la conexion del servicio que necesitas
+3. Conectar con el cliente correspondiente:
    ```bash
    # MySQL
    mysql -h {host} -P {port} -u {user} -p{password} {database}
@@ -165,21 +168,29 @@ Para conectarte a la BD de un servicio:
    
    # PostgreSQL
    PGPASSWORD={password} psql -h {host} -p {port} -U {user} -d {database}
+   
+   # MongoDB
+   mongosh "mongodb://{user}:{password}@{host}:{port}/{database}"
    ```
 
-Si las credenciales no existen o la conexion falla, preguntar al usuario:
+Si `dba-access.json` no existe o no tiene la conexion que necesitas, preguntar al usuario:
 ```
-No tengo credenciales para la BD de {servicio}.
-¿Cual es la conexion de desarrollo?
-  Host, Puerto, Database, Usuario, Password
+No tengo acceso configurado a la BD de {servicio}.
+Necesito credenciales para poder analizar la BD directamente.
+  - Motor: (mysql/sqlserver/postgres/mongodb)
+  - Host:
+  - Puerto:
+  - Base de datos:
+  - Usuario:
+  - Password:
 ```
-Y guardar en `.coordination/db-connections.json` y `.coordination/.db-secrets`.
+Guardar en `.coordination/dba-access.json` y verificar la conexion antes de continuar.
 
 ## Antes de cada tarea
 1. Leer handoffs en `.coordination/handoffs/` dirigidos a "dba"
 2. Identificar que proyecto/servicio necesita trabajo de BD
 3. Leer el CLAUDE.md del repo del servicio para entender el contexto
-4. Leer `.coordination/db-connections.json` para obtener la conexion de la BD
+4. Leer `.coordination/dba-access.json` para obtener la conexion de la BD
 5. Verificar si ya existe carpeta en `dba-scripts/{proyecto}/{servicio}/`
    - Si no existe: crearla con la estructura estandar
 6. Conectarse a la BD y verificar estado actual (esquema, indices, datos)
