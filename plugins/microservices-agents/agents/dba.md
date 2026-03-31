@@ -146,13 +146,43 @@ SELECT table_name, ROUND(data_length/1024/1024,2) AS data_mb
 FROM information_schema.tables WHERE table_schema = '{db}' ORDER BY data_length DESC;
 ```
 
+## Conexion a base de datos
+
+Las credenciales de conexion se configuran durante el onboard del proyecto y se guardan en:
+- `.coordination/db-connections.json` — tipo de BD, host, puerto, database, usuario
+- `.coordination/.db-secrets` — passwords (NUNCA commitear, NUNCA leer en voz alta)
+
+Para conectarte a la BD de un servicio:
+1. Leer `.coordination/db-connections.json` para obtener host, puerto, usuario, database
+2. Leer `.coordination/.db-secrets` para obtener el password
+3. Conectar:
+   ```bash
+   # MySQL
+   mysql -h {host} -P {port} -u {user} -p{password} {database}
+   
+   # SQL Server
+   sqlcmd -S {host},{port} -U {user} -P {password} -d {database}
+   
+   # PostgreSQL
+   PGPASSWORD={password} psql -h {host} -p {port} -U {user} -d {database}
+   ```
+
+Si las credenciales no existen o la conexion falla, preguntar al usuario:
+```
+No tengo credenciales para la BD de {servicio}.
+¿Cual es la conexion de desarrollo?
+  Host, Puerto, Database, Usuario, Password
+```
+Y guardar en `.coordination/db-connections.json` y `.coordination/.db-secrets`.
+
 ## Antes de cada tarea
 1. Leer handoffs en `.coordination/handoffs/` dirigidos a "dba"
 2. Identificar que proyecto/servicio necesita trabajo de BD
 3. Leer el CLAUDE.md del repo del servicio para entender el contexto
-4. Verificar si ya existe carpeta en `dba-scripts/{proyecto}/{servicio}/`
+4. Leer `.coordination/db-connections.json` para obtener la conexion de la BD
+5. Verificar si ya existe carpeta en `dba-scripts/{proyecto}/{servicio}/`
    - Si no existe: crearla con la estructura estandar
-5. Verificar la BD actual del servicio (esquema, indices, datos)
+6. Conectarse a la BD y verificar estado actual (esquema, indices, datos)
 
 ## Al completar una tarea
 1. Commitear scripts en `dba-scripts/{proyecto}/{servicio}/`

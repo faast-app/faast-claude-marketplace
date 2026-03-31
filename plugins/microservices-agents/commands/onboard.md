@@ -144,16 +144,81 @@ Por cada repo, ejecutar:
    - **MongoDB** → MongoDB.Driver, mongo en docker-compose
    - **No detectada** → Preguntar al usuario: "No pude detectar la BD de {repo}. ¿Cual usa? (mysql/sqlserver/postgres/mongodb)"
 
-   Esta informacion se pasa al agente DBA para que configure su workspace en `dba-scripts/{proyecto}/`.
+   Esta informacion se usa en el Paso 2b para configurar la conexion.
+
+### Paso 2b: Configurar conexion a base de datos
+
+Una vez detectado el tipo de BD, preguntar al usuario las credenciales de conexion.
+El appsettings.json puede tener placeholders, variables de entorno, o estar incompleto — no asumir que las credenciales estan ahi.
+
+**Preguntar al usuario:**
+```
+Detecte que {repo} usa {MySQL/SQL Server/PostgreSQL/MongoDB}.
+Necesito configurar la conexion para que el DBA pueda trabajar.
+
+¿Cual es la conexion de DESARROLLO?
+  - Host: (ej: localhost, 192.168.1.100, dev-db.faast.cl)
+  - Puerto: (default: MySQL=3306, SQL Server=1433, PostgreSQL=5432, MongoDB=27017)
+  - Base de datos: (nombre)
+  - Usuario: (ej: root, sa, admin)
+  - Password: (se guarda solo localmente en .coordination/, NUNCA se commitea)
+```
+
+**Si el usuario tiene multiples BDs** (ej: un micro usa MySQL y otro usa SQL Server):
+Preguntar la conexion de cada una por separado.
+
+**Guardar la conexion** en `.coordination/db-connections.json` (NUNCA en git):
+```json
+{
+  "connections": {
+    "micro-backoffice-github": {
+      "type": "mysql",
+      "host": "dev-db.faast.cl",
+      "port": 3306,
+      "database": "backoffice_dev",
+      "user": "dev_user"
+    },
+    "micro-otro-servicio": {
+      "type": "sqlserver",
+      "host": "192.168.1.50",
+      "port": 1433,
+      "database": "otro_dev",
+      "user": "sa"
+    }
+  }
+}
+```
+**El password se guarda aparte** en `.coordination/.db-secrets` (archivo plano, gitignored):
+```
+micro-backoffice-github=mi_password_dev
+micro-otro-servicio=sa_password
+```
+
+**Verificar la conexion** si es posible:
+```bash
+# MySQL
+mysql -h {host} -P {port} -u {user} -p{password} -e "SELECT 1" {database} 2>/dev/null
+
+# SQL Server (si sqlcmd esta disponible)
+sqlcmd -S {host},{port} -U {user} -P {password} -d {database} -Q "SELECT 1" 2>/dev/null
+
+# PostgreSQL
+PGPASSWORD={password} psql -h {host} -p {port} -U {user} -d {database} -c "SELECT 1" 2>/dev/null
+```
+
+Si la conexion falla, avisar pero no bloquear — el usuario puede corregir despues.
+
+Esta informacion se pasa al agente DBA para que configure su workspace en `dba-scripts/{proyecto}/`.
 
 Presentar resumen al usuario:
 ```
 Repos detectados:
-  micro-backoffice-github  → Microservicio .NET 8, MySQL 8
+  micro-backoffice-github  → Microservicio .NET 8
   gw-backoffice-github     → Gateway .NET 8 (YARP/Ocelot), sin BD propia
   front-backoffice-github  → Frontend React + TypeScript
 
-Base de datos: MySQL 8 (detectada en micro-backoffice-github)
+Base de datos:
+  micro-backoffice-github  → MySQL 8 @ dev-db.faast.cl:3306/backoffice_dev (conexion OK ✓)
 ```
 
 ## Paso 3: Traer tickets de GitHub Issues y Projects
