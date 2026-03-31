@@ -7,6 +7,52 @@ argument-hint: Nombre del proyecto o repos (ej. "backoffice" o "faast-app/micro-
 
 Adopta el proyecto: $ARGUMENTS
 
+## Paso 0: Validar prerequisitos
+
+### GitHub CLI (gh)
+Verificar que `gh` esta instalado y autenticado:
+```bash
+gh --version 2>/dev/null
+gh auth status 2>/dev/null
+```
+
+**Si `gh` NO esta instalado:**
+```
+GitHub CLI (gh) no esta instalado. Es necesario para traer tickets e interactuar con GitHub.
+
+Instalar con:
+  Windows:  winget install GitHub.cli
+  macOS:    brew install gh
+  Linux:    sudo apt install gh
+
+Despues de instalar: gh auth login
+```
+Detener aqui y esperar a que el usuario lo instale.
+
+**Si `gh` esta instalado pero NO autenticado:**
+```
+GitHub CLI no esta autenticado. Ejecuta:
+  gh auth login
+Y selecciona tu cuenta de GitHub.
+```
+Detener aqui y esperar autenticacion.
+
+**Si `gh` esta OK:** Obtener la org/usuario autenticado:
+```bash
+gh auth status --hostname github.com 2>&1
+gh api user --jq '.login' 2>/dev/null
+```
+Guardar el usuario/org para usarlo en los pasos siguientes. Si el usuario pertenece a multiples orgs, preguntar cual usar:
+```bash
+gh api user/orgs --jq '.[].login' 2>/dev/null
+```
+
+### Git
+Verificar que git esta disponible:
+```bash
+git --version
+```
+
 ## Paso 1: Detectar repos del proyecto
 
 ### Caso A: El usuario dio repos especificos
@@ -76,12 +122,38 @@ Por cada repo, ejecutar:
 
 5. Clasificar cada repo como: **micro** (microservicio), **gw** (gateway), **front** (frontend), **shared** (libreria), **infra** (infraestructura), **otro**
 
+6. **Detectar base de datos** en repos de backend (micro, gw):
+   ```bash
+   # Buscar en connection strings, appsettings, .env, docker-compose
+   grep -ri "mysql\|MySql\|Pomelo" {repo}/src/ --include="*.cs" --include="*.csproj" --include="*.json" -l 2>/dev/null
+   grep -ri "sqlserver\|SqlServer\|Microsoft.EntityFrameworkCore.SqlServer" {repo}/src/ --include="*.cs" --include="*.csproj" --include="*.json" -l 2>/dev/null
+   grep -ri "npgsql\|postgres\|PostgreSQL" {repo}/src/ --include="*.cs" --include="*.csproj" --include="*.json" -l 2>/dev/null
+   grep -ri "mongodb\|MongoClient" {repo}/src/ --include="*.cs" --include="*.ts" --include="*.json" -l 2>/dev/null
+
+   # Buscar en docker-compose
+   grep -i "mysql\|mariadb\|postgres\|sqlserver\|mssql\|mongo" {repo}/docker-compose* 2>/dev/null
+
+   # Buscar en appsettings / .env
+   grep -i "connectionstring\|DB_HOST\|DATABASE_URL" {repo}/src/appsettings*.json {repo}/.env* 2>/dev/null
+   ```
+
+   Clasificar BD detectada:
+   - **MySQL** → Pomelo.EntityFrameworkCore.MySql, mysql en docker-compose, Server= en connection string
+   - **SQL Server** → Microsoft.EntityFrameworkCore.SqlServer, mssql en docker-compose, Data Source= en connection string
+   - **PostgreSQL** → Npgsql.EntityFrameworkCore.PostgreSQL, postgres en docker-compose
+   - **MongoDB** → MongoDB.Driver, mongo en docker-compose
+   - **No detectada** → Preguntar al usuario: "No pude detectar la BD de {repo}. ¿Cual usa? (mysql/sqlserver/postgres/mongodb)"
+
+   Esta informacion se pasa al agente DBA para que configure su workspace en `dba-scripts/{proyecto}/`.
+
 Presentar resumen al usuario:
 ```
 Repos detectados:
-  micro-backoffice-github  → Microservicio .NET 8, MySQL
-  gw-backoffice-github     → Gateway .NET 8 (YARP/Ocelot)
+  micro-backoffice-github  → Microservicio .NET 8, MySQL 8
+  gw-backoffice-github     → Gateway .NET 8 (YARP/Ocelot), sin BD propia
   front-backoffice-github  → Frontend React + TypeScript
+
+Base de datos: MySQL 8 (detectada en micro-backoffice-github)
 ```
 
 ## Paso 3: Traer tickets de GitHub Issues y Projects
