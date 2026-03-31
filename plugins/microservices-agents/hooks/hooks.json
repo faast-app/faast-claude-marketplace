@@ -1,0 +1,42 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash.*git push --force",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "BLOQUEADO: git push --force no esta permitido. Crea un handoff al Lead si hay conflictos."
+          }
+        ]
+      },
+      {
+        "matcher": "Bash.*git merge --theirs",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "BLOQUEADO: git merge --theirs no esta permitido. Crea un handoff al Lead para resolver conflictos."
+          }
+        ]
+      },
+      {
+        "matcher": "Bash.*git add \\.",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "ADVERTENCIA: git add . o git add -A agrega todos los archivos. Usa git add con archivos especificos de tu area de responsabilidad."
+          }
+        ]
+      },
+      {
+        "matcher": "Bash.*git checkout main",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "ADVERTENCIA: No deberias trabajar directamente en main. Solo el Lead mergea a main. Verifica que estas en tu branch asignado."
+          }
+        ]
+      }
+    ]
+  }
+}

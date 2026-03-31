@@ -1,0 +1,25 @@
+# Dynamic configuration for Traefik
+# Services are auto-discovered via Docker labels in docker-compose
+# Add manual routes here if needed
+
+http:
+  middlewares:
+    cors-headers:
+      headers:
+        accessControlAllowOriginList:
+          - "http://localhost:3000"
+        accessControlAllowMethods:
+          - GET
+          - POST
+          - PUT
+          - PATCH
+          - DELETE
+          - OPTIONS
+        accessControlAllowHeaders:
+          - Authorization
+          - Content-Type
+        accessControlMaxAge: 100
+    rate-limit:
+      rateLimit:
+        average: 100
+        burst: 50

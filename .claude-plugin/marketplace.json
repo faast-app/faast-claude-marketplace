@@ -13,6 +13,13 @@
       "category": "development",
       "source": "./plugins/senior-backend-architect",
       "homepage": "https://github.com/faast-app/faast-claude-marketplace"
+    },
+    {
+      "name": "microservices-agents",
+      "description": "Sistema de agentes IA para arquitectura de microservicios reales. 7 agentes (Arquitecto, Lead, Backend, Frontend, DBA, Infra, Ciberseguridad) + 10 skills para crear y gestionar proyectos multi-repo.",
+      "category": "development",
+      "source": "./plugins/microservices-agents",
+      "homepage": "https://github.com/faast-app/faast-claude-marketplace"
     }
   ]
 }

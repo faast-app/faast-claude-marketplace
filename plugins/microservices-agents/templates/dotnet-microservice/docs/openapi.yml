@@ -1,0 +1,12 @@
+openapi: 3.0.3
+info:
+  title: "{{ServiceName}} API"
+  version: "1.0.0"
+  description: "{{ServiceDescription}}"
+paths:
+  /health:
+    get:
+      summary: Health check
+      responses:
+        "200":
+          description: Service is healthy

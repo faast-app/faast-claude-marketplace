@@ -17,6 +17,7 @@ claude plugin install senior-backend-architect
 | Plugin | Descripcion |
 |--------|-------------|
 | **senior-backend-architect** | Analisis de arquitectura backend, code review, debugging, diseno de BD, documentacion tecnica. Soporta .NET, Python, Java, Node.js, C++, Go, Rust. Comando `/architect`. |
+| **microservices-agents** | Sistema de 7 agentes IA para arquitectura de microservicios reales. Crea proyectos multi-repo desde documentos de requerimientos. Incluye Arquitecto, Lead, Backend, Frontend, DBA, Infra y Ciberseguridad + 10 skills. |
 
 ## Agregar un nuevo plugin
 

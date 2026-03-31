@@ -1,0 +1,24 @@
+# docker-compose.dev.yml — Desarrollo local
+# Levanta TODOS los servicios del proyecto en la maquina del dev
+# Este archivo NO esta en git — vive en la carpeta paraguas
+#
+# Uso: docker compose -f docker-compose.dev.yml up -d
+#
+# Generado por /microservices-agents:new-project
+# Proyecto: {{ProjectName}}
+
+services:
+  # --- Bases de datos (una por servicio) ---
+  # {{DB_SERVICES_PLACEHOLDER}}
+
+  # --- Message broker (si aplica) ---
+  # {{BROKER_PLACEHOLDER}}
+
+  # --- Servicios backend ---
+  # {{BACKEND_SERVICES_PLACEHOLDER}}
+
+  # --- Gateway ---
+  # {{GATEWAY_PLACEHOLDER}}
+
+  # --- Frontend ---
+  # {{FRONTEND_PLACEHOLDER}}
