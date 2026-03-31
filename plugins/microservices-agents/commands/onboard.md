@@ -9,21 +9,45 @@ Adopta el proyecto: $ARGUMENTS
 
 ## Paso 1: Detectar repos del proyecto
 
-Si el usuario dio repos especificos, usarlos. Si dio un nombre de proyecto (ej: "backoffice"):
+### Caso A: El usuario dio repos especificos
+Usarlos directamente. Ejemplo: `onboard faast-app/micro-backoffice-github faast-app/gw-backoffice-github`
+
+### Caso B: El usuario dio un nombre de proyecto
+Buscar repos que matcheen con el nombre (ej: "backoffice"):
 
 1. Buscar repos locales que matcheen:
    ```bash
    ls ~/OneDrive/Documents/Trabajo/Repositorios/ | grep -i "{nombre}"
    ```
-2. Si no hay repos locales, buscar en GitHub:
+2. En paralelo, buscar en GitHub:
    ```bash
-   gh repo list {org} --limit 50 --json name,description | grep -i "{nombre}"
+   gh repo list {org} --limit 100 --json name,description,url | jq '.[] | select(.name | test("{nombre}"; "i"))'
    ```
-3. Presentar la lista al usuario y preguntar: "Estos son los repos que encontre. Confirmas? Quieres agregar o quitar alguno?"
+3. Presentar la lista combinada al usuario:
+   ```
+   Repos encontrados para "backoffice":
+     1. micro-backoffice-github  (local + GitHub)
+     2. gw-backoffice-github     (local + GitHub)
+     3. front-backoffice-github  (solo GitHub, no clonado)
+   ¿Confirmas estos repos? ¿Quieres agregar o quitar alguno?
+   ```
 
+### Caso C: No se encontraron matches
+Preguntar directamente:
+```
+No encontre repos que matcheen con "{nombre}".
+¿Cuales son los nombres exactos de los repos del proyecto?
+Puedes darme:
+  - Nombres de repos: micro-backoffice-github, gw-backoffice-github
+  - URLs: github.com/faast-app/micro-backoffice-github
+  - O la organizacion para buscar: faast-app
+```
+
+### Resolver repos
 Para cada repo confirmado:
 - Si existe local: usar la ruta local
-- Si no existe local: `gh repo clone {org}/{repo}` en el directorio de trabajo
+- Si no existe local: preguntar si clonar → `gh repo clone {org}/{repo}` en el directorio de trabajo
+- Verificar que es un repo git valido: `git -C {repo} status`
 
 ## Paso 2: Analizar cada repo
 
