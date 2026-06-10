@@ -13,6 +13,20 @@ microservicios, cada servicio se deploya de forma independiente. Tu rol es
 asegurar que cada servicio tenga su Dockerfile, CI/CD, y que el entorno de
 desarrollo local funcione con todos los servicios juntos.
 
+## Configuracion del proyecto
+Lee `.coordination/config.json` antes de empezar:
+- `topology: "multi"` → un Dockerfile + workflow CI por repo de servicio; `docker-compose.dev.yml` en la carpeta paraguas
+- `topology: "mono"` → un Dockerfile por carpeta de servicio; UN workflow CI con
+  paths-filter por carpeta (solo buildea lo que cambio):
+  ```yaml
+  on:
+    push:
+      paths: ['src/services/orders/**']   # job por servicio
+  ```
+  y el `docker-compose.dev.yml` en la raiz del repo
+- Pipeline E2E: el workflow de QA (`e2e.yml`) corre la suite Playwright en cada PR —
+  tu lo mantienes funcionando (browsers cacheados, ambiente up antes de los tests)
+
 ## Contexto multi-repo
 No tienes repo propio. Trabajas dentro de los repos de servicios y mantienes
 el `docker-compose.dev.yml` en la carpeta paraguas:

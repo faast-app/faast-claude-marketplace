@@ -1,0 +1,59 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## What this repo is
+
+This is the **FAAST Claude Code plugin marketplace** — a distribution repo, not an application. There is no build, lint, or test step. The "code" is Markdown agent/command definitions and JSON manifests that Claude Code installs and loads at runtime. Validation is structural: manifests must match Claude Code's plugin/marketplace schemas, and agent/command Markdown must carry correct YAML frontmatter.
+
+Users consume it via:
+```bash
+claude plugin marketplace add faast-app/faast-claude-marketplace
+claude plugin install <plugin-name>@faast-marketplace
+claude plugin marketplace update faast-marketplace   # after changes are pushed to main
+```
+
+## Repository structure
+
+- [.claude-plugin/marketplace.json](.claude-plugin/marketplace.json) — the marketplace manifest. Every plugin must be registered here with a `source` pointing at `./plugins/<name>`. **Adding a plugin folder is not enough — it must also be listed here.**
+- [plugins/](plugins/) — one folder per distributable plugin. Each has `.claude-plugin/plugin.json` plus some combination of `agents/`, `commands/`, `templates/`, `README.md`.
+- `.claude/` (untracked) — this repo's own local agent/command setup. Not part of what gets distributed.
+
+## The two plugins
+
+### senior-backend-architect
+Single agent + single `/architect` command. A self-contained expert that runs a fixed 4-phase flow (Understand → Analyze → Recommend → optionally Implement) for backend review/debugging/design across .NET, Python, Java, Node.js, etc. No coordination machinery — it's a one-shot consultant.
+
+### dev-team
+A **team of 11 role-agents** covering the full SDLC that collaborate to build/operate real projects (mono-repo or multi-repo). This is the substantial plugin; understand its model before editing it.
+
+**Agents** (`plugins/dev-team/agents/*.md`): `setup`, `product-owner`, `architect`, `lead`, `backend`, `frontend`, `dba`, `qa`, `infra`, `cybersec`, `tech-writer`. Each is a Markdown file with frontmatter (`name`, `description`, `model`, `tools`). The `description` is what Claude Code uses to decide when to auto-delegate, so it matters functionally. The `model` field is deliberately tiered to optimize token cost: `opus` only for architect, `haiku` for setup/tech-writer, `sonnet` for the rest — keep that discipline when adding agents.
+
+**Commands** (`plugins/dev-team/commands/*.md`): 18 slash commands. `/start` is the universal entry point (detects context, routes the user — simplicity is a core design goal). Others: `/new-project`, `/onboard`, `/setup`, `/refine`, `/assign-task`, `/inbox`, `/handoff`, `/sync`, `/test-plan`, `/e2e`, `/review-pr`, `/git-check`, `/security-audit`, `/db-health`, `/deploy-check`, `/document`, `/status`. Frontmatter `description` + `argument-hint`; body is the procedure, with `$ARGUMENTS` interpolated. Commands orchestrate; agents do the work.
+
+**Templates** (`plugins/dev-team/templates/`): scaffolding the `/new-project` flow copies when creating repos — `dotnet-microservice`, `nodejs-microservice`, `react-spa`, `react-microfrontend`, gateway variants (`gateway-yarp`, `gateway-ocelot`, `gateway-traefik`), and `project-umbrella`. Filenames/contents use `{{ServiceName}}` placeholders.
+
+## Core model of dev-team (the non-obvious part)
+
+These conventions are enforced by the agent prompts themselves — preserve them when editing:
+
+- **`.coordination/config.json` is the source of truth** every agent reads first: `topology` (`"mono"` | `"multi"`) and `tracker.provider` (`"github"` | `"azure"`). Created by `/new-project` or `/onboard`.
+- **Two topologies.** `multi`: umbrella folder `~/projects/{name}/` with one git repo per service plus `.coordination/`. `mono`: a single repo where agents are scoped to folders (`src/services/*`, `src/frontend/`) and `.coordination/` sits at the repo root (secrets like `dba-access.json` gitignored). Onboarded projects never get their topology migrated unless the user asks.
+- **Two trackers.** The PO creates HUs as GitHub Issues/Projects (via `gh`) or Azure DevOps PBIs (via `az boards`); `/sync` translates both directions. `.coordination/backlog.md` is the local mirror.
+- **HUs are business-language only** (the PO's golden rule); technical "how" lives in the Lead's task handoffs, never in the HU.
+- **QA is a merge gate.** Devs hand off to QA on completion; QA validates each acceptance criterion (interactively via Playwright MCP `browser_*` tools, then as an automated Playwright suite with criterion→test traceability) and the Lead cannot merge without QA's APROBADA verdict. cybersec is a second gate for auth/sensitive changes.
+- **The setup agent runs first** in both entry flows — it validates/installs prerequisites (git, Docker, gh/az, DB CLI clients, Playwright) with one user confirmation, and stores state in `.coordination/setup-status.json`.
+- **Handoffs are the only inter-agent channel.** Markdown files in `.coordination/handoffs/` (named `{from}-to-{to}-{timestamp}.md`), read via `/inbox`.
+- **One agent = one branch = one task.** Branches are `{type}/{ID}-{agent}-{desc}`, cut from `develop`. **Only the Lead merges** (to `develop`, then `main`).
+- **cybersec never commits code** — it only audits and reports findings via handoff; the relevant agent implements the fix.
+- **dba uses one permanent central repo** (`dba-scripts/`) spanning all projects. Microservice architecture is **database-per-service** (polyglot persistence allowed; single DB acceptable in small mono-repo projects).
+- **The architect chooses topology and stack per service** — it does not assume everything is .NET or multi-repo.
+
+Two entry flows: `/new-project` (setup → architect designs from a requirements doc → user approves → repos scaffolded from templates → PO creates the HU backlog in the tracker) and `/onboard` (setup → detect repos/topology/stack → pull tickets from GitHub or Azure DevOps into the backlog). `/start` wraps both for users who don't know the commands.
+
+## Conventions when editing
+
+- After changing any plugin, bump nothing automatically — but the change only reaches users after a push to `main` and a `marketplace update`.
+- Keep agent/command `description` fields accurate; they drive Claude Code's routing, not just docs.
+- The codebase prose is primarily in **Spanish** (agent identities, command procedures, READMEs). Match the language of the file you're editing.
+- When adding a plugin: create `plugins/<name>/.claude-plugin/plugin.json`, add agents/commands, then register it in `.claude-plugin/marketplace.json` with `source: "./plugins/<name>"`.

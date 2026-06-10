@@ -1,5 +1,5 @@
 ---
-description: Revisa un Pull Request verificando codigo, tests, seguridad y cumplimiento de reglas del proyecto. Uso - /microservices-agents:review-pr $ARGUMENTS
+description: Revisa un Pull Request verificando codigo, tests, seguridad y cumplimiento de reglas del proyecto. Uso - /dev-team:review-pr $ARGUMENTS
 ---
 
 Revisa el Pull Request: $ARGUMENTS

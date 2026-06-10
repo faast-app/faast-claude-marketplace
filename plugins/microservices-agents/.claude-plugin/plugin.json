@@ -1,8 +1,0 @@
-{
-  "name": "microservices-agents",
-  "description": "Sistema de agentes IA para arquitectura de microservicios reales. 7 agentes (Arquitecto, Lead, Backend, Frontend, DBA, Infra, Ciberseguridad) + 10 commands para crear y gestionar proyectos multi-repo.",
-  "author": {
-    "name": "Carlos Fuentes",
-    "email": "carlos.fuentes@faast.cl"
-  }
-}

@@ -4,7 +4,7 @@
 #
 # Uso: docker compose -f docker-compose.dev.yml up -d
 #
-# Generado por /microservices-agents:new-project
+# Generado por /dev-team:new-project
 # Proyecto: {{ProjectName}}
 
 services:

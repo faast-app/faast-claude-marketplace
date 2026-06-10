@@ -1,5 +1,5 @@
 ---
-description: Adopta un proyecto existente con repos en GitHub. Detecta repos, analiza codigo, trae tickets de GitHub Issues/Projects y prepara el equipo de agentes para trabajar.
+description: Adopta un proyecto existente (mono-repo o multi-repo, en GitHub o Azure DevOps, o solo local). Valida prerequisitos, detecta y analiza repos, trae tickets del tracker y prepara al equipo completo para trabajar.
 argument-hint: Nombre del proyecto o repos (ej. "backoffice" o "faast-app/micro-backoffice-github faast-app/gw-backoffice-github")
 ---
 
@@ -7,51 +7,20 @@ argument-hint: Nombre del proyecto o repos (ej. "backoffice" o "faast-app/micro-
 
 Adopta el proyecto: $ARGUMENTS
 
-## Paso 0: Validar prerequisitos
+## Paso 0: Prerequisitos (agente setup)
 
-### GitHub CLI (gh)
-Verificar que `gh` esta instalado y autenticado:
-```bash
-gh --version 2>/dev/null
-gh auth status 2>/dev/null
-```
+Preguntar al usuario donde vive el trabajo del proyecto:
+- **GitHub** (Issues + Projects) → el setup valida `gh` instalado y autenticado
+- **Azure DevOps** (Boards) → el setup valida `az` + extension `azure-devops` + login
+- **Solo local** (sin tracker remoto) → solo git
 
-**Si `gh` NO esta instalado:**
-```
-GitHub CLI (gh) no esta instalado. Es necesario para traer tickets e interactuar con GitHub.
+Invocar al agente `setup` para validar e instalar lo que falte (git, gh/az segun
+eleccion). El setup pregunta UNA vez antes de instalar y guarda el resultado en
+`.coordination/setup-status.json`. NO continuar si falta el CLI del tracker elegido.
 
-Instalar con:
-  Windows:  winget install GitHub.cli
-  macOS:    brew install gh
-  Linux:    sudo apt install gh
-
-Despues de instalar: gh auth login
-```
-Detener aqui y esperar a que el usuario lo instale.
-
-**Si `gh` esta instalado pero NO autenticado:**
-```
-GitHub CLI no esta autenticado. Ejecuta:
-  gh auth login
-Y selecciona tu cuenta de GitHub.
-```
-Detener aqui y esperar autenticacion.
-
-**Si `gh` esta OK:** Obtener la org/usuario autenticado:
-```bash
-gh auth status --hostname github.com 2>&1
-gh api user --jq '.login' 2>/dev/null
-```
-Guardar el usuario/org para usarlo en los pasos siguientes. Si el usuario pertenece a multiples orgs, preguntar cual usar:
-```bash
-gh api user/orgs --jq '.[].login' 2>/dev/null
-```
-
-### Git
-Verificar que git esta disponible:
-```bash
-git --version
-```
+Si es GitHub: obtener org/usuario (`gh api user --jq '.login'`; si hay varias orgs,
+preguntar cual). Si es Azure: obtener organizacion y proyecto
+(`az devops configure --defaults organization=... project=...`).
 
 ## Paso 1: Detectar repos del proyecto
 
@@ -120,7 +89,19 @@ Por cada repo, ejecutar:
    git -C {repo} branch -a
    ```
 
-5. Clasificar cada repo como: **micro** (microservicio), **gw** (gateway), **front** (frontend), **shared** (libreria), **infra** (infraestructura), **otro**
+5. Clasificar cada repo como: **micro** (microservicio), **gw** (gateway), **front** (frontend), **shared** (libreria), **infra** (infraestructura), **e2e** (tests), **otro**
+
+### Paso 2a-bis: Detectar topologia
+
+- **Varios repos**, cada uno con un servicio → `topology: "multi"`
+- **Un solo repo** que contiene todo (src/services/*, src/frontend/, o un monolito) → `topology: "mono"`
+- Caso ambiguo → preguntar al usuario
+
+La topologia detectada se guarda en `.coordination/config.json` (Paso 4) y NUNCA
+se propone migrarla salvo pedido explicito del usuario.
+
+Detectar tambien si existe suite E2E (carpeta `e2e/`, `tests/e2e/`, repo `*-e2e`,
+`playwright.config.*`). Si no existe, anotarlo: QA la creara cuando valide su primera HU.
 
 ### Paso 2b: Configurar acceso del DBA a la base de datos
 
@@ -143,7 +124,7 @@ analizar esquemas, optimizar queries e indices, revisar migraciones, etc.
 ```
 
 Si elige saltar, continuar sin configurar BD. El DBA se configura despues con
-`/microservices-agents:db-health` cuando sea necesario.
+`/dev-team:db-health` cuando sea necesario.
 
 Si elige una BD, preguntar las credenciales de acceso del DBA:
 ```
@@ -241,7 +222,16 @@ Herramientas:
   git         → OK ✓
 ```
 
-## Paso 3: Traer tickets de GitHub Issues y Projects
+## Paso 3: Traer tickets del tracker
+
+**Si el tracker es Azure DevOps:** traer los work items con
+```bash
+az boards query --wiql "SELECT [System.Id],[System.Title],[System.State],[System.WorkItemType] FROM WorkItems WHERE [System.TeamProject]='{proyecto}' AND [System.State] <> 'Closed' ORDER BY [Microsoft.VSTS.Common.Priority]" --output json
+```
+y clasificar por estado (New/Approved → To Do, Active/Committed → In Progress,
+Resolved → In Review, Closed/Done → Done). Luego saltar a la clasificacion por repo.
+
+**Si el tracker es GitHub:**
 
 1. **Obtener issues abiertos** de cada repo:
    ```bash
@@ -271,22 +261,38 @@ Herramientas:
    - Issues en repo front → Frontend
    - Issues sin repo especifico → Lead decide
 
-## Paso 4: Crear carpeta paraguas y coordinacion
+## Paso 4: Crear estructura de coordinacion
 
-Crear la estructura de coordinacion:
+Segun la topologia detectada:
+- **multi** → carpeta paraguas `~/projects/{proyecto}/` con `.coordination/` y los repos
+- **mono** → `.coordination/` en la raiz del repo unico (agregar `dba-access.json` y
+  `setup-status.json` al .gitignore)
 
 ```
-~/projects/{nombre-proyecto}/
-├── .coordination/
-│   ├── handoffs/
-│   │   └── archive/
-│   ├── backlog.md          ← Generado desde GitHub Issues reales
-│   ├── sprint-actual.md    ← Generado desde GitHub Project (columna actual)
-│   ├── architecture.md     ← Generado desde analisis de repos
-│   └── repos.md            ← Mapa de repos con rutas locales y URLs
-├── {repo-1}/ → symlink o ruta al repo local
-├── {repo-2}/ → symlink o ruta al repo local
-└── ...
+.coordination/
+├── config.json             ← Fuente de verdad: topologia, tracker, urls (ver abajo)
+├── handoffs/
+│   └── archive/
+├── test-plans/             ← Planes de prueba de QA
+├── backlog.md              ← Generado desde los tickets reales del tracker
+├── sprint-actual.md        ← Generado desde el estado del Project/Board
+├── architecture.md         ← Generado desde analisis de repos
+└── repos.md                ← Mapa de repos con rutas locales y URLs
+```
+
+**config.json:**
+```json
+{
+  "project": "{nombre}",
+  "topology": "mono|multi",
+  "tracker": {
+    "provider": "github|azure",
+    "github": { "org": "{org}", "project": "{project-number-o-nombre}" },
+    "azure": { "organization": "https://dev.azure.com/{org}", "project": "{proyecto}" }
+  },
+  "urls": { "dev": "http://localhost:{puerto}" },
+  "e2e": { "exists": true, "path": "{ruta-suite-o-repo}" }
+}
 ```
 
 **repos.md** debe contener:
@@ -316,11 +322,13 @@ Crear la estructura de coordinacion:
 ## Paso 5: Presentar resumen y preguntar siguiente paso
 
 Mostrar:
-- Repos adoptados (N repos, stacks)
-- Tickets totales: N abiertos (X to-do, Y in-progress, Z in-review)
+- Topologia detectada (mono/multi) y repos adoptados (N repos, stacks)
+- Tracker configurado (GitHub/Azure) y tickets totales: N abiertos (X to-do, Y in-progress, Z in-review)
+- Estado del entorno segun el setup (herramientas, conexion BD, suite E2E existe o no)
 - Tickets sin asignar que se pueden empezar
 
 Preguntar:
-- "Quieres que asigne tickets a los agentes y empiecen a trabajar?"
-- "Quieres revisar el backlog primero?"
-- "Quieres que haga un analisis de arquitectura mas profundo?"
+- "¿Asigno tickets a los agentes y empiezan a trabajar?" → /dev-team:assign-task
+- "¿Revisamos el backlog primero?" → /dev-team:refine si faltan HUs bien definidas
+- "¿Analisis de arquitectura mas profundo?" → agente architect
+- Recordar: "/dev-team:start te orienta en cualquier momento"

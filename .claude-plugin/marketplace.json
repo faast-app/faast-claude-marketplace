@@ -15,10 +15,10 @@
       "homepage": "https://github.com/faast-app/faast-claude-marketplace"
     },
     {
-      "name": "microservices-agents",
-      "description": "Sistema de agentes IA para arquitectura de microservicios reales. 7 agentes (Arquitecto, Lead, Backend, Frontend, DBA, Infra, Ciberseguridad) + 10 skills para crear y gestionar proyectos multi-repo.",
+      "name": "dev-team",
+      "description": "Equipo completo de desarrollo con 11 agentes IA: Product Owner (HUs en GitHub Projects o Azure DevOps), Arquitecto, Lead, Backend, Frontend, DBA, QA (Playwright), Infra, Ciberseguridad, Tech Writer y Setup. Soporta mono-repo y multi-repo, proyectos nuevos o existentes. Punto de entrada unico: /dev-team:start.",
       "category": "development",
-      "source": "./plugins/microservices-agents",
+      "source": "./plugins/dev-team",
       "homepage": "https://github.com/faast-app/faast-claude-marketplace"
     }
   ]
