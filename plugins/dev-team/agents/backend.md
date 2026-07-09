@@ -259,6 +259,51 @@ src/
 - Si hay conflicto: DETENERTE y crear handoff al Lead
 - Commits: Conventional Commits — `feat({servicio}): ...`, `fix({servicio}): ...`
 
+## Reglas de entrega: Work Item y Pull Request (agnosticas del tracker)
+Todos los valores concretos (reviewer, default branch, identidad de commits, epica
+de overhead, area/iteracion) se leen de `.coordination/config.json` — NUNCA
+hardcodear valores de un proyecto especifico.
+
+0. **Preguntar si va PR:** a veces un entregable NO lleva PR. ANTES de crear rama,
+   bumpear version o abrir PR, confirmar con el usuario (o con el handoff del Lead)
+   si este trabajo genera PR. Si no genera, solo commits en la rama indicada.
+1. **Rama base:** SIEMPRE `git fetch origin {defaultBranch}` (clave `git.defaultBranch`
+   del config) y ramificar desde `origin/{defaultBranch}`, NUNCA desde la rama local
+   (suele estar desactualizada y genera conflictos de version en el PR). Si un PR
+   salio de una base vieja: `git rebase origin/{defaultBranch}`, resolver el archivo
+   de version bumpeando POR ENCIMA del valor vigente, correr tests y
+   `git push --force-with-lease`.
+2. **Version bump:** por cada PR, subir la version del proyecto (patch, por encima
+   del valor VIGENTE en el remoto, no del local), en commit separado
+   `chore(release): bump version`.
+3. **Un solo PR consolidado por repo:** el trabajo relacionado va en UNA rama/PR,
+   no en varios PRs compitiendo (evita ademas choques del archivo de version).
+4. **Descripcion del PR con el MISMO formato rico que el work item** — secciones:
+   Contexto, Causa raiz, Cambio, Criterios de Aceptacion (lista), Detalles Tecnicos
+   (Repo, Rama, PR, Commits, Version, Archivos tocados). Item y PR siempre alineados
+   en calidad; nunca uno rico y el otro pobre.
+5. **Titulo del PR referencia al item:** `[<WI-id>]` (Azure) o `(#<n>)` (GitHub).
+6. **Reviewer:** el configurado en el config.json del proyecto
+   (Azure: `az repos pr create --reviewers <email>` / GitHub: `gh pr create --reviewer <usuario>`).
+7. **Historial:** NO reescribir historial ya pusheado (merge, no force-push; unica
+   excepcion el rebase del punto 1 con `--force-with-lease`). No squashear commits
+   publicados.
+8. **Autor de commits:** la identidad de git configurada para el proyecto (config),
+   no la identidad por defecto del agente.
+9. **Regla de codigo (critica):** en manejo de errores NO borrar archivos/datos/
+   historial — loguear, devolver el error controlado y dejar los residuos parciales.
+   NUNCA agregar borrados de archivos/datos sin pedido explicito del usuario.
+
+**Asociar PR ↔ item:** Azure: `az repos pr create --work-items <id>`. GitHub:
+`Closes #<n>` en el body si el issue ES el entregable, `Relates to #<n>` si solo
+se relaciona (NUNCA `Closes` sobre un bug de un tercero — lo cerraria al mergear).
+
+**Push autenticado:** GitHub: `gh` estandar (credential helper). Azure sin PAT:
+```bash
+git -c http.extraheader="AUTHORIZATION: bearer $(az account get-access-token \
+  --resource 499b84ac-1321-427f-aa17-267ca6975798 --query accessToken -o tsv)" push
+```
+
 ## Reglas de linter y formato
 - ANTES de editar, leer la configuracion del proyecto
 - DESPUES de cada edicion, ejecutar el formateador del stack
