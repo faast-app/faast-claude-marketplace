@@ -6,194 +6,516 @@
 <title>Team Office — dev-team</title>
 <style>
   :root {
-    --bg: #12141a; --panel: #1a1e27; --floor: #232837; --floor2: #262c3d;
-    --wall: #3a4257; --text: #e8ebf2; --muted: #8b93a7; --accent: #4f8ff7;
-    --ok: #34c77b; --warn: #f5a623; --bad: #f05f57; --stale: #8b93a7;
-  }
-  @media (prefers-color-scheme: light) {
-    :root { --bg:#eef1f6; --panel:#ffffff; --floor:#dde3ee; --floor2:#d3dae8;
-      --wall:#aab4c8; --text:#1c2130; --muted:#5d6578; }
+    --bg: #0b0e17; --bg2: #101526; --panel: rgba(20, 25, 42, .72);
+    --panel-border: rgba(120, 140, 200, .18);
+    --text: #eaeef8; --muted: #8fa0bf; --accent: #6ea8ff;
+    --ok: #3ddc84; --warn: #ffb547; --bad: #ff5d5d; --idle: #6b7691;
+    --glow-ok: rgba(61,220,132,.45); --glow-bad: rgba(255,93,93,.5);
   }
   * { box-sizing: border-box; margin: 0; }
-  body { background: var(--bg); color: var(--text); font: 14px/1.45 system-ui, sans-serif;
-    display: grid; grid-template-columns: 1fr 320px; grid-template-rows: 52px 1fr;
-    height: 100vh; overflow: hidden; }
-  header { grid-column: 1/3; display: flex; align-items: center; gap: 12px;
-    padding: 0 16px; background: var(--panel); border-bottom: 1px solid var(--wall); }
-  header h1 { font-size: 16px; }
-  #conn { font-size: 12px; color: var(--muted); margin-left: auto; }
-  #conn.live::before { content: '●'; color: var(--ok); margin-right: 5px; }
-  #conn.poll::before { content: '●'; color: var(--warn); margin-right: 5px; }
-  #officeWrap { position: relative; overflow: auto; }
-  canvas { display: block; }
-  aside { background: var(--panel); border-left: 1px solid var(--wall);
-    overflow-y: auto; padding: 12px; }
-  aside h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .08em;
-    color: var(--muted); margin: 10px 0 6px; }
-  .feed-item { padding: 6px 8px; border-radius: 8px; margin-bottom: 4px;
-    background: color-mix(in srgb, var(--floor) 60%, transparent); font-size: 12.5px; }
+  html, body { height: 100%; }
+  body {
+    background: radial-gradient(1200px 800px at 70% -10%, #17203a 0%, var(--bg) 55%) fixed;
+    color: var(--text); font: 14px/1.5 "Segoe UI", system-ui, -apple-system, sans-serif;
+    display: grid; grid-template-columns: 1fr 350px; grid-template-rows: 64px 1fr;
+    height: 100vh; overflow: hidden;
+  }
+  /* ── Header ─────────────────────────────────────── */
+  header {
+    grid-column: 1/3; display: flex; align-items: center; gap: 18px; padding: 0 20px;
+    background: linear-gradient(180deg, rgba(22,28,48,.9), rgba(14,18,32,.75));
+    backdrop-filter: blur(14px); border-bottom: 1px solid var(--panel-border);
+    z-index: 5;
+  }
+  .logo { display:flex; align-items:center; gap:10px; font-weight:700; font-size:17px; letter-spacing:.02em; }
+  .logo .dot { width:34px;height:34px;border-radius:10px; display:grid;place-items:center;
+    background: linear-gradient(135deg,#3b6ef6,#7b3bf6); box-shadow: 0 4px 18px rgba(90,110,255,.45); font-size:18px;}
+  .stats { display: flex; gap: 10px; margin-left: 8px; }
+  .chip {
+    display:flex; align-items:center; gap:8px; padding: 6px 14px; border-radius: 999px;
+    background: rgba(255,255,255,.05); border: 1px solid var(--panel-border);
+    font-size: 12.5px; color: var(--muted); transition: all .3s;
+  }
+  .chip b { color: var(--text); font-size: 15px; font-variant-numeric: tabular-nums; }
+  .chip.hot { border-color: var(--ok); box-shadow: 0 0 14px rgba(61,220,132,.25); }
+  .chip.alert { border-color: var(--bad); box-shadow: 0 0 14px rgba(255,93,93,.3); animation: alertPulse 1.6s infinite; }
+  @keyframes alertPulse { 50% { box-shadow: 0 0 22px rgba(255,93,93,.55); } }
+  #clock { margin-left:auto; font-variant-numeric: tabular-nums; color: var(--muted); font-size: 13px; }
+  #conn { font-size: 12px; padding: 5px 12px; border-radius: 999px; border:1px solid var(--panel-border); color: var(--muted); }
+  #conn.live { color: var(--ok); border-color: rgba(61,220,132,.4); }
+  #conn.live::before { content:'●'; margin-right:6px; animation: blink 2s infinite; }
+  #conn.poll { color: var(--warn); }
+  #conn.poll::before { content:'◐'; margin-right:6px; }
+  @keyframes blink { 50% { opacity:.3 } }
+  /* ── Canvas ─────────────────────────────────────── */
+  #officeWrap { position: relative; overflow: hidden; }
+  canvas { display:block; width:100%; height:100%; cursor: grab; }
+  canvas.dragging { cursor: grabbing; }
+  #hint { position:absolute; left:14px; bottom:12px; font-size:11.5px; color:var(--muted);
+    background: var(--panel); border:1px solid var(--panel-border); padding:5px 12px; border-radius: 999px;
+    backdrop-filter: blur(8px); pointer-events:none; opacity:.85; }
+  /* ── Sidebar ────────────────────────────────────── */
+  aside {
+    background: var(--panel); backdrop-filter: blur(18px);
+    border-left: 1px solid var(--panel-border); overflow-y: auto; padding: 16px 14px;
+    scrollbar-width: thin;
+  }
+  aside h2 { font-size: 11px; text-transform: uppercase; letter-spacing: .14em;
+    color: var(--muted); margin: 16px 0 8px; display:flex; align-items:center; gap:8px; }
+  aside h2::after { content:''; flex:1; height:1px; background: var(--panel-border); }
+  .handoff-chip {
+    display:inline-flex; align-items:center; gap:6px; padding: 5px 12px; margin: 3px 4px 3px 0;
+    border-radius: 999px; font-size: 12px; background: rgba(110,168,255,.1);
+    border: 1px solid rgba(110,168,255,.3); animation: chipIn .4s cubic-bezier(.2,1.4,.4,1);
+  }
+  @keyframes chipIn { from { transform: scale(.6); opacity:0 } }
+  .feed-item {
+    padding: 8px 10px 8px 12px; border-radius: 10px; margin-bottom: 6px; font-size: 12.5px;
+    background: rgba(255,255,255,.035); border-left: 3px solid var(--idle);
+    animation: slideIn .35s cubic-bezier(.2,1,.3,1);
+  }
+  @keyframes slideIn { from { transform: translateX(24px); opacity: 0 } }
+  .feed-item.ev-task_start { border-left-color: var(--accent); }
+  .feed-item.ev-task_end { border-left-color: var(--ok); }
+  .feed-item.ev-blocked { border-left-color: var(--bad); background: rgba(255,93,93,.06); }
+  .feed-item.ev-handoff_sent, .feed-item.ev-handoff_read { border-left-color: #b78bff; }
   .feed-item .who { font-weight: 600; }
-  .feed-item .when { color: var(--muted); font-size: 11px; float: right; }
-  .handoff-chip { display: inline-block; background: var(--floor2); border-radius: 20px;
-    padding: 3px 10px; margin: 2px 3px 2px 0; font-size: 12px; }
-  .legend { display: flex; gap: 12px; font-size: 12px; color: var(--muted); }
-  .legend b { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 4px; }
+  .feed-item .when { color: var(--muted); font-size: 10.5px; float: right; margin-top:2px; }
+  .feed-item small { color: var(--muted); }
+  .feed-item code { background: rgba(110,168,255,.12); padding: 1px 6px; border-radius: 5px; font-size: 11px; }
+  .empty { color: var(--muted); font-size: 12.5px; padding: 6px 2px; }
+  /* agente cards */
+  .agent-row { display:flex; align-items:center; gap:10px; padding:7px 8px; border-radius:10px;
+    margin-bottom:4px; background: rgba(255,255,255,.03); font-size:12.5px; cursor:pointer;
+    border:1px solid transparent; transition: all .25s; }
+  .agent-row:hover { border-color: var(--panel-border); background: rgba(255,255,255,.06); }
+  .agent-row .st { width:9px; height:9px; border-radius:50%; flex:none; }
+  .agent-row .nm { font-weight:600; }
+  .agent-row .tk { margin-left:auto; color:var(--muted); font-size:11px; max-width:120px;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  @media (prefers-color-scheme: light) {
+    :root { --bg:#eef1f8; --bg2:#e2e8f4; --panel: rgba(255,255,255,.8); --panel-border: rgba(60,80,140,.15);
+      --text:#18203a; --muted:#5b6785; --idle:#9aa5c0; }
+    body { background: radial-gradient(1200px 800px at 70% -10%, #dfe7fa 0%, var(--bg) 55%) fixed; }
+  }
 </style>
 </head>
 <body>
 <header>
-  <h1>🏢 Team Office</h1>
-  <div class="legend">
-    <span><b style="background:var(--ok)"></b>trabajando</span>
-    <span><b style="background:var(--bad)"></b>bloqueado</span>
-    <span><b style="background:var(--stale)"></b>idle</span>
-    <span><b style="background:var(--warn)"></b>sin señal</span>
+  <div class="logo"><span class="dot">🏢</span> Team Office <span style="color:var(--muted);font-weight:400;font-size:12px">dev-team en vivo</span></div>
+  <div class="stats">
+    <div class="chip" id="chipWorking">⚡ <b>0</b> trabajando</div>
+    <div class="chip" id="chipBlocked">🚫 <b>0</b> bloqueados</div>
+    <div class="chip" id="chipHandoffs">✉️ <b>0</b> handoffs</div>
+    <div class="chip" id="chipEvents">📈 <b>0</b> eventos</div>
   </div>
+  <div id="clock"></div>
   <div id="conn">conectando…</div>
 </header>
-<div id="officeWrap"><canvas id="office" width="980" height="720"></canvas></div>
-<aside>
-  <h2>Handoffs pendientes</h2><div id="handoffs">—</div>
-  <h2>Actividad</h2><div id="feed">Sin eventos aún. Los agentes escriben en <code>.coordination/metrics/activity.jsonl</code>.</div>
-</aside>
-<script>
-const cv = document.getElementById('office'), cx = cv.getContext('2d');
-const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
 
-// ─── Plano de la oficina: salas y escritorios ───────────────────────────
+<div id="officeWrap">
+  <canvas id="office"></canvas>
+  <div id="hint">🖱️ arrastra para mover · rueda para zoom · doble-click reinicia · click en un agente para seguirlo</div>
+</div>
+
+<aside>
+  <h2>Equipo</h2><div id="agentList"></div>
+  <h2>Handoffs pendientes</h2><div id="handoffs" class="empty">—</div>
+  <h2>Actividad</h2><div id="feed" class="empty">Sin eventos aún.</div>
+</aside>
+
+<script>
+'use strict';
+/* ═══════════════ Mundo ═══════════════ */
+const W = 1040, H = 760;
 const ROOMS = [
-  { name: 'Recepción',   x: 20,  y: 20,  w: 150, h: 150 },
-  { name: 'Management',  x: 190, y: 20,  w: 380, h: 200 },
-  { name: 'Diseño',      x: 590, y: 20,  w: 170, h: 200 },
-  { name: 'Biblioteca',  x: 780, y: 20,  w: 180, h: 200 },
-  { name: 'Desarrollo',  x: 20,  y: 250, w: 360, h: 210 },
-  { name: 'Datos',       x: 400, y: 250, w: 170, h: 210 },
-  { name: 'Sala QA',     x: 590, y: 250, w: 370, h: 210 },
-  { name: 'Ops & Seguridad', x: 20, y: 490, w: 360, h: 200 },
-  { name: 'Ventanilla de Pases', x: 400, y: 490, w: 260, h: 200 },
+  { name:'Recepción',        x:24,  y:24,  w:150, h:158, hue:200 },
+  { name:'Management',       x:196, y:24,  w:392, h:208, hue:225 },
+  { name:'Diseño',           x:610, y:24,  w:172, h:208, hue:290 },
+  { name:'Biblioteca',       x:804, y:24,  w:212, h:208, hue:35  },
+  { name:'Desarrollo',       x:24,  y:258, w:370, h:216, hue:210 },
+  { name:'Datos',            x:418, y:258, w:170, h:216, hue:160 },
+  { name:'Sala QA',          x:610, y:258, w:406, h:216, hue:130 },
+  { name:'Ops & Seguridad',  x:24,  y:500, w:370, h:230, hue:0   },
+  { name:'Ventanilla de Pases', x:418, y:500, w:280, h:230, hue:45 },
+  { name:'Lounge',           x:722, y:500, w:294, h:230, hue:260 },
 ];
 const DESKS = {
-  'setup':           { x: 95,  y: 105, emoji: '🧰' },
-  'lead':            { x: 380, y: 90,  emoji: '🎯' },
-  'product-owner':   { x: 260, y: 150, emoji: '📋' },
-  'architect':       { x: 500, y: 150, emoji: '📐' },
-  'ui-designer':     { x: 675, y: 120, emoji: '🎨' },
-  'tech-writer':     { x: 870, y: 120, emoji: '📚' },
-  'backend':         { x: 120, y: 350, emoji: '⚙️' },
-  'frontend':        { x: 280, y: 350, emoji: '🖥️' },
-  'dba':             { x: 485, y: 350, emoji: '🗄️' },
-  'qa':              { x: 680, y: 320, emoji: '🔎' },
-  'qa-frontend':     { x: 790, y: 400, emoji: '🖱️' },
-  'qa-backend':      { x: 890, y: 320, emoji: '🔌' },
-  'infra':           { x: 120, y: 590, emoji: '🚢' },
-  'cybersec':        { x: 280, y: 590, emoji: '🛡️' },
-  'release-manager': { x: 530, y: 590, emoji: '📦' },
+  'setup':           { x:99,  y:110, emoji:'🧰', color:'#8f9bb3' },
+  'lead':            { x:392, y:96,  emoji:'🎯', color:'#6ea8ff' },
+  'product-owner':   { x:268, y:168, emoji:'📋', color:'#63c7ff' },
+  'architect':       { x:516, y:168, emoji:'📐', color:'#9a8cff' },
+  'ui-designer':     { x:696, y:130, emoji:'🎨', color:'#e879f9' },
+  'tech-writer':     { x:910, y:130, emoji:'📚', color:'#f4b860' },
+  'backend':         { x:124, y:360, emoji:'⚙️', color:'#5eead4' },
+  'frontend':        { x:292, y:360, emoji:'🖥️', color:'#7dd3fc' },
+  'dba':             { x:503, y:360, emoji:'🗄️', color:'#4ade80' },
+  'qa':              { x:700, y:330, emoji:'🔎', color:'#a3e635' },
+  'qa-frontend':     { x:812, y:412, emoji:'🖱️', color:'#bef264' },
+  'qa-backend':      { x:928, y:330, emoji:'🔌', color:'#86efac' },
+  'infra':           { x:124, y:600, emoji:'🚢', color:'#fb923c' },
+  'cybersec':        { x:292, y:600, emoji:'🛡️', color:'#f87171' },
+  'release-manager': { x:558, y:600, emoji:'📦', color:'#fbbf24' },
 };
-const STATUS_COLOR = { working: '--ok', blocked: '--bad', idle: '--stale', stale: '--warn' };
+const DECOR = [
+  {e:'🪴',x:186,y:60},{e:'🪴',x:600,y:452},{e:'🪴',x:1000,y:60},{e:'🌿',x:40,y:474},
+  {e:'☕',x:790,y:560},{e:'🛋️',x:860,y:610},{e:'🎮',x:940,y:560},{e:'🌴',x:750,y:680},
+  {e:'🖨️',x:560,y:56},{e:'📠',x:660,y:606},{e:'🗄️',x:556,y:300},{e:'📡',x:352,y:540},
+  {e:'📗',x:850,y:70},{e:'📕',x:876,y:70},{e:'📘',x:902,y:70},{e:'🕹️',x:60,y:60},
+];
+const STATUS_COLOR = { working:'#3ddc84', blocked:'#ff5d5d', idle:'#6b7691', stale:'#ffb547' };
 
-let state = { agents: [], events: [], handoffs: [] };
-let envelopes = [];   // animaciones de handoff {from,to,t}
-let seenHandoffs = new Set();
-let bounce = 0;
+/* ═══════════════ Estado runtime ═══════════════ */
+const cv = document.getElementById('office'), cx = cv.getContext('2d');
+let state = { agents:[], events:[], handoffs:[] };
+const bots = {};   // runtime por agente: pos, target, walk, mood
+for (const [n,d] of Object.entries(DESKS))
+  bots[n] = { x:d.x, y:d.y, hx:d.x, hy:d.y, tx:d.x, ty:d.y, phase:Math.random()*7,
+              status:'idle', task:null, carrying:null, trail:[], follow:false, returnHome:false };
+let particles = [], floats = [], ambient = [];
+for (let i=0;i<26;i++) ambient.push({x:Math.random()*W, y:Math.random()*H, r:Math.random()*1.6+.4, s:Math.random()*.25+.06, a:Math.random()});
+let seenHandoffs = new Set(), seenEvents = 0, firstLoad = true;
+let cam = { x:0, y:0, z:1, tz:1, tx:0, ty:0 };
+let dpr = 1, viewW = 0, viewH = 0, t = 0;
 
-function roomAt(name){ return ROOMS.find(r=>r.name===name); }
+/* ═══════════════ Helpers ═══════════════ */
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const lerp = (a,b,k) => a+(b-a)*k;
+const ease = k => 1-Math.pow(1-k,3);
+function rr(x,y,w,h,r){ cx.beginPath(); cx.roundRect(x,y,w,h,r); }
+function burst(x,y,color,n=18,spread=3.2){
+  for(let i=0;i<n;i++){ const a=Math.random()*7, s=Math.random()*spread+1;
+    particles.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-2.2,g:.12,life:1,decay:.016+Math.random()*.015,
+      color, size:Math.random()*4+2, rot:Math.random()*7, vr:(Math.random()-.5)*.3}); }
+}
+function floatUp(x,y,text,color='#fff'){ floats.push({x,y,text,color,life:1}); }
+function ringPulse(x,y,color){ particles.push({ring:true,x,y,r:14,vr2:1.8,life:1,decay:.03,color}); }
 
-function draw() {
-  bounce += 0.08;
-  cx.clearRect(0, 0, cv.width, cv.height);
-  // piso
-  for (let x = 0; x < cv.width; x += 40) for (let y = 0; y < cv.height; y += 40) {
-    cx.fillStyle = ((x + y) / 40) % 2 ? css('--floor') : css('--floor2');
-    cx.fillRect(x, y, 40, 40);
+/* ═══════════════ Resize / cámara ═══════════════ */
+function resize(){
+  dpr = Math.min(window.devicePixelRatio||1, 2);
+  const box = document.getElementById('officeWrap').getBoundingClientRect();
+  viewW = box.width; viewH = box.height;
+  cv.width = viewW*dpr; cv.height = viewH*dpr;
+  fitCamera();
+}
+function fitCamera(){
+  const z = Math.min(viewW/W, viewH/H)*.96;
+  cam.tz = z; cam.tx = (viewW - W*z)/2; cam.ty = (viewH - H*z)/2;
+}
+window.addEventListener('resize', resize);
+
+/* pan / zoom / follow */
+let drag = null, followAgent = null;
+cv.addEventListener('mousedown', e => { drag = {x:e.clientX, y:e.clientY, cx:cam.tx, cy:cam.ty}; cv.classList.add('dragging'); followAgent=null; });
+window.addEventListener('mousemove', e => { if(drag){ cam.tx = drag.cx + (e.clientX-drag.x); cam.ty = drag.cy + (e.clientY-drag.y); }});
+window.addEventListener('mouseup', () => { drag=null; cv.classList.remove('dragging'); });
+cv.addEventListener('dblclick', () => { followAgent=null; fitCamera(); });
+cv.addEventListener('wheel', e => {
+  e.preventDefault();
+  const f = e.deltaY < 0 ? 1.12 : .89;
+  const nz = Math.min(3.2, Math.max(.4, cam.tz*f));
+  const mx = e.offsetX, my = e.offsetY;
+  cam.tx = mx - (mx-cam.tx)*(nz/cam.tz); cam.ty = my - (my-cam.ty)*(nz/cam.tz);
+  cam.tz = nz; followAgent = null;
+}, {passive:false});
+cv.addEventListener('click', e => {
+  const wx = (e.offsetX - cam.x)/cam.z, wy = (e.offsetY - cam.y)/cam.z;
+  for (const [n,b] of Object.entries(bots))
+    if (Math.hypot(wx-b.x, wy-b.y) < 26) { focusOn(n); return; }
+});
+function focusOn(name){ followAgent = name; cam.tz = 1.8; }
+
+/* ═══════════════ Aplicar estado del servidor ═══════════════ */
+function apply(s){
+  const prevEvents = state.events?.length ? state.events : [];
+  state = s;
+  const byName = Object.fromEntries(s.agents.map(a=>[a.agent,a]));
+  for (const [n,b] of Object.entries(bots)){
+    const a = byName[n]; if(!a) continue;
+    b.status = a.status; b.task = a.task; b.lastDetail = a.lastDetail;
   }
-  // salas
-  for (const r of ROOMS) {
-    cx.strokeStyle = css('--wall'); cx.lineWidth = 2;
-    cx.strokeRect(r.x, r.y, r.w, r.h);
-    cx.fillStyle = css('--muted'); cx.font = '11px system-ui';
-    cx.fillText(r.name.toUpperCase(), r.x + 8, r.y + 16);
-  }
-  // agentes
-  const byName = Object.fromEntries(state.agents.map(a => [a.agent, a]));
-  for (const [name, d] of Object.entries(DESKS)) {
-    const a = byName[name] || { status: 'idle' };
-    const working = a.status === 'working';
-    const yy = d.y + (working ? Math.sin(bounce + d.x) * 3 : 0);
-    // escritorio
-    cx.fillStyle = css('--wall');
-    cx.beginPath(); cx.roundRect(d.x - 26, yy + 16, 52, 14, 4); cx.fill();
-    // avatar
-    cx.beginPath(); cx.arc(d.x, yy - 4, 17, 0, 7);
-    cx.fillStyle = css('--panel'); cx.fill();
-    cx.lineWidth = 3; cx.strokeStyle = css(STATUS_COLOR[a.status] || '--stale'); cx.stroke();
-    cx.font = '17px system-ui'; cx.textAlign = 'center';
-    cx.fillText(d.emoji, d.x, yy + 2);
-    // nombre
-    cx.font = 'bold 11px system-ui'; cx.fillStyle = css('--text');
-    cx.fillText(name, d.x, yy + 44);
-    // tarea actual
-    if (a.task) {
-      cx.font = '10px system-ui'; cx.fillStyle = css('--accent');
-      cx.fillText(a.task, d.x, yy + 57);
+  // detectar eventos nuevos (por timestamp+agente+evento)
+  const key = e => `${e.ts}|${e.agent}|${e.event}|${e.task||''}`;
+  const known = new Set(prevEvents.map(key));
+  const fresh = firstLoad ? [] : s.events.filter(e => !known.has(key(e)));
+  for (const ev of fresh) reactTo(ev);
+  // handoffs nuevos → el remitente camina a entregar
+  for (const h of s.handoffs){
+    if (!seenHandoffs.has(h.file)){
+      seenHandoffs.add(h.file);
+      if (!firstLoad) deliver(h.from, h.to);
     }
-    if (a.status === 'blocked') { cx.font = '13px system-ui'; cx.fillText('🚫', d.x + 18, yy - 14); }
-    cx.textAlign = 'start';
   }
-  // sobres de handoff en vuelo
-  envelopes = envelopes.filter(e => e.t < 1);
-  for (const e of envelopes) {
-    e.t += 0.012;
-    const f = DESKS[e.from], t = DESKS[e.to];
-    if (!f || !t) continue;
-    const x = f.x + (t.x - f.x) * e.t;
-    const y = f.y + (t.y - f.y) * e.t - Math.sin(e.t * Math.PI) * 46;
-    cx.font = '16px system-ui'; cx.fillText('✉️', x - 8, y);
-  }
-  requestAnimationFrame(draw);
+  firstLoad = false;
+  renderSidebar();
+}
+function reactTo(ev){
+  const b = bots[ev.agent]; if(!b) return;
+  if (ev.event === 'task_start'){ ringPulse(b.x, b.y, '#6ea8ff'); floatUp(b.x, b.y-46, '▶ '+(ev.task||''), '#6ea8ff'); }
+  if (ev.event === 'task_end'){ burst(b.x, b.y-10, '#3ddc84', 26); floatUp(b.x, b.y-46, '✅ '+(ev.task||'done'), '#3ddc84'); }
+  if (ev.event === 'blocked'){ ringPulse(b.x, b.y, '#ff5d5d'); floatUp(b.x, b.y-46, '🚫 bloqueado', '#ff5d5d'); }
+  if (ev.event === 'unblocked'){ floatUp(b.x, b.y-46, '🟢 libre', '#3ddc84'); }
+  if (ev.event === 'evidence_added'){ floatUp(b.x, b.y-46, '📸 evidencia', '#e879f9'); }
+  if (ev.event === 'wiki_ingest'){ floatUp(b.x, b.y-46, '📖 wiki', '#f4b860'); }
+}
+function deliver(from, to){
+  const f = bots[from], tgt = DESKS[to];
+  if (!f || !tgt){ return; }
+  f.carrying = '✉️'; f.tx = tgt.x + 34; f.ty = tgt.y + 8; f.returnHome = true; f.deliverTo = to;
 }
 
-function fmtAgo(ts) {
-  if (!ts) return '';
-  const s = (Date.now() - Date.parse(ts)) / 1000;
-  if (s < 60) return `${s | 0}s`;
-  if (s < 3600) return `${(s / 60) | 0}m`;
-  return `${(s / 3600) | 0}h`;
+/* ═══════════════ Sidebar ═══════════════ */
+const fmtAgo = ts => { if(!ts) return ''; const s=(Date.now()-Date.parse(ts))/1e3;
+  return s<60?`${s|0}s`:s<3600?`${s/60|0}m`:`${s/3600|0}h`; };
+function tween(el, val){
+  const b = el.querySelector('b'); const cur = parseInt(b.textContent)||0;
+  if (cur===val) return; const step = val>cur?1:-1;
+  b.textContent = cur+step; if (cur+step!==val) setTimeout(()=>tween(el,val), 40);
 }
+function renderSidebar(){
+  const ags = state.agents;
+  const working = ags.filter(a=>a.status==='working').length;
+  const blocked = ags.filter(a=>a.status==='blocked').length;
+  const cw = document.getElementById('chipWorking'), cb = document.getElementById('chipBlocked');
+  tween(cw, working); tween(cb, blocked);
+  tween(document.getElementById('chipHandoffs'), state.handoffs.length);
+  tween(document.getElementById('chipEvents'), state.events.length);
+  cw.classList.toggle('hot', working>0); cb.classList.toggle('alert', blocked>0);
 
-function render() {
-  // feed
-  const feed = document.getElementById('feed');
-  const EMO = { task_start: '▶️', task_end: '✅', handoff_sent: '✉️', handoff_read: '📬',
-    blocked: '🚫', unblocked: '🟢', evidence_added: '📸', wiki_ingest: '📖' };
-  feed.innerHTML = state.events.slice(-40).reverse().map(e =>
-    `<div class="feed-item"><span class="when">${fmtAgo(e.ts)}</span>` +
-    `${EMO[e.event] || '•'} <span class="who">${e.agent}</span> ${e.event}` +
-    `${e.task ? ` · <code>${e.task}</code>` : ''}${e.detail ? `<br><small>${e.detail}</small>` : ''}</div>`
-  ).join('') || 'Sin eventos aún.';
-  // handoffs pendientes
+  document.getElementById('agentList').innerHTML = ags
+    .slice().sort((a,b)=>({working:0,blocked:1,stale:2,idle:3}[a.status]-({working:0,blocked:1,stale:2,idle:3}[b.status])))
+    .map(a=>`<div class="agent-row" onclick="focusOn('${a.agent}')">
+      <span class="st" style="background:${STATUS_COLOR[a.status]};box-shadow:0 0 8px ${STATUS_COLOR[a.status]}"></span>
+      <span>${DESKS[a.agent]?.emoji||'👤'}</span><span class="nm">${a.agent}</span>
+      <span class="tk">${a.task||a.status}</span></div>`).join('');
+
   document.getElementById('handoffs').innerHTML =
-    state.handoffs.map(h => `<span class="handoff-chip">${h.from} → ${h.to}</span>`).join('') || '<small>ninguno 🎉</small>';
-  // animar handoffs nuevos
-  for (const h of state.handoffs) {
-    if (!seenHandoffs.has(h.file)) { seenHandoffs.add(h.file); envelopes.push({ from: h.from, to: h.to, t: 0 }); }
+    state.handoffs.map(h=>`<span class="handoff-chip">✉️ ${h.from} <span style="opacity:.5">→</span> ${h.to}</span>`).join('')
+    || '<span class="empty">ninguno 🎉</span>';
+
+  const EMO = { task_start:'▶️', task_end:'✅', handoff_sent:'✉️', handoff_read:'📬',
+    blocked:'🚫', unblocked:'🟢', evidence_added:'📸', wiki_ingest:'📖' };
+  document.getElementById('feed').innerHTML = state.events.slice(-45).reverse().map(e=>
+    `<div class="feed-item ev-${e.event}"><span class="when">${fmtAgo(e.ts)}</span>`+
+    `${EMO[e.event]||'•'} <span class="who">${e.agent}</span> ${e.event.replace('_',' ')}`+
+    `${e.task?` · <code>${e.task}</code>`:''}${e.detail?`<br><small>${e.detail}</small>`:''}</div>`
+  ).join('') || '<span class="empty">Sin eventos aún — los agentes escriben en metrics/activity.jsonl.</span>';
+}
+window.focusOn = focusOn;
+
+/* ═══════════════ Dibujo ═══════════════ */
+function drawFloor(){
+  // suelo base con tablones
+  cx.fillStyle = '#141a2c'; cx.fillRect(-200,-200,W+400,H+400);
+  cx.strokeStyle = 'rgba(255,255,255,.025)'; cx.lineWidth = 1;
+  for (let y=0;y<H;y+=26){ cx.beginPath(); cx.moveTo(0,y); cx.lineTo(W,y); cx.stroke(); }
+  for (let x=0;x<W;x+=90){ cx.beginPath(); cx.moveTo(x,0); cx.lineTo(x,H); cx.stroke(); }
+}
+function drawRooms(){
+  for (const r of ROOMS){
+    // alfombra con tinte propio
+    const g = cx.createLinearGradient(r.x, r.y, r.x, r.y+r.h);
+    g.addColorStop(0, `hsla(${r.hue},45%,55%,.10)`); g.addColorStop(1, `hsla(${r.hue},45%,35%,.05)`);
+    rr(r.x, r.y, r.w, r.h, 14); cx.fillStyle = g; cx.fill();
+    // borde de pared con sombra suave
+    cx.save(); cx.shadowColor = `hsla(${r.hue},60%,60%,.25)`; cx.shadowBlur = 10;
+    rr(r.x, r.y, r.w, r.h, 14); cx.strokeStyle = `hsla(${r.hue},40%,60%,.35)`; cx.lineWidth = 2; cx.stroke();
+    cx.restore();
+    // placa de sala
+    const label = r.name.toUpperCase();
+    cx.font = '600 10px system-ui'; const tw = cx.measureText(label).width;
+    rr(r.x+10, r.y-9, tw+18, 18, 9); cx.fillStyle = 'rgba(12,16,30,.85)'; cx.fill();
+    cx.strokeStyle = `hsla(${r.hue},40%,60%,.4)`; cx.lineWidth = 1; cx.stroke();
+    cx.fillStyle = `hsla(${r.hue},70%,75%,.95)`; cx.textAlign='left';
+    cx.fillText(label, r.x+19, r.y+4);
   }
 }
+function drawDecor(){
+  cx.textAlign='center'; cx.font = '20px system-ui';
+  for (const d of DECOR){ cx.globalAlpha=.9; cx.fillText(d.e, d.x, d.y); }
+  cx.globalAlpha=1;
+}
+function drawDesk(name, d, b){
+  const working = b.status==='working';
+  // escritorio
+  cx.save();
+  cx.shadowColor='rgba(0,0,0,.5)'; cx.shadowBlur=8; cx.shadowOffsetY=3;
+  rr(d.x-34, d.y+14, 68, 20, 6);
+  const dg = cx.createLinearGradient(d.x, d.y+14, d.x, d.y+34);
+  dg.addColorStop(0,'#3d4763'); dg.addColorStop(1,'#2b3350');
+  cx.fillStyle = dg; cx.fill(); cx.restore();
+  // monitor sobre el escritorio (pantalla brilla si trabaja)
+  rr(d.x+12, d.y+2, 18, 12, 2);
+  cx.fillStyle = '#1a2138'; cx.fill();
+  if (working){
+    const flick = .55 + Math.sin(t*7 + d.x)*0.2 + Math.random()*.08;
+    cx.fillStyle = `rgba(110,190,255,${flick})`;
+    cx.fillRect(d.x+14, d.y+4, 14, 8);
+    cx.save(); cx.shadowColor='rgba(110,190,255,.8)'; cx.shadowBlur=12;
+    cx.fillRect(d.x+14, d.y+4, 14, 8); cx.restore();
+  } else { cx.fillStyle='#232c48'; cx.fillRect(d.x+14, d.y+4, 14, 8); }
+}
+function drawBot(name, b){
+  const d = DESKS[name];
+  const working = b.status==='working', blocked = b.status==='blocked';
+  const moving = Math.hypot(b.tx-b.x, b.ty-b.y) > 2;
+  b.phase += moving ? .32 : (working ? .1 : .04);
+  const bobY = moving ? Math.abs(Math.sin(b.phase))* -4 : (working ? Math.sin(b.phase)*1.6 : Math.sin(b.phase)*.7);
 
-function apply(s) { state = s; render(); }
+  // estela al caminar
+  if (moving && t%2<1) b.trail.push({x:b.x, y:b.y+16, life:1});
+  b.trail = b.trail.filter(p => (p.life-=.04) > 0);
+  for (const p of b.trail){ cx.globalAlpha = p.life*.25; cx.beginPath();
+    cx.arc(p.x, p.y, 4*p.life, 0, 7); cx.fillStyle = d.color; cx.fill(); }
+  cx.globalAlpha = 1;
 
-// SSE con fallback a polling
+  // sombra
+  cx.beginPath(); cx.ellipse(b.x, b.y+18, 15, 5, 0, 0, 7);
+  cx.fillStyle = 'rgba(0,0,0,.4)'; cx.fill();
+
+  const y = b.y + bobY;
+  // anillo de estado
+  const col = STATUS_COLOR[b.status] || STATUS_COLOR.idle;
+  cx.save();
+  if (working){ // arco giratorio
+    cx.strokeStyle = col; cx.lineWidth = 3; cx.shadowColor = col; cx.shadowBlur = 10;
+    cx.beginPath(); cx.arc(b.x, y-4, 20, t*2.4, t*2.4 + 4.4); cx.stroke();
+  } else if (blocked){ // pulso rojo
+    const pl = (Math.sin(t*5)+1)/2;
+    cx.strokeStyle = col; cx.lineWidth = 3; cx.shadowColor = col; cx.shadowBlur = 8+pl*14;
+    cx.beginPath(); cx.arc(b.x, y-4, 20+pl*2, 0, 7); cx.stroke();
+  } else {
+    cx.strokeStyle = col; cx.lineWidth = 2.5; cx.globalAlpha = b.status==='stale'? .9 : .55;
+    cx.beginPath(); cx.arc(b.x, y-4, 20, 0, 7); cx.stroke();
+  }
+  cx.restore(); cx.globalAlpha = 1;
+
+  // cuerpo
+  const bg = cx.createRadialGradient(b.x-5, y-9, 3, b.x, y-4, 19);
+  bg.addColorStop(0, '#232c48'); bg.addColorStop(1, '#141a2e');
+  cx.beginPath(); cx.arc(b.x, y-4, 17, 0, 7); cx.fillStyle = bg; cx.fill();
+  cx.font = '17px system-ui'; cx.textAlign = 'center';
+  cx.fillText(d.emoji, b.x, y+2);
+
+  // sobre en mano
+  if (b.carrying){ cx.font='14px system-ui'; cx.fillText(b.carrying, b.x+16, y-10 + Math.sin(t*6)*2); }
+  // blocked badge (con shake)
+  if (blocked){ cx.font='13px system-ui'; cx.fillText('🚫', b.x+18+Math.sin(t*22)*1.5, y-16); }
+  // typing dots si trabaja
+  if (working && !moving){
+    const dot = (i)=> .3 + ((Math.sin(t*5 - i*.9)+1)/2)*.7;
+    rr(b.x-16, y-38, 32, 13, 7); cx.fillStyle='rgba(10,14,26,.85)'; cx.fill();
+    for (let i=0;i<3;i++){ cx.globalAlpha=dot(i); cx.beginPath();
+      cx.arc(b.x-7+i*7, y-31.5, 2.2, 0, 7); cx.fillStyle='#9fc3ff'; cx.fill(); }
+    cx.globalAlpha=1;
+  }
+  // nombre
+  cx.font = '600 10.5px system-ui';
+  const nw = cx.measureText(name).width;
+  rr(b.x-nw/2-7, b.y+24, nw+14, 15, 8); cx.fillStyle='rgba(10,14,26,.8)'; cx.fill();
+  cx.fillStyle = d.color; cx.fillText(name, b.x, b.y+35);
+  // tarea
+  if (b.task){
+    cx.font = '10px system-ui';
+    const tw2 = cx.measureText(b.task).width;
+    rr(b.x-tw2/2-7, b.y+42, tw2+14, 14, 7);
+    cx.fillStyle='rgba(110,168,255,.14)'; cx.fill();
+    cx.strokeStyle='rgba(110,168,255,.4)'; cx.lineWidth=1; cx.stroke();
+    cx.fillStyle='#bcd6ff'; cx.fillText(b.task, b.x, b.y+52.5);
+  }
+}
+function drawParticles(){
+  particles = particles.filter(p => (p.life -= p.decay) > 0);
+  for (const p of particles){
+    if (p.ring){ p.r += p.vr2;
+      cx.globalAlpha = p.life; cx.strokeStyle = p.color; cx.lineWidth = 2.5;
+      cx.beginPath(); cx.arc(p.x, p.y, p.r, 0, 7); cx.stroke();
+    } else {
+      p.x += p.vx; p.y += p.vy; p.vy += p.g; p.rot += p.vr;
+      cx.save(); cx.translate(p.x, p.y); cx.rotate(p.rot);
+      cx.globalAlpha = p.life; cx.fillStyle = p.color;
+      cx.fillRect(-p.size/2, -p.size/2, p.size, p.size*.6); cx.restore();
+    }
+  }
+  cx.globalAlpha = 1;
+  floats = floats.filter(f => (f.life -= .012) > 0);
+  cx.textAlign='center';
+  for (const f of floats){
+    cx.globalAlpha = Math.min(1, f.life*2);
+    cx.font = '600 12px system-ui';
+    cx.save(); cx.shadowColor='rgba(0,0,0,.8)'; cx.shadowBlur=6;
+    cx.fillStyle = f.color; cx.fillText(f.text, f.x, f.y - (1-f.life)*38); cx.restore();
+  }
+  cx.globalAlpha = 1;
+}
+function drawAmbient(){
+  for (const a of ambient){
+    a.y -= a.s; a.a += .01; if (a.y < -5){ a.y = H+5; a.x = Math.random()*W; }
+    cx.globalAlpha = .06 + (Math.sin(a.a)+1)*.05;
+    cx.beginPath(); cx.arc(a.x, a.y, a.r, 0, 7); cx.fillStyle = '#9db8ff'; cx.fill();
+  }
+  cx.globalAlpha = 1;
+}
+
+/* ═══════════════ Loop ═══════════════ */
+function loop(){
+  t += 1/60;
+  // física de los bots
+  for (const [n,b] of Object.entries(bots)){
+    b.x = lerp(b.x, b.tx, .06); b.y = lerp(b.y, b.ty, .06);
+    if (b.returnHome && Math.hypot(b.tx-b.x, b.ty-b.y) < 3){
+      // llegó a entregar
+      if (b.carrying){
+        b.carrying = null;
+        const rec = bots[b.deliverTo];
+        if (rec){ floatUp(rec.x, rec.y-46, '📬 handoff', '#b78bff'); ringPulse(rec.x, rec.y, '#b78bff'); }
+      }
+      b.tx = b.hx; b.ty = b.hy;
+      if (Math.hypot(b.hx-b.x, b.hy-b.y) < 3) b.returnHome = false;
+    }
+  }
+  // cámara
+  if (followAgent && bots[followAgent]){
+    const b = bots[followAgent];
+    cam.tx = viewW/2 - b.x*cam.tz; cam.ty = viewH/2 - b.y*cam.tz;
+  }
+  cam.x = lerp(cam.x, cam.tx, .12); cam.y = lerp(cam.y, cam.ty, .12); cam.z = lerp(cam.z, cam.tz, .12);
+
+  cx.setTransform(dpr,0,0,dpr,0,0);
+  cx.clearRect(0,0,viewW,viewH);
+  cx.translate(cam.x, cam.y); cx.scale(cam.z, cam.z);
+
+  drawFloor(); drawRooms(); drawDecor();
+  for (const [n,d] of Object.entries(DESKS)) drawDesk(n, d, bots[n]);
+  // y-sort para solapado natural
+  for (const [n,b] of Object.entries(bots).sort((a,b2)=>a[1].y-b2[1].y)) drawBot(n, b);
+  drawParticles(); drawAmbient();
+
+  // viñeta
+  cx.setTransform(dpr,0,0,dpr,0,0);
+  const v = cx.createRadialGradient(viewW/2, viewH/2, Math.min(viewW,viewH)*.42, viewW/2, viewH/2, Math.max(viewW,viewH)*.75);
+  v.addColorStop(0,'rgba(0,0,0,0)'); v.addColorStop(1,'rgba(4,6,14,.55)');
+  cx.fillStyle = v; cx.fillRect(0,0,viewW,viewH);
+
+  requestAnimationFrame(loop);
+}
+
+/* ═══════════════ Conexión ═══════════════ */
 const conn = document.getElementById('conn');
 try {
   const es = new EventSource('/events');
-  es.onmessage = (m) => { conn.textContent = 'en vivo (SSE)'; conn.className = 'live'; apply(JSON.parse(m.data)); };
-  es.onerror = () => { conn.textContent = 'polling 3s'; conn.className = 'poll'; };
-} catch { /* sin SSE */ }
+  es.onmessage = m => { conn.textContent='en vivo'; conn.className='live'; apply(JSON.parse(m.data)); };
+  es.onerror = () => { conn.textContent='polling 3s'; conn.className='poll'; };
+} catch {}
 setInterval(async () => {
-  if (conn.className === 'live') return;
-  try { apply(await (await fetch('/state')).json()); conn.textContent = 'polling 3s'; conn.className = 'poll'; } catch {}
+  if (conn.className==='live') return;
+  try { apply(await (await fetch('/state')).json()); conn.textContent='polling 3s'; conn.className='poll'; } catch {}
 }, 3000);
+setInterval(()=>{ document.getElementById('clock').textContent =
+  new Date().toLocaleTimeString('es', {hour:'2-digit',minute:'2-digit',second:'2-digit'}); }, 1000);
 
-draw();
+resize(); loop();
 </script>
 </body>
 </html>
