@@ -1,8 +1,8 @@
 # Dev Team
 
-Equipo completo de desarrollo con 11 agentes IA. Cubre todo el ciclo de vida:
-Historias de Usuario → arquitectura → desarrollo → QA automatizado con Playwright →
-seguridad → deploy → documentacion.
+Equipo completo de desarrollo con 15 agentes IA. Cubre todo el ciclo de vida:
+Historias de Usuario → diseño UI/UX → arquitectura → desarrollo → QA en equipo con
+Playwright y evidencia → seguridad → pases a ambientes → deploy → documentacion.
 
 - **Proyectos nuevos o existentes** (`/new-project`, `/onboard`)
 - **Mono-repo o multi-repo** — el equipo se adapta a tu topologia
@@ -36,8 +36,12 @@ comandos y flujos, ver **[GUIDE.md](GUIDE.md)**.
 | **lead** | Coordina, asigna, exige gates de calidad, unico que mergea |
 | **backend** | Servicios backend (.NET 8, Node.js, Python, Java) |
 | **frontend** | SPA y microfrontends (React, Vue, Angular) |
-| **dba** | Esquemas, indices, queries, migraciones |
-| **qa** | Planes de prueba + E2E automatizado con Playwright |
+| **ui-designer** | Mockups y specs UI/UX (paletas, tipografia, accesibilidad) |
+| **dba** | Esquemas, indices, queries, migraciones, scripts de pase, comparacion de BDs |
+| **qa** | QA Lead: plan de pruebas, consolida veredicto, suite de regresion |
+| **qa-frontend** | Especialista QA de UI (Playwright MCP, evidencia visual) |
+| **qa-backend** | Especialista QA de APIs (contract testing, evidencia) |
+| **release-manager** | Solicitudes de pase (doc Word+PDF), audita scripts del DBA, Scripts.zip |
 | **infra** | Docker, CI/CD, gateways, deploy |
 | **cybersec** | Auditoria de seguridad (nunca commitea) |
 | **tech-writer** | README, OpenAPI, ADRs, diagramas, wiki |
@@ -46,6 +50,14 @@ comandos y flujos, ver **[GUIDE.md](GUIDE.md)**.
 
 - Las HUs son de **negocio** (las escribe el PO); lo tecnico vive en las tareas
 - **QA y Cybersec son gates de merge** — nada llega a main sin validacion
+- **QA no debuggea**: reproduce, documenta y reporta con evidencia (screenshots/clips)
+- **Pases con gate**: el release-manager audita los scripts del DBA y puede rechazarlos
+- **Wiki viva (patron LLM Wiki de Karpathy)**: `.coordination/wiki/` — el tech-writer
+  destila handoffs a paginas enlazadas `[[wikilinks]]`; los agentes leen la wiki
+  primero (menos tokens); abrela como vault de Obsidian para el graph view
+- **/dev-team:team-office**: oficina virtual 2D en vivo (estilo Gather Town) — cada
+  agente en su escritorio, estado, tarea actual y handoffs volando entre salas
+- **/dev-team:team-metrics**: productividad y consumo de tokens por agente
 - Un agente = un branch = una tarea; **solo el Lead mergea**
 - Los agentes usan el modelo Claude optimo para su funcion (opus/sonnet/haiku)
 - Coordinacion via handoffs en `.coordination/` — sin estado oculto

@@ -1,0 +1,7 @@
+# Los agentes y comandos solo se modifican con aprobacion del owner
+/plugins/dev-team/agents/    @carlos-fuentes-rojas
+/plugins/dev-team/commands/  @carlos-fuentes-rojas
+/plugins/dev-team/templates/ @carlos-fuentes-rojas
+/plugins/senior-backend-architect/ @carlos-fuentes-rojas
+/.claude-plugin/             @carlos-fuentes-rojas
+/.github/                    @carlos-fuentes-rojas
