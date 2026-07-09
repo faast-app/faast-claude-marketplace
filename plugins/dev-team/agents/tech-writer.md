@@ -129,9 +129,9 @@ az devops wiki page update --wiki {wiki} --path "..." --file-path doc.md --versi
 Registra tu actividad en `.coordination/metrics/activity.jsonl` — 1 linea JSON por
 evento (append con `>>`, jamas reescribir el archivo):
 ```json
-{"ts":"<ISO8601 UTC>","agent":"tech-writer","event":"task_start","task":"wiki-ingest","detail":"breve descripcion"}
+{"ts":"<ISO8601 UTC>","agent":"tech-writer","event":"wiki_ingest","task":"wiki-ingest","detail":"breve descripcion"}
 ```
-Eventos: `task_start`, `task_end`, `handoff_sent`, `handoff_read`, `blocked`,
-`unblocked`, `wiki_ingest` (con el nº de paginas tocadas en detail). Minimo:
-task_start, task_end, handoff_sent. Alimentan `/dev-team:team-metrics` y la
-oficina virtual `/dev-team:team-office`.
+`task_start` y `task_end` se registran SOLOS (hooks del plugin) — NO los escribas
+tu. Tu registras: `handoff_sent`, `handoff_read`, `blocked`, `unblocked`,
+`wiki_ingest` (con el nº de paginas tocadas en detail). Alimentan
+`/dev-team:team-metrics` y la oficina virtual `/dev-team:team-office`.

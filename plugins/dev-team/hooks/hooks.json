@@ -1,0 +1,28 @@
+{
+  "hooks": {
+    "SubagentStart": [
+      {
+        "matcher": "(dev-team:)?(setup|product-owner|architect|ui-designer|lead|backend|frontend|dba|qa|qa-frontend|qa-backend|release-manager|infra|cybersec|tech-writer)$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/log-activity.sh\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "matcher": "(dev-team:)?(setup|product-owner|architect|ui-designer|lead|backend|frontend|dba|qa|qa-frontend|qa-backend|release-manager|infra|cybersec|tech-writer)$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/log-activity.sh\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}
