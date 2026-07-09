@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Team Office — dev-team</title>
+<style>
+  :root {
+    --bg: #12141a; --panel: #1a1e27; --floor: #232837; --floor2: #262c3d;
+    --wall: #3a4257; --text: #e8ebf2; --muted: #8b93a7; --accent: #4f8ff7;
+    --ok: #34c77b; --warn: #f5a623; --bad: #f05f57; --stale: #8b93a7;
+  }
+  @media (prefers-color-scheme: light) {
+    :root { --bg:#eef1f6; --panel:#ffffff; --floor:#dde3ee; --floor2:#d3dae8;
+      --wall:#aab4c8; --text:#1c2130; --muted:#5d6578; }
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body { background: var(--bg); color: var(--text); font: 14px/1.45 system-ui, sans-serif;
+    display: grid; grid-template-columns: 1fr 320px; grid-template-rows: 52px 1fr;
+    height: 100vh; overflow: hidden; }
+  header { grid-column: 1/3; display: flex; align-items: center; gap: 12px;
+    padding: 0 16px; background: var(--panel); border-bottom: 1px solid var(--wall); }
+  header h1 { font-size: 16px; }
+  #conn { font-size: 12px; color: var(--muted); margin-left: auto; }
+  #conn.live::before { content: '●'; color: var(--ok); margin-right: 5px; }
+  #conn.poll::before { content: '●'; color: var(--warn); margin-right: 5px; }
+  #officeWrap { position: relative; overflow: auto; }
+  canvas { display: block; }
+  aside { background: var(--panel); border-left: 1px solid var(--wall);
+    overflow-y: auto; padding: 12px; }
+  aside h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .08em;
+    color: var(--muted); margin: 10px 0 6px; }
+  .feed-item { padding: 6px 8px; border-radius: 8px; margin-bottom: 4px;
+    background: color-mix(in srgb, var(--floor) 60%, transparent); font-size: 12.5px; }
+  .feed-item .who { font-weight: 600; }
+  .feed-item .when { color: var(--muted); font-size: 11px; float: right; }
+  .handoff-chip { display: inline-block; background: var(--floor2); border-radius: 20px;
+    padding: 3px 10px; margin: 2px 3px 2px 0; font-size: 12px; }
+  .legend { display: flex; gap: 12px; font-size: 12px; color: var(--muted); }
+  .legend b { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 4px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>🏢 Team Office</h1>
+  <div class="legend">
+    <span><b style="background:var(--ok)"></b>trabajando</span>
+    <span><b style="background:var(--bad)"></b>bloqueado</span>
+    <span><b style="background:var(--stale)"></b>idle</span>
+    <span><b style="background:var(--warn)"></b>sin señal</span>
+  </div>
+  <div id="conn">conectando…</div>
+</header>
+<div id="officeWrap"><canvas id="office" width="980" height="720"></canvas></div>
+<aside>
+  <h2>Handoffs pendientes</h2><div id="handoffs">—</div>
+  <h2>Actividad</h2><div id="feed">Sin eventos aún. Los agentes escriben en <code>.coordination/metrics/activity.jsonl</code>.</div>
+</aside>
+<script>
+const cv = document.getElementById('office'), cx = cv.getContext('2d');
+const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+
+// ─── Plano de la oficina: salas y escritorios ───────────────────────────
+const ROOMS = [
+  { name: 'Recepción',   x: 20,  y: 20,  w: 150, h: 150 },
+  { name: 'Management',  x: 190, y: 20,  w: 380, h: 200 },
+  { name: 'Diseño',      x: 590, y: 20,  w: 170, h: 200 },
+  { name: 'Biblioteca',  x: 780, y: 20,  w: 180, h: 200 },
+  { name: 'Desarrollo',  x: 20,  y: 250, w: 360, h: 210 },
+  { name: 'Datos',       x: 400, y: 250, w: 170, h: 210 },
+  { name: 'Sala QA',     x: 590, y: 250, w: 370, h: 210 },
+  { name: 'Ops & Seguridad', x: 20, y: 490, w: 360, h: 200 },
+  { name: 'Ventanilla de Pases', x: 400, y: 490, w: 260, h: 200 },
+];
+const DESKS = {
+  'setup':           { x: 95,  y: 105, emoji: '🧰' },
+  'lead':            { x: 380, y: 90,  emoji: '🎯' },
+  'product-owner':   { x: 260, y: 150, emoji: '📋' },
+  'architect':       { x: 500, y: 150, emoji: '📐' },
+  'ui-designer':     { x: 675, y: 120, emoji: '🎨' },
+  'tech-writer':     { x: 870, y: 120, emoji: '📚' },
+  'backend':         { x: 120, y: 350, emoji: '⚙️' },
+  'frontend':        { x: 280, y: 350, emoji: '🖥️' },
+  'dba':             { x: 485, y: 350, emoji: '🗄️' },
+  'qa':              { x: 680, y: 320, emoji: '🔎' },
+  'qa-frontend':     { x: 790, y: 400, emoji: '🖱️' },
+  'qa-backend':      { x: 890, y: 320, emoji: '🔌' },
+  'infra':           { x: 120, y: 590, emoji: '🚢' },
+  'cybersec':        { x: 280, y: 590, emoji: '🛡️' },
+  'release-manager': { x: 530, y: 590, emoji: '📦' },
+};
+const STATUS_COLOR = { working: '--ok', blocked: '--bad', idle: '--stale', stale: '--warn' };
+
+let state = { agents: [], events: [], handoffs: [] };
+let envelopes = [];   // animaciones de handoff {from,to,t}
+let seenHandoffs = new Set();
+let bounce = 0;
+
+function roomAt(name){ return ROOMS.find(r=>r.name===name); }
+
+function draw() {
+  bounce += 0.08;
+  cx.clearRect(0, 0, cv.width, cv.height);
+  // piso
+  for (let x = 0; x < cv.width; x += 40) for (let y = 0; y < cv.height; y += 40) {
+    cx.fillStyle = ((x + y) / 40) % 2 ? css('--floor') : css('--floor2');
+    cx.fillRect(x, y, 40, 40);
+  }
+  // salas
+  for (const r of ROOMS) {
+    cx.strokeStyle = css('--wall'); cx.lineWidth = 2;
+    cx.strokeRect(r.x, r.y, r.w, r.h);
+    cx.fillStyle = css('--muted'); cx.font = '11px system-ui';
+    cx.fillText(r.name.toUpperCase(), r.x + 8, r.y + 16);
+  }
+  // agentes
+  const byName = Object.fromEntries(state.agents.map(a => [a.agent, a]));
+  for (const [name, d] of Object.entries(DESKS)) {
+    const a = byName[name] || { status: 'idle' };
+    const working = a.status === 'working';
+    const yy = d.y + (working ? Math.sin(bounce + d.x) * 3 : 0);
+    // escritorio
+    cx.fillStyle = css('--wall');
+    cx.beginPath(); cx.roundRect(d.x - 26, yy + 16, 52, 14, 4); cx.fill();
+    // avatar
+    cx.beginPath(); cx.arc(d.x, yy - 4, 17, 0, 7);
+    cx.fillStyle = css('--panel'); cx.fill();
+    cx.lineWidth = 3; cx.strokeStyle = css(STATUS_COLOR[a.status] || '--stale'); cx.stroke();
+    cx.font = '17px system-ui'; cx.textAlign = 'center';
+    cx.fillText(d.emoji, d.x, yy + 2);
+    // nombre
+    cx.font = 'bold 11px system-ui'; cx.fillStyle = css('--text');
+    cx.fillText(name, d.x, yy + 44);
+    // tarea actual
+    if (a.task) {
+      cx.font = '10px system-ui'; cx.fillStyle = css('--accent');
+      cx.fillText(a.task, d.x, yy + 57);
+    }
+    if (a.status === 'blocked') { cx.font = '13px system-ui'; cx.fillText('🚫', d.x + 18, yy - 14); }
+    cx.textAlign = 'start';
+  }
+  // sobres de handoff en vuelo
+  envelopes = envelopes.filter(e => e.t < 1);
+  for (const e of envelopes) {
+    e.t += 0.012;
+    const f = DESKS[e.from], t = DESKS[e.to];
+    if (!f || !t) continue;
+    const x = f.x + (t.x - f.x) * e.t;
+    const y = f.y + (t.y - f.y) * e.t - Math.sin(e.t * Math.PI) * 46;
+    cx.font = '16px system-ui'; cx.fillText('✉️', x - 8, y);
+  }
+  requestAnimationFrame(draw);
+}
+
+function fmtAgo(ts) {
+  if (!ts) return '';
+  const s = (Date.now() - Date.parse(ts)) / 1000;
+  if (s < 60) return `${s | 0}s`;
+  if (s < 3600) return `${(s / 60) | 0}m`;
+  return `${(s / 3600) | 0}h`;
+}
+
+function render() {
+  // feed
+  const feed = document.getElementById('feed');
+  const EMO = { task_start: '▶️', task_end: '✅', handoff_sent: '✉️', handoff_read: '📬',
+    blocked: '🚫', unblocked: '🟢', evidence_added: '📸', wiki_ingest: '📖' };
+  feed.innerHTML = state.events.slice(-40).reverse().map(e =>
+    `<div class="feed-item"><span class="when">${fmtAgo(e.ts)}</span>` +
+    `${EMO[e.event] || '•'} <span class="who">${e.agent}</span> ${e.event}` +
+    `${e.task ? ` · <code>${e.task}</code>` : ''}${e.detail ? `<br><small>${e.detail}</small>` : ''}</div>`
+  ).join('') || 'Sin eventos aún.';
+  // handoffs pendientes
+  document.getElementById('handoffs').innerHTML =
+    state.handoffs.map(h => `<span class="handoff-chip">${h.from} → ${h.to}</span>`).join('') || '<small>ninguno 🎉</small>';
+  // animar handoffs nuevos
+  for (const h of state.handoffs) {
+    if (!seenHandoffs.has(h.file)) { seenHandoffs.add(h.file); envelopes.push({ from: h.from, to: h.to, t: 0 }); }
+  }
+}
+
+function apply(s) { state = s; render(); }
+
+// SSE con fallback a polling
+const conn = document.getElementById('conn');
+try {
+  const es = new EventSource('/events');
+  es.onmessage = (m) => { conn.textContent = 'en vivo (SSE)'; conn.className = 'live'; apply(JSON.parse(m.data)); };
+  es.onerror = () => { conn.textContent = 'polling 3s'; conn.className = 'poll'; };
+} catch { /* sin SSE */ }
+setInterval(async () => {
+  if (conn.className === 'live') return;
+  try { apply(await (await fetch('/state')).json()); conn.textContent = 'polling 3s'; conn.className = 'poll'; } catch {}
+}, 3000);
+
+draw();
+</script>
+</body>
+</html>

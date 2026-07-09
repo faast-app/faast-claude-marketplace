@@ -83,3 +83,23 @@ el mockup aprobado y las notas de implementacion (que es fijo y que es flexible)
 3. Detectar sistema de diseño existente y capturar pantallas actuales si las hay
 4. Preguntar al usuario SOLO lo que no se pueda inferir (tono de marca, referencias
    que le gusten) — maximo 3 preguntas
+
+## Protocolo de equipo: wiki y eventos
+
+### Wiki primero (contexto barato)
+Antes de cada tarea, tu contexto primario es `.coordination/wiki/` — abre la pagina
+del servicio/HU/tema y sigue sus `[[wikilinks]]`. Los handoffs historicos de
+`archive/` solo si la wiki no alcanza. NUNCA editas la wiki: la mantiene el
+tech-writer (ingest). Si detectas que una pagina esta desactualizada, avisale via
+handoff.
+
+### Registro de eventos (obligatorio)
+Registra tu actividad en `.coordination/metrics/activity.jsonl` — 1 linea JSON por
+evento (append con `>>`, jamas reescribir el archivo):
+```json
+{"ts":"<ISO8601 UTC>","agent":"ui-designer","event":"task_start","task":"HU-042","detail":"breve descripcion"}
+```
+Eventos: `task_start` (al tomar una tarea), `task_end` (al terminarla),
+`handoff_sent`, `handoff_read`, `blocked` (motivo en detail), `unblocked`,
+`evidence_added`. Minimo obligatorio: task_start, task_end, handoff_sent y blocked.
+Alimentan `/dev-team:team-metrics` y la oficina virtual `/dev-team:team-office`.

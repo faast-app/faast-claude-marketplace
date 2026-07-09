@@ -274,6 +274,9 @@ Segun la topologia detectada:
 ├── handoffs/
 │   └── archive/
 ├── test-plans/             ← Planes de prueba de QA
+├── wiki/                   ← Wiki viva del proyecto (crear con /dev-team:wiki init)
+├── metrics/                ← activity.jsonl (eventos de los agentes)
+├── evidence/               ← Evidencia de QA (screenshots/clips)
 ├── backlog.md              ← Generado desde los tickets reales del tracker
 ├── sprint-actual.md        ← Generado desde el estado del Project/Board
 ├── architecture.md         ← Generado desde analisis de repos
@@ -318,6 +321,13 @@ Segun la topologia detectada:
 ## En Review
 - [~] [#41](url) Fix paginacion — PR #89 — Esperando merge
 ```
+
+## Paso 4.5: Wiki y metricas
+1. Ejecutar `/dev-team:wiki init` (tech-writer): crea `.coordination/wiki/` e
+   ingiere lo detectado (architecture.md, backlog, repos.md)
+2. Crear `.coordination/metrics/` para el event log de los agentes
+3. Sugerir: abrir la wiki como vault de Obsidian y `/dev-team:team-office` para
+   ver al equipo en vivo
 
 ## Paso 5: Presentar resumen y preguntar siguiente paso
 

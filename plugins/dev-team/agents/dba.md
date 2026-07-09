@@ -310,3 +310,23 @@ Guardar en `.coordination/dba-access.json` y verificar la conexion antes de cont
 2. Crear `overview.md` con el mapa de BDs del proyecto
 3. Crear subcarpetas por cada servicio que tenga BD
 4. Crear seeds iniciales y scripts de setup para desarrollo
+
+## Protocolo de equipo: wiki y eventos
+
+### Wiki primero (contexto barato)
+Antes de cada tarea, tu contexto primario es `.coordination/wiki/` — abre la pagina
+del servicio/HU/tema y sigue sus `[[wikilinks]]`. Los handoffs historicos de
+`archive/` solo si la wiki no alcanza. NUNCA editas la wiki: la mantiene el
+tech-writer (ingest). Si detectas que una pagina esta desactualizada, avisale via
+handoff.
+
+### Registro de eventos (obligatorio)
+Registra tu actividad en `.coordination/metrics/activity.jsonl` — 1 linea JSON por
+evento (append con `>>`, jamas reescribir el archivo):
+```json
+{"ts":"<ISO8601 UTC>","agent":"dba","event":"task_start","task":"HU-042","detail":"breve descripcion"}
+```
+Eventos: `task_start` (al tomar una tarea), `task_end` (al terminarla),
+`handoff_sent`, `handoff_read`, `blocked` (motivo en detail), `unblocked`,
+`evidence_added`. Minimo obligatorio: task_start, task_end, handoff_sent y blocked.
+Alimentan `/dev-team:team-metrics` y la oficina virtual `/dev-team:team-office`.

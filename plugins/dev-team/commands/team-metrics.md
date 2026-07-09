@@ -9,6 +9,14 @@ Argumentos: $ARGUMENTS (default: periodo del sprint actual; `--watch` = modo liv
 
 ## Fuentes de datos (usar todas las disponibles)
 
+### 0. Event log — fuente PRIMARIA
+`.coordination/metrics/activity.jsonl`: cada agente registra por protocolo sus
+eventos (`task_start`, `task_end`, `handoff_sent`, `blocked`, ...). De aqui sale
+directo: tareas completadas, lead time real (task_start → task_end), bloqueos y
+su duracion, y quien esta activo ahora mismo. Es la misma fuente que alimenta la
+oficina virtual (`/dev-team:team-office`). Las fuentes siguientes complementan o
+sirven de fallback si el log esta incompleto.
+
 ### 1. Productividad — artefactos de coordinacion
 - **Handoffs:** parsear `.coordination/handoffs/` y `archive/` — los nombres
   `{from}-to-{to}-{timestamp}.md` dan: quien entrega trabajo, a quien, y cuando.

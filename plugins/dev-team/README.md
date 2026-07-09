@@ -52,6 +52,11 @@ comandos y flujos, ver **[GUIDE.md](GUIDE.md)**.
 - **QA y Cybersec son gates de merge** — nada llega a main sin validacion
 - **QA no debuggea**: reproduce, documenta y reporta con evidencia (screenshots/clips)
 - **Pases con gate**: el release-manager audita los scripts del DBA y puede rechazarlos
+- **Wiki viva (patron LLM Wiki de Karpathy)**: `.coordination/wiki/` — el tech-writer
+  destila handoffs a paginas enlazadas `[[wikilinks]]`; los agentes leen la wiki
+  primero (menos tokens); abrela como vault de Obsidian para el graph view
+- **/dev-team:team-office**: oficina virtual 2D en vivo (estilo Gather Town) — cada
+  agente en su escritorio, estado, tarea actual y handoffs volando entre salas
 - **/dev-team:team-metrics**: productividad y consumo de tokens por agente
 - Un agente = un branch = una tarea; **solo el Lead mergea**
 - Los agentes usan el modelo Claude optimo para su funcion (opus/sonnet/haiku)

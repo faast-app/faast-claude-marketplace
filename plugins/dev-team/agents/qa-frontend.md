@@ -82,3 +82,23 @@ Handoff en `.coordination/handoffs/qa-frontend-to-qa-{fecha}.md`:
 2. Leer los criterios asignados y el plan de pruebas de la HU
 3. Verificar que el ambiente esta arriba (URL responde)
 4. Si Playwright MCP no responde: pedir `/dev-team:setup`
+
+## Protocolo de equipo: wiki y eventos
+
+### Wiki primero (contexto barato)
+Antes de cada tarea, tu contexto primario es `.coordination/wiki/` — abre la pagina
+del servicio/HU/tema y sigue sus `[[wikilinks]]`. Los handoffs historicos de
+`archive/` solo si la wiki no alcanza. NUNCA editas la wiki: la mantiene el
+tech-writer (ingest). Si detectas que una pagina esta desactualizada, avisale via
+handoff.
+
+### Registro de eventos (obligatorio)
+Registra tu actividad en `.coordination/metrics/activity.jsonl` — 1 linea JSON por
+evento (append con `>>`, jamas reescribir el archivo):
+```json
+{"ts":"<ISO8601 UTC>","agent":"qa-frontend","event":"task_start","task":"HU-042","detail":"breve descripcion"}
+```
+Eventos: `task_start` (al tomar una tarea), `task_end` (al terminarla),
+`handoff_sent`, `handoff_read`, `blocked` (motivo en detail), `unblocked`,
+`evidence_added`. Minimo obligatorio: task_start, task_end, handoff_sent y blocked.
+Alimentan `/dev-team:team-metrics` y la oficina virtual `/dev-team:team-office`.

@@ -65,7 +65,7 @@ Escribir `.coordination/config.json` — la fuente de verdad para todos los agen
 **Topologia MULTI** — carpeta paraguas:
 ```
 {directorio}/{proyecto}/
-├── .coordination/  (config.json, handoffs/+archive/, backlog.md, sprint-actual.md, architecture.md, test-plans/)
+├── .coordination/  (config.json, handoffs/+archive/, backlog.md, sprint-actual.md, architecture.md, test-plans/, wiki/, metrics/, evidence/)
 ├── docker-compose.dev.yml
 ├── .env.dev
 ├── {proyecto}-{servicio}/     ← git init por servicio (scaffolding segun stack desde templates/)
@@ -97,7 +97,14 @@ Invocar al agente `product-owner` para:
 2. Crear las HUs en el tracker elegido (issues/PBIs reales)
 3. Generar `.coordination/backlog.md` espejo con los IDs reales
 
-## Paso 7: Resumen final
+## Paso 7: Wiki y metricas
+1. Ejecutar `/dev-team:wiki init` (tech-writer): crea `.coordination/wiki/` con el
+   esquema del plugin e ingiere `architecture.md` y el backlog inicial
+2. Crear `.coordination/metrics/` (los agentes registran ahi `activity.jsonl`)
+3. Sugerir: abrir `.coordination/wiki/` como vault en Obsidian (graph view) y
+   `/dev-team:team-office` para ver al equipo trabajando en vivo
+
+## Paso 8: Resumen final
 Mostrar:
 - Topologia y repos/carpetas creados (locales y/o remotos)
 - Tracker configurado y N HUs creadas

@@ -328,3 +328,23 @@ git -c http.extraheader="AUTHORIZATION: bearer $(az account get-access-token \
 6. Si generaste migraciones: crear handoff al DBA para review
 7. Si hay nuevos endpoints: crear handoff al Frontend con el contrato
 8. Si el cambio toca auth/datos sensibles: pedir review de Ciberseguridad
+
+## Protocolo de equipo: wiki y eventos
+
+### Wiki primero (contexto barato)
+Antes de cada tarea, tu contexto primario es `.coordination/wiki/` — abre la pagina
+del servicio/HU/tema y sigue sus `[[wikilinks]]`. Los handoffs historicos de
+`archive/` solo si la wiki no alcanza. NUNCA editas la wiki: la mantiene el
+tech-writer (ingest). Si detectas que una pagina esta desactualizada, avisale via
+handoff.
+
+### Registro de eventos (obligatorio)
+Registra tu actividad en `.coordination/metrics/activity.jsonl` — 1 linea JSON por
+evento (append con `>>`, jamas reescribir el archivo):
+```json
+{"ts":"<ISO8601 UTC>","agent":"backend","event":"task_start","task":"HU-042","detail":"breve descripcion"}
+```
+Eventos: `task_start` (al tomar una tarea), `task_end` (al terminarla),
+`handoff_sent`, `handoff_read`, `blocked` (motivo en detail), `unblocked`,
+`evidence_added`. Minimo obligatorio: task_start, task_end, handoff_sent y blocked.
+Alimentan `/dev-team:team-metrics` y la oficina virtual `/dev-team:team-office`.

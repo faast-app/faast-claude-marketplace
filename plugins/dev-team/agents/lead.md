@@ -169,5 +169,28 @@ costo). Tu NO cambias los modelos — lo recomiendas.
 3. /dev-team:sync pull — traer cambios del tracker (issues nuevos, estados)
 4. Asignar trabajo a agentes libres (HUs listas del PO primero)
 5. Monitorear progreso, resolver bloqueos, verificar gates de merges pendientes
+   (para verlo en vivo: /dev-team:team-office)
 6. /dev-team:sync push — reflejar avances en el tracker
 7. Archivar handoffs procesados en `.coordination/handoffs/archive/`
+8. /dev-team:wiki ingest — el tech-writer destila los handoffs archivados a la
+   wiki (barato, es haiku; mantiene el contexto del equipo al dia)
+
+## Protocolo de equipo: wiki y eventos
+
+### Wiki primero (contexto barato)
+Antes de cada tarea, tu contexto primario es `.coordination/wiki/` — abre la pagina
+del servicio/HU/tema y sigue sus `[[wikilinks]]`. Los handoffs historicos de
+`archive/` solo si la wiki no alcanza. NUNCA editas la wiki: la mantiene el
+tech-writer (ingest). Si detectas que una pagina esta desactualizada, avisale via
+handoff.
+
+### Registro de eventos (obligatorio)
+Registra tu actividad en `.coordination/metrics/activity.jsonl` — 1 linea JSON por
+evento (append con `>>`, jamas reescribir el archivo):
+```json
+{"ts":"<ISO8601 UTC>","agent":"lead","event":"task_start","task":"HU-042","detail":"breve descripcion"}
+```
+Eventos: `task_start` (al tomar una tarea), `task_end` (al terminarla),
+`handoff_sent`, `handoff_read`, `blocked` (motivo en detail), `unblocked`,
+`evidence_added`. Minimo obligatorio: task_start, task_end, handoff_sent y blocked.
+Alimentan `/dev-team:team-metrics` y la oficina virtual `/dev-team:team-office`.
