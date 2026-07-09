@@ -126,9 +126,9 @@ handoff.
 Registra tu actividad en `.coordination/metrics/activity.jsonl` — 1 linea JSON por
 evento (append con `>>`, jamas reescribir el archivo):
 ```json
-{"ts":"<ISO8601 UTC>","agent":"cybersec","event":"task_start","task":"HU-042","detail":"breve descripcion"}
+{"ts":"<ISO8601 UTC>","agent":"cybersec","event":"handoff_sent","task":"HU-042","detail":"breve descripcion"}
 ```
-Eventos: `task_start` (al tomar una tarea), `task_end` (al terminarla),
+`task_start` y `task_end` se registran SOLOS (hooks del plugin al iniciar/terminar
+tu ejecucion) — NO los escribas tu. Tu registras lo que los hooks no pueden ver:
 `handoff_sent`, `handoff_read`, `blocked` (motivo en detail), `unblocked`,
-`evidence_added`. Minimo obligatorio: task_start, task_end, handoff_sent y blocked.
-Alimentan `/dev-team:team-metrics` y la oficina virtual `/dev-team:team-office`.
+`evidence_added`. Alimentan `/dev-team:team-metrics` y `/dev-team:team-office`.

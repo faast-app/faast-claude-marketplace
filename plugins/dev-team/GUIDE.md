@@ -98,8 +98,11 @@ falte**. Nunca te vas a topar con un error criptico por una herramienta faltante
 - **Los devs preguntan antes de abrir PR** — no todo entregable lleva PR
 - **Wiki primero** — todos los agentes leen `.coordination/wiki/` antes de cada
   tarea (menos tokens, mas contexto); solo el tech-writer la escribe
-- **Todo queda registrado** — cada agente reporta eventos a
-  `.coordination/metrics/activity.jsonl` (alimenta metricas y la oficina virtual)
+- **Todo queda registrado AUTOMATICAMENTE** — hooks del plugin escriben
+  `task_start`/`task_end` en `.coordination/metrics/activity.jsonl` cada vez que
+  un agente arranca o termina (sin depender de que el agente se acuerde); los
+  agentes agregan lo demas (handoffs, bloqueos, evidencia). Alimenta metricas y
+  la oficina virtual
 
 ---
 
@@ -349,6 +352,12 @@ click en un agente = la camara lo sigue.
 **Como funciona:** un servidor Node local sin dependencias que solo LEE
 `.coordination/` (eventos de `metrics/activity.jsonl` + carpeta `handoffs/`) y
 empuja cambios por SSE. Cero tokens, cero escritura.
+
+**El registro es automatico:** los hooks del plugin (`SubagentStart`/`SubagentStop`)
+escriben el evento cada vez que un agente dev-team arranca o termina — veras a
+los agentes encenderse en la oficina sin que ellos hagan nada. Requiere reiniciar
+la sesion de Claude Code tras instalar/actualizar el plugin (los hooks se cargan
+al inicio).
 
 ---
 
