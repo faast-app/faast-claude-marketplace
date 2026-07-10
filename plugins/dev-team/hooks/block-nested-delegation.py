@@ -3,13 +3,14 @@
 # Problema que resuelve: un backend lanzando 3 backends anidados duplica contexto
 # y quema tokens sin dividir trabajo real.
 # Politica:
-#   - Sesion principal (sin agent_id): puede delegar libremente        → allow
-#   - Caller que no es del equipo dev-team: no lo policiamos           → allow
-#   - qa (QA Lead):   solo puede lanzar qa-frontend / qa-backend       → resto deny
-#   - lead:           puede lanzar agentes del equipo, NUNCA otro lead → deny lead/lead
-#   - Cualquier dev-team agent → Explore (busqueda barata solo-lectura)→ allow
-#   - Todo lo demas desde un subagente dev-team (mismo tipo, devs,
-#     general-purpose, claude, etc.)                                   → DENY
+#   - Sesion principal (sin agent_id): puede delegar libremente          → allow
+#   - Caller que no es del equipo dev-team: no lo policiamos             → allow
+#   - lead: UNICO que delega — cualquier agente del equipo, incluso
+#     VARIAS instancias del mismo rol (2 backend en HUs distintas);
+#     NUNCA otro lead                                                    → allow
+#   - Cualquier dev-team agent → Explore (busqueda barata solo-lectura)  → allow
+#   - Todo lo demas desde un subagente dev-team (qa incluido: sus
+#     especialistas los invoca el lead/sesion principal)                 → DENY
 # Nunca falla hacia afuera: ante cualquier error, permite (exit 0 sin output).
 import json, sys
 
@@ -41,19 +42,20 @@ def main():
 
     if target in CHEAP_OK:
         return
-    if caller == "qa" and target in {"qa-frontend", "qa-backend"}:
-        return
     if caller == "lead" and target in TEAM and target != "lead":
         return
+    if caller == "lead" and target == "lead":
+        deny("Delegacion bloqueada: el lead no lanza otro lead — tu YA eres el "
+             "coordinador. Ejecuta la coordinacion directamente.")
 
     if caller == target:
         deny(f"Delegacion bloqueada: '{caller}' intento lanzar otra instancia de si mismo. "
              "Ejecuta el trabajo TU directamente — una instancia anidada duplica todo el "
              "contexto y quema tokens sin dividir trabajo real.")
-    deny(f"Delegacion bloqueada: los agentes dev-team no crean subagentes ('{caller}' → "
-         f"'{target or 'desconocido'}'). Ejecuta tu trabajo directamente; si necesitas a "
-         "otro rol, crea un handoff en .coordination/handoffs/ y termina tu parte. "
-         "Excepciones: qa→qa-frontend/qa-backend, lead→equipo, cualquiera→Explore.")
+    deny(f"Delegacion bloqueada ('{caller}' → '{target or 'desconocido'}'): solo el lead "
+         "delega en el equipo; los demas agentes ejecutan su trabajo directamente. Si "
+         "necesitas a otro rol, crea un handoff en .coordination/handoffs/ y termina tu "
+         "parte. Unica excepcion: el agente Explore (busqueda de solo-lectura).")
 
 try:
     main()

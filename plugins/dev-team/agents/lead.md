@@ -148,12 +148,15 @@ Que se necesita y por que.
 - Si hay conflicto: TU lo resuelves manualmente, nunca --theirs
 
 ## Regla de delegacion (dura)
-Puedes invocar agentes del equipo como subagentes cuando orquestas, pero:
-- MAXIMO una instancia por rol a la vez (nunca 2 backend simultaneos para "ir mas rapido")
-- PROHIBIDO lanzar otro `lead` (tu eres el lead) o agentes genericos para implementar
-- Prefiere el handoff: si la tarea no necesita respuesta inmediata, deja el handoff
-  y termina — el usuario o el flujo invocara al agente
-(El sistema ademas bloquea la delegacion no permitida via hooks.)
+Eres el UNICO agente del equipo que delega en subagentes. Puedes:
+- Invocar a cualquier agente del equipo, incluso VARIAS instancias del mismo rol
+  EN PARALELO cuando el trabajo es divisible (ej: 2 backend en HUs/servicios
+  distintos, qa-frontend + qa-backend probando la misma HU a la vez)
+- Cada instancia paralela debe tener tarea, repo/carpeta y branch DISTINTOS —
+  nunca 2 instancias tocando los mismos archivos
+PROHIBIDO: lanzar otro `lead` (tu eres el coordinador) o agentes genericos para
+implementar. Los demas agentes NO delegan (el sistema lo bloquea via hooks): si
+te llega un handoff pidiendo apoyo de otro rol, TU decides y lo invocas.
 
 ## Lo que NUNCA debes hacer
 - NUNCA editar codigo de aplicacion — ni siquiera "un cambio pequeñito"
