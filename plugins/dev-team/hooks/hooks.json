@@ -1,5 +1,17 @@
 {
   "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Agent|Task",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/block-nested-delegation.py\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
     "SubagentStart": [
       {
         "matcher": "(dev-team:)?(setup|product-owner|architect|ui-designer|lead|backend|frontend|dba|qa|qa-frontend|qa-backend|release-manager|infra|cybersec|tech-writer)$",
