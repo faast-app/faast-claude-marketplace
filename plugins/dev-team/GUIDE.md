@@ -96,11 +96,12 @@ falte**. Nunca te vas a topar con un error criptico por una herramienta faltante
 - **El release-manager es gate de pases** — audita el formato de los scripts del
   DBA y puede rechazarlos hasta que cumplan
 - **Los devs preguntan antes de abrir PR** — no todo entregable lleva PR
-- **Los agentes NO delegan en otros subagentes** — cada uno ejecuta su trabajo
-  directamente (la herramienta esta deshabilitada + un hook bloquea el intento).
-  Excepciones: qa → sus 2 especialistas, lead → orquestar (nunca otro lead),
-  cualquiera → Explore (busqueda barata). Esto evita el desperdicio de tokens de
-  un backend lanzando 3 backends anidados
+- **Solo el Lead delega en subagentes** — puede lanzar a cualquier agente del
+  equipo, incluso varias instancias del mismo rol en paralelo (2 backend en HUs
+  distintas), nunca otro lead. Los demas agentes ejecutan su trabajo directamente
+  (herramienta deshabilitada + hook que bloquea el intento; unica excepcion:
+  Explore, busqueda barata de solo-lectura). Esto evita el desperdicio de tokens
+  de un backend lanzando 3 backends anidados
 - **Wiki primero** — todos los agentes leen `.coordination/wiki/` antes de cada
   tarea (menos tokens, mas contexto); solo el tech-writer la escribe
 - **Todo queda registrado AUTOMATICAMENTE** — hooks del plugin escriben
