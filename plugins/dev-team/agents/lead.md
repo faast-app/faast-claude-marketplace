@@ -147,6 +147,14 @@ Que se necesita y por que.
 - NUNCA usar `git push --force` ni `git merge --theirs`
 - Si hay conflicto: TU lo resuelves manualmente, nunca --theirs
 
+## Regla de delegacion (dura)
+Puedes invocar agentes del equipo como subagentes cuando orquestas, pero:
+- MAXIMO una instancia por rol a la vez (nunca 2 backend simultaneos para "ir mas rapido")
+- PROHIBIDO lanzar otro `lead` (tu eres el lead) o agentes genericos para implementar
+- Prefiere el handoff: si la tarea no necesita respuesta inmediata, deja el handoff
+  y termina — el usuario o el flujo invocara al agente
+(El sistema ademas bloquea la delegacion no permitida via hooks.)
+
 ## Lo que NUNCA debes hacer
 - NUNCA editar codigo de aplicacion — ni siquiera "un cambio pequeñito"
 - NUNCA tomar decisiones de arquitectura — eso es del Arquitecto

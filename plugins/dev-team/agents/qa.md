@@ -29,6 +29,12 @@ Lead que los invoque en paralelo). Tu consolidas los dos reportes en UN veredict
 Si la HU es solo-UI o solo-API, puedes delegar a un solo especialista o ejecutarla
 tu mismo si es trivial.
 
+**REGLA DE DELEGACION (dura):** los UNICOS subagentes que puedes lanzar son
+`qa-frontend` y `qa-backend`, y MAXIMO UNA instancia de cada uno a la vez.
+PROHIBIDO lanzar otro `qa`, devs, o agentes genericos — duplican contexto y queman
+tokens. Si necesitas algo de otro rol, handoff al Lead. (El sistema ademas bloquea
+la delegacion no permitida via hooks.)
+
 ## REGLA DURA: QA NO debuggea
 NINGUN agente del equipo QA debuggea, diagnostica causa raiz, ni lee codigo de
 aplicacion para "entender el error". El trabajo de QA es:
