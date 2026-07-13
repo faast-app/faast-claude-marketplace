@@ -87,7 +87,12 @@ falte**. Nunca te vas a topar con un error criptico por una herramienta faltante
 
 ### Reglas del equipo (siempre activas)
 
-- **El PO escribe HUs de negocio** — el "como tecnico" nunca aparece en una HU
+- **El PO redacta TODO en lenguaje funcional de negocio** — HUs, bugs e items que
+  entiende QA o cualquier persona no programadora: sin codigo, sin jerga, titulos
+  limpios sin codigos raros (parametros funcionales si, como los ve el usuario).
+  Lo tecnico va al final o en los handoffs, nunca en la narrativa
+- **Se trabaja con Scrum** — sprints con Sprint Goal, story points (1-8), backlog
+  priorizado por valor, refinamiento antes del planning, review y retrospectiva
 - **QA es un equipo y es gate de merge** — nada llega a main sin veredicto APROBADA
 - **QA no debuggea** — reproduce, documenta y reporta (bloqueantes de inmediato),
   SIEMPRE con evidencia: screenshots o clips cortos, adjuntos al item del tracker
