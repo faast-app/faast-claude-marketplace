@@ -3,6 +3,13 @@ description: Valida e instala todos los prerequisitos del proyecto - git, gh/az 
 argument-hint: (opcional) que validar - "db", "tracker", "playwright" o vacio para todo
 ---
 
+> **Ejecucion INLINE obligatoria:** este es un COMANDO, no un agente. Ejecuta su
+> procedimiento en la sesion actual (el contexto ya esta cacheado). NUNCA lo
+> corras dentro de un subagente ni lo invoques via Agent/Task — eso recarga todo
+> el contexto desde cero y quema tokens. Solo se delegan los AGENTES del equipo,
+> y unicamente cuando este procedimiento lo indica.
+
+
 # Setup: Validar e instalar prerequisitos
 
 Alcance solicitado: $ARGUMENTS (vacio = checklist completo)

@@ -2,6 +2,13 @@
 description: Revisa un Pull Request verificando codigo, tests, seguridad y cumplimiento de reglas del proyecto. Uso - /dev-team:review-pr $ARGUMENTS
 ---
 
+> **Ejecucion INLINE obligatoria:** este es un COMANDO, no un agente. Ejecuta su
+> procedimiento en la sesion actual (el contexto ya esta cacheado). NUNCA lo
+> corras dentro de un subagente ni lo invoques via Agent/Task — eso recarga todo
+> el contexto desde cero y quema tokens. Solo se delegan los AGENTES del equipo,
+> y unicamente cuando este procedimiento lo indica.
+
+
 Revisa el Pull Request: $ARGUMENTS
 
 1. Si $ARGUMENTS es un numero o URL de PR, obtener los cambios con `gh pr diff $ARGUMENTS`

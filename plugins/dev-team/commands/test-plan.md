@@ -3,6 +3,13 @@ description: QA genera el plan de pruebas de una HU desde sus criterios de acept
 argument-hint: ID de la HU (ej. "HU-042" o "#42") o descripcion de que probar
 ---
 
+> **Ejecucion INLINE obligatoria:** este es un COMANDO, no un agente. Ejecuta su
+> procedimiento en la sesion actual (el contexto ya esta cacheado). NUNCA lo
+> corras dentro de un subagente ni lo invoques via Agent/Task — eso recarga todo
+> el contexto desde cero y quema tokens. Solo se delegan los AGENTES del equipo,
+> y unicamente cuando este procedimiento lo indica.
+
+
 # Test Plan: Plan de pruebas de una HU
 
 HU o alcance: $ARGUMENTS

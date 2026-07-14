@@ -3,6 +3,13 @@ description: Crea un proyecto nuevo desde una idea o documento de requerimientos
 argument-hint: Ruta al documento de requerimientos (.docx, .pdf, .md) o descripcion en texto libre
 ---
 
+> **Ejecucion INLINE obligatoria:** este es un COMANDO, no un agente. Ejecuta su
+> procedimiento en la sesion actual (el contexto ya esta cacheado). NUNCA lo
+> corras dentro de un subagente ni lo invoques via Agent/Task — eso recarga todo
+> el contexto desde cero y quema tokens. Solo se delegan los AGENTES del equipo,
+> y unicamente cuando este procedimiento lo indica.
+
+
 # Crear nuevo proyecto
 
 Recibiste un documento o descripcion de requerimientos: $ARGUMENTS

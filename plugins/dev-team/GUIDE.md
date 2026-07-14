@@ -464,6 +464,38 @@ Todo vive en `.coordination/config.json` (lo crean new-project/onboard):
 
 ---
 
+## Como cuidar tu limite de uso (5 horas / semanal)
+
+El equipo dispara subagentes y eso consume tokens — estas practicas mantienen el
+consumo sano. Revisa tu panel con `/usage` (pestaña Usage de Settings).
+
+**Habitos que mas ahorran:**
+1. **Sesiones cortas por tarea** — el enemigo #1 es el contexto gigante: una sesion
+   de 3 horas re-lee 150k+ tokens en CADA turno (aun cacheados, cuentan). Usa
+   `/compact` a mitad de tarea larga y `/clear` (o sesion nueva) al cambiar de tema.
+2. **Wiki al dia** — `/dev-team:wiki ingest` al cierre del dia hace que la sesion
+   de mañana arranque liviana: los agentes leen la pagina canonica (2-3k tokens),
+   no el historial completo.
+3. **Pregunta directa = respuesta directa** — no uses `/dev-team:start` para
+   preguntas simples; el router puede disparar agentes que no necesitas.
+4. **Modelo principal en sonnet** (`/model sonnet`) — los agentes ya traen su
+   modelo optimizado (opus solo el architect).
+5. **MCP solo los necesarios** — `claude mcp list` y quita los que no uses: sus
+   esquemas viajan en cada sesion.
+
+**Protecciones automaticas del plugin (v2.5.1+):**
+- Los subagentes NO pueden delegar (solo el lead orquesta; hook lo bloquea)
+- Los comandos `/dev-team:*` se ejecutan inline, nunca como subagentes (hook lo
+  bloquea) — correr `/start` como subagente recargaba todo el contexto
+- `task_start`/`task_end` se registran via hooks (cero tokens)
+
+**Leyendo tu `/usage`:**
+- "subagents under dev-team:backend" con % bajo = normal (son Explore, busqueda
+  barata permitida); % alto = delegacion anidada → actualiza el plugin y reinicia
+- "% at >150k context" alto = sesiones demasiado largas → habito 1
+- La primera interaccion tras el reset del limite siempre pesa mas (escritura de
+  cache fria) — es el peaje de arranque, no una fuga
+
 ## Preguntas frecuentes
 
 **¿Tengo que saber que agente invoca cada cosa?**
