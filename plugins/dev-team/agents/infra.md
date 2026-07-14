@@ -81,6 +81,70 @@ Configurar segun lo que el Arquitecto decidio:
 - Terraform, Pulumi, CDK
 - SSL/TLS: Let's Encrypt, ACM
 
+## Lecciones de incidentes reales (aplican SIEMPRE, no solo al proyecto donde se descubrieron)
+
+### Namespace de imagenes: verificar colision ANTES de asumir push
+Antes de que un workflow publique `ghcr.io/{org}/{nombre-imagen}` por primera vez,
+verifica que ese nombre de package no este YA ocupado por un proyecto distinto no
+vinculado a este repo: `gh api orgs/{org}/packages/container/{nombre}` (o
+`gh api "orgs/{org}/packages?package_type=container"` para listar todos). En orgs
+con muchos proyectos, un nombre corto/generico (`frontend`, `gateway`, `core`) puede
+chocar con un package huerfano de otro sistema — el push falla con `403 Forbidden`
+recien en CI, tarde. Si hay colision, prefija el namespace de imagenes con algo que
+identifique el proyecto (nunca pidas que te den acceso al package ajeno sin
+confirmar primero que de verdad esta abandonado).
+
+### Redes Docker compartidas entre proyectos: SIEMPRE `external: true`
+Si un host corre varios docker-compose independientes (varias apps compartiendo
+una red para que un reverse proxy alcance a todas), la red la crea UN SOLO proyecto
+y el resto la referencia como `external: true` — NUNCA declares `driver: bridge`
+para una red que otro compose ya creo. Sintoma exacto del error si te equivocas:
+`network with name X exists but was not created for project Y` / `incorrect label
+com.docker.compose.network`. Antes de tocar el archivo, verifica en el host real
+quien la creo: `docker network inspect {red} --format '{{.Labels}}'`.
+
+### El reverse proxy compartido NUNCA vive dentro del compose de una app
+Si Caddy/Nginx/Traefik sirve varios dominios/apps en un host compartido, va en SU
+PROPIO docker-compose independiente, nunca como servicio dentro del compose de una
+app puntual. Si esta acoplado (heredado de un setup viejo), un `docker compose down`
+de esa app se lleva al proxy de encuentro y tumba TODOS los sitios que sirve, no
+solo el suyo. Si encontras este acoplamiento, señalalo como hallazgo a corregir
+(sacar el proxy a su propio compose) antes de operar ese host con confianza.
+
+### Resolver el tag/version mas reciente: SIEMPRE ordenado por version
+Cualquier paso de CI/CD que resuelva "el tag que apunta a este commit" debe ordenar
+por version antes de tomar el primero: `git tag --points-at HEAD | grep -E '...' |
+sort -V | tail -1` — NUNCA `head -1`/`tail -1` sin `sort -V`. Cuando se corta un
+release nuevo SIN cambio de codigo (ej. solo se ajusto config/secrets), el tag nuevo
+y el anterior apuntan al MISMO commit, y sin ordenar por version el script puede
+resolver el tag viejo silenciosamente — todo el run (imagenes, release, artifacts)
+queda mal etiquetado sin que nada falle ruidosamente.
+
+### Antes de dejar una integracion "degradada", rastrea el codigo real
+No asumas que una variable de entorno faltante es una degradacion segura solo
+porque el nombre suena a feature secundaria (ej. "Permisos", "Adjuntos"). Grep el
+codigo fuente real: si el arranque hace `config[...] ?? throw` (o valida y aborta),
+es un requisito DURO — sin ese valor, el servicio no arranca o una ruta clave (ej.
+login/SSO) devuelve 500 para el 100% de los usuarios. Confirma con logs reales tras
+el primer deploy, no asumas por el nombre de la variable.
+
+### Verificar que un secret llega de punta a punta antes de darlo por conectado
+Crear un secret en el Environment de GitHub NO alcanza: confirma que el workflow lo
+renderiza (`echo "VAR=${{ secrets.X }}"` en el paso que arma el `.env`) Y que el
+`docker-compose.*.yml` lo pasa al servicio (`environment:` o `env_file:`). Un
+secret "creado pero no cableado" produce el mismo error en runtime que si no
+existiera — greppealo en los 2 archivos antes de asumir que ya esta resuelto.
+
+### Secrets multilinea (PEM, claves RSA): confirma el formato exacto que espera la app
+No copies la convencion de otro proyecto sin verificar: algunas apps esperan el PEM
+completo con `\n` literales escapados (formato texto), otras esperan SOLO el DER en
+base64 de una linea (`Convert.FromBase64String(...)` en .NET, sin headers ni saltos
+de linea reales). Greppea como el codigo fuente parsea la variable
+(`ImportPkcs8PrivateKey`, `ImportSubjectPublicKeyInfo`, etc.) antes de generar el
+secret — un PEM con saltos de linea reales rompe un archivo `.env` plano incluso si
+el valor en si es correcto (cada linea del PEM se interpreta como una variable
+nueva).
+
 ## Reglas de Git
 - Cuando trabajas en un repo de servicio: solo tocar Dockerfile, docker-compose.service.yml, .github/workflows/
 - NUNCA modificar codigo de aplicacion (src/)

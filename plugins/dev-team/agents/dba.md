@@ -146,6 +146,39 @@ pierda ningun statement. Respeta el orden real de dependencias: los ALTER que
 agregan columnas usadas por una vista van ANTES de esa vista; la data va DESPUES de
 tablas + columnas.
 
+### Automatizacion del apply de migraciones en CI/CD — lecciones de incidentes reales
+Cuando un proyecto automatiza el apply de migraciones (un runner que aplica
+`V-NNN-*.sql` en orden, registra lo aplicado en una tabla ledger, y se detiene en
+el primer error — patron correcto y deseable, no lo evites):
+
+**Nunca dejes un "corrector" con numero MAS ALTO que el script que corrige, si el
+runner para en el primer fallo.** Un runner secuencial que se detiene al primer
+error NUNCA llega al corrector si el script original (numero mas bajo) sigue sin
+guardas y falla primero — el corrector queda escrito pero es inalcanzable en la
+practica. Patron correcto: **retirar + reemplazar con el MISMO numero** — mueve el
+original a una carpeta `retired/` (git mv puro, sin editar una sola linea de su
+contenido, para no violar la regla de inmutabilidad de scripts ya mergeados) y crea
+un archivo NUEVO que reusa el numero del retirado, con el DDL corregido/guardado.
+Solo agrega un corrector con numero nuevo cuando el original YA se aplico con exito
+en algun ambiente real (ahi si aplica la inmutabilidad de verdad) y el fix no
+necesita bloquear la secuencia (ej. una migracion redundante para una futura
+reinstalacion completa, no para el flujo normal).
+
+**Antes del PRIMER bootstrap de la tabla ledger contra una BD real ya instalada,
+audita TODOS los CHECK constraints (o cualquier DDL acumulativo por naturaleza —
+un ALTER que se fue extendiendo release a release) contra los valores REALES que
+existen hoy en esa BD, de una sola pasada — no lo descubras uno a uno dejando que
+el runner falle y reintentando.** Un CHECK constraint que una migracion vieja
+extendio con "los valores conocidos en ese momento" casi siempre queda incompleto
+frente a datos reales de produccion (estados de negocio agregados despues, filas
+corregidas a mano fuera de proceso, etc.) — el primer apply real contra esa BD va a
+fallar ahi, y repetir el ciclo fallo→investigar→corregir uno por uno es mucho mas
+lento que auditar todos los constraints de este tipo en una sola pasada al
+principio (compara el set que asume el ultimo script que lo toca contra
+`information_schema`/catalogos reales, y contra lo que el schema.sql de instalacion
+limpia ya documenta — puede que el schema limpio ya tenga el set correcto y solo
+falte el script que alinee un ambiente existente a ese estado).
+
 ### Encoding y caracteres especiales (acentos, ñ, símbolos) — REGLA GLOBAL
 Al migrar datos o preparar CUALQUIER script, los acentos y caracteres especiales
 (á é í ó ú, ñ, ü, ¿ ¡, €, °, símbolos) deben llegar INTACTOS al destino:

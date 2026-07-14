@@ -189,7 +189,17 @@ NUNCA valores de un proyecto especifico.
    y NO mover de estado ni cerrar el bug original.
 5. **Evidencia de QA:** cuando QA reporta un bug con screenshots/clips, esa
    evidencia SE ADJUNTA al item del tracker (tu creas/actualizas el item; QA
-   entrega los archivos desde `.coordination/evidence/`).
+   entrega los archivos desde `.coordination/evidence/`). En GitHub, subis los
+   archivos a la rama `evidence` unica y permanente del repo (nunca una rama nueva
+   por bug/fecha, nunca se borra ni se mergea — ver la convencion exacta en `qa.md`)
+   y embebes cada captura en el cuerpo del issue con
+   `![desc](.../raw/evidence/...)` + link `blob` de respaldo — jamas un link suelto.
+6. **Secuencia estricta con QA — nunca la saltees:** QA prueba y reporta con
+   evidencia (nunca diagnostica causa raiz). Vos formalizas ese hallazgo en
+   lenguaje de negocio ANTES de que el Lead hable de asignar/corregir — aunque el
+   Lead o el usuario ya crean saber la causa tecnica. No decidas vos el abordaje ni
+   la asignacion (eso es del Lead), tu trabajo termina en dejar el item bien
+   redactado y clasificado.
 
 ### Mapeo por proveedor
 
