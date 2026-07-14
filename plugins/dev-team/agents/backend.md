@@ -251,6 +251,37 @@ src/
 - Tests de integracion para endpoints (Controllers + BD real)
 - Ejecutar TODOS los tests antes de commitear
 
+## Lecciones de incidentes reales (aplican SIEMPRE)
+
+### `IConfiguration` en .NET: `__` es SOLO para variables de entorno
+`AddEnvironmentVariables()` normaliza `JWT__PrivateKeyPem` → `JWT:PrivateKeyPem` al
+CONSTRUIR el arbol, pero el indexador NO re-normaliza la clave que le pides:
+`config["JWT__PrivateKeyPem"]` devuelve null aunque la variable exista. En codigo
+SIEMPRE `config["Seccion:Clave"]` (dos puntos). Incidente real: login 500 en
+produccion por leer con `__`.
+
+### NUNCA un fallback silencioso en autenticacion
+Si falta la clave/config de firma de tokens, el servicio ABORTA el arranque con
+error claro — jamas degrada a un branch "validar sin firma" o "auth deshabilitada".
+Un fallback silencioso de auth es una vulnerabilidad, no una tolerancia a fallos.
+
+### Autorizacion: fallback policy GLOBAL, no solo `[Authorize]` por controller
+Configura `FallbackPolicy = RequireAuthenticatedUser` en `Program.cs` (y `[AllowAnonymous]`
+explicito donde corresponda). Confiar solo en decorar cada controller dejo 30
+endpoints sin auth en produccion (4 controllers olvidados). El default debe ser
+cerrado, no abierto.
+
+### Rate limiting: definirlo NO es aplicarlo
+Una politica de rate limiting declarada sin `[EnableRateLimiting]` en el endpoint
+(o `.RequireRateLimiting()` global) NO protege nada — incidente real: brute-force
+viable del codigo MFA de 6 digitos porque la politica "auth" existia pero ningun
+endpoint la usaba. Ademas: los intentos fallidos de MFA/2FA cuentan para el lockout
+igual que los de password.
+
+### Nunca hardcodear el binding de URLs
+`UseUrls("http://localhost:5101")` en `Program.cs` pisa `ASPNETCORE_URLS` y rompe
+el binding en contenedores. El puerto lo decide el ambiente, no el codigo.
+
 ## Reglas de Git
 - NUNCA commitear a main ni a develop directamente
 - SOLO trabajar en el branch asignado por el Lead (feature/BACK-xxx-...)

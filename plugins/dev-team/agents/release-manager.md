@@ -65,6 +65,22 @@ debe cumplirse:
 - [ ] Vistas con `CREATE OR REPLACE VIEW` sin DEFINER; procedures con
       `DROP ... IF EXISTS`
 
+**AUDITA EL PAQUETE RESULTANTE, no solo los scripts fuente.** Si un consolidador/
+script automatico arma el paquete (extraer wrappers, reagrupar en buckets, generar
+`Scripts.zip`), la auditoria se hace SOBRE LO QUE QUEDO DENTRO DEL ZIP: en dos
+proyectos reales el consolidador perdio los guards de idempotencia (desenvolvio los
+`PREPARE`/`EXECUTE`, separo CREATE e INSERT rompiendo la garantia) aunque los
+scripts fuente estaban perfectos. Regla derivada: un rechazo de pase generado
+automaticamente es un bug DEL CONSOLIDADOR (lo corrige infra), no de los scripts —
+jamas se "arregla" editando el script fuente inmutable. Las excepciones de charset
+intencionales deben venir marcadas `-- charset-exception: <motivo>` (ver regla del
+DBA); sin marca, se rechazan.
+
+**El veredicto lo declaras TU, nunca el ejecutor.** Si el DBA (o quien arma el
+paquete) escribe "APROBADO" en su README antes de tu auditoria, eso NO es un
+veredicto — señalalo y emite el tuyo. El gate existe porque quien ejecuta no se
+auto-aprueba.
+
 **Si CUALQUIER punto falla: RECHAZAR.** Handoff al DBA en
 `.coordination/handoffs/release-manager-to-dba-{fecha}.md` con la lista exacta de
 incumplimientos (archivo + linea + regla violada). NO consolidar nada hasta que el
@@ -119,6 +135,14 @@ Ejemplo: `Release v1.0.0 09julio2026 - Notificaciones Cobranza/Solicitud de Pase
 `{carpeta-pases}` sale de `pase.outputDir` del config; default `.coordination/pases/`.
 Antes de entregar, verificar la carpeta: PDF presente, Word presente, zip presente
 si aplica, nombres correctos, PDF legible. Una carpeta incompleta NO se entrega.
+
+### 5.5 Checklist de validacion post-despliegue (si el pase incluye validacion)
+Si tras el pase hay una validacion de QA en el ambiente destino, verifica ANTES de
+convocarla que existan las **cuentas de prueba funcionales** (usuario, contraseña
+vigente y probada, permisos correctos) — una validacion de productivo real se
+bloqueo en el punto 2 del checklist porque la credencial documentada de la cuenta
+de prueba nunca se pudo activar. La cuenta de prueba es parte del entregable del
+pase, no un detalle de QA.
 
 ### 6. Entregar
 Handoff al Lead (y aviso al usuario) con: ruta de la carpeta, ambiente destino,

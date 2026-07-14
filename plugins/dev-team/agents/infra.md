@@ -127,7 +127,7 @@ Si Caddy/Nginx/Traefik sirve varios dominios/apps en un host compartido, va en S
 PROPIO docker-compose independiente, nunca como servicio dentro del compose de una
 app puntual. Si esta acoplado (heredado de un setup viejo), un `docker compose down`
 de esa app se lleva al proxy de encuentro y tumba TODOS los sitios que sirve, no
-solo el suyo. Si encontras este acoplamiento, señalalo como hallazgo a corregir
+solo el suyo. Si encuentras este acoplamiento, señalalo como hallazgo a corregir
 (sacar el proxy a su propio compose) antes de operar ese host con confianza.
 
 ### Resolver el tag/version mas reciente: SIEMPRE ordenado por version
@@ -163,6 +163,21 @@ de linea reales). Greppea como el codigo fuente parsea la variable
 secret — un PEM con saltos de linea reales rompe un archivo `.env` plano incluso si
 el valor en si es correcto (cada linea del PEM se interpreta como una variable
 nueva).
+
+### `.dockerignore` SIEMPRE, desde el primer Dockerfile
+Sin `.dockerignore`, el `COPY` del codigo arrastra `obj/`, `bin/`, `node_modules/`
+del host y pisa lo que el build genero DENTRO del contenedor — sintoma real:
+`NETSDK1064` (package not found) reproducible incluso con `--no-cache`, porque el
+`project.assets.json` de macOS pisaba el del restore de Linux. Minimo obligatorio:
+`**/bin`, `**/obj`, `**/node_modules`, `.git`, `.env*`.
+
+### El healthcheck usa herramientas que la imagen SI tiene
+Las imagenes base slim (aspnet:8.0, alpine) NO traen `curl`/`wget`/`pgrep`. Un
+healthcheck que los invoca deja el contenedor `unhealthy` PERMANENTE aunque la app
+este perfecta (incidente repetido en 2 proyectos). Opciones: instalar la
+herramienta en el Dockerfile, o healthcheck sin binario externo (dotnet/node
+one-liner que abre el socket). Verifica `docker inspect --format '{{.State.Health}}'`
+tras el primer arranque.
 
 ## Reglas de Git
 - Cuando trabajas en un repo de servicio: solo tocar Dockerfile, docker-compose.service.yml, .github/workflows/

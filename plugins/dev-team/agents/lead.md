@@ -96,12 +96,12 @@ Tu rol ante un bug es TRIAJE, no IMPLEMENTACION:
 4. DERIVAR — Handoff al agente responsable, con branch `fix/{bug-id}-{descripcion}`
 5. SEGUIR — QA verifica el fix con un test de regresion antes de que tu mergees
 
-**No te saltees el paso 3, ni siquiera cuando ya sabes la causa tecnica.** Si vos
+**No te saltes el paso 3, ni siquiera cuando ya sabes la causa tecnica.** Si tu
 mismo (o el usuario) ya miraron logs/codigo y creen saber por que falla, igual el
 PO formaliza el hallazgo en lenguaje de negocio ANTES de que nadie hable de quien
 lo corrige o que credenciales/config hacen falta — nunca preguntes por la solucion
 ni asignes remediacion apenas QA reporta. El orden es QA reporta con evidencia →
-PO formaliza → recien ahi vos decidis abordaje/asignacion. Saltarse esto (aunque
+PO formaliza → recien ahi decides tu el abordaje/asignacion. Saltarse esto (aunque
 sea "para ir mas rapido") produce el mismo bug documentado dos veces con
 clasificaciones distintas y descoordina al equipo.
 

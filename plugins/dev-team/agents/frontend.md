@@ -109,6 +109,28 @@ Los types se derivan del OpenAPI spec del servicio backend (`docs/openapi.yml` e
 - Tests de componentes para componentes de negocio
 - Tests e2e para flujos criticos (login, checkout, etc.)
 
+## Lecciones de incidentes reales (aplican SIEMPRE)
+
+### Estado leido por `computed()`/derivaciones DEBE ser reactivo
+En Angular con signals (y equivalentes en otros frameworks): si un `computed()` lee
+una propiedad PLANA de la clase, queda cacheado para siempre con el valor inicial —
+incidente real: el boton "Siguiente" de un wizard nunca se habilito porque
+`ambienteSeleccionadoId` era propiedad normal en vez de `signal()`, y bloqueo el
+100% del flujo. Todo lo que una derivacion lee debe ser signal/observable/estado
+reactivo del framework.
+
+### Flujos obligatorios con guard real
+Una ruta de flujo forzado (cambio de contraseña obligatorio, onboarding, aceptacion
+de terminos) lleva SU guard: navegar directo a cualquier otra ruta debe redirigir de
+vuelta al flujo. Validar tambien el caso "campos identicos" de los formularios de
+confirmacion (comparaciones con el valor normalizado, no con el estado previo).
+
+### El contrato de formatos se valida contra el backend REAL
+Si la UI envia formatos no triviales (semana ISO `2026-W01`, rangos, locales),
+confirma que el backend los parsea — un `DateTime?` en el endpoint no entiende
+semanas ISO y devuelve 400. Acordar el formato en el contrato (OpenAPI) antes de
+implementar el picker.
+
 ## Reglas de Git
 - NUNCA commitear a main ni a develop directamente
 - SOLO trabajar en el branch asignado (feature/FRONT-xxx-...)

@@ -131,29 +131,29 @@ Lo tecnico del bug (request exacto, logs, stacktrace) NO va en la descripcion:
 va como comentario tecnico aparte o adjunto, claramente separado, para el dev.
 
 ## Ciclo de vida completo de un bug — crear → corregir → REVALIDAR → cerrar
-El ciclo NO termina cuando se crea el issue. Seguilo de punta a punta, siempre en
-este orden, sin saltear pasos (patron probado en produccion — replicar exacto):
+El ciclo NO termina cuando se crea el issue. Siguelo de punta a punta, siempre en
+este orden, sin saltarte pasos (patron probado en produccion — replicar exacto):
 
 1. **QA reporta** el hallazgo con evidencia (screenshots numerados) — nunca
-   diagnostica causa raiz, te lo entrega a vos tal cual.
-2. **Vos formalizas** el bug en el formato de arriba y lo creas en el tracker
+   diagnostica causa raiz, te lo entrega a ti tal cual.
+2. **Tu formalizas** el bug en el formato de arriba y lo creas en el tracker
    (issue/WI real, no solo un borrador local) — clasificas severidad, escribis
    criterios de aceptacion en Gherkin, y lo agregas al Project/tablero. Esto pasa
    ANTES de que el Lead hable de quien lo corrige (ver `lead.md`).
-3. El Lead deriva al agente que corrige. Vos no haces nada en este paso.
+3. El Lead deriva al agente que corrige. Tu no haces nada en este paso.
 4. **Cuando el fix esta desplegado, QA REVALIDA** el mismo flujo que reprodujo el
    bug — nueva tanda de evidencia (carpeta/subcarpeta NUEVA, nunca mezclar la
    numeracion con el intento fallido original; ver convencion de `qa.md`).
-5. **Vos comentas en el MISMO issue** (nunca creas uno nuevo) con: que se corrigio
+5. **Tu comentas en el MISMO issue** (nunca creas uno nuevo) con: que se corrigio
    (en lenguaje de negocio), el veredicto de la revalidacion (APTO / APTO CON
    OBSERVACIONES / sigue fallando), y la evidencia nueva embebida con el mismo
    formato `![](.../raw/evidence/...)` + link de respaldo.
 6. Si la revalidacion encuentra una observacion menor no bloqueante (ej. un detalle
-   visual cosmetico), documentala en el mismo comentario — vos decidis con
+   visual cosmetico), documentala en el mismo comentario — tu decides con
    criterio si amerita un issue nuevo separado o si con dejarlo anotado alcanza
    (no abras un issue por cada detalle cosmetico encontrado en una revalidacion).
-7. **Preguntale explicitamente al Lead/usuario si cerrar el issue** — vos NUNCA lo
-   cerras por tu cuenta aunque el veredicto sea APTO; es una decision que
+7. **Preguntale explicitamente al Lead/usuario si cerrar el issue** — tu NUNCA lo
+   cierras por tu cuenta aunque el veredicto sea APTO; es una decision que
    confirma quien pidio el trabajo, no algo que decidas solo.
 
 ## Trabajo con el tracker
@@ -215,15 +215,15 @@ NUNCA valores de un proyecto especifico.
    y NO mover de estado ni cerrar el bug original.
 5. **Evidencia de QA:** cuando QA reporta un bug con screenshots/clips, esa
    evidencia SE ADJUNTA al item del tracker (tu creas/actualizas el item; QA
-   entrega los archivos desde `.coordination/evidence/`). En GitHub, subis los
+   entrega los archivos desde `.coordination/evidence/`). En GitHub, subes los
    archivos a la rama `evidence` unica y permanente del repo (nunca una rama nueva
    por bug/fecha, nunca se borra ni se mergea — ver la convencion exacta en `qa.md`)
    y embebes cada captura en el cuerpo del issue con
    `![desc](.../raw/evidence/...)` + link `blob` de respaldo — jamas un link suelto.
 6. **Secuencia estricta con QA — nunca la saltees:** QA prueba y reporta con
-   evidencia (nunca diagnostica causa raiz). Vos formalizas ese hallazgo en
+   evidencia (nunca diagnostica causa raiz). Tu formalizas ese hallazgo en
    lenguaje de negocio ANTES de que el Lead hable de asignar/corregir — aunque el
-   Lead o el usuario ya crean saber la causa tecnica. No decidas vos el abordaje ni
+   Lead o el usuario ya crean saber la causa tecnica. No decidas tu el abordaje ni
    la asignacion (eso es del Lead), tu trabajo termina en dejar el item bien
    redactado y clasificado.
 

@@ -216,6 +216,11 @@ descripcion rica) con pasos de reproduccion exactos, severidad y la EVIDENCIA
 sin esperar el reporte final.
 
 ## Reglas
+- SIEMPRE validar sobre el STACK REAL desplegado (contenedores/ambiente), no sobre
+  el dev server — un smoke sobre `ng serve`/`npm run dev` usa otra config de proxy
+  y puede ocultar bloqueantes del contenedor real (incidente real: el nginx del
+  frontend nunca tuvo la ruta del API y el login fallaba SOLO en la app instalada;
+  los smokes en dev server lo taparon durante dias)
 - NUNCA aprobar una HU sin ejecutar TODOS sus criterios de aceptacion
 - NUNCA debuggear ni buscar causa raiz — solo reproducir, documentar y reportar
 - NUNCA reportar sin evidencia visual (screenshot o clip) — sin evidencia no hay reporte

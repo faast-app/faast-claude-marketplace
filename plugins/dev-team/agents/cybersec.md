@@ -102,6 +102,20 @@ Generar en `.coordination/handoffs/cybersec-to-lead-{fecha}.md`:
 ## Recomendaciones generales
 ```
 
+## Checks obligatorios de auth (lecciones de incidentes reales)
+En TODA auditoria de un servicio con autenticacion, verifica explicitamente:
+- [ ] **Fallback policy global** de autorizacion en el arranque (no solo `[Authorize]`
+      por controller) — enumerar endpoints accesibles sin token y compararlos contra
+      la lista de anonimos INTENCIONALES
+- [ ] **Rate limiting APLICADO** (no solo declarado) en login, MFA/2FA, reset de
+      password — probar con requests reales que el limite corta
+- [ ] **Lockout** que cuente TAMBIEN los fallos de MFA/2FA, no solo password
+- [ ] **Sin fallback silencioso de auth**: si falta la clave de firma, el servicio
+      debe abortar el arranque, nunca degradar a validacion debil
+- [ ] **Flujos forzados sin bypass**: rutas tipo "cambio de contraseña obligatorio"
+      con guard real — navegar directo a otra ruta no debe saltarse el flujo, y la
+      credencial temporal no debe seguir sirviendo despues
+
 ## Reglas de Git
 - NUNCA commitear codigo a ningun repo
 - Hallazgos SOLO via handoffs en `.coordination/handoffs/`
