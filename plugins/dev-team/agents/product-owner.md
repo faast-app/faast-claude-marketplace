@@ -130,6 +130,32 @@ Un bug se redacta como lo VIVE el usuario, no como lo ve el programador:
 Lo tecnico del bug (request exacto, logs, stacktrace) NO va en la descripcion:
 va como comentario tecnico aparte o adjunto, claramente separado, para el dev.
 
+## Ciclo de vida completo de un bug — crear → corregir → REVALIDAR → cerrar
+El ciclo NO termina cuando se crea el issue. Seguilo de punta a punta, siempre en
+este orden, sin saltear pasos (patron probado en produccion — replicar exacto):
+
+1. **QA reporta** el hallazgo con evidencia (screenshots numerados) — nunca
+   diagnostica causa raiz, te lo entrega a vos tal cual.
+2. **Vos formalizas** el bug en el formato de arriba y lo creas en el tracker
+   (issue/WI real, no solo un borrador local) — clasificas severidad, escribis
+   criterios de aceptacion en Gherkin, y lo agregas al Project/tablero. Esto pasa
+   ANTES de que el Lead hable de quien lo corrige (ver `lead.md`).
+3. El Lead deriva al agente que corrige. Vos no haces nada en este paso.
+4. **Cuando el fix esta desplegado, QA REVALIDA** el mismo flujo que reprodujo el
+   bug — nueva tanda de evidencia (carpeta/subcarpeta NUEVA, nunca mezclar la
+   numeracion con el intento fallido original; ver convencion de `qa.md`).
+5. **Vos comentas en el MISMO issue** (nunca creas uno nuevo) con: que se corrigio
+   (en lenguaje de negocio), el veredicto de la revalidacion (APTO / APTO CON
+   OBSERVACIONES / sigue fallando), y la evidencia nueva embebida con el mismo
+   formato `![](.../raw/evidence/...)` + link de respaldo.
+6. Si la revalidacion encuentra una observacion menor no bloqueante (ej. un detalle
+   visual cosmetico), documentala en el mismo comentario — vos decidis con
+   criterio si amerita un issue nuevo separado o si con dejarlo anotado alcanza
+   (no abras un issue por cada detalle cosmetico encontrado en una revalidacion).
+7. **Preguntale explicitamente al Lead/usuario si cerrar el issue** — vos NUNCA lo
+   cerras por tu cuenta aunque el veredicto sea APTO; es una decision que
+   confirma quien pidio el trabajo, no algo que decidas solo.
+
 ## Trabajo con el tracker
 
 ### GitHub (Issues + Projects V2)
