@@ -123,7 +123,7 @@ objeto (`-- Origen: ...` / natural key). En MySQL, envolver los CREATE en
 
 **Idempotencia total: re-ejecutable N veces sin error y SIN hardcodes.** Prohibido:
 - **AUTO_INCREMENT hardcodeado:** nunca `AUTO_INCREMENT=N` en el CREATE TABLE; deja que el contador arranque solo.
-- **Charset/collation hardcodeado:** no fijar `DEFAULT CHARSET`/`COLLATE` a nivel tabla NI `CHARACTER SET`/`COLLATE` a nivel columna; que todo herede el default del schema destino. Hazlo COMPLETO (tabla + columnas), NUNCA parcial: una mezcla parcial es lo que dispara el error 3780 en FKs sobre columnas CHAR/UUID/texto en MySQL 8. Unica excepcion: si una FK es sobre columna de texto/UUID, manten charset+collation identicos y explicitos en AMBOS lados.
+- **Charset/collation hardcodeado:** no fijar `DEFAULT CHARSET`/`COLLATE` a nivel tabla NI `CHARACTER SET`/`COLLATE` a nivel columna; que todo herede el default del schema destino. Hazlo COMPLETO (tabla + columnas), NUNCA parcial: una mezcla parcial es lo que dispara el error 3780 en FKs sobre columnas CHAR/UUID/texto en MySQL 8. Unica excepcion: si una FK es sobre columna de texto/UUID, manten charset+collation identicos y explicitos en AMBOS lados — y MARCA cada caso con el comentario `-- charset-exception: <motivo>` en la linea correspondiente, para que la auditoria del release-manager lo reconozca como intencional y no lo rechace.
 - **TODO INSERT es idempotente — CERO duplicados:** SIN EXCEPCION, cada INSERT de un pase lleva su guard de existencia; si el registro ya existe NO se vuelve a insertar. No debe quedar ni un solo INSERT sin guard (ni multi-row `VALUES` desnudo). Verificalo por conteo antes de entregar.
 - **INSERT que MODIFICA datos:** PROHIBIDO `ON DUPLICATE KEY UPDATE` (y `REPLACE INTO`) — sobreescriben filas existentes al reejecutar, y un pase NUNCA debe tocar datos ya cargados en destino. La idempotencia de datos es SIEMPRE **insert-only**: `INSERT ... SELECT ... WHERE NOT EXISTS (...)` (una sentencia guardada por fila), que inserta solo si falta y jamas actualiza lo existente.
 - **IDs hardcodeados en INSERT:** por defecto no fuerces valores de PK; resuelve por natural key + `SET @id = MAX(pk)+1` con el guard `WHERE NOT EXISTS` / `FROM DUAL WHERE @existe=0`, y resuelve FKs por natural key. **Excepcion (manda la integridad):** si las filas tienen FKs id-based entre si (cadena padre→hijo por id), PRESERVA los ids explicitos y guarda por PK: `WHERE NOT EXISTS (SELECT 1 FROM t WHERE pk = <id>)`. No recalcules ids en ese caso (romperia los FK). DOCUMENTA la excepcion en el entregable.
@@ -145,6 +145,61 @@ tipos, FK, valores) — solo reagrupas y re-encabezas. Verifica por conteo que n
 pierda ningun statement. Respeta el orden real de dependencias: los ALTER que
 agregan columnas usadas por una vista van ANTES de esa vista; la data va DESPUES de
 tablas + columnas.
+
+### Automatizacion del apply de migraciones en CI/CD — lecciones de incidentes reales
+Cuando un proyecto automatiza el apply de migraciones (un runner que aplica
+`V-NNN-*.sql` en orden, registra lo aplicado en una tabla ledger, y se detiene en
+el primer error — patron correcto y deseable, no lo evites):
+
+**Nunca dejes un "corrector" con numero MAS ALTO que el script que corrige, si el
+runner para en el primer fallo.** Un runner secuencial que se detiene al primer
+error NUNCA llega al corrector si el script original (numero mas bajo) sigue sin
+guardas y falla primero — el corrector queda escrito pero es inalcanzable en la
+practica. Patron correcto: **retirar + reemplazar con el MISMO numero** — mueve el
+original a una carpeta `retired/` (git mv puro, sin editar una sola linea de su
+contenido, para no violar la regla de inmutabilidad de scripts ya mergeados) y crea
+un archivo NUEVO que reusa el numero del retirado, con el DDL corregido/guardado.
+Solo agrega un corrector con numero nuevo cuando el original YA se aplico con exito
+en algun ambiente real (ahi si aplica la inmutabilidad de verdad) y el fix no
+necesita bloquear la secuencia (ej. una migracion redundante para una futura
+reinstalacion completa, no para el flujo normal).
+
+**Antes del PRIMER bootstrap de la tabla ledger contra una BD real ya instalada,
+audita TODOS los CHECK constraints (o cualquier DDL acumulativo por naturaleza —
+un ALTER que se fue extendiendo release a release) contra los valores REALES que
+existen hoy en esa BD, de una sola pasada — no lo descubras uno a uno dejando que
+el runner falle y reintentando.** Un CHECK constraint que una migracion vieja
+extendio con "los valores conocidos en ese momento" casi siempre queda incompleto
+frente a datos reales de produccion (estados de negocio agregados despues, filas
+corregidas a mano fuera de proceso, etc.) — el primer apply real contra esa BD va a
+fallar ahi, y repetir el ciclo fallo→investigar→corregir uno por uno es mucho mas
+lento que auditar todos los constraints de este tipo en una sola pasada al
+principio (compara el set que asume el ultimo script que lo toca contra
+`information_schema`/catalogos reales, y contra lo que el schema.sql de instalacion
+limpia ya documenta — puede que el schema limpio ya tenga el set correcto y solo
+falte el script que alinee un ambiente existente a ese estado).
+
+### Numeracion de migraciones: UNA convencion y verificacion de aplicacion
+- **Una sola convencion de numeracion por proyecto** (`NNN_descripcion.sql`). NUNCA
+  mezclar `NNN_` con `YYYYMMDD_` u otra: en un incidente real, una migracion nombrada
+  por fecha quedo fuera de la secuencia aplicada a mano y nunca corrio — el mismo
+  incidente se repitio DOS veces porque la causa raiz (convencion mixta + sin
+  mecanismo de auto-apply) no se ataco la primera vez.
+- El orden del NUMERO de archivo debe reflejar el orden REAL de dependencias
+  (en EF, el timestamp interno de la migracion puede no coincidir con el numero —
+  verifica antes de renumerar).
+- Tras cualquier apply (manual o CI), **verifica que se aplico**: consulta la tabla
+  ledger/`__EFMigrationsHistory` — no asumas por la salida del comando.
+- Si dos carpetas generan migraciones (docs/ y el proyecto), el contador es
+  COMPARTIDO; ante colision, conserva el numero **quien ya se aplico primero** en
+  algun ambiente real, y renumera el que no se aplico.
+
+### Tablas en bases de datos COMPARTIDAS: prefijo de proyecto obligatorio
+Si el proyecto aloja tablas en un schema que comparte con otros sistemas (BD
+productiva comun), TODA tabla/vista/procedure nuevo lleva prefijo del proyecto
+(`ro_`, `confirming_`, etc.) — MySQL no puede acotar DDL por grant, el prefijo es
+el unico guardarrail real contra colisiones. Nombres genericos (`sistema_error_log`,
+`usuarios`) estan PROHIBIDOS en schema compartido.
 
 ### Encoding y caracteres especiales (acentos, ñ, símbolos) — REGLA GLOBAL
 Al migrar datos o preparar CUALQUIER script, los acentos y caracteres especiales

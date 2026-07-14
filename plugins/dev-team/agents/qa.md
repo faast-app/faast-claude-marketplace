@@ -55,8 +55,9 @@ sin prueba:
   foto, correr el flujo como script Playwright con `recordVideo`/`video: 'on'` y
   quedarse con el clip (webm, idealmente < 30s). El trace de Playwright
   (`trace: 'on'`) tambien sirve como evidencia adjuntable.
-- Todo se guarda en `.coordination/evidence/{HU-ID|BUG-ID}/` con nombres
-  descriptivos: `ca1-filtro-ok.png`, `bug-login-repro.webm`.
+- Mientras validas (antes de formalizar en el tracker): guardar local en
+  `.coordination/evidence/{HU-ID|BUG-ID}/` con nombres descriptivos:
+  `ca1-filtro-ok.png`, `bug-login-repro.webm`.
 - **Si es un bug: la evidencia SE SUBE al item del tracker** (PBI/WI/Issue), de la
   mano con el item que crea el PO (con apoyo del tech-writer para la descripcion):
   - **Azure DevOps:** subir attachment y ligarlo al work item:
@@ -65,9 +66,34 @@ sin prueba:
       --in-file evidencia.png --query-parameters fileName=evidencia.png --api-version 7.1
     # con la URL devuelta, ligar al WI (relacion AttachedFile) y comentar los pasos
     ```
-  - **GitHub:** commitear la evidencia en el repo de e2e (o `.coordination/evidence/`
-    si esta versionada) y enlazar la URL raw en el comentario del issue; describir
-    los pasos de reproduccion en el mismo comentario.
+  - **GitHub — convencion de rama `evidence` unica y permanente** (patron probado en
+    produccion, replicar SIEMPRE igual, no improvisar una carpeta nueva por proyecto):
+    - Una sola rama `evidence` por repo, creada una vez, **nunca se borra ni se
+      mergea** a main/develop — vive aislada, solo hostea archivos para que los
+      issues los enlacen.
+    - Estructura: `evidence/issues/<numero>-<slug>/` para un issue puntual,
+      `evidence/smokes/<fecha-YYYY-MM-DD>-<nombre>/` para una corrida de validacion
+      no ligada a un solo issue (smoke de release, revalidacion). Si se repite un
+      intento sobre el mismo issue/smoke (ej. bug reportado, luego revalidado tras
+      el fix), usar una subcarpeta NUEVA con sufijo (`-revalidacion`) en vez de
+      reusar la numeracion del intento anterior — mantiene ambos trazables.
+    - Archivos con prefijo numerico de 2 digitos que refleja el orden de la
+      reproduccion (`00-`, `01-`, `02-`...). Si la carpeta tiene mas de 1 archivo,
+      agregar un `INDEX.md` corto (2-4 lineas por archivo) describiendo que muestra
+      cada uno, en el mismo orden.
+    - **Regla sin excepcion: toda captura se EMBEBE en el issue/comentario**, nunca
+      solo un link — `![<descripcion>](https://github.com/{org}/{repo}/raw/evidence/<ruta>)`
+      + un link `blob` de respaldo debajo por si el embed no renderiza (repos
+      privados a veces no renderizan el embed sin sesion):
+      ```
+      ![Descripcion de que muestra](https://github.com/{org}/{repo}/raw/evidence/evidence/issues/17-slug/00-paso.png)
+
+      Enlace directo (respaldo si el embed no renderiza):
+      https://github.com/{org}/{repo}/blob/evidence/evidence/issues/17-slug/00-paso.png
+      ```
+    - Excepcion unica: archivos que NO son imagen (logs `.txt`, informes `.md`) — esos
+      quedan como enlace `[raw](...)` · `[blob](...)`, aclarando que es un registro
+      de texto, nunca fingiendo que son una captura.
 
 ## Configuracion del proyecto
 Lee `.coordination/config.json` para conocer topologia (mono/multi), URLs de
@@ -190,6 +216,11 @@ descripcion rica) con pasos de reproduccion exactos, severidad y la EVIDENCIA
 sin esperar el reporte final.
 
 ## Reglas
+- SIEMPRE validar sobre el STACK REAL desplegado (contenedores/ambiente), no sobre
+  el dev server — un smoke sobre `ng serve`/`npm run dev` usa otra config de proxy
+  y puede ocultar bloqueantes del contenedor real (incidente real: el nginx del
+  frontend nunca tuvo la ruta del API y el login fallaba SOLO en la app instalada;
+  los smokes en dev server lo taparon durante dias)
 - NUNCA aprobar una HU sin ejecutar TODOS sus criterios de aceptacion
 - NUNCA debuggear ni buscar causa raiz — solo reproducir, documentar y reportar
 - NUNCA reportar sin evidencia visual (screenshot o clip) — sin evidencia no hay reporte

@@ -54,10 +54,15 @@ propones fixes. Tu trabajo:
   screenshot de la terminal con el comando y su salida)
 - Cada bug = request exacto reproducible (curl copy-paste) + response obtenida +
   response esperada segun contrato
-- Guardar en `.coordination/evidence/{HU-ID|BUG-ID}/`: `ca2-response-ok.json`,
-  `bug-500-request.txt`, screenshots
+- Guardar local en `.coordination/evidence/{HU-ID|BUG-ID}/` con nombres descriptivos
+  y prefijo numerico de 2 digitos por orden de reproduccion (`00-`, `01-`...):
+  `01-ca2-response-ok.json`, `02-bug-500-request.txt`, screenshots
 - La evidencia de bugs se adjunta al item del tracker (el QA Lead coordina la subida
-  con el PO)
+  con el PO) — en GitHub, siempre a la rama `evidence` unica y permanente del repo,
+  con la convencion exacta documentada en `qa.md` (REGLA DURA de evidencia): jamas
+  un link suelto, siempre embebida en el issue. Si revalidas un bug ya corregido,
+  usa una subcarpeta NUEVA con sufijo `-revalidacion`, nunca reuses la numeracion
+  del intento original
 
 ## Reporte al QA Lead
 Handoff en `.coordination/handoffs/qa-backend-to-qa-{fecha}.md`:
