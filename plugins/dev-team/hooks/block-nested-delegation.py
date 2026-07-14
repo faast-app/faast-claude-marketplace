@@ -17,6 +17,13 @@ import json, sys
 TEAM = {"setup","product-owner","architect","ui-designer","lead","backend","frontend",
         "dba","qa","qa-frontend","qa-backend","release-manager","infra","cybersec","tech-writer"}
 CHEAP_OK = {"explore"}  # agentes de busqueda solo-lectura, baratos: permitidos
+# comandos del plugin (NO son agentes): correrlos como subagente recarga todo el
+# contexto y quema tokens — se ejecutan inline con el Skill tool. "setup" no esta
+# aqui porque tambien existe el AGENTE setup (legitimo).
+SKILLS_NOT_AGENTS = {"assign-task","db-health","deploy-check","document","e2e",
+        "git-check","handoff","inbox","new-project","onboard","pase","refine",
+        "review-pr","security-audit","start","status","sync","team-metrics",
+        "team-office","test-plan","wiki"}
 
 def short(name):
     return (name or "").strip().split(":", 1)[-1].lower()
@@ -34,11 +41,20 @@ def deny(reason):
 def main():
     payload = json.load(sys.stdin)
     caller = short(payload.get("agent_type"))
-    # sesion principal o agente ajeno al equipo → no intervenir
-    if not payload.get("agent_id") or caller not in TEAM:
-        return
     tool_input = payload.get("tool_input") or {}
     target = short(tool_input.get("subagent_type") or tool_input.get("agentType") or "")
+
+    # comandos /dev-team:* corridos como subagente: bloquear SIEMPRE (tambien en
+    # la sesion principal) — recargan todo el contexto; deben correr inline
+    raw = (tool_input.get("subagent_type") or tool_input.get("agentType") or "")
+    if target in SKILLS_NOT_AGENTS and ("dev-team" in raw.lower() or caller in TEAM):
+        deny(f"'{target}' es un COMANDO del plugin, no un agente. Ejecutalo INLINE "
+             f"en esta sesion con el Skill tool (/dev-team:{target}) — correrlo como "
+             "subagente recarga todo el contexto desde cero y quema tokens sin beneficio.")
+
+    # sesion principal o agente ajeno al equipo → no intervenir en lo demas
+    if not payload.get("agent_id") or caller not in TEAM:
+        return
 
     if target in CHEAP_OK:
         return

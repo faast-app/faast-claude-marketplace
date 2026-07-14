@@ -2,6 +2,13 @@
 description: Verifica estado de git antes de commitear (branch correcto, archivos correctos, sin conflictos)
 ---
 
+> **Ejecucion INLINE obligatoria:** este es un COMANDO, no un agente. Ejecuta su
+> procedimiento en la sesion actual (el contexto ya esta cacheado). NUNCA lo
+> corras dentro de un subagente ni lo invoques via Agent/Task — eso recarga todo
+> el contexto desde cero y quema tokens. Solo se delegan los AGENTES del equipo,
+> y unicamente cuando este procedimiento lo indica.
+
+
 Ejecuta verificaciones de git antes de commitear:
 
 1. **Branch:** `git branch --show-current`

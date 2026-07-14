@@ -3,6 +3,13 @@ description: QA automatiza y/o ejecuta pruebas E2E con Playwright. Puede validar
 argument-hint: Que hacer - "HU-042" (validar y automatizar esa HU), "run" (correr la suite), "explorar {url}" (prueba exploratoria)
 ---
 
+> **Ejecucion INLINE obligatoria:** este es un COMANDO, no un agente. Ejecuta su
+> procedimiento en la sesion actual (el contexto ya esta cacheado). NUNCA lo
+> corras dentro de un subagente ni lo invoques via Agent/Task — eso recarga todo
+> el contexto desde cero y quema tokens. Solo se delegan los AGENTES del equipo,
+> y unicamente cuando este procedimiento lo indica.
+
+
 # E2E: Pruebas automatizadas con Playwright
 
 Pedido: $ARGUMENTS

@@ -3,6 +3,13 @@ description: Dashboard del Lead - productividad y consumo de tokens por agente. 
 argument-hint: "[--watch] [--sprint | --semana | --todo]"
 ---
 
+> **Ejecucion INLINE obligatoria:** este es un COMANDO, no un agente. Ejecuta su
+> procedimiento en la sesion actual (el contexto ya esta cacheado). NUNCA lo
+> corras dentro de un subagente ni lo invoques via Agent/Task — eso recarga todo
+> el contexto desde cero y quema tokens. Solo se delegan los AGENTES del equipo,
+> y unicamente cuando este procedimiento lo indica.
+
+
 Genera el dashboard de desempeño del equipo de agentes. Lo ejecuta el `lead`.
 
 Argumentos: $ARGUMENTS (default: periodo del sprint actual; `--watch` = modo live)

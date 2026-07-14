@@ -3,6 +3,13 @@ description: El Product Owner convierte tu pedido en Historias de Usuario profes
 argument-hint: Que necesitas, en tus palabras (ej. "los analistas necesitan filtrar cobranzas por fecha") o ruta a un documento
 ---
 
+> **Ejecucion INLINE obligatoria:** este es un COMANDO, no un agente. Ejecuta su
+> procedimiento en la sesion actual (el contexto ya esta cacheado). NUNCA lo
+> corras dentro de un subagente ni lo invoques via Agent/Task — eso recarga todo
+> el contexto desde cero y quema tokens. Solo se delegan los AGENTES del equipo,
+> y unicamente cuando este procedimiento lo indica.
+
+
 # Refine: De pedido a Historias de Usuario
 
 Pedido del usuario: $ARGUMENTS

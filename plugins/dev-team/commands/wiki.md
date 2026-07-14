@@ -3,6 +3,13 @@ description: Wiki viva del proyecto (patron LLM Wiki de Karpathy, vault de Obsid
 argument-hint: "init | ingest | lint | query <pregunta>"
 ---
 
+> **Ejecucion INLINE obligatoria:** este es un COMANDO, no un agente. Ejecuta su
+> procedimiento en la sesion actual (el contexto ya esta cacheado). NUNCA lo
+> corras dentro de un subagente ni lo invoques via Agent/Task — eso recarga todo
+> el contexto desde cero y quema tokens. Solo se delegan los AGENTES del equipo,
+> y unicamente cuando este procedimiento lo indica.
+
+
 Opera la wiki del proyecto en `.coordination/wiki/` usando el agente `tech-writer`.
 
 Argumentos: $ARGUMENTS
