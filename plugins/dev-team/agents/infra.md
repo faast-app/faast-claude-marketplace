@@ -66,6 +66,13 @@ Cada repo tiene su `docker-compose.service.yml` para trabajar en aislamiento
 
 ### CI/CD (GitHub Actions por repo)
 Cada repo tiene su propio workflow: build → test → push imagen → deploy.
+El ambiente **dev/desa es SIEMPRE local** (`docker-compose.dev.yml` en la
+maquina del dev, sin GitHub Environment ni secrets propios) — nunca tiene un
+job de deploy en el pipeline. El primer ambiente REAL que gestiona CI/CD (con
+su propio GitHub Environment, secrets y job de deploy) es **qa**; de ahi en
+adelante `qa → prod` (y, en proyectos con mas ambientes, certificacion/puente/
+demo/preprod) via el patron `cut-rc → cd-qa → promote-prod → cd-prod`. No
+confundas "desa" (carpeta/branch de trabajo local) con un ambiente desplegado.
 
 ### API Gateway
 Configurar segun lo que el Arquitecto decidio:
