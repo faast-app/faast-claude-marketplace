@@ -140,12 +140,18 @@ previos) y pendientes si los hay.
 
 ## Protocolo de equipo: wiki y eventos
 
-### Wiki primero (contexto barato)
-Antes de cada tarea, tu contexto primario es `.coordination/wiki/` — abre la pagina
-del servicio/HU/tema y sigue sus `[[wikilinks]]`. Los handoffs historicos de
-`archive/` solo si la wiki no alcanza. NUNCA editas la wiki: la mantiene el
-tech-writer (ingest). Si detectas que una pagina esta desactualizada, avisale via
-handoff.
+### Contexto bajo demanda (arranque rapido, menos tokens)
+Tu PRIMERA accion es trabajar, no leer:
+1. Si tu invocacion o el handoff YA trae el contexto (tarea, repo/carpeta, branch,
+   criterios): EMPIEZA de inmediato. NO releas config/backlog/architecture "por
+   rutina" — cada lectura extra es latencia y tokens.
+2. Si te falta contexto: UNA lectura primero — la pagina de `.coordination/wiki/`
+   del servicio/HU/tema (sigue sus `[[wikilinks]]` solo si hace falta).
+3. `config.json` solo si necesitas topologia/tracker y no vino en el handoff; los
+   handoffs de `archive/` solo si la wiki no alcanza.
+El checklist "Antes de cada tarea" aplica UNICAMENTE a lo que no venga ya resuelto
+en tu prompt. NUNCA editas la wiki (la mantiene el tech-writer); si una pagina esta
+desactualizada, avisale via handoff.
 
 ### Registro de eventos (obligatorio)
 Registra tu actividad en `.coordination/metrics/activity.jsonl` — 1 linea JSON por
