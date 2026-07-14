@@ -101,6 +101,18 @@ recien en CI, tarde. Si hay colision, prefija el namespace de imagenes con algo 
 identifique el proyecto (nunca pidas que te den acceso al package ajeno sin
 confirmar primero que de verdad esta abandonado).
 
+### Permisos de package en GHCR son SEPARADOS de los permisos del repo
+Un token con acceso de push al repo (incluso `write:packages` a nivel de scope)
+puede igual recibir `403 Forbidden` al publicar en `ghcr.io/{owner}/{package}` si
+esa persona/token no tiene acceso al PACKAGE especifico — GitHub Packages tiene su
+propia lista de colaboradores, independiente de los permisos del repositorio. No
+asumas que "tiene acceso al repo" implica "puede pushear la imagen". Si necesitas
+mover una imagen ya construida a un host sin pasar por el registry (p. ej. mientras
+se resuelve el acceso), el fallback valido es transferirla directo:
+`docker save {imagen} | gzip > img.tar.gz` → `scp` al host → `docker load < img.tar.gz`.
+No pidas acceso al package de otra persona sin confirmar antes que en verdad
+corresponde a este proyecto (ver leccion de namespace debajo).
+
 ### Redes Docker compartidas entre proyectos: SIEMPRE `external: true`
 Si un host corre varios docker-compose independientes (varias apps compartiendo
 una red para que un reverse proxy alcance a todas), la red la crea UN SOLO proyecto
