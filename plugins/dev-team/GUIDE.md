@@ -92,6 +92,10 @@ falte**. Nunca te vas a topar con un error criptico por una herramienta faltante
 > El lead (y los flujos) pasan ese valor como override al invocar al agente.
 > Valores: `haiku` | `sonnet` | `opus`. Util para equipos con limites ajustados
 > (todo en sonnet) o proyectos complejos (architect en opus).
+>
+> **Config personal (global a TUS proyectos):** el mismo bloque en
+> `~/.claude/dev-team.config.json` aplica en toda tu maquina; el config del
+> proyecto tiene prioridad sobre el personal.
 > **Excepcion fija:** los agentes con default `haiku` (setup, tech-writer) NO son
 > configurables — su modelo no se altera y cualquier entrada para ellos se ignora.
 

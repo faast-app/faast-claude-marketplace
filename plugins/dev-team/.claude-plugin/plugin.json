@@ -1,7 +1,7 @@
 {
   "name": "dev-team",
   "description": "Equipo completo de desarrollo con 15 agentes IA que cubre todo el ciclo de vida: Product Owner (HUs en GitHub Projects o Azure DevOps), Arquitecto, UI Designer, Lead, Backend, Frontend, DBA, equipo QA (Lead + especialistas frontend/backend con Playwright y evidencia), Release Manager (pases a ambientes), Infra/DevOps, Ciberseguridad, Tech Writer y Setup. Soporta mono-repo y multi-repo, proyectos nuevos o existentes.",
-  "version": "2.6.2",
+  "version": "2.6.3",
   "author": {
     "name": "Carlos Fuentes",
     "email": "carlos.fuentes@faast.cl"
