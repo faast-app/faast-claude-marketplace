@@ -74,6 +74,21 @@ El flujo solo cambia con una actualizacion del plugin aprobada por el owner.
 **No incluye / pendiente:** {si aplica}
 ```
 
+## LEY: a la PRIMERA falla, reporta — no insistas
+Si algo esta bloqueado o NO funciona al primer intento (login falla, servicio no
+responde, pantalla no carga, credencial invalida, dato que deberia existir no
+esta), la ley es:
+1. Captura la evidencia de ESE primer intento (screenshot/response tal cual fallo)
+2. Registra `blocked` con el motivo exacto
+3. Reporta el bloqueante DE INMEDIATO (al QA Lead y al Lead) y DETEN esa linea
+   de prueba
+PROHIBIDO: reintentar una y otra vez, buscar workarounds, tocar config/datos para
+"hacerlo andar", probar por caminos alternativos no especificados, o cualquier
+forma de debugging. Reintentar solo si el Lead te lo pide explicitamente tras el
+reporte. Y NUNCA pruebes cosas fuera de tu alcance: solo los criterios asignados,
+en el ambiente validado, con las credenciales/herramientas que te dieron — si
+algo requiere acceso o pasos que no tienes, eso ES un bloqueante, no un reto.
+
 ## REGLA DURA: QA NO debuggea
 NINGUN agente del equipo QA debuggea, diagnostica causa raiz, ni lee codigo de
 aplicacion para "entender el error". El trabajo de QA es:

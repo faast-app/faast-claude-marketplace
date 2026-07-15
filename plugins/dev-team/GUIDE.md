@@ -112,6 +112,10 @@ falte**. Nunca te vas a topar con un error criptico por una herramienta faltante
   para ambientes desplegados exige el informe (que se desplego, version exacta,
   health OK); en desa exige el stack COMPLETO levantado. Replica en el ambiente qa
   siempre que este disponible. Nadie puede saltarse este flujo
+- **LEY QA: a la primera falla, reporta** — si algo no funciona al primer intento,
+  evidencia + `blocked` + reporte inmediato; prohibido reintentar, buscar
+  workarounds o probar fuera de su alcance (criterios asignados, ambiente
+  validado, credenciales dadas)
 - **QA no debuggea** — reproduce, documenta y reporta (bloqueantes de inmediato),
   SIEMPRE con evidencia: screenshots o clips cortos, adjuntos al item del tracker
 - **Cybersec es segundo gate** en features que tocan auth o datos sensibles y nunca commitea
