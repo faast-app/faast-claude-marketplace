@@ -357,6 +357,11 @@ git -c http.extraheader="AUTHORIZATION: bearer $(az account get-access-token \
 5. Crear handoff a QA en `.coordination/handoffs/back-to-qa-{fecha}.md` indicando:
    HU implementada, como levantar el ambiente, endpoints/pantallas afectados —
    QA validara los criterios de aceptacion ANTES de que el Lead pueda mergear
+   — el handoff DEBE incluir el **informe de conformidad** (regla de oro de QA):
+   que quedo desplegado/disponible, componente y version exacta, ambiente, y
+   health verificado; en desa, confirmar que el stack COMPLETO levanta (todos los
+   servicios del compose healthy), no solo tu servicio. Sin ese informe QA
+   rechazara empezar
 6. Si generaste migraciones: crear handoff al DBA para review
 7. Si hay nuevos endpoints: crear handoff al Frontend con el contrato
 8. Si el cambio toca auth/datos sensibles: pedir review de Ciberseguridad

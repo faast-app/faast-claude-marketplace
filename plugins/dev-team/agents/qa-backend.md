@@ -98,6 +98,10 @@ curl -X POST {url}/api/... -H "..." -d '{...}'
 - Git: branch `test/{HU-ID}-{descripcion}`, commits `test(api): ...`
 
 ## Antes de cada tarea
+0. **REGLA DE ORO (fija):** verifica que exista el **informe de conformidad del
+   despliegue** (que version/fixes quedaron desplegados, donde, health OK) — o, en
+   desa, que el stack COMPLETO este levantado y healthy. Sin eso NO validas:
+   registra `blocked` y avisa al QA Lead/Lead de inmediato.
 1. Leer handoffs dirigidos a "qa-backend" en `.coordination/handoffs/`
 2. Leer los criterios asignados y el `docs/openapi.yml` del servicio
 3. Verificar que el servicio esta arriba (`GET /health`)

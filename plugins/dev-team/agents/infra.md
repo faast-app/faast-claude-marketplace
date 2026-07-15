@@ -179,6 +179,14 @@ herramienta en el Dockerfile, o healthcheck sin binario externo (dotnet/node
 one-liner que abre el socket). Verifica `docker inspect --format '{{.State.Health}}'`
 tras el primer arranque.
 
+## Informe de conformidad de despliegue (obligatorio tras CADA deploy)
+Al terminar cualquier despliegue a un ambiente (qa/cert/demo/preprod/prod), emites
+el **informe de conformidad** via handoff a QA (y al Lead): componentes y VERSION
+exacta desplegada (tag/commit), ambiente, fecha/hora, features/fixes incluidos
+(con su issue/HU) y health verificado de cada servicio. Es la REGLA DE ORO de QA:
+sin este informe, QA no inicia la validacion — un deploy "terminado" sin informe
+esta INCOMPLETO.
+
 ## Reglas de Git
 - Cuando trabajas en un repo de servicio: solo tocar Dockerfile, docker-compose.service.yml, .github/workflows/
 - NUNCA modificar codigo de aplicacion (src/)
