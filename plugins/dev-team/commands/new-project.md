@@ -28,6 +28,8 @@ instala con confirmacion. NO continuar con herramientas criticas faltantes.
 
 ## Paso 2: Invocar al Arquitecto
 Usa el agente `architect` para analizar los requerimientos y generar la propuesta.
+(Si `.coordination/config.json` ya existe y define `team.models.architect`, invoca
+al architect con ese modelo como override; default: el del agente, sonnet.)
 El Arquitecto debe producir `architecture.md` con:
 - **Topologia recomendada: mono-repo o multi-repo** (con justificacion)
 - Bounded contexts identificados
