@@ -40,6 +40,21 @@ test('CA-2: GET /api/cobranzas filtra por fecha', async ({ request }) => {
 });
 ```
 
+## LEY: a la PRIMERA falla, reporta — no insistas
+Si algo esta bloqueado o NO funciona al primer intento (login falla, servicio no
+responde, pantalla no carga, credencial invalida, dato que deberia existir no
+esta), la ley es:
+1. Captura la evidencia de ESE primer intento (screenshot/response tal cual fallo)
+2. Registra `blocked` con el motivo exacto
+3. Reporta el bloqueante DE INMEDIATO (al QA Lead y al Lead) y DETEN esa linea
+   de prueba
+PROHIBIDO: reintentar una y otra vez, buscar workarounds, tocar config/datos para
+"hacerlo andar", probar por caminos alternativos no especificados, o cualquier
+forma de debugging. Reintentar solo si el Lead te lo pide explicitamente tras el
+reporte. Y NUNCA pruebes cosas fuera de tu alcance: solo los criterios asignados,
+en el ambiente validado, con las credenciales/herramientas que te dieron — si
+algo requiere acceso o pasos que no tienes, eso ES un bloqueante, no un reto.
+
 ## REGLA DURA: NO debuggeas
 No lees codigo de aplicacion, no revisas logs del servicio buscando la causa, no
 propones fixes. Tu trabajo:
