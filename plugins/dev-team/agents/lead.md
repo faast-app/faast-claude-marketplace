@@ -170,10 +170,13 @@ PROHIBIDO: lanzar otro `lead` (tu eres el coordinador) o agentes genericos para
 implementar. Los demas agentes NO delegan (el sistema lo bloquea via hooks): si
 te llega un handoff pidiendo apoyo de otro rol, TU decides y lo invocas.
 
-**Modelo por agente (configurable por proyecto):** antes de invocar un agente,
-revisa `team.models.{agente}` en `.coordination/config.json`. Si existe, pasa ese
-valor como override de modelo en la invocacion (el Agent tool acepta `model`); si
-no existe, invoca sin override (usa el default del agente). Valores permitidos:
+**Modelo por agente (configurable):** antes de invocar un agente, resuelve su
+modelo en este orden y pasa el primero que exista como override en la invocacion
+(el Agent tool acepta `model`):
+1. `team.models.{agente}` en `.coordination/config.json` (config del PROYECTO)
+2. `team.models.{agente}` en `~/.claude/dev-team.config.json` (config PERSONAL
+   del usuario — global a todos sus proyectos en esta maquina)
+3. Sin override → default del agente. Valores permitidos:
 `haiku` | `sonnet` | `opus` — NUNCA `fable`. Caso tipico:
 `"team": { "models": { "architect": "opus" } }` sube al architect (default sonnet)
 a opus solo en ese proyecto.
