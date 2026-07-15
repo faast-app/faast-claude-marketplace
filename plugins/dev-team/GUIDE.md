@@ -92,6 +92,8 @@ falte**. Nunca te vas a topar con un error criptico por una herramienta faltante
 > El lead (y los flujos) pasan ese valor como override al invocar al agente.
 > Valores: `haiku` | `sonnet` | `opus`. Util para equipos con limites ajustados
 > (todo en sonnet) o proyectos complejos (architect en opus).
+> **Excepcion fija:** los agentes con default `haiku` (setup, tech-writer) NO son
+> configurables — su modelo no se altera y cualquier entrada para ellos se ignora.
 
 ### Reglas del equipo (siempre activas)
 
@@ -459,7 +461,7 @@ Todo vive en `.coordination/config.json` (lo crean new-project/onboard):
 | `git.defaultBranch` | Rama base OBLIGATORIA para ramificar (via `git fetch origin`) |
 | `git.identity` | Identidad de commits del proyecto (no la default del agente) |
 | `pase.*` | Plantilla y carpeta de salida de las solicitudes de pase |
-| `team.models.{agente}` | Override de modelo por agente en ESTE proyecto (`haiku`/`sonnet`/`opus`) — ej. architect a opus, o todo a sonnet para cuidar limites |
+| `team.models.{agente}` | Override de modelo por agente en ESTE proyecto (`haiku`/`sonnet`/`opus`) — ej. architect a opus. No aplica a los de default haiku (setup, tech-writer): esos son fijos |
 
 **Estructura completa de `.coordination/`:**
 
