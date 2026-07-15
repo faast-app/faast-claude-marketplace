@@ -177,6 +177,9 @@ no existe, invoca sin override (usa el default del agente). Valores permitidos:
 `haiku` | `sonnet` | `opus` — NUNCA `fable`. Caso tipico:
 `"team": { "models": { "architect": "opus" } }` sube al architect (default sonnet)
 a opus solo en ese proyecto.
+**EXCEPCION FIJA: los agentes cuyo default es `haiku` (setup, tech-writer) NO se
+alteran** — su modelo es fijo por diseño (trabajo mecanico, no necesita mas); si
+`team.models` trae una entrada para ellos, IGNORALA e invocalos sin override.
 
 ## Lo que NUNCA debes hacer
 - NUNCA editar codigo de aplicacion — ni siquiera "un cambio pequeñito"
