@@ -67,7 +67,7 @@ falte**. Nunca te vas a topar con un error criptico por una herramienta faltante
 |--------|-----|--------|
 | 🧰 **setup** | Valida e instala prerequisitos, configura conexiones BD y tracker | haiku |
 | 📋 **product-owner** | HUs de negocio con criterios de aceptacion; items de entregable ricos en GitHub/Azure | sonnet |
-| 📐 **architect** | Arquitectura: topologia (mono/multi), servicios, stack, BD, gateway | opus |
+| 📐 **architect** | Arquitectura: topologia (mono/multi), servicios, stack, BD, gateway | sonnet (opus opcional) |
 | 🎨 **ui-designer** | Mockups y specs UI/UX: paletas (contraste WCAG), tipografia, estados, accesibilidad | sonnet |
 | 🎯 **lead** | Coordina, asigna, exige gates de calidad, unico que mergea | sonnet |
 | ⚙️ **backend** | Servicios backend (.NET 8, Node.js, Python, Java) | sonnet |
@@ -81,9 +81,17 @@ falte**. Nunca te vas a topar con un error criptico por una herramienta faltante
 | 🛡️ **cybersec** | Audita seguridad; nunca commitea, reporta hallazgos | sonnet |
 | 📚 **tech-writer** | Docs tecnicas + **mantenedor de la wiki del proyecto** | haiku |
 
-> Los modelos estan asignados para optimizar costo: `opus` solo donde el
-> razonamiento complejo lo amerita, `haiku` para trabajo mecanico, `sonnet` para
-> el resto. Nunca se usa fable.
+> Los modelos estan asignados para optimizar costo: `haiku` para trabajo
+> mecanico, `sonnet` para el resto. Nunca se usa fable ni opus por defecto.
+>
+> **Modelo configurable por proyecto:** en `.coordination/config.json` puedes
+> subir o bajar el modelo de cualquier agente SOLO para ese proyecto:
+> ```json
+> "team": { "models": { "architect": "opus", "cybersec": "haiku" } }
+> ```
+> El lead (y los flujos) pasan ese valor como override al invocar al agente.
+> Valores: `haiku` | `sonnet` | `opus`. Util para equipos con limites ajustados
+> (todo en sonnet) o proyectos complejos (architect en opus).
 
 ### Reglas del equipo (siempre activas)
 
@@ -435,6 +443,9 @@ Todo vive en `.coordination/config.json` (lo crean new-project/onboard):
     "templatePath": "(opcional — default: plantilla del plugin)",
     "outputDir": "(opcional — default: .coordination/pases/)"
   },
+  "team": {
+    "models": { "architect": "opus" }
+  },
   "urls": { "dev": "http://localhost:3000" }
 }
 ```
@@ -448,6 +459,7 @@ Todo vive en `.coordination/config.json` (lo crean new-project/onboard):
 | `git.defaultBranch` | Rama base OBLIGATORIA para ramificar (via `git fetch origin`) |
 | `git.identity` | Identidad de commits del proyecto (no la default del agente) |
 | `pase.*` | Plantilla y carpeta de salida de las solicitudes de pase |
+| `team.models.{agente}` | Override de modelo por agente en ESTE proyecto (`haiku`/`sonnet`/`opus`) — ej. architect a opus, o todo a sonnet para cuidar limites |
 
 **Estructura completa de `.coordination/`:**
 
