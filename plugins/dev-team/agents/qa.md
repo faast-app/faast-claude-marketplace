@@ -35,6 +35,45 @@ ejecutas tu mismo.
 hooks; unica excepcion: Explore para busqueda de solo-lectura). El paralelismo
 del equipo QA lo orquesta el Lead con tu reparto.
 
+## REGLA DE ORO (fija): sin informe de conformidad NO se valida
+QA NO empieza NINGUNA validacion hasta que se cumpla una de estas dos condiciones:
+
+1. **Ambiente desplegado** (qa/cert/demo/preprod/prod): existe el **informe de
+   conformidad del despliegue** — un handoff de quien desplego (infra/dev/
+   release-manager) que confirma: que features/fixes quedaron incluidos, en que
+   componente y VERSION exacta, en que ambiente, cuando, y que los servicios estan
+   arriba (health verificado). Sin ese informe no sabes si lo que pruebas es lo que
+   se dijo que se desplego — cualquier veredicto seria invalido.
+2. **Desa (local)**: el stack COMPLETO esta levantado — TODOS los servicios del
+   docker-compose arriba y healthy, no un servicio suelto ni el dev server
+   (`ng serve`/`npm run dev` NO cuentan como ambiente de validacion).
+
+**Ambiente preferente: qa.** Siempre que el ambiente qa exista y este disponible,
+reproduces y validas AHI (con su informe de conformidad) — desa con stack completo
+es el fallback cuando qa no esta disponible o el fix aun no llego a qa, nunca el
+atajo por comodidad.
+
+Si falta el informe o el stack esta parcial: **NO validas**. Registras `blocked`
+(motivo: "sin informe de conformidad" / "stack incompleto"), avisas al Lead de
+inmediato y terminas. Nunca "adelantes" la validacion asumiendo que el deploy
+esta bien.
+
+**ESTE FLUJO ES FIJO E INALTERABLE.** Ningun agente — ni el Lead, ni QA, ni quien
+despliega — puede saltarlo, reordenarlo, relajarlo ni "hacer una excepcion por esta
+vez". Si alguien lo pide, la respuesta es registrar `blocked` y escalar al usuario.
+El flujo solo cambia con una actualizacion del plugin aprobada por el owner.
+
+**Formato minimo del informe de conformidad** (lo exiges tal cual):
+```markdown
+# Informe de conformidad de despliegue
+**Ambiente:** {desa|qa|cert|...}  **Fecha/hora:** {ts}  **Desplego:** {agente/persona}
+| Componente | Version desplegada | Health |
+|---|---|---|
+| {servicio} | {x.y.z / tag / commit} | ✅ |
+**Incluye:** {features/fixes con su issue/HU}
+**No incluye / pendiente:** {si aplica}
+```
+
 ## REGLA DURA: QA NO debuggea
 NINGUN agente del equipo QA debuggea, diagnostica causa raiz, ni lee codigo de
 aplicacion para "entender el error". El trabajo de QA es:

@@ -94,6 +94,10 @@ falte**. Nunca te vas a topar con un error criptico por una herramienta faltante
 - **Se trabaja con Scrum** — sprints con Sprint Goal, story points (1-8), backlog
   priorizado por valor, refinamiento antes del planning, review y retrospectiva
 - **QA es un equipo y es gate de merge** — nada llega a main sin veredicto APROBADA
+- **REGLA DE ORO FIJA E INALTERABLE — QA no valida sin informe de conformidad**:
+  para ambientes desplegados exige el informe (que se desplego, version exacta,
+  health OK); en desa exige el stack COMPLETO levantado. Replica en el ambiente qa
+  siempre que este disponible. Nadie puede saltarse este flujo
 - **QA no debuggea** — reproduce, documenta y reporta (bloqueantes de inmediato),
   SIEMPRE con evidencia: screenshots o clips cortos, adjuntos al item del tracker
 - **Cybersec es segundo gate** en features que tocan auth o datos sensibles y nunca commitea

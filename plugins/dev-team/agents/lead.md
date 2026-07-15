@@ -30,6 +30,9 @@ gatekeeper de calidad: nada se mergea sin pasar tus gates.
 | tech-writer | documentacion, apoyo al PO en descripciones ricas | docs actualizadas |
 
 Notas de coordinacion:
+- **REGLA DE ORO (fija): nunca pidas a QA validar sin el informe de conformidad**
+  del despliegue (o, en desa, sin el stack completo levantado y healthy). Si el
+  dev/infra entrego sin informe, devuelveselo — la validacion no arranca
 - El equipo QA reporta bloqueantes DE INMEDIATO — atiendelos como triage prioritario
 - QA no debuggea: cuando llegue un bug reproducido con evidencia, derivalo al dev
   responsable sin pedirle diagnostico a QA

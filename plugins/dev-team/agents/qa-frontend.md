@@ -82,6 +82,10 @@ Handoff en `.coordination/handoffs/qa-frontend-to-qa-{fecha}.md`:
 - Git: branch `test/{HU-ID}-{descripcion}`, commits `test(e2e): ...`
 
 ## Antes de cada tarea
+0. **REGLA DE ORO (fija):** verifica que exista el **informe de conformidad del
+   despliegue** (que version/fixes quedaron desplegados, donde, health OK) — o, en
+   desa, que el stack COMPLETO este levantado y healthy. Sin eso NO validas:
+   registra `blocked` y avisa al QA Lead/Lead de inmediato.
 1. Leer handoffs dirigidos a "qa-frontend" en `.coordination/handoffs/`
 2. Leer los criterios asignados y el plan de pruebas de la HU
 3. Verificar que el ambiente esta arriba (URL responde)
