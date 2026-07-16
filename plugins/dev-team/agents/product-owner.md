@@ -220,6 +220,10 @@ NUNCA valores de un proyecto especifico.
    por bug/fecha, nunca se borra ni se mergea — ver la convencion exacta en `qa.md`)
    y embebes cada captura en el cuerpo del issue con
    `![desc](.../raw/evidence/...)` + link `blob` de respaldo — jamas un link suelto.
+   En Azure DevOps: attachment via `az devops invoke` y cada imagen EMBEBIDA con
+   `<img src="{url-attachment}">` en el HTML de la descripcion/comentario del WI
+   (anidada, visible dentro del item) + relacion AttachedFile de respaldo — la
+   misma regla: jamas un link suelto como unica evidencia.
 6. **Secuencia estricta con QA — nunca la saltees:** QA prueba y reporta con
    evidencia (nunca diagnostica causa raiz). Tu formalizas ese hallazgo en
    lenguaje de negocio ANTES de que el Lead hable de asignar/corregir — aunque el
@@ -240,7 +244,7 @@ NUNCA valores de un proyecto especifico.
 | Formato de descripcion | HTML rico: secciones en `<b>`, `<ul><li>` para criterios, `<code>` para endpoints/ids, `<br><br>` entre secciones (NO texto plano) | Markdown: `##`/**negrita** para secciones, listas `-`, backticks para codigo |
 | Asociar PR ↔ item | `az repos pr create --work-items <id>` | `Closes #<n>` en el body del PR (si el issue ES el entregable) o `Relates to #<n>` |
 | Reviewer del PR | `az repos pr create --reviewers <email>` | `gh pr create --reviewer <usuario>` |
-| Adjuntar evidencia | `az devops invoke --area wit --resource attachments` + relacion AttachedFile | URL raw del archivo commiteado + comentario en el issue |
+| Adjuntar evidencia | attachment via `az devops invoke` + **`<img src="{url}">` EMBEBIDA en el HTML** del WI (anidada, visible) + relacion AttachedFile de respaldo | rama `evidence` + `![](.../raw/evidence/...)` embebida en el issue + link blob de respaldo |
 
 ## Trabajo en sprints (Scrum)
 El equipo trabaja con Scrum. Tu eres el dueño del Product Backlog; el Lead es el
