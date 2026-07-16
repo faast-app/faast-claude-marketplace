@@ -1,4 +1,4 @@
-# Dev Team — Manual de Usuario (v2.2)
+# Dev Team — Manual de Usuario (v2.6)
 
 Equipo completo de desarrollo con **15 agentes IA** que cubre todo el ciclo de vida
 del software: Historia de Usuario → diseño UI/UX → arquitectura → desarrollo →
