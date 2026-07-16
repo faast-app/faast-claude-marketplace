@@ -122,6 +122,12 @@ falte**. Nunca te vas a topar con un error criptico por una herramienta faltante
 - **Solo el Lead mergea** a develop/main; un agente = un branch = una tarea
 - **El release-manager es gate de pases** — audita el formato de los scripts del
   DBA y puede rechazarlos hasta que cumplan
+- **PLAN PRIMERO** — antes de ejecutar una feature o un fix (flujos C y D), el
+  Lead presenta el plan (que/quien/donde/riesgos) y espera tu confirmacion;
+  puedes ajustar o pedir otro abordaje. Nada se ejecuta sin tu OK
+- **Nada de personas hardcodeadas** — nombres, correos, reviewers, "elaborado
+  por": SIEMPRE del config del proyecto o preguntando; jamas copiados de un
+  ejemplo, de otro proyecto o inventados
 - **Los devs preguntan antes de abrir PR** — no todo entregable lleva PR
 - **Solo el Lead delega en subagentes** — puede lanzar a cualquier agente del
   equipo, incluso varias instancias del mismo rol en paralelo (2 backend en HUs
@@ -226,6 +232,8 @@ falte**. Nunca te vas a topar con un error criptico por una herramienta faltante
 ```
 
 ```
+0. PLAN PRIMERO: el Lead presenta que se hara, quien, donde y riesgos ──► TU confirmas
+   (o pides ajustes / otro abordaje) — nada se ejecuta sin tu OK
 1. PO escribe la HU (negocio + criterios Gherkin) ──► la crea en GitHub/Azure
 2. (Si hay pantallas nuevas) ui-designer propone mockups ──► tu eliges ──► spec a frontend
 3. Lead asigna: backend + frontend implementan ──► QA prepara el plan de pruebas en paralelo
@@ -248,6 +256,8 @@ falte**. Nunca te vas a topar con un error criptico por una herramienta faltante
 
 1. **Lead** hace triaje: ¿que componente falla? ¿severidad?
 2. **QA** lo reproduce (sin debuggear): pasos exactos + screenshots/clip
+   — y ANTES de pasar a corregir, el Lead te presenta el PLAN del fix
+   (que/quien/donde/riesgos) y espera tu confirmacion; puedes pedir otro abordaje
 3. El PO registra el Bug en el tracker **con la evidencia adjunta**; el Lead lo
    asigna con branch `fix/...`
 4. El dev corrige (la causa raiz es SU trabajo, no de QA); **QA escribe el test de
@@ -440,14 +450,14 @@ Todo vive en `.coordination/config.json` (lo crean new-project/onboard):
   "tracker": {
     "provider": "azure",
     "azure": { "org": "faast", "project": "BackOffice" },
-    "reviewer": "carlos.fuentes@faast.app",
+    "reviewer": "{email-del-reviewer}",
     "overheadEpicId": 1234,
     "areaPath": "BackOffice\\Fintec",
     "iterationPath": "BackOffice\\Sprint 12"
   },
   "git": {
     "defaultBranch": "develop",
-    "identity": { "name": "Carlos Fuentes", "email": "carlos.fuentes@faast.app" }
+    "identity": { "name": "{Nombre Apellido}", "email": "{email-del-proyecto}" }
   },
   "pase": {
     "templatePath": "(opcional — default: plantilla del plugin)",

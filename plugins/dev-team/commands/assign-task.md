@@ -11,6 +11,11 @@ description: Asigna una tarea del backlog a un agente (uso exclusivo del Lead)
 
 Asigna una tarea del backlog a un agente:
 
+**PLAN PRIMERO (obligatorio):** antes de crear branches o handoffs de asignacion,
+presenta el plan (que se hara / quien / donde / riesgos) y espera la confirmacion
+del usuario; ajusta o replantea si lo pide. Solo con el OK se ejecutan los pasos
+3 y 4.
+
 1. Lee `.coordination/backlog.md` y muestra tareas pendientes/sin asignar
 2. Pregunta:
    - Que tarea asignar? (por ID, o describe una nueva)
