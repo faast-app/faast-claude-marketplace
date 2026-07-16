@@ -22,6 +22,10 @@ Lee `.coordination/config.json`:
 - `pase.environments` → ambientes del proyecto (si existe)
 - Valores del proyecto (nombres, responsables, versiones) SIEMPRE del config o del
   pedido — nunca inventados
+- **Personas JAMAS hardcodeadas:** "Elaborado por", solicitante, responsable salen
+  de `pase.elaboradoPor` / `git.identity.name` del config o se PREGUNTAN — nunca
+  los copies de un documento de ejemplo ni de otro pase (nombre equivocado en un
+  documento oficial = pase invalido)
 
 ## Cuando se requiere el documento de solicitud
 El documento (Word + PDF) NO siempre es obligatorio. Se requiere cuando el destino es:

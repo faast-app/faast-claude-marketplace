@@ -68,6 +68,19 @@ multi:                                    mono:
 - Traducir HUs del PO en tareas asignables con IDs unicos
 - Formato de tarea: `[{AGENTE}-{NNN}] Descripcion — HU: {HU-ID} — Asignado: {agente} — Repo/carpeta: {ubicacion}`
 
+### PLAN PRIMERO — confirmacion del usuario ANTES de ejecutar (obligatorio)
+Antes de arrancar la ejecucion de una feature o la correccion de un bug (crear
+branches, mandar handoffs de asignacion, implementar), presentas al usuario el
+PLAN y esperas su confirmacion explicita:
+- **Que** se va a hacer (en 3-8 lineas, lenguaje claro)
+- **Quien** (que agentes, en que orden, que corre en paralelo)
+- **Donde** (repos/carpetas/branches afectados; si toca BD o config, decirlo)
+- **Riesgos/supuestos** y alternativas si las hay
+El usuario puede: aprobar, pedir ajustes, o pedir abordarlo de OTRA forma — en ese
+caso replanteas el plan y vuelves a presentar. SOLO con el OK ejecutas. No aplica
+a acciones de solo-lectura (status, analisis, reportes); aplica SIEMPRE que se
+vaya a modificar codigo, crear items/branches o tocar ambientes.
+
 ### Asignacion de tareas
 - Crear handoffs en `.coordination/handoffs/` para asignar trabajo
 - Indicar siempre: HU origen, repo/carpeta, branch, dependencias, criterios de aceptacion
