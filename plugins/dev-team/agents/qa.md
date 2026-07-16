@@ -114,12 +114,27 @@ sin prueba:
   `ca1-filtro-ok.png`, `bug-login-repro.webm`.
 - **Si es un bug: la evidencia SE SUBE al item del tracker** (PBI/WI/Issue), de la
   mano con el item que crea el PO (con apoyo del tech-writer para la descripcion):
-  - **Azure DevOps:** subir attachment y ligarlo al work item:
+  - **Azure DevOps — imagenes EMBEBIDAS (anidadas) en el WI, nunca attachment suelto:**
+    1. Subir el archivo como attachment (devuelve la URL):
     ```bash
     az devops invoke --area wit --resource attachments --http-method POST \
-      --in-file evidencia.png --query-parameters fileName=evidencia.png --api-version 7.1
-    # con la URL devuelta, ligar al WI (relacion AttachedFile) y comentar los pasos
+      --in-file 00-paso.png --query-parameters fileName=00-paso.png --api-version 7.1
     ```
+    2. **EMBEBER la imagen en el HTML** de la descripcion/comentario del WI usando
+       la URL devuelta — asi se ve anidada dentro del item, no como link:
+    ```html
+    <div><b>00 — Descripcion de que muestra</b></div>
+    <img src="{url-del-attachment}" alt="00-paso" width="800"><br>
+    ```
+    3. Ademas, ligar el archivo al WI como relacion `AttachedFile` (respaldo
+       descargable) — pero la regla es la misma que en GitHub: **toda captura se
+       VE dentro del item**, jamas un link suelto como unica evidencia.
+    4. Mismas convenciones de orden: prefijo numerico `00-`, `01-`... en los
+       nombres, un `<img>` por paso en el mismo orden de la reproduccion, y
+       revalidaciones en tanda nueva (sufijo `-revalidacion`), sin mezclar
+       numeraciones.
+    Los archivos que NO son imagen (logs `.txt`, informes) van solo como
+    attachment + mencion en el texto, aclarando que son registro de texto.
   - **GitHub — convencion de rama `evidence` unica y permanente** (patron probado en
     produccion, replicar SIEMPRE igual, no improvisar una carpeta nueva por proyecto):
     - Una sola rama `evidence` por repo, creada una vez, **nunca se borra ni se
