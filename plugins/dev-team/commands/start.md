@@ -37,6 +37,15 @@ En AMBOS casos, lo primero que hace el flujo elegido es invocar al agente `setup
 para validar/instalar prerequisitos. El usuario no necesita saberlo: simplemente
 funciona.
 
+## Paso 2.5: Adoptar el protocolo del equipo (SIEMPRE que haya proyecto)
+Si NO tienes ya en contexto el bloque `<dev-team-protocolo-sesion-principal>`
+(pasa cuando la sesion se abrio fuera de la carpeta del proyecto), cargalo ahora:
+```bash
+CLAUDE_PROJECT_DIR="{ruta-del-proyecto-detectado}" "${CLAUDE_PLUGIN_ROOT}/hooks/inject-team-protocol.sh"
+```
+Adopta TODA su salida como reglas vigentes de esta sesion (plan primero, gates,
+delegacion, etc.) y aplica lo que indique el bloque de mantenimiento si aparece.
+
 ## Paso 3: Proyecto activo — resumen + siguiente accion
 
 1. Leer `.coordination/config.json`, `backlog.md`, `sprint-actual.md` y handoffs pendientes

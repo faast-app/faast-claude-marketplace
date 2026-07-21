@@ -336,6 +336,10 @@ Segun la topologia detectada:
 3. Sugerir: abrir la wiki como vault de Obsidian y `/dev-team:team-office` para
    ver al equipo en vivo
 
+## Paso 4.9: Adoptar el protocolo del equipo
+Ejecuta `CLAUDE_PROJECT_DIR="{ruta-del-proyecto}" "${CLAUDE_PLUGIN_ROOT}/hooks/inject-team-protocol.sh"`
+y adopta su salida como reglas vigentes de la sesion (si no la tenias ya en contexto).
+
 ## Paso 5: Presentar resumen y preguntar siguiente paso
 
 Mostrar:

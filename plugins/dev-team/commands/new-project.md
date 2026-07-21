@@ -113,6 +113,10 @@ Invocar al agente `product-owner` para:
 3. Sugerir: abrir `.coordination/wiki/` como vault en Obsidian (graph view) y
    `/dev-team:team-office` para ver al equipo trabajando en vivo
 
+## Paso 7.9: Adoptar el protocolo del equipo
+Ejecuta `CLAUDE_PROJECT_DIR="{ruta-del-proyecto}" "${CLAUDE_PLUGIN_ROOT}/hooks/inject-team-protocol.sh"`
+y adopta su salida como reglas vigentes de la sesion.
+
 ## Paso 8: Resumen final
 Mostrar:
 - Topologia y repos/carpetas creados (locales y/o remotos)
