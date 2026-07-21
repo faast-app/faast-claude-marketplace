@@ -881,6 +881,22 @@ se "arregla" editando scripts ya aplicados.
 **¿Tengo que saber que agente hace cada cosa?**
 No. `/dev-team:start` + describir lo que necesitas. El equipo enruta.
 
+**¿Como hablo con el lead? Siempre veo que responde la sesion principal.**
+Es por diseño: tu sesion principal ES el coordinador operativo — el plugin le
+inyecta el protocolo del Lead al abrir la sesion (plan primero, gates,
+delegacion), asi no paga el costo de un subagente para coordinar. El agente
+`lead` existe para gestion profunda: sprint, triage, prioridades, revision de
+PRs y merges (los merges SIEMPRE pasan por el). Para invocarlo explicitamente:
+`/dev-team:assign-task`, o escribe "que el lead revise el sprint" / "invoca al
+lead para el triage".
+
+**¿Como me entero de que salio una version nueva del plugin?**
+Automatico: al abrir o reanudar una sesion, el plugin compara tu version
+instalada con la publicada en el marketplace (consulta 1 vez cada 6 horas) y te
+avisa al inicio de la conversacion, preguntandote si quieres actualizar. Tu
+decides: si aceptas, corre los dos comandos de actualizacion y te recuerda
+reiniciar la sesion.
+
 **¿Puedo confiar en que no haran nada sin avisarme?**
 Si: plan primero es regla — features y fixes te presentan el plan y esperan tu
 OK. Puedes ajustar o pedir otro abordaje. Solo lo de lectura corre directo.
