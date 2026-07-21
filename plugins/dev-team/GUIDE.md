@@ -890,6 +890,13 @@ PRs y merges (los merges SIEMPRE pasan por el). Para invocarlo explicitamente:
 `/dev-team:assign-task`, o escribe "que el lead revise el sprint" / "invoca al
 lead para el triage".
 
+**Tengo proyectos creados con versiones viejas del plugin — ¿migran solos?**
+Si, automaticamente. Al abrir una sesion en un proyecto con `.coordination/`, el
+plugin crea lo que falte (wiki con su esquema, metrics, evidence, pases,
+test-plans), detecta claves faltantes del config (se completan contigo la primera
+vez que un flujo las necesite) y, si la wiki esta vacia, te ofrece UNA VEZ
+poblarla con `/dev-team:wiki ingest`. No tienes que migrar nada a mano.
+
 **¿Como me entero de que salio una version nueva del plugin?**
 Automatico: al abrir o reanudar una sesion, el plugin compara tu version
 instalada con la publicada en el marketplace (consulta 1 vez cada 6 horas) y te
