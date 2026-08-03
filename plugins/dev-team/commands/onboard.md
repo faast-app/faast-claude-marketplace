@@ -329,6 +329,16 @@ Segun la topologia detectada:
 - [~] [#41](url) Fix paginacion — PR #89 — Esperando merge
 ```
 
+## Paso 4.4: Punteros de coordinacion (multi-repo con repos fuera del paraguas)
+Si algun repo del proyecto NO vive dentro de la carpeta paraguas (ej. repos en
+~/Repositorios/ y paraguas en ~/Proyectos/{nombre}/), crea en la RAIZ de cada uno:
+- `.coordination-root` — una sola linea: la ruta (relativa o absoluta) a la
+  carpeta paraguas. Con esto hooks y agentes resuelven SIEMPRE la coordinacion
+  canonica, aunque la sesion se abra dentro del repo.
+- Agrega `.coordination-root` y `.coordination/` al `.gitignore` del repo (el
+  puntero es por maquina; y una .coordination dentro de un repo multi es un
+  desvio que no debe existir ni commitearse).
+
 ## Paso 4.5: Wiki y metricas
 1. Ejecutar `/dev-team:wiki init` (tech-writer): crea `.coordination/wiki/` e
    ingiere lo detectado (architecture.md, backlog, repos.md)
