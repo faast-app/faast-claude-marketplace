@@ -17,11 +17,22 @@ Pedido del usuario (puede venir vacio): $ARGUMENTS
 Este comando existe para que NADIE tenga que memorizar los demas comandos.
 Detecta el contexto y guia al usuario al flujo correcto.
 
-## Paso 1: Detectar contexto
+## Paso 1: Detectar contexto (resolucion CANONICA)
 
-Buscar `.coordination/config.json` en el directorio actual y en el padre:
-- **No existe** → no hay proyecto configurado → Paso 2
-- **Existe** → proyecto activo → Paso 3
+Resolver la coordinacion del proyecto en este orden, subiendo desde el directorio
+actual (hasta ~8 niveles):
+1. **`.coordination-root`** (archivo puntero en la raiz de un repo): leer su unica
+   linea (ruta relativa o absoluta a la carpeta paraguas) → la coordinacion es
+   `{esa-ruta}/.coordination` → proyecto activo → Paso 3
+2. **`.coordination/` CON `config.json`** → es la canonica → proyecto activo → Paso 3
+3. **`.coordination/` SIN `config.json`** → es un DESVIO (huerfana): NO la uses
+   como coordinacion. Pregunta al usuario donde esta la canonica (carpeta
+   paraguas); con su OK crea el puntero `.coordination-root` en la raiz del repo
+   (+ entrada en .gitignore), fusiona lo util del desvio en la canonica y
+   eliminalo. Luego continua al Paso 3 con la canonica.
+4. **Nada de lo anterior** → no hay proyecto configurado → Paso 2
+
+NUNCA escribas handoffs/metricas/evidencia en una .coordination sin config.json.
 
 ## Paso 2: Sin proyecto — ofrecer 2 caminos
 
