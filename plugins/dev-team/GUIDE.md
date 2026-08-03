@@ -859,6 +859,16 @@ directo o dejar handoff al Lead.
 → tambien correcto si falta el informe de conformidad o el stack completo en
 desa (regla de oro, inalterable). Pide a quien desplego que emita el informe.
 
+**Aparecen handoffs/metricas en una `.coordination` equivocada (dentro de un repo)**
+→ hay una `.coordination` huerfana (sin `config.json`) mas cerca del cwd que la
+canonica del paraguas. Desde v2.6.11 el plugin resuelve por canonicidad: la
+`.coordination` valida es la que tiene `config.json`, y los repos fuera del
+paraguas llevan un archivo `.coordination-root` en su raiz (una linea: ruta a la
+carpeta paraguas; gitignored). Al abrir sesion sobre una huerfana, el propio
+equipo te propondra fusionarla, eliminarla y crear el puntero. Para repararlo a
+mano: crea `.coordination-root`, fusiona lo util del desvio en la canonica y
+borralo.
+
 **Los agentes tardan en arrancar**
 → (1) sesion abierta desde la carpeta paraguas + `/add-dir` para los repos;
 (2) `repos.md` con las rutas locales reales; (3) wiki al dia — el arranque lee

@@ -21,18 +21,38 @@ def main():
         return
 
     def find_coord(start):
+        # canonica = .coordination CON config.json; los repos fuera del paraguas
+        # apuntan a ella con un archivo .coordination-root (ruta absoluta o
+        # relativa al dir que lo contiene). Una .coordination sin config.json es
+        # un desvio: solo se usa como ULTIMO recurso.
         if not start:
             return None
         d = os.path.abspath(start)
+        bare = None
         for _ in range(8):
+            ptr = os.path.join(d, ".coordination-root")
+            if os.path.isfile(ptr):
+                try:
+                    target = open(ptr).read().strip()
+                    if target:
+                        if not os.path.isabs(target):
+                            target = os.path.join(d, target)
+                        c = os.path.join(os.path.abspath(target), ".coordination")
+                        if os.path.isdir(c):
+                            return c
+                except Exception:
+                    pass
             c = os.path.join(d, ".coordination")
             if os.path.isdir(c):
-                return c
+                if os.path.isfile(os.path.join(c, "config.json")):
+                    return c
+                if bare is None:
+                    bare = c
             parent = os.path.dirname(d)
             if parent == d:
-                return None
+                break
             d = parent
-        return None
+        return bare
 
     coord = find_coord(payload.get("cwd")) or find_coord(sys.argv[1] if len(sys.argv) > 1 else None)
     if not coord:
