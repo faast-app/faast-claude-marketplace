@@ -97,7 +97,12 @@ Escribir `.coordination/config.json` — la fuente de verdad para todos los agen
 
 Por cada repo/carpeta: estructura segun stack (usar `templates/` del plugin),
 Dockerfile, CI/CD, CLAUDE.md con contexto del servicio, .env.example, README basico,
-commit inicial. Si hay remoto: `gh repo create` / `az repos create` + push.
+commit inicial. La suite de QA (`e2e/` en mono, repo `{proyecto}-e2e` en multi) se
+crea SIEMPRE desde `templates/e2e-faast/` (reemplazar `{{ProjectName}}`; Playwright +
+axe + Schemathesis + workflow E2E; evidencia en `.coordination/evidence/`), y se
+registra en `config.json` como `"e2e": { "exists": true, "path": "..." }`. El
+`.gitignore` de cada repo debe incluir `.coordination/evidence/` (ya viene en los
+templates). Si hay remoto: `gh repo create` / `az repos create` + push.
 
 ## Paso 6: Backlog inicial (agente product-owner)
 Invocar al agente `product-owner` para:

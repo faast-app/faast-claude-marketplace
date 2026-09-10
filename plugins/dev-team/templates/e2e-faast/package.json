@@ -1,0 +1,25 @@
+{
+  "name": "{{ProjectName}}-e2e",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Suite E2E de QA de {{ProjectName}} — Playwright + axe + Schemathesis (dev-team e2e-faast)",
+  "scripts": {
+    "test": "playwright test",
+    "test:hu": "playwright test --grep",
+    "test:double": "playwright test --repeat-each=2",
+    "test:regression": "playwright test tests/regression",
+    "test:visual": "playwright test tests/visual",
+    "test:visual:update": "playwright test tests/visual --update-snapshots",
+    "test:a11y": "playwright test tests/a11y",
+    "test:api": "bash api/contract.sh",
+    "report": "playwright show-report ../.coordination/evidence/_suite/playwright-report",
+    "agents:init": "playwright init-agents --loop=claude"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.10.0",
+    "@playwright/test": "^1.56.0",
+    "@types/node": "^22.0.0",
+    "dotenv": "^16.4.0",
+    "typescript": "^5.5.0"
+  }
+}

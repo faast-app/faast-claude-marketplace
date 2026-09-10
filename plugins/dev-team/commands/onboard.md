@@ -108,7 +108,11 @@ La topologia detectada se guarda en `.coordination/config.json` (Paso 4) y NUNCA
 se propone migrarla salvo pedido explicito del usuario.
 
 Detectar tambien si existe suite E2E (carpeta `e2e/`, `tests/e2e/`, repo `*-e2e`,
-`playwright.config.*`). Si no existe, anotarlo: QA la creara cuando valide su primera HU.
+`playwright.config.*`). Si no existe, ofrecer crearla ahora desde `templates/e2e-faast/`
+del plugin (mono: `e2e/`; multi: repo `{proyecto}-e2e`) — si el usuario prefiere
+esperar, anotarlo: QA la creara desde ese template al validar su primera HU. En ambos
+casos verificar que `.coordination/evidence/` este en el `.gitignore` de los repos
+(la evidencia QA jamas viaja en ramas de codigo).
 
 ### Paso 2b: Configurar acceso del DBA a la base de datos
 

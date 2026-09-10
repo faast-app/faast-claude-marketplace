@@ -7,7 +7,7 @@ Playwright y evidencia → seguridad → pases a ambientes → deploy → docume
 - **Proyectos nuevos o existentes** (`/new-project`, `/onboard`)
 - **Mono-repo o multi-repo** — el equipo se adapta a tu topologia
 - **Backlog en GitHub Projects o Azure DevOps Boards** — HUs, PBIs y bugs reales
-- **QA de precision con Playwright** — MCP incluido en el plugin (verificacion explicita, trace, video), Test Agents, regresion visual, axe y Schemathesis; evidencia por criterio
+- **QA de precision con Playwright** — MCP incluido en el plugin (verificacion explicita, trace, video), Test Agents, regresion visual, axe y Schemathesis; evidencia por criterio; suite lista desde `templates/e2e-faast/`
 - **Prerequisitos automaticos** — el agente setup instala lo que falte antes de empezar
 
 ## Instalacion

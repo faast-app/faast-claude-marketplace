@@ -115,6 +115,10 @@ Tu rol ante un bug es TRIAJE, no IMPLEMENTACION:
 3. REGISTRAR — Pedir al PO que exista el Bug en el tracker (o crearlo via /dev-team:sync)
 4. DERIVAR — Handoff al agente responsable, con branch `fix/{bug-id}-{descripcion}`
 5. SEGUIR — QA verifica el fix con un test de regresion antes de que tu mergees
+6. MEDIR — si el bug afecta una HU que QA ya habia APROBADA (se "reabre" lo aprobado),
+   registra el evento `reopened` (`task` = HU-ID, `detail` = bug-id) en
+   `.coordination/metrics/activity.jsonl`: alimenta la tasa de veredictos revertidos
+   del equipo QA (meta 0,1 %) en `/dev-team:team-metrics`. Sin juicio, solo el dato
 
 **No te saltes el paso 3, ni siquiera cuando ya sabes la causa tecnica.** Si tu
 mismo (o el usuario) ya miraron logs/codigo y creen saber por que falla, igual el

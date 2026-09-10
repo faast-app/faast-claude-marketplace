@@ -1,0 +1,72 @@
+name: E2E
+
+on:
+  pull_request:
+    branches: [develop, main]
+  schedule:
+    - cron: '0 6 * * 1-5'      # nightly: visual + a11y + contrato
+  workflow_dispatch:
+    inputs:
+      update_snapshots:
+        description: 'Actualizar baselines visuales (requiere OK de ui-designer/PO)'
+        type: boolean
+        default: false
+
+env:
+  BASE_URL: ${{ vars.E2E_BASE_URL }}
+  API_URL: ${{ vars.E2E_API_URL }}
+  QA_USER: ${{ secrets.E2E_QA_USER }}
+  QA_PASS: ${{ secrets.E2E_QA_PASS }}
+  QA_TOKEN: ${{ secrets.E2E_QA_TOKEN }}
+  EVIDENCE_DIR: ./.evidence          # en CI la evidencia es ARTIFACT del run, nunca un commit
+
+jobs:
+  e2e:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20, cache: npm }
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      # Puerta 2: doble corrida — lo intermitente falla aqui, no en produccion
+      - run: npx playwright test --repeat-each=2 --project=chromium
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: evidencia-e2e-${{ github.run_number }}
+          path: .evidence/
+          retention-days: 30
+
+  nightly:
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20, cache: npm }
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: pipx install schemathesis
+      - name: Visual (puerta 4)
+        run: npx playwright test tests/visual ${{ inputs.update_snapshots && '--update-snapshots' || '' }}
+      - name: Accesibilidad (puerta 5)
+        run: npx playwright test tests/a11y
+      - name: Contrato OpenAPI (puerta 6)
+        run: bash api/contract.sh regresion
+      - name: Regresion (puerta 3)
+        run: npx playwright test tests/regression --repeat-each=2
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: evidencia-nightly-${{ github.run_number }}
+          path: .evidence/
+          retention-days: 30
+      # Baselines actualizados: PR automatico para revision (nunca push directo)
+      - if: inputs.update_snapshots
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: test/visual-baselines
+          title: 'test(visual): actualizar baselines (aprobado por ui-designer/PO)'
+          commit-message: 'test(visual): actualizar baselines'
