@@ -36,7 +36,12 @@ comandos y flujos, ver **[GUIDE.md](GUIDE.md)**.
 | **lead** | Coordina, asigna, exige gates de calidad, unico que mergea |
 | **backend** | Servicios backend (.NET 8, Node.js, Python, Java) |
 | **frontend** | SPA y microfrontends (React, Vue, Angular) |
-| **ui-designer** | Mockups y specs UI/UX (paletas, tipografia, accesibilidad) |
+| **ui-designer** | Design Lead: brief, direcciones de pantallas, propuesta funcional (deck HTML+PDF) |
+| **ux-researcher** | Personas, flujos, arquitectura de informacion, wireframes, heuristicas, WCAG 2.2 |
+| **visual-designer** | Identidad y brand kit, iconografia SVG, ilustracion, referencias, tipografia |
+| **motion-designer** | Motion tokens, micro-interacciones, prototipos animados, video (HyperFrames) |
+| **artist-3d** | Escenas 3D web (Three.js/R3F), glTF optimizado, fallback 2D |
+| **design-engineer** | Prototipo pixel-perfect, tokens DTCG, DESIGN.md, sync Pencil/Figma/Penpot |
 | **dba** | Esquemas, indices, queries, migraciones, scripts de pase, comparacion de BDs |
 | **qa** | QA Lead: plan de pruebas, consolida veredicto, suite de regresion |
 | **qa-frontend** | Especialista QA de UI (Playwright MCP, evidencia visual) |

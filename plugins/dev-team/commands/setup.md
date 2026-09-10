@@ -1,6 +1,6 @@
 ---
 description: Valida e instala todos los prerequisitos del proyecto - git, gh/az CLI, Docker, SDKs, clientes de BD, Playwright. Configura conexiones de BD y autenticacion del tracker. Ejecutalo si algo falla o antes de empezar.
-argument-hint: (opcional) que validar - "db", "tracker", "playwright" o vacio para todo
+argument-hint: (opcional) que validar - "db", "tracker", "playwright", "design" o vacio para todo
 ---
 
 > **Ejecucion INLINE obligatoria:** este es un COMANDO, no un agente. Ejecuta su
@@ -23,6 +23,8 @@ Invoca al agente `setup` para que ejecute su flujo completo:
    - **db**: solo cliente CLI del motor + conexion (credenciales → `.coordination/dba-access.json`)
    - **tracker**: solo gh CLI + auth (GitHub) o az CLI + extension devops + auth (Azure)
    - **playwright**: solo Playwright/browsers para el agente QA
+   - **design**: herramientas del equipo de diseño (lienzo Pencil/Figma/Penpot, generador
+     de imagenes, HyperFrames para video, gltf-transform) → `config.json` `design.tools`
 4. Mostrar tabla de resultados (OK / Falta / Sin configurar)
 5. Ofrecer instalar lo que falta (UNA confirmacion, lista explicita)
 6. Re-verificar y guardar estado en `.coordination/setup-status.json`

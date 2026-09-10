@@ -95,6 +95,41 @@ Reglas de esta seccion:
 - En `setup-status.json` registra por separado: `"playwright-mcp"`, `"playwright"`,
   `"axe"`, `"schemathesis"`, `"test-agents"`
 
+### 6. Equipo de diseño (si el proyecto tiene frontend o se pide `setup design`)
+El equipo de diseño SIEMPRE puede trabajar (entrega HTML/SVG autocontenido); estas
+herramientas lo potencian. Detecta y registra en `config.json` → `design.tools`:
+```bash
+# 6.1 Lienzo de diseño (canvas): pencil | figma | penpot | none
+claude mcp list | grep -i -E "pencil|figma|penpot"
+#   - Pencil (gratis; su app registra el MCP sola):   https://docs.pencil.dev/getting-started/installation
+#   - Figma (si la organizacion ya usa Figma; OAuth): claude mcp add --transport http --scope user figma https://mcp.figma.com/mcp
+#   - Penpot (open source, self-hosted por infra + MCP): ver docs/propuestas/design-team.md
+#   Pregunta al usuario cual usa; si ninguno → "none" (no es bloqueante)
+# 6.2 Generacion de imagenes (opcional; requiere API key del usuario): nombre del MCP o none
+claude mcp list | grep -i -E "image|imagen|gemini|openai"
+# 6.3 Video de producto: HyperFrames (plugin de HeyGen) + Node ≥ 22 + FFmpeg
+claude plugin list | grep -i hyperframes; node --version; ffmpeg -version | head -1
+# 6.4 3D: optimizador de glTF (opcional)
+npx --yes @gltf-transform/cli --version
+```
+```bash
+# 6.5 Skills personales de diseño (opcional, RECOMENDADO): el equipo de diseño trae sus
+#     propias skills en el plugin, pero estas elevan el resultado. Se instalan con la
+#     CLI `skills` (quedan en ~/.agents/skills y ~/.claude/skills). Pregunta antes:
+ls ~/.claude/skills 2>/dev/null | grep -c -E "impeccable|design-taste-frontend|emil-design-eng|brandkit"
+npx skills add emilkowalski/skills      # animate, prototype, emil-design-eng, review/improve-animations, apple-design, pick-ui-library...
+npx skills add Leonxlnx/taste-skill     # design-taste-frontend, high-end-visual-design, brandkit, imagegen-frontend-web/mobile, image-to-code, stitch-design-taste...
+npx skills add pbakaus/impeccable       # impeccable (diseño/rediseño/auditoria de UI)
+npx skills add tt-a1i/archify           # archify (diagramas de arquitectura como HTML/SVG)
+# HyperFrames (video) se instala como plugin: claude plugin marketplace add heygen-com/hyperframes && claude plugin install core-skills@hyperframes
+```
+Guarda en `config.json`:
+```json
+"design": { "tools": { "canvas": "none", "imagegen": "none", "video": "hyperframes" } }
+```
+y en `setup-status.json`: `"design-canvas"`, `"design-imagegen"`, `"design-video"`.
+Agrega `.coordination/design/_media/` al `.gitignore` (videos y raster pesado).
+
 ## Flujo de trabajo
 
 ### Cuando te invocan
@@ -124,7 +159,10 @@ Reglas de esta seccion:
      "playwright-mcp": "ok",
      "axe": "ok",
      "schemathesis": "ok",
-     "test-agents": "ok"
+     "test-agents": "ok",
+     "design-canvas": "pencil",
+     "design-imagegen": "none",
+     "design-video": "hyperframes"
    }
    ```
 7. **Dar el OK final**: "Entorno listo. El equipo puede trabajar." — o listar lo que quedo pendiente y su impacto (ej: "Sin gh auth no funcionara /sync")

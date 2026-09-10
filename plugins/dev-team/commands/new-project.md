@@ -46,6 +46,13 @@ Muestra la propuesta completa y pregunta:
 - "Aprobado" → continuar al paso 4
 - Ajustes ("prefiero mono-repo", "quita el servicio X") → el Arquitecto modifica y re-presenta
 
+## Paso 3.5: Propuesta de diseño (si el proyecto tiene pantallas)
+Ofrecer al usuario arrancar la **propuesta funcional de diseño** con el equipo de diseño
+(`/dev-team:design {tema del proyecto}`): identidad (si no existe), flujos, direcciones
+de pantallas clave, prototipo navegable, tokens y deck. Puede correr en paralelo con la
+creacion de repos y el backlog. Si el usuario prefiere despues, anotarlo: el Lead lo
+exigira antes de asignar la primera pantalla a frontend.
+
 ## Paso 4: Configurar proyecto y tracker
 Preguntar al usuario (en UNA sola interaccion):
 - Nombre del proyecto (ej: ecommerce)

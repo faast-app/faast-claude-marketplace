@@ -15,7 +15,8 @@ def main():
     if not agent:
         return
     TEAM = {"setup","product-owner","architect","ui-designer","lead","backend","frontend",
-            "dba","qa","qa-frontend","qa-backend","release-manager","infra","cybersec","tech-writer"}
+            "dba","qa","qa-frontend","qa-backend","release-manager","infra","cybersec","tech-writer",
+            "ux-researcher","visual-designer","motion-designer","artist-3d","design-engineer"}
     short = agent.split(":", 1)[-1]
     if short not in TEAM:
         return

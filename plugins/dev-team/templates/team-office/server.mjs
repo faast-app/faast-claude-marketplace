@@ -24,6 +24,7 @@ const HANDOFFS = path.join(COORD, 'handoffs');
 const AGENTS = [
   'setup','product-owner','architect','ui-designer','lead','backend','frontend',
   'dba','qa','qa-frontend','qa-backend','release-manager','infra','cybersec','tech-writer',
+  'ux-researcher','visual-designer','motion-designer','artist-3d','design-engineer',
 ];
 
 function readEvents(limit = 400) {
