@@ -145,6 +145,8 @@ correctos, en cualquier carpeta, sin `claude mcp add`:
 ```
 
 Notas:
+- `--output-dir` apunta a `.coordination/evidence/` del proyecto: la evidencia nace ya en la
+  carpeta del proyecto (§3.7), nunca en un temporal.
 - `--headless` **no** se fija: en local el QA (y el usuario) ven el browser; en CI se pasa
   por variable `PLAYWRIGHT_MCP_HEADLESS=1`.
 - Credenciales de QA: archivo `.coordination/qa-secrets.env` (gitignored) pasado con
@@ -235,7 +237,41 @@ Reglas del informe:
 - Viewport declarado (1280×720 escritorio; 375×812 móvil cuando el criterio es responsive).
 - Trace y clip **siempre** en bugs; en criterios aprobados basta la captura y la verificación.
 - El reporte HTML de Playwright (`playwright-report/`) se adjunta comprimido al veredicto de la HU.
-- La subida al tracker no cambia: rama `evidence` + `![](raw)` en GitHub, attachment + `<img>` embebido en Azure.
+- La subida al tracker sigue la **regla dura de ubicación de la evidencia** (§3.7): rama `evidence` + `![](raw)` en GitHub, attachment + `<img>` embebido en Azure.
+
+### 3.7 Dónde vive la evidencia (REGLA DURA, sin excepciones)
+
+1. **Toda captura, clip, trace, reporte HTML y junit queda en la carpeta del proyecto**:
+   `.coordination/evidence/{HU-ID|BUG-ID}/`. El MCP escribe ahí (`--output-dir`), la suite
+   Playwright también (`outputDir` y `reporter html` apuntan a esa carpeta). Nada de
+   evidencia se guarda en temporales del sistema ni en carpetas del código fuente.
+2. **`.coordination/evidence/` está en el `.gitignore` de todas las ramas de trabajo.**
+   Un PR de feature/fix/release que incluya una imagen o clip de evidencia se RECHAZA en
+   `/review-pr` (el lead lo verifica). Las imágenes de evidencia nunca viajan dentro del
+   código, ni en `develop`, ni en `main`, ni en ninguna rama de trabajo.
+3. **Cuando la evidencia debe verse en el tracker** (GitHub Issue/Project, Azure WI, o el
+   destino que se decida), el equipo QA tiene la capacidad y la obligación de subirla
+   embebida:
+   - **Azure DevOps**: attachment vía API + `<img>` en el HTML del WI (como hoy). No se
+     toca ningún repo.
+   - **GitHub**: la imagen se publica **únicamente en la rama `evidence` del repo**,
+     creada una sola vez como rama huérfana (`git checkout --orphan evidence`, sin
+     historia de código), permanente, jamás mergeada ni borrada, y trabajada desde un
+     worktree aparte (`git worktree add ../{repo}-evidence evidence`) para que nunca se
+     mezcle con la rama de trabajo del QA. Estructura: `evidence/issues/<n>-<slug>/`,
+     `evidence/smokes/<fecha>-<nombre>/`, prefijos `00-`, `01-`, `INDEX.md`.
+     El embed es `![](https://github.com/{org}/{repo}/raw/evidence/...)` con el enlace
+     `blob` de respaldo.
+   - **Otro destino** (SharePoint, S3, wiki): se sube ahí y se embebe/enlaza; el repo de
+     código no se toca.
+4. **Prohibido** subir evidencia a cualquier otra rama, carpeta del repo, o repo distinto
+   del propio (salvo el destino decidido en el punto 3). Sin excepción por urgencia.
+5. Los **baselines de regresión visual** (`tests/**/*-snapshots/`) NO son evidencia: son
+   activos de la suite y viven con el código de tests. La evidencia es lo que prueba un
+   veredicto puntual; el baseline es la referencia que la suite compara.
+6. El informe `informe-qa.md` de la HU cita cada archivo por su ruta local y, cuando
+   aplique, por su URL en el tracker. Así el veredicto es auditable desde el proyecto
+   aunque el tracker cambie.
 
 ### 3.6 Puertas de aprobación (lo que qa exige antes de APROBADA)
 
@@ -254,8 +290,9 @@ Si cualquiera falla → RECHAZADA con el informe. Sin excepciones ni "aprobada c
 | # | Cambio | Archivos |
 |---|---|---|
 | 6.1 | `.mcp.json` del plugin con Playwright MCP configurado (§3.1); setup detecta el servidor duplicado en `~/.claude.json` y propone quitarlo; instala `pipx`+Schemathesis y `@axe-core/playwright` | `plugins/dev-team/.mcp.json`, `agents/setup.md` §5 |
-| 6.2 | qa-frontend: verificación explícita obligatoria (`browser_verify_*`), highlight + screenshot, trace/video por tool (sin scripts ad hoc), viewport declarado, axe por pantalla nueva, informe por criterio §3.5 | `agents/qa-frontend.md` |
+| 6.2 | qa-frontend: verificación explícita obligatoria (`browser_verify_*`), highlight + screenshot, trace/video por tool (sin scripts ad hoc), viewport declarado, axe por pantalla nueva, informe por criterio §3.5, regla de ubicación §3.7 (worktree de la rama `evidence`) | `agents/qa-frontend.md` |
 | 6.3 | qa-backend: Schemathesis como barrido de contrato + Playwright `request` para escenarios; evidencia = junit + responses | `agents/qa-backend.md` |
+| 6.4b | lead / `/review-pr`: rechazar PRs que incluyan archivos de `.coordination/evidence/` o imágenes de evidencia fuera de la rama `evidence`; `.gitignore` de templates incluye `.coordination/evidence/` | `agents/lead.md`, `commands/review-pr.md`, `templates/*/.gitignore` |
 | 6.4 | qa (Lead): puertas §3.6, doble corrida, política de cuarentena, uso del planner para el plan y del healer solo en regresión (con la regla de no cambiar aserciones) | `agents/qa.md` |
 | 6.5 | Template `e2e-faast/` (§3.3) con config, fixtures axe/auth/datos, workflow CI y `schemathesis.yml`; `/new-project` lo copia cuando hay frontend o APIs; `/onboard` lo ofrece si no existe carpeta e2e | `templates/e2e-faast/`, `commands/new-project.md`, `commands/onboard.md` |
 | 6.6 | `/e2e`: subcomandos `plan` (planner), `generate` (generator), `heal` (healer, solo regresión), `visual` (actualizar baselines con aprobación), `a11y`, `api` (schemathesis) | `commands/e2e.md` |
@@ -285,6 +322,7 @@ menor (v2.8.0) para 6.1–6.4 y otra (v2.9.0) para 6.5–6.8.
 | Baselines visuales distintos por SO/fuentes | Generar baselines solo en CI (Linux) con `--update-snapshots`; local solo compara, no actualiza |
 | Healer "arregla" un test ocultando un bug real | Regla dura §3.2: el healer no cambia aserciones; todo parche pasa por qa y se lista en el informe |
 | Schemathesis genera carga sobre desa | `--max-examples` acotado (200) y solo contra `urls.dev`; nunca contra ambientes de cliente |
+| Evidencia filtrada a una rama de código | `.gitignore` + chequeo en `/review-pr` + worktree separado para la rama `evidence`; el QA nunca hace `git add` en su rama de trabajo |
 | Credenciales en el chat | `--secrets` en el MCP; `storageState` por rol en la suite; archivo gitignored |
 
 ## 7. Fuentes
