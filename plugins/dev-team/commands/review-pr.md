@@ -38,6 +38,11 @@ Para cada archivo modificado, verificar:
 - Solo archivos del area de responsabilidad del agente?
 - Branch naming correcto?
 
+### Evidencia QA (regla dura)
+- El diff NO incluye `.coordination/evidence/` ni archivos de evidencia (png/jpg/webm/
+  trace.zip/informe-qa.md) — la evidencia vive SOLO en la rama `evidence` o en el tracker
+- Si aparece: **Bloqueado** hasta que se retire del PR (mover a la rama `evidence`)
+
 ### Formato
 - Linter/formateador ejecutado?
 

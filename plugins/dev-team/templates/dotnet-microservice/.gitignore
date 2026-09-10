@@ -5,3 +5,8 @@ obj/
 .vs/
 .env
 appsettings.Development.json
+
+# dev-team: la evidencia QA NUNCA viaja en ramas de codigo (solo rama evidence / tracker)
+.coordination/evidence/
+.coordination/qa-secrets.env
+.coordination/dba-access.json

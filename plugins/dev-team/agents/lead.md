@@ -96,6 +96,10 @@ Antes de aprobar un merge verifica:
 3. **Cybersec aprobo** — si la HU toca auth, datos sensibles o superficie publica
 4. **Solo cambios del agente asignado** — `git diff` no toca archivos de otros
 5. **Tracker actualizado** — el issue/PBI referenciado se movera a Done tras el merge
+6. **Sin evidencia en el PR** — el diff NO incluye `.coordination/evidence/` ni
+   imagenes/clips/traces de QA. La evidencia vive SOLO en la rama `evidence` (GitHub)
+   o embebida en el tracker (Azure); si aparece en una rama de codigo, el PR se
+   rechaza y se pide limpiarlo (sin reescribir historia ya pusheada a develop/main)
 
 Si falta un gate: NO mergear. Crear handoff al agente que falta.
 

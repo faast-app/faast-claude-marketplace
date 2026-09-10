@@ -21,12 +21,17 @@ Invoca al agente `qa`. Segun el pedido:
    generarlo primero (flujo de /dev-team:test-plan)
 2. Verificar que el ambiente esta arriba (docker compose ps / URL de config responde);
    si no, levantarlo o pedir a infra
-3. **Validacion interactiva** con Playwright MCP (`browser_navigate`, `browser_snapshot`,
-   `browser_click`, `browser_fill_form`...): recorrer cada criterio de aceptacion y
-   capturar evidencia (`browser_take_screenshot`)
+3. **Validacion interactiva** con el Playwright MCP del plugin (`browser_navigate`,
+   `browser_snapshot`, `browser_click`, `browser_fill_form`...): recorrer cada criterio
+   y CERRARLO con `browser_verify_*` + captura resaltada (`browser_highlight` →
+   `browser_take_screenshot`); trace/clip con `browser_start_tracing` /
+   `browser_start_video` en bugs. Todo queda en `.coordination/evidence/{HU}/` con su
+   bloque en `informe-qa.md`
 4. **Automatizar**: escribir `tests/hu-{nnn}-{slug}.spec.ts` con un test por criterio
-   (convencion CA-N), Page Objects si aplica, selectores getByRole/getByTestId
-5. Ejecutar la suite nueva: `npx playwright test tests/hu-{nnn}*` — todo verde
+   (convencion CA-N), Page Objects si aplica, selectores getByRole/getByTestId — o
+   generarlo con el Test Agent `generator` desde `specs/hu-{nnn}.md` (planner)
+5. Ejecutar la suite nueva DOS veces: `npx playwright test tests/hu-{nnn}* --repeat-each=2`
+   — todo verde en ambas; lo intermitente va a cuarentena y NO aprueba
 6. Commitear en branch `test/{HU-ID}` y agregar a la regresion
 7. Handoff a Lead con veredicto: APROBADA / RECHAZADA (+ bugs creados en el tracker)
 
@@ -43,6 +48,10 @@ Navegar la app con Playwright MCP, revisar consola y network
 con evidencia. No requiere HU previa.
 
 ## Reglas
-- NUNCA aprobar una HU con criterios sin ejecutar
-- Los bugs encontrados se crean en el tracker con pasos exactos y evidencia
-- Si Playwright no esta disponible: sugerir `/dev-team:setup playwright`
+- NUNCA aprobar una HU con criterios sin ejecutar ni sin verificacion explicita
+- Las 7 puertas de aprobacion del QA Lead son obligatorias (ver `qa.md`)
+- Los bugs encontrados se crean en el tracker con pasos exactos y evidencia EMBEBIDA
+- La evidencia vive en `.coordination/evidence/` del proyecto; a GitHub SOLO por la rama
+  `evidence`; JAMAS en una rama de codigo ni en el commit `test/{HU-ID}`
+- Si faltan las tools `browser_*` (el MCP viene en el plugin), Playwright, axe o
+  Schemathesis: sugerir `/dev-team:setup playwright`

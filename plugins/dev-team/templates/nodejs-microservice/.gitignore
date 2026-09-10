@@ -2,3 +2,8 @@ node_modules/
 dist/
 .env
 *.log
+
+# dev-team: la evidencia QA NUNCA viaja en ramas de codigo (solo rama evidence / tracker)
+.coordination/evidence/
+.coordination/qa-secrets.env
+.coordination/dba-access.json
