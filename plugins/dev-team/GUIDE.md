@@ -163,10 +163,12 @@ la escribe. Abrela con Obsidian para ver el grafo de conocimiento.
 6. **LEY QA: a la primera falla, reporta** — evidencia + `blocked` + reporte
    inmediato. Prohibido reintentar, workarounds o probar fuera de su alcance.
 7. **QA no debuggea** — reproduce, documenta y reporta. La causa raiz es del dev.
-8. **Evidencia SIEMPRE embebida y en su lugar** — screenshots/clips visibles DENTRO
-   del item: GitHub → rama `evidence` + `![](raw)`; Azure → attachment + `<img>` en el
-   HTML del WI. Jamas un link suelto. La evidencia vive en `.coordination/evidence/`
-   del proyecto y en GitHub SOLO en la rama `evidence`: nunca en una rama de codigo.
+8. **Toda prueba deja evidencia, y la evidencia se VE dentro del ticket** — las
+   capturas de pantalla y los videos cortos aparecen dentro del bug o de la historia,
+   no como un enlace que hay que abrir aparte. Las imagenes se guardan en la carpeta
+   del proyecto (`.coordination/evidence/`) y, si el proyecto esta en GitHub, en un
+   espacio apartado del repositorio (la rama `evidence`) que existe solo para eso.
+   Nunca se mezclan con el codigo del producto.
 9. **Cybersec es segundo gate** en auth/datos sensibles y nunca commitea.
 10. **Solo el Lead mergea**; un agente = un branch = una tarea.
 11. **El release-manager es gate de pases** — audita el paquete RESULTANTE y puede
@@ -513,68 +515,82 @@ gateway y ms-auth
 
 ---
 
-## Caso 8 — Pruebas: plan, E2E, exploratoria y regresion
+## Caso 8 — Pruebas: plan, validar una historia, regresion y exploratoria
 
-**Generar el plan de pruebas de una HU:**
+El equipo QA trabaja con una meta clara: **equivocarse como maximo una vez cada mil
+criterios revisados** (0,1 %). Para eso no "mira" la pantalla y opina: cada criterio
+de aceptacion se comprueba con una verificacion concreta, queda una foto con el
+elemento resaltado, y la historia solo se aprueba si pasa 7 controles. Tu no tienes
+que configurar nada: las herramientas de prueba vienen incluidas en el plugin.
+
+**Generar el plan de pruebas de una historia:**
 ```
 /dev-team:test-plan HU-42
 ```
-→ tabla criterio-por-criterio: cual se automatiza (E2E/API), cual es manual,
-casos borde adicionales y datos de prueba necesarios.
+→ una tabla con cada criterio de aceptacion: cual se probara de forma automatica,
+cual a mano, que casos extremos se agregan y que datos de prueba hacen falta.
 
-**Validar una HU (interactivo + automatizado):**
+**Validar una historia (lo mas habitual):**
 ```
 /dev-team:e2e HU-42
 ```
-→ el equipo QA valida cada criterio con Playwright REAL (previa verificacion del
-informe de conformidad). El Playwright MCP ya viene dentro del plugin: no hay que
-instalar ni registrar nada. Cada criterio se cierra con una verificacion explicita
-(`browser_verify_*`) y una captura con el elemento resaltado, se guarda en
-`.coordination/evidence/HU-042/informe-qa.md`, y despues se escribe la suite
-automatizada con trazabilidad criterio → test:
-```typescript
-test.describe('[HU-042] Filtro de fechas en cobranzas', () => {
-  test('CA-1: filtra registros dentro del rango', async ({ page }) => { ... });
-  test('CA-2: muestra error con rango invalido', async ({ page }) => { ... });
-});
-```
+→ Primero QA confirma que lo que va a probar es lo que se dijo que se desplego (el
+"informe de conformidad"). Luego recorre la aplicacion como lo haria un usuario y, por
+cada criterio, deja tres fotos (antes, la accion, el resultado con el elemento
+resaltado) y una comprobacion que dice si se cumple o no. Con eso arma un **informe
+por criterio** en la carpeta del proyecto. Despues escribe las pruebas automaticas,
+una por criterio y con el mismo nombre, para que el criterio quede protegido de aqui
+en adelante.
 
-Para aprobar, el QA Lead exige 7 puertas: verificacion explicita de todos los
-criterios, suite verde en dos corridas seguidas, regresion verde, sin diffs visuales
-sin aprobar, cero violaciones graves de accesibilidad, contrato de API sin fallos
-(Schemathesis) y consola/red limpias. Si una falla, la HU vuelve RECHAZADA; no
-existe "aprobada con observaciones".
+**Los 7 controles para aprobar.** El QA Lead revisa, en este orden, que:
+1. Todos los criterios tienen su comprobacion y su foto.
+2. Las pruebas automaticas de la historia pasaron **dos veces seguidas** (si una prueba
+   pasa una vez y falla otra, no cuenta como aprobada: se aparta y se investiga).
+3. Lo que ya funcionaba sigue funcionando (regresion).
+4. Las pantallas clave se ven igual que la version aprobada; si cambiaron, alguien del
+   equipo de diseño o el PO lo aprobo.
+5. Las pantallas nuevas son usables por personas con discapacidad (sin fallas graves
+   de accesibilidad).
+6. Los servicios responden exactamente lo que su contrato promete (se les envian cientos
+   de solicitudes validas e invalidas generadas automaticamente).
+7. Durante el recorrido no hubo errores ocultos en la consola ni llamadas fallidas.
+
+Si falla cualquiera, la historia vuelve **RECHAZADA** con el informe. No existe
+"aprobada con observaciones": una observacion es un bug (se registra) o no es nada.
 
 **Correr la regresion completa** (por ejemplo antes de un pase):
 ```
 /dev-team:e2e run
 ```
-→ doble corrida; cada fallo se clasifica como bug de la app (se crea con evidencia)
-o test fragil (cuarentena).
+→ corre todo dos veces. Cada fallo se clasifica: o es un **bug del producto** (se crea
+en el tracker con evidencia) o es una **prueba fragil** (se aparta y se repara la
+prueba, nunca el producto).
 
-**Los demas subcomandos de QA:**
+**Otras cosas que puedes pedirle a QA:**
 ```
-/dev-team:e2e plan HU-42        # el planner explora la app y escribe specs/hu-042.md
-/dev-team:e2e generate HU-42    # el generator convierte el plan en tests, locator por locator
-/dev-team:e2e heal              # solo en regresion: repara TESTS fragiles, nunca aserciones
-/dev-team:e2e visual            # compara pantallas clave contra sus baselines
-/dev-team:e2e a11y              # accesibilidad WCAG 2.1 AA (0 violaciones graves)
-/dev-team:e2e api HU-42 '^/api/cobranzas'   # contrato OpenAPI con Schemathesis
+/dev-team:e2e plan HU-42        # QA explora la aplicacion y propone el plan de pruebas
+/dev-team:e2e generate HU-42    # QA convierte ese plan en pruebas automaticas
+/dev-team:e2e heal              # QA repara pruebas fragiles (nunca cambia lo que debe cumplirse)
+/dev-team:e2e visual            # compara las pantallas clave con la version aprobada
+/dev-team:e2e a11y              # revisa accesibilidad de las pantallas
+/dev-team:e2e api HU-42         # somete los servicios de la historia a su contrato
 ```
-La suite se crea sola desde el template `e2e-faast` del plugin la primera vez que QA
-la necesita (o en `/new-project` y `/onboard`). Toda la evidencia queda en
-`.coordination/evidence/` del proyecto; en CI es un artifact del run, nunca un commit.
+La primera vez que QA necesita el proyecto de pruebas, lo crea solo (tambien lo hacen
+`/dev-team:new-project` y `/dev-team:onboard`). Toda la evidencia queda en la carpeta
+del proyecto, nunca dentro del codigo.
 
-**Ver la precision del equipo QA** (tasa de veredictos revertidos, meta 0,1 %):
+**Ver que tan preciso esta siendo QA:**
 ```
 /dev-team:team-metrics
 ```
+→ entre otras cosas, cuantas historias aprobadas volvieron despues como bug. La meta
+es una de cada mil o menos.
 
-**Exploratoria libre sobre una URL:**
+**Exploratoria libre sobre una direccion:**
 ```
 /dev-team:e2e explorar http://localhost:4200
 ```
-→ QA navega la app como usuario, reporta lo que encuentre (con evidencia), sin
+→ QA navega la aplicacion como usuario, reporta lo que encuentre (con evidencia), sin
 tocar nada.
 
 ---
@@ -976,18 +992,19 @@ LEY: captura la evidencia de ese primer intento, registra `blocked` y reporta de
 inmediato. No reintenta, no busca workarounds, no toca nada.
 
 **¿Donde queda la evidencia de QA?**
-Siempre en la carpeta del proyecto, `.coordination/evidence/{HU}/`, con un informe
-por criterio. Al formalizar, EMBEBIDA en el item del tracker (GitHub: rama
-`evidence` + `![](raw)`; Azure: attachment + `<img>` en el HTML del WI). Siempre
-visible dentro del item, jamas un link suelto. Regla dura: en GitHub la evidencia va
-UNICAMENTE a la rama `evidence` (huerfana, permanente); nunca a otra rama ni a otra
-parte del repo, y `.coordination/evidence/` esta en el `.gitignore` de las ramas de
-codigo. Un PR con capturas adentro se rechaza.
+Siempre en la carpeta del proyecto (`.coordination/evidence/`, una subcarpeta por
+historia o bug) con un informe por criterio. Cuando hay un bug, las imagenes se
+muestran DENTRO del ticket, no como un enlace aparte. Si el proyecto esta en GitHub,
+las imagenes se publican en un espacio apartado del repositorio que existe solo para
+eso (la rama `evidence`) y nunca se mezclan con el codigo; un cambio de codigo que
+traiga capturas adentro se rechaza. Si el proyecto esta en Azure DevOps, se adjuntan
+al ticket y se muestran embebidas.
 
-**Me aparecen dos servidores "playwright" en `claude mcp list` / QA no ve `browser_*`**
-Desde v2.8.0 el Playwright MCP viene dentro del plugin. Si ademas lo tenias registrado
-a mano, quitalo con `claude mcp remove playwright` (el del plugin queda). Si no aparece
-ninguno, reinicia la sesion: los MCP de plugin cargan al inicio.
+**QA dice que no puede abrir el navegador para probar**
+Desde la version 2.8.0 el navegador de pruebas viene incluido en el plugin. Casi
+siempre basta con cerrar y abrir la sesion. Si antes lo habias configurado a mano,
+pidele a `/dev-team:setup playwright` que lo revise: te dira si hay uno duplicado y
+que comando ejecutar para quitarlo.
 
 **¿El DBA puede escribir en las BDs cuando compara dos bases?**
 No. Solo-lectura por regla dura. Los scripts de nivelacion se GENERAN como
