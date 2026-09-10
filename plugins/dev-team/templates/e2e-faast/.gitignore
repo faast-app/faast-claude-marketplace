@@ -1,0 +1,9 @@
+node_modules/
+.env
+.auth/
+test-results/
+playwright-report/
+blob-report/
+# La evidencia vive en .coordination/evidence/ del proyecto (gitignored alli), JAMAS en este repo
+.evidence/
+# Solo los baselines (*-snapshots/) se versionan: son activos de la suite, no evidencia

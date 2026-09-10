@@ -51,6 +51,17 @@ en el input de la herramienta Task. Con un script Python:
 Si los transcripts no estan disponibles, reportarlo como "sin datos de tokens" —
 NUNCA inventar cifras.
 
+### 3. Precision del equipo QA (meta 0,1 %)
+Del mismo `activity.jsonl`:
+- `verdict` (agente qa; `detail` APROBADA|RECHAZADA) → veredictos emitidos por HU
+- `reopened` (agente lead; `task` = HU aprobada que volvio como bug) → veredictos revertidos
+- **Tasa de veredictos revertidos = reopened / verdict APROBADA** (periodo). Meta ≤ 0,1 %
+  (1 por cada 1.000). Reportar tambien: HUs rechazadas a la primera (%), bugs
+  encontrados por QA vs bugs reportados por usuarios/produccion, tests en cuarentena
+  (`test.fixme` en la suite) y flaky detectados en doble corrida.
+Si no hay eventos `verdict`, decirlo ("QA aun no registra veredictos") — nunca inferirlo
+de los handoffs.
+
 ## Salida (tabla ranking)
 
 ```
@@ -64,8 +75,13 @@ NUNCA inventar cifras.
 ## Ahora mismo (actividad reciente, ultimos 30 min)
 - {agente}: {ultimo handoff / branch con commits recientes / sesion activa}
 
+## Precision QA
+- Veredictos: {n} (APROBADA {a} / RECHAZADA {r}) · Revertidos: {x} → tasa {x/a %} (meta ≤ 0,1 %)
+- Cuarentena: {n} tests · Flaky en doble corrida: {n} · Bugs QA vs produccion: {q} / {p}
+
 ## Alertas
 - {agente} tiene N handoffs sin procesar hace > 1 dia
+- Tasa de veredictos revertidos > 0,1 % — revisar puertas de aprobacion / cuarentena
 - {agente} consume {X}% de los tokens con {Y}% de las tareas — revisar si su
   modelo asignado es el correcto (optimizacion de costo)
 ```

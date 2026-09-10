@@ -257,6 +257,8 @@ function reactTo(ev){
   if (ev.event === 'blocked'){ ringPulse(b.x, b.y, '#ff5d5d'); floatUp(b.x, b.y-46, '🚫 bloqueado', '#ff5d5d'); }
   if (ev.event === 'unblocked'){ floatUp(b.x, b.y-46, '🟢 libre', '#3ddc84'); }
   if (ev.event === 'evidence_added'){ floatUp(b.x, b.y-46, '📸 evidencia', '#e879f9'); }
+  if (ev.event === 'verdict'){ const ok = /APROBADA/.test(ev.detail||''); floatUp(b.x, b.y-46, ok ? '✅ APROBADA' : '❌ RECHAZADA', ok ? '#3ddc84' : '#ff5d5d'); }
+  if (ev.event === 'reopened'){ floatUp(b.x, b.y-46, '↩️ reabierta', '#ffb547'); }
   if (ev.event === 'wiki_ingest'){ floatUp(b.x, b.y-46, '📖 wiki', '#f4b860'); }
 }
 function deliver(from, to){

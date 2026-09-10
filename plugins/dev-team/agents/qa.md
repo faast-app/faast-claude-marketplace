@@ -432,4 +432,6 @@ evento (append con `>>`, jamas reescribir el archivo):
 `task_start` y `task_end` se registran SOLOS (hooks del plugin al iniciar/terminar
 tu ejecucion) — NO los escribas tu. Tu registras lo que los hooks no pueden ver:
 `handoff_sent`, `handoff_read`, `blocked` (motivo en detail), `unblocked`,
-`evidence_added`. Alimentan `/dev-team:team-metrics` y `/dev-team:team-office`.
+`evidence_added` y **`verdict`** (obligatorio al cerrar cada HU: `task` = HU-ID,
+`detail` = `APROBADA` o `RECHAZADA: {n} bugs`). Alimentan `/dev-team:team-metrics`
+(tasa de veredictos revertidos = meta 0,1 %) y `/dev-team:team-office`.

@@ -210,7 +210,7 @@ la escribe. Abrela con Obsidian para ver el grafo de conocimiento.
 | Comando | Que hace |
 |---------|----------|
 | `/dev-team:test-plan {HU}` | Plan de pruebas desde los criterios de aceptacion |
-| `/dev-team:e2e {HU\|run\|explorar url}` | Validacion Playwright + suite E2E automatizada |
+| `/dev-team:e2e {HU\|run\|plan\|generate\|heal\|visual\|a11y\|api\|explorar url}` | Validacion con evidencia por criterio, suite E2E, Test Agents, regresion visual, accesibilidad y contrato de API |
 | `/dev-team:review-pr {n}` | Revision de codigo de un PR |
 | `/dev-team:security-audit` | Auditoria de seguridad del repo actual |
 | `/dev-team:git-check` | Verificacion git antes de commitear |
@@ -548,6 +548,26 @@ existe "aprobada con observaciones".
 **Correr la regresion completa** (por ejemplo antes de un pase):
 ```
 /dev-team:e2e run
+```
+→ doble corrida; cada fallo se clasifica como bug de la app (se crea con evidencia)
+o test fragil (cuarentena).
+
+**Los demas subcomandos de QA:**
+```
+/dev-team:e2e plan HU-42        # el planner explora la app y escribe specs/hu-042.md
+/dev-team:e2e generate HU-42    # el generator convierte el plan en tests, locator por locator
+/dev-team:e2e heal              # solo en regresion: repara TESTS fragiles, nunca aserciones
+/dev-team:e2e visual            # compara pantallas clave contra sus baselines
+/dev-team:e2e a11y              # accesibilidad WCAG 2.1 AA (0 violaciones graves)
+/dev-team:e2e api HU-42 '^/api/cobranzas'   # contrato OpenAPI con Schemathesis
+```
+La suite se crea sola desde el template `e2e-faast` del plugin la primera vez que QA
+la necesita (o en `/new-project` y `/onboard`). Toda la evidencia queda en
+`.coordination/evidence/` del proyecto; en CI es un artifact del run, nunca un commit.
+
+**Ver la precision del equipo QA** (tasa de veredictos revertidos, meta 0,1 %):
+```
+/dev-team:team-metrics
 ```
 
 **Exploratoria libre sobre una URL:**
