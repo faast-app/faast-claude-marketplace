@@ -65,16 +65,35 @@ Despues de validar el cliente:
 3. Guardar en `.coordination/dba-access.json` (NUNCA commitearlo — verificar .gitignore)
 4. Confirmar al usuario: "Conexion a {motor} OK"
 
-### 5. QA / Playwright (si el proyecto tiene frontend o pruebas E2E)
+### 5. QA / Playwright (si el proyecto tiene frontend, APIs o pruebas E2E)
+El **Playwright MCP viene INCLUIDO en el plugin** (`.mcp.json` de dev-team: chromium,
+`--caps=testing,devtools,vision`, `--isolated`, salida en `.coordination/evidence/_mcp/`).
+Nadie tiene que registrarlo a mano. Tu checklist:
 ```bash
-# Opcion A (preferida): Playwright MCP ya disponible en Claude Code — verificar
-# que las tools browser_* responden (el agente QA las usa directamente)
-
-# Opcion B: Playwright instalado en el repo de tests
-npx playwright --version       # si falta: npm init playwright@latest
-npx playwright install         # descarga browsers (chromium, firefox, webkit)
-npx playwright install-deps    # solo Linux
+# 5.1 MCP del plugin activo: en `claude mcp list` debe aparecer UN solo "playwright"
+claude mcp list
+#   - Si aparecen DOS (uno del plugin y otro personal en ~/.claude.json): las tools se
+#     duplican y confunden al QA. Pide al usuario ejecutar (tu NO tocas su config):
+#       claude mcp remove playwright          # quita el personal; el del plugin queda
+#   - Si no aparece ninguno: sesion vieja → reiniciar Claude Code (los MCP de plugin
+#     cargan al inicio). Requiere Node ≥ 18 (npx descarga @playwright/mcp la 1ra vez)
+# 5.2 Browser para el MCP y la suite
+npx playwright install chromium      # 1ra vez; install-deps solo en Linux
+# 5.3 Suite E2E en el repo de tests (mono: e2e/; multi: {proyecto}-e2e)
+npx playwright --version             # si falta: npm init playwright@latest
+npm ls @axe-core/playwright 2>/dev/null | grep -q axe-core || echo "falta: npm i -D @axe-core/playwright"
+npx playwright init-agents --loop=claude   # Test Agents planner/generator/healer (una vez; regenerar al actualizar Playwright)
+# 5.4 Contratos de API (qa-backend)
+schemathesis --version               # si falta: pipx install schemathesis  (pipx: brew install pipx | pip install --user pipx)
 ```
+Reglas de esta seccion:
+- `.gitignore` del repo (o repos) debe contener `.coordination/evidence/` y
+  `.coordination/qa-secrets.env` — agregalos si faltan (la evidencia QA jamas viaja en
+  ramas de codigo; solo rama `evidence` o tracker)
+- Credenciales de QA: `.coordination/qa-secrets.env` (formato dotenv, gitignored) — el
+  QA usa el NOMBRE de la variable, nunca el valor en el chat
+- En `setup-status.json` registra por separado: `"playwright-mcp"`, `"playwright"`,
+  `"axe"`, `"schemathesis"`, `"test-agents"`
 
 ## Flujo de trabajo
 
@@ -101,7 +120,11 @@ npx playwright install-deps    # solo Linux
      "tools": { "git": "ok", "gh": "ok", "docker": "ok", "mysql-client": "ok" },
      "dbConnection": "ok",
      "trackerAuth": "ok",
-     "playwright": "ok"
+     "playwright": "ok",
+     "playwright-mcp": "ok",
+     "axe": "ok",
+     "schemathesis": "ok",
+     "test-agents": "ok"
    }
    ```
 7. **Dar el OK final**: "Entorno listo. El equipo puede trabajar." — o listar lo que quedo pendiente y su impacto (ej: "Sin gh auth no funcionara /sync")

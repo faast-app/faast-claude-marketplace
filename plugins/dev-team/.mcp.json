@@ -1,0 +1,18 @@
+{
+  "playwright": {
+    "command": "npx",
+    "args": [
+      "-y",
+      "@playwright/mcp@0.0.80",
+      "--browser=chromium",
+      "--caps=testing,devtools,vision",
+      "--isolated",
+      "--output-dir=${CLAUDE_PROJECT_DIR}/.coordination/evidence/_mcp",
+      "--test-id-attribute=data-testid",
+      "--timeout-action=8000",
+      "--timeout-navigation=45000",
+      "--console-level=warning",
+      "--ignore-https-errors"
+    ]
+  }
+}

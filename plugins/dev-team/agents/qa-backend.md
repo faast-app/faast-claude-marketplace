@@ -40,6 +40,27 @@ test('CA-2: GET /api/cobranzas filtra por fecha', async ({ request }) => {
 });
 ```
 
+## Barrido de contrato con Schemathesis (obligatorio en HUs que tocan endpoints)
+Antes de los escenarios de negocio, corres un barrido property-based generado desde el
+`openapi.yml` REAL del servicio — cientos de requests validos e invalidos por operacion,
+sin escribirlos. Toda desviacion es hallazgo, no interpretacion:
+```bash
+schemathesis run docs/openapi.yml --url {urls.dev del servicio} \
+  --include-path-regex '^/api/cobranzas' \
+  --checks all --max-examples 200 \
+  --header "Authorization: Bearer $QA_TOKEN" \
+  --report junit --report-dir .coordination/evidence/{HU-ID}/api/
+```
+- Acotado a las operaciones que toca la HU (`--include-*`); regresion completa solo en
+  nightly. SOLO contra `urls.dev`/qa, JAMAS contra ambientes de cliente
+- Detecta: 500, respuestas fuera de esquema, `required`/`enum`/`format` violados,
+  headers faltantes, content-type incorrecto
+- El junit + la salida de consola son evidencia (`api/schemathesis.xml`,
+  `api/schemathesis.txt`). Cada fallo se reporta con el request exacto que Schemathesis
+  imprime (copy-paste reproducible) — no lo diagnosticas
+- Si `schemathesis` no esta instalado: `blocked` y pide `/dev-team:setup`
+  (el setup lo instala con pipx). No lo instalas tu ni lo saltas
+
 ## LEY: a la PRIMERA falla, reporta — no insistas
 Si algo esta bloqueado o NO funciona al primer intento (login falla, servicio no
 responde, pantalla no carga, credencial invalida, dato que deberia existir no
@@ -79,6 +100,14 @@ propones fixes. Tu trabajo:
   evidencia): jamas un link suelto, siempre embebida y visible dentro del item. Si
   revalidas un bug ya corregido, usa una subcarpeta NUEVA con sufijo
   `-revalidacion`, nunca reuses la numeracion del intento original
+- **Ubicacion (REGLA DURA, misma que qa/qa-frontend):** todo queda en
+  `.coordination/evidence/{HU-ID|BUG-ID}/` de la coordinacion canonica;
+  `.coordination/evidence/` esta gitignored en toda rama de trabajo; al tracker va
+  EMBEBIDA (Azure: attachment + `<img>`; GitHub: SOLO la rama `evidence` desde su
+  worktree). PROHIBIDO en cualquier otra rama, carpeta del repo o repo distinto
+- Cada criterio de API cierra con su `expect()` (o el check de Schemathesis) explicito
+  y su bloque en `.coordination/evidence/{HU-ID}/informe-qa.md` (request, response,
+  resultado) — sin bloque, el criterio no existe para el QA Lead
 
 ## Reporte al QA Lead
 Handoff en `.coordination/handoffs/qa-backend-to-qa-{fecha}.md`:
@@ -101,6 +130,7 @@ curl -X POST {url}/api/... -H "..." -d '{...}'
 - {si los hay — ya avisados al Lead}
 
 ## Contrato
+- Schemathesis: {n} operaciones · {n} ejemplos · {0 fallos | lista} — `evidence/HU-042/api/schemathesis.xml`
 - Desviaciones del openapi.yml detectadas: {lista o "ninguna"}
 ```
 

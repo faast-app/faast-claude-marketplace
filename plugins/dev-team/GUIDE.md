@@ -163,9 +163,10 @@ la escribe. Abrela con Obsidian para ver el grafo de conocimiento.
 6. **LEY QA: a la primera falla, reporta** — evidencia + `blocked` + reporte
    inmediato. Prohibido reintentar, workarounds o probar fuera de su alcance.
 7. **QA no debuggea** — reproduce, documenta y reporta. La causa raiz es del dev.
-8. **Evidencia SIEMPRE embebida** — screenshots/clips visibles DENTRO del item:
-   GitHub → rama `evidence` + `![](raw)`; Azure → attachment + `<img>` en el HTML
-   del WI. Jamas un link suelto.
+8. **Evidencia SIEMPRE embebida y en su lugar** — screenshots/clips visibles DENTRO
+   del item: GitHub → rama `evidence` + `![](raw)`; Azure → attachment + `<img>` en el
+   HTML del WI. Jamas un link suelto. La evidencia vive en `.coordination/evidence/`
+   del proyecto y en GitHub SOLO en la rama `evidence`: nunca en una rama de codigo.
 9. **Cybersec es segundo gate** en auth/datos sensibles y nunca commitea.
 10. **Solo el Lead mergea**; un agente = un branch = una tarea.
 11. **El release-manager es gate de pases** — audita el paquete RESULTANTE y puede
@@ -526,14 +527,23 @@ casos borde adicionales y datos de prueba necesarios.
 /dev-team:e2e HU-42
 ```
 → el equipo QA valida cada criterio con Playwright REAL (previa verificacion del
-informe de conformidad), captura evidencia, y escribe la suite automatizada con
-trazabilidad criterio → test:
+informe de conformidad). El Playwright MCP ya viene dentro del plugin: no hay que
+instalar ni registrar nada. Cada criterio se cierra con una verificacion explicita
+(`browser_verify_*`) y una captura con el elemento resaltado, se guarda en
+`.coordination/evidence/HU-042/informe-qa.md`, y despues se escribe la suite
+automatizada con trazabilidad criterio → test:
 ```typescript
 test.describe('[HU-042] Filtro de fechas en cobranzas', () => {
   test('CA-1: filtra registros dentro del rango', async ({ page }) => { ... });
   test('CA-2: muestra error con rango invalido', async ({ page }) => { ... });
 });
 ```
+
+Para aprobar, el QA Lead exige 7 puertas: verificacion explicita de todos los
+criterios, suite verde en dos corridas seguidas, regresion verde, sin diffs visuales
+sin aprobar, cero violaciones graves de accesibilidad, contrato de API sin fallos
+(Schemathesis) y consola/red limpias. Si una falla, la HU vuelve RECHAZADA; no
+existe "aprobada con observaciones".
 
 **Correr la regresion completa** (por ejemplo antes de un pase):
 ```
@@ -946,9 +956,18 @@ LEY: captura la evidencia de ese primer intento, registra `blocked` y reporta de
 inmediato. No reintenta, no busca workarounds, no toca nada.
 
 **¿Donde queda la evidencia de QA?**
-Local en `.coordination/evidence/` mientras valida; al formalizar, EMBEBIDA en
-el item del tracker (GitHub: rama `evidence` + `![](raw)`; Azure: attachment +
-`<img>` en el HTML del WI). Siempre visible dentro del item, jamas un link suelto.
+Siempre en la carpeta del proyecto, `.coordination/evidence/{HU}/`, con un informe
+por criterio. Al formalizar, EMBEBIDA en el item del tracker (GitHub: rama
+`evidence` + `![](raw)`; Azure: attachment + `<img>` en el HTML del WI). Siempre
+visible dentro del item, jamas un link suelto. Regla dura: en GitHub la evidencia va
+UNICAMENTE a la rama `evidence` (huerfana, permanente); nunca a otra rama ni a otra
+parte del repo, y `.coordination/evidence/` esta en el `.gitignore` de las ramas de
+codigo. Un PR con capturas adentro se rechaza.
+
+**Me aparecen dos servidores "playwright" en `claude mcp list` / QA no ve `browser_*`**
+Desde v2.8.0 el Playwright MCP viene dentro del plugin. Si ademas lo tenias registrado
+a mano, quitalo con `claude mcp remove playwright` (el del plugin queda). Si no aparece
+ninguno, reinicia la sesion: los MCP de plugin cargan al inicio.
 
 **¿El DBA puede escribir en las BDs cuando compara dos bases?**
 No. Solo-lectura por regla dura. Los scripts de nivelacion se GENERAN como
