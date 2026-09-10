@@ -121,6 +121,23 @@ Cabecera minima de 2-4 lineas por archivo: `-- <schema_destino>: <TIPO> (<desc>)
 objeto (`-- Origen: ...` / natural key). En MySQL, envolver los CREATE en
 `SET FOREIGN_KEY_CHECKS=0; ... SET FOREIGN_KEY_CHECKS=1;`.
 
+**Layout de ENTREGA (carpetas) — asi lo espera el release-manager y asi lo cita
+el documento de pase:**
+```
+{entrega}/
+├── MYSQL/                       # una carpeta por MOTOR (MYSQL | SQL | POSTGRES)
+│   ├── 1_db_fintec/             # una carpeta por BASE, numerada = orden de ejecucion
+│   │   ├── 1_createTable.sql    #   dentro: los archivos por TIPO de la regla global
+│   │   └── 5_insertInto.sql
+│   └── 2_db_dicom/
+└── SQL/
+    └── 1_db_interface/
+        └── 6_procedures.sql
+```
+Nunca scripts sueltos en la raiz, nunca carpetas por feature/ticket/sprint, nunca
+un archivo con statements de varias bases. Si el pase va a varios paises con data
+distinta, una entrega por pais (`CL/`, `PE/`) con el mismo layout adentro.
+
 **Idempotencia total: re-ejecutable N veces sin error y SIN hardcodes.** Prohibido:
 - **AUTO_INCREMENT hardcodeado:** nunca `AUTO_INCREMENT=N` en el CREATE TABLE; deja que el contador arranque solo.
 - **Charset/collation hardcodeado:** no fijar `DEFAULT CHARSET`/`COLLATE` a nivel tabla NI `CHARACTER SET`/`COLLATE` a nivel columna; que todo herede el default del schema destino. Hazlo COMPLETO (tabla + columnas), NUNCA parcial: una mezcla parcial es lo que dispara el error 3780 en FKs sobre columnas CHAR/UUID/texto en MySQL 8. Unica excepcion: si una FK es sobre columna de texto/UUID, manten charset+collation identicos y explicitos en AMBOS lados — y MARCA cada caso con el comentario `-- charset-exception: <motivo>` en la linea correspondiente, para que la auditoria del release-manager lo reconozca como intencional y no lo rechace.
