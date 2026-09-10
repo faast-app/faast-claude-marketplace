@@ -1,10 +1,10 @@
 # Dev Team — Manual de Usuario
 
-**Version del plugin:** 2.10.x · **Integrantes del equipo:** 15 · **Comandos:** 22
+**Version del plugin:** 2.11.x · **Integrantes del equipo:** 20 · **Comandos:** 23
 
 Dev Team es un **equipo completo de desarrollo de software formado por asistentes de
 inteligencia artificial**. Funciona como una empresa de software en miniatura: hay
-alguien que escribe lo que el negocio necesita, alguien que diseña las pantallas,
+alguien que escribe lo que el negocio necesita, un estudio de diseño completo,
 alguien que decide como se construye, programadores, un equipo de pruebas, un
 encargado de seguridad, uno de publicar versiones y uno que documenta. Tu hablas
 con ellos en lenguaje normal y ellos hacen el trabajo, pidiendote confirmacion antes
@@ -31,7 +31,7 @@ separada, en el **Anexo tecnico**.
 - [Caso 2: Tengo un documento de requerimientos](#caso-2--tengo-un-documento-de-requerimientos)
 - [Caso 3: Ya tengo un proyecto andando y quiero que el equipo lo tome](#caso-3--ya-tengo-un-proyecto-andando-y-quiero-que-el-equipo-lo-tome)
 - [Caso 4: Necesito una funcionalidad nueva, de principio a fin](#caso-4--necesito-una-funcionalidad-nueva-de-principio-a-fin)
-- [Caso 5: Quiero ver como se vera una pantalla antes de construirla](#caso-5--quiero-ver-como-se-vera-una-pantalla-antes-de-construirla)
+- [Caso 5: Quiero ver como se vera el producto antes de construirlo (equipo de diseño)](#caso-5--quiero-ver-como-se-vera-el-producto-antes-de-construirlo-equipo-de-diseño)
 - [Caso 6: Algo no funciona (reportar y corregir un error)](#caso-6--algo-no-funciona-reportar-y-corregir-un-error)
 - [Caso 7: Algo falla y nadie sabe en que parte esta el problema](#caso-7--algo-falla-y-nadie-sabe-en-que-parte-esta-el-problema)
 - [Caso 8: Pruebas — como se comprueba que todo funciona](#caso-8--pruebas-como-se-comprueba-que-todo-funciona)
@@ -93,15 +93,20 @@ Ejemplos de lo que puedes escribir despues (o en la misma linea):
 
 ## 2. Conoce al equipo
 
-Piensa en una empresa de software pequeña. Estos son sus 15 integrantes, con lo que
-cada uno hace y cuando te vas a cruzar con ellos.
+Piensa en una empresa de software pequeña con su propio estudio de diseño. Estos son
+sus 20 integrantes, con lo que cada uno hace y cuando te vas a cruzar con ellos.
 
 | Integrante | Que hace, en palabras simples | Cuando aparece |
 |---|---|---|
 | 🧰 **setup** (el que prepara la oficina) | Revisa que la computadora tenga todo lo necesario e instala lo que falte, con tu permiso | Al empezar un proyecto o cuando algo no esta instalado |
 | 📋 **product-owner** (el dueño del producto) | Escribe lo que el negocio necesita en lenguaje claro: historias, errores, prioridades. Lleva el tablero de tareas | Siempre que pides algo nuevo o reportas un problema |
 | 📐 **architect** (el arquitecto) | Decide como se construye: en cuantas partes, con que tecnologias, como se conectan | Al crear un proyecto o ante una decision estructural |
-| 🎨 **ui-designer** (el diseñador) | Propone como se veran las pantallas (colores, tipografia, distribucion) y te deja elegir | Antes de construir una pantalla nueva |
+| 🎨 **ui-designer** (el director de diseño) | Dirige el estudio de diseño y diseña las pantallas: te presenta dos o tres caminos con algo real para ver, y arma la propuesta completa para que decidas | Antes de construir cualquier pantalla o producto nuevo |
+| 🧭 **ux-researcher** (el investigador de experiencia) | Entiende a las personas que usaran el sistema: que quieren lograr, donde se traban, cual es el camino mas corto. Dibuja los flujos y los bocetos | Producto o flujo nuevo, rediseños, "los usuarios se pierden" |
+| 🖌️ **visual-designer** (el diseñador grafico e ilustrador) | Identidad de marca, logo, colores, letras, iconos e ilustraciones con caracter propio | Identidad, material grafico, paginas de presentacion |
+| 🎞️ **motion-designer** (el animador) | Da vida a las pantallas: transiciones, respuestas al tocar, y videos de producto o lanzamiento | Toda pantalla con interaccion; demostraciones y lanzamientos |
+| 🧊 **artist-3d** (el artista 3D) | Escenas y objetos en tres dimensiones para la web, rapidos y con version simple para equipos modestos | Cuando el 3D aporta de verdad: producto fisico, datos espaciales, marca |
+| 📐 **design-engineer** (el maquetador experto) | Convierte el diseño elegido en un prototipo que se navega como el producto real y en el "diccionario" de colores, letras y medidas que usaran los programadores. Lo sincroniza con Pencil, Figma o Penpot si los usas | Al final de toda propuesta; antes de programar |
 | 🎯 **lead** (el jefe de equipo) | Coordina, arma el plan, reparte el trabajo, exige que se cumplan los controles y es el unico que integra los cambios al producto | Detras de cada tarea; lo ves al aprobar planes |
 | ⚙️ **backend** (programador de "la cocina") | Construye la logica y los servicios que no se ven | Al construir funcionalidades |
 | 🖥️ **frontend** (programador de pantallas) | Construye lo que el usuario ve y toca | Al construir pantallas |
@@ -142,6 +147,10 @@ El equipo intenta hablar claro, pero hay palabras del oficio que conviene conoce
 | **Plan primero** | La regla de que nadie cambia nada sin mostrarte antes el plan y esperar tu "adelante" |
 | **Nota de traspaso (handoff)** | La forma en que los integrantes se pasan trabajo entre ellos: un mensaje escrito que queda guardado. Todo es trazable |
 | **Wiki** | La memoria del proyecto: paginas cortas con lo que se decidio y por que |
+| **Propuesta de diseño** | El paquete que entrega el estudio de diseño para que decidas: quien lo usa, como fluye, dos o tres caminos visuales, el recomendado, el prototipo navegable y el plan. Se lee como una presentacion |
+| **Prototipo navegable** | Una version de las pantallas que se abre en el navegador y se recorre haciendo clic, con textos y datos reales, pero sin estar programada por detras |
+| **Tokens de diseño** | El "diccionario" oficial de colores, letras, espacios y tiempos de animacion. Diseño y programacion usan el mismo, asi nada se inventa a mano |
+| **Pencil / Figma / Penpot** | Herramientas de dibujo de pantallas. El equipo puede sincronizar su trabajo con la que uses; si no usas ninguna, entrega igual en archivos que se abren en el navegador |
 
 ---
 
@@ -157,6 +166,9 @@ Estas reglas estan siempre activas. No hay que pedirlas.
 3. **Se trabaja por sprints**, con un objetivo por sprint, tareas estimadas y
    prioridades por valor para el negocio.
 4. **Nada se integra al producto sin la aprobacion de pruebas**, con evidencia.
+4b. **Ninguna pantalla nueva se programa sin diseño aprobado por ti.** El estudio de
+   diseño te muestra caminos reales, eliges, y solo entonces se construye exactamente eso.
+   Los ajustes pequeños dentro de lo que ya existe no lo necesitan.
 5. **Regla de oro (no se cambia nunca): pruebas no valida sin el informe de
    conformidad.** Si nadie confirmo que quedo instalado y funcionando, no se prueba.
    En la computadora del desarrollador, solo si todo el sistema esta levantado
@@ -216,6 +228,16 @@ exactamente que quieres.
 | `/dev-team:refine {pedido}` | El dueño del producto convierte tu pedido en historias en el tablero |
 | `/dev-team:assign-task` | El jefe de equipo reparte el trabajo (con plan primero) |
 | `/dev-team:handoff` | Crear una nota de traspaso entre integrantes |
+
+**Diseño**
+
+| Escribes | Que consigues |
+|---|---|
+| `/dev-team:design {lo que necesitas}` | La propuesta de diseño completa: usuarios y flujos, caminos visuales, prototipo navegable y presentacion (ver [Caso 5](#caso-5--quiero-ver-como-se-vera-el-producto-antes-de-construirlo-equipo-de-diseño)) |
+| `/dev-team:design pantalla HU-42` | Propuesta ligera de una sola pantalla |
+| `/dev-team:design identidad` | Marca: logo, colores, letras, aplicaciones y manual de marca |
+| `/dev-team:design review {direccion}` | Revision de diseño de algo que ya existe, con hallazgos y fotos |
+| `/dev-team:design video {tema}` | Video de producto, demostracion o lanzamiento |
 
 **Calidad**
 
@@ -414,34 +436,75 @@ memoria del proyecto al dia.
 
 ---
 
-## Caso 5 — Quiero ver como se vera una pantalla antes de construirla
+## Caso 5 — Quiero ver como se vera el producto antes de construirlo (equipo de diseño)
 
-**Situacion:** necesitas una pantalla nueva de "Resumen de cobranzas" y quieres
-elegir el diseño antes de que alguien la programe.
+**Situacion:** necesitas el nuevo "Portal de proveedores" (o una sola pantalla, o una
+marca nueva) y quieres decidir con algo real frente a tus ojos antes de que alguien
+programe una linea.
 
 **Que escribes:**
 ```
-/dev-team:start necesito diseñar la pantalla de resumen de cobranzas antes de construirla
+/dev-team:design portal de proveedores: los proveedores consultan el estado de sus
+facturas, suben documentos y ven pagos programados. Debe sentirse confiable y simple,
+lo usaran personas de 25 a 65 años, muchas desde el celular.
 ```
 
-**Que hace el diseñador:**
-1. Mira como se ven hoy tus pantallas (colores, tipografia, estilo) para partir de tu
-   realidad, no de cero.
-2. Te entrega **dos o tres propuestas** como paginas que abres en tu navegador y se
-   ven como la pantalla real:
+**Que hace el estudio de diseño:**
+1. **El director de diseño te hace como maximo tres preguntas** (tono de la marca,
+   referencias que te gusten, restricciones) y escribe el brief: el problema, para quien,
+   como se mide el exito.
+2. **Dos integrantes trabajan a la vez:** el investigador de experiencia define quienes
+   son los usuarios, que quieren lograr y el camino mas corto para lograrlo (dibuja los
+   flujos y bocetos grises que se pueden recorrer); el diseñador grafico propone la
+   direccion de arte: colores, letras, iconos, ilustraciones y, si no existe, la marca.
+3. **El director de diseño te presenta dos o tres caminos** para las pantallas clave.
+   Cada camino se abre en tu navegador y se ve como el producto terminado, con datos
+   reales, en computador y en celular. Los caminos son de verdad distintos, no tres
+   tonos de lo mismo:
    ```
-   propuesta-A-densa.html     "para leer muchos datos: tabla e indicadores arriba"
-   propuesta-B-aireada.html   "para leer rapido: tarjetas y un grafico"
-   design-spec.md             colores (con contraste verificado), letras, espacios,
-                              y como se ve cuando carga, cuando falla, cuando esta vacia
+   Camino A "Escritorio de trabajo"  — denso, tabla protagonista, para quien entra todos los dias
+   Camino B "Guiado"                 — paso a paso, tarjetas grandes, para quien entra una vez al mes
+   Camino C "Estado de cuenta"       — parecido a una cartola bancaria, familiar y sobrio
    ```
-3. Eliges ("la B, pero con los indicadores de la A"). El diseñador arma la version
-   final y se la pasa al programador de pantallas indicando que es fijo y que puede
-   adaptarse.
-4. El programador construye **exactamente eso**.
+4. **Tu eliges** ("el B, pero con la tabla del A para el listado de facturas"). Nada
+   avanza sin tu decision.
+5. **Con la direccion elegida entran el animador y, si aporta, el artista 3D:** como
+   responden los botones, como aparecen las pantallas, que se mueve y que no (siempre
+   con una version tranquila para quien prefiere menos movimiento); y una escena 3D solo
+   si tiene sentido, con su version simple para equipos modestos.
+6. **El maquetador experto arma el prototipo navegable** de alta fidelidad: se recorre
+   completo en el navegador, con todos los estados (cargando, error, vacio, exito), y
+   deja el "diccionario" oficial de colores, letras y medidas que usaran los
+   programadores. Si tu empresa usa Pencil, Figma o Penpot, lo sincroniza alli.
+7. **Recibes la propuesta de diseño**, una presentacion que se lee sola (y su PDF):
+   ```
+   .coordination/design/DSN-001-portal-proveedores/
+   ├── propuesta.html / propuesta.pdf   la presentacion: problema, usuarios, flujos, caminos,
+   │                                    recomendado, marca, movimiento, prototipo, plan, decision
+   ├── 01-ux/        flujos y bocetos          ├── 04-motion/  movimiento y prototipo animado
+   ├── 02-ui/        los caminos A, B, C       ├── 05-3d/      escena 3D (si aplica)
+   ├── 03-visual/    marca, iconos, ilustraciones
+   └── 06-prototipo/ el prototipo navegable + tokens + DESIGN.md
+   ```
+8. Con tu OK final, el director de diseño le entrega al programador de pantallas
+   exactamente que construir. Pruebas compara despues lo construido con el prototipo.
 
-**Recibes:** pantallas decididas por ti, con algo visible antes de gastar en
-construccion. Cero "no era asi como lo imaginaba".
+**Recibes:** decisiones tomadas por ti con algo real en la mano, una marca y un sistema
+visual coherentes, y cero "no era asi como lo imaginaba".
+
+**Variantes rapidas:**
+```
+/dev-team:design pantalla HU-42          # una sola pantalla, dos caminos, prototipo de esa pantalla
+/dev-team:design identidad               # logo, colores, letras, aplicaciones, manual de marca
+/dev-team:design motion                  # revisar y proponer el movimiento del producto actual
+/dev-team:design review https://...      # revision de diseño de lo que ya existe, con fotos
+/dev-team:design video lanzamiento v2    # video de producto o lanzamiento
+```
+
+> El estudio trabaja con herramientas de ultima generacion (Pencil, Figma, Penpot,
+> generadores de imagenes, HyperFrames para video) **si las tienes**. Si no tienes
+> ninguna, entrega igual: todo se abre en el navegador. `/dev-team:setup design` te
+> dice que tienes y que podrias agregar.
 
 ---
 
@@ -844,6 +907,14 @@ El navegador de pruebas viene incluido con el plugin desde la version 2.8.0. Cas
 siempre basta con cerrar y abrir la sesion. Si antes alguien lo configuro a mano,
 pide `/dev-team:setup playwright`: detecta si hay uno duplicado y dice como quitarlo.
 
+**¿Necesito Figma o Pencil para que el equipo diseñe?**
+No. Todo lo que entrega el estudio de diseño se abre en el navegador. Si tu empresa ya
+usa Pencil, Figma o Penpot, el equipo sincroniza su trabajo alli; si no, no cambia nada.
+
+**¿Por que los programadores no pueden hacer la pantalla directo?**
+Porque decidir con algo real a la vista es mas barato que corregir despues de programar.
+Para ajustes pequeños dentro de lo que ya existe no hace falta pasar por diseño.
+
 **¿El encargado de datos puede escribir en las bases cuando compara dos?**
 No. Solo lee. Los archivos para nivelar se generan y tu decides cuando ejecutarlos.
 
@@ -958,7 +1029,8 @@ Todo vive en `.coordination/config.json` (lo crean `new-project` y `onboard`):
   },
   "team": { "models": { "architect": "opus" } },
   "urls": { "dev": "http://localhost:3000" },
-  "e2e": { "exists": true, "path": "e2e" }
+  "e2e": { "exists": true, "path": "e2e" },
+  "design": { "tools": { "canvas": "pencil", "imagegen": "none", "video": "hyperframes" } }
 }
 ```
 
@@ -974,6 +1046,15 @@ Todo vive en `.coordination/config.json` (lo crean `new-project` y `onboard`):
 | `team.models.{agente}` | Override de modelo en este proyecto (no aplica a setup/tech-writer). Personal: `~/.claude/dev-team.config.json`; proyecto gana |
 | `urls.dev` | URL del ambiente que QA usa para validar |
 | `e2e.path` | Donde vive la suite de pruebas (mono: `e2e/`; multi: repo `{proyecto}-e2e`), creada desde `templates/e2e-faast/` |
+| `design.tools.canvas` | `pencil` / `figma` / `penpot` / `none`: lienzo con el que sincroniza el design-engineer (Figma: `claude mcp add --transport http --scope user figma https://mcp.figma.com/mcp`) |
+| `design.tools.imagegen` | MCP de generacion de imagenes (opcional, API key del usuario) o `none` |
+| `design.tools.video` | `hyperframes` (plugin de HeyGen, Node ≥ 22 + FFmpeg) o `none` |
+
+**Skills de diseño recomendadas (opcionales).** El equipo de diseño trae las suyas en el
+plugin; estas lo elevan: `npx skills add emilkowalski/skills`, `npx skills add
+Leonxlnx/taste-skill`, `npx skills add pbakaus/impeccable`, `npx skills add tt-a1i/archify`;
+video: `claude plugin marketplace add heygen-com/hyperframes && claude plugin install
+core-skills@hyperframes`. `/dev-team:setup design` las detecta y las ofrece.
 
 **Secretos que nunca entran a git** (los templates ya los ignoran): `.coordination/dba-access.json`,
 `.coordination/qa-secrets.env`, `.coordination/setup-status.json`, y toda la carpeta
@@ -996,7 +1077,7 @@ linea con la ruta; gitignored).
 ├── pases/                carpetas de pase entregadas
 ├── office/               la oficina virtual (se instala con /team-office)
 ├── test-plans/           planes de prueba de QA
-├── design/               propuestas del ui-designer
+├── design/               propuestas de diseño (DSN-nnn-*/: brief, ux, ui, visual, motion, 3d, prototipo, deck); `_media/` gitignored
 ├── backlog.md · sprint-actual.md · architecture.md · repos.md
 ├── dba-access.json       credenciales BD — NUNCA en git
 ├── qa-secrets.env        credenciales de QA — NUNCA en git

@@ -131,8 +131,7 @@ const W = 1040, H = 760;
 const ROOMS = [
   { name:'Recepción',        x:24,  y:24,  w:150, h:158, hue:200 },
   { name:'Management',       x:196, y:24,  w:392, h:208, hue:225 },
-  { name:'Diseño',           x:610, y:24,  w:172, h:208, hue:290 },
-  { name:'Biblioteca',       x:804, y:24,  w:212, h:208, hue:35  },
+  { name:'Estudio de Diseño', x:610, y:24,  w:406, h:208, hue:290 },
   { name:'Desarrollo',       x:24,  y:258, w:370, h:216, hue:210 },
   { name:'Datos',            x:418, y:258, w:170, h:216, hue:160 },
   { name:'Sala QA',          x:610, y:258, w:406, h:216, hue:130 },
@@ -145,8 +144,13 @@ const DESKS = {
   'lead':            { x:392, y:96,  emoji:'🎯', color:'#6ea8ff' },
   'product-owner':   { x:268, y:168, emoji:'📋', color:'#63c7ff' },
   'architect':       { x:516, y:168, emoji:'📐', color:'#9a8cff' },
-  'ui-designer':     { x:696, y:130, emoji:'🎨', color:'#e879f9' },
-  'tech-writer':     { x:910, y:130, emoji:'📚', color:'#f4b860' },
+  'ui-designer':     { x:668, y:96,  emoji:'🎨', color:'#e879f9' },
+  'ux-researcher':   { x:800, y:96,  emoji:'🧭', color:'#f0abfc' },
+  'visual-designer': { x:932, y:96,  emoji:'🖌️', color:'#d946ef' },
+  'motion-designer': { x:668, y:180, emoji:'🎞️', color:'#c084fc' },
+  'artist-3d':       { x:800, y:180, emoji:'🧊', color:'#a78bfa' },
+  'design-engineer': { x:932, y:180, emoji:'📐', color:'#e879f9' },
+  'tech-writer':     { x:780, y:600, emoji:'📚', color:'#f4b860' },
   'backend':         { x:124, y:360, emoji:'⚙️', color:'#5eead4' },
   'frontend':        { x:292, y:360, emoji:'🖥️', color:'#7dd3fc' },
   'dba':             { x:503, y:360, emoji:'🗄️', color:'#4ade80' },
@@ -159,9 +163,9 @@ const DESKS = {
 };
 const DECOR = [
   {e:'🪴',x:186,y:60},{e:'🪴',x:600,y:452},{e:'🪴',x:1000,y:60},{e:'🌿',x:40,y:474},
-  {e:'☕',x:790,y:560},{e:'🛋️',x:860,y:610},{e:'🎮',x:940,y:560},{e:'🌴',x:750,y:680},
+  {e:'☕',x:880,y:560},{e:'🛋️',x:900,y:640},{e:'🎮',x:960,y:560},{e:'🌴',x:750,y:680},
   {e:'🖨️',x:560,y:56},{e:'📠',x:660,y:606},{e:'🗄️',x:556,y:300},{e:'📡',x:352,y:540},
-  {e:'📗',x:850,y:70},{e:'📕',x:876,y:70},{e:'📘',x:902,y:70},{e:'🕹️',x:60,y:60},
+  {e:'📗',x:850,y:660},{e:'📕',x:876,y:660},{e:'🖼️',x:640,y:56},{e:'🕹️',x:60,y:60},
 ];
 const STATUS_COLOR = { working:'#3ddc84', blocked:'#ff5d5d', idle:'#6b7691', stale:'#ffb547' };
 

@@ -15,7 +15,8 @@
 import json, sys
 
 TEAM = {"setup","product-owner","architect","ui-designer","lead","backend","frontend",
-        "dba","qa","qa-frontend","qa-backend","release-manager","infra","cybersec","tech-writer"}
+        "dba","qa","qa-frontend","qa-backend","release-manager","infra","cybersec","tech-writer",
+            "ux-researcher","visual-designer","motion-designer","artist-3d","design-engineer"}
 CHEAP_OK = {"explore"}  # agentes de busqueda solo-lectura, baratos: permitidos
 # comandos del plugin (NO son agentes): correrlos como subagente recarga todo el
 # contexto y quema tokens — se ejecutan inline con el Skill tool. "setup" no esta

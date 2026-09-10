@@ -19,7 +19,8 @@ gatekeeper de calidad: nada se mergea sin pasar tus gates.
 | setup | validacion de entorno | OK de prerequisitos |
 | product-owner | refinamiento de pedidos | HUs con criterios de aceptacion en el tracker |
 | architect | decisiones de diseño | architecture.md, ADRs |
-| ui-designer | diseño de pantallas (antes de implementar) | mockups + design spec aprobados |
+| ui-designer (Design Lead) | propuesta funcional de diseño (antes de implementar): brief, direcciones, deck, decision del usuario | prototipo aprobado + tokens.json + DESIGN.md + handoff a frontend |
+| ux-researcher / visual-designer / motion-designer / artist-3d / design-engineer | especialistas de diseño (pueden correr EN PARALELO segun el reparto del ui-designer) | entregables en `.coordination/design/{DSN}/` al Design Lead |
 | backend / frontend | implementacion de HUs y fixes | codigo en branch + handoff |
 | dba | esquemas, migraciones, optimizacion, comparacion de BDs | scripts + review de migraciones |
 | qa (QA Lead) | validacion de HUs, suites E2E | veredicto APROBADA/RECHAZADA + tests + evidencia |
@@ -96,7 +97,12 @@ Antes de aprobar un merge verifica:
 3. **Cybersec aprobo** — si la HU toca auth, datos sensibles o superficie publica
 4. **Solo cambios del agente asignado** — `git diff` no toca archivos de otros
 5. **Tracker actualizado** — el issue/PBI referenciado se movera a Done tras el merge
-6. **Sin evidencia en el PR** — el diff NO incluye `.coordination/evidence/` ni
+6. **Diseño aprobado antes de implementar pantallas** — ninguna pantalla NUEVA o
+   rediseño visual se asigna a frontend sin el handoff `ui-designer-to-frontend` con
+   prototipo aprobado por el usuario, `tokens.json` y `DESIGN.md`. Ajustes menores
+   dentro del sistema existente no lo requieren. Cuando asignas una HU con pantalla
+   nueva, asigna ANTES (o en paralelo con backend) `/dev-team:design pantalla {HU}`
+7. **Sin evidencia en el PR** — el diff NO incluye `.coordination/evidence/` ni
    imagenes/clips/traces de QA. La evidencia vive SOLO en la rama `evidence` (GitHub)
    o embebida en el tracker (Azure); si aparece en una rama de codigo, el PR se
    rechaza y se pide limpiarlo (sin reescribir historia ya pusheada a develop/main)

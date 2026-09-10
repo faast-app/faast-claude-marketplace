@@ -7,3 +7,4 @@ dist/
 .coordination/evidence/
 .coordination/qa-secrets.env
 .coordination/dba-access.json
+.coordination/design/_media/

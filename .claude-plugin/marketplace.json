@@ -16,7 +16,7 @@
     },
     {
       "name": "dev-team",
-      "description": "Equipo completo de desarrollo con 15 agentes IA: Product Owner (HUs en GitHub Projects o Azure DevOps), Arquitecto, UI Designer, Lead, Backend, Frontend, DBA, equipo QA (Playwright MCP incluido, evidencia visual), Release Manager, Infra, Ciberseguridad, Tech Writer y Setup. Soporta mono-repo y multi-repo, proyectos nuevos o existentes. Punto de entrada unico: /dev-team:start.",
+      "description": "Equipo completo de desarrollo con 20 agentes IA: Product Owner (HUs en GitHub Projects o Azure DevOps), Arquitecto, equipo de Diseño (UX, UI, visual, motion, 3D, design engineer), Lead, Backend, Frontend, DBA, equipo QA (Playwright MCP incluido, evidencia visual), Release Manager, Infra, Ciberseguridad, Tech Writer y Setup. Soporta mono-repo y multi-repo, proyectos nuevos o existentes. Punto de entrada unico: /dev-team:start.",
       "category": "development",
       "source": "./plugins/dev-team",
       "homepage": "https://github.com/faast-app/faast-claude-marketplace"

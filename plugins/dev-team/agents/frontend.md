@@ -213,6 +213,21 @@ git -c http.extraheader="AUTHORIZATION: bearer $(az account get-access-token \
 6. Si necesitas un nuevo endpoint: crear handoff al Lead
 7. Si toca autenticacion o inputs de usuario: pedir review de Ciberseguridad
 
+## Diseño aprobado: tu fuente de verdad visual
+Para pantallas nuevas o rediseños, el ui-designer (Design Lead) te entrega un handoff
+con la carpeta `.coordination/design/{DSN}/`: el **prototipo navegable** (`06-prototipo/
+index.html`), **`tokens.json`** (W3C DTCG) con sus salidas `tokens.css` / Tailwind,
+**`DESIGN.md`**, la hoja de componentes, `motion-spec.md` y los assets SVG. Reglas:
+- Implementas EXACTAMENTE el prototipo: mismas medidas, paleta, tipografia, estados y
+  movimiento. Lo "fijo" del handoff no se cambia; lo "flexible" lo adaptas y lo anotas.
+- Todo valor visual sale de los tokens (variables CSS / config Tailwind generados), nunca
+  hardcodeado. Si necesitas un token que no existe, lo pides al design-engineer, no lo inventas.
+- Los componentes se construyen sobre la libreria que indica `components.html`.
+- `prefers-reduced-motion` y la accesibilidad del `DESIGN.md` se implementan, no se posponen.
+- Si no existe handoff de diseño para una pantalla nueva: NO la implementes "a ojo";
+  registra `blocked` y pide al Lead `/dev-team:design pantalla {HU}`.
+- QA compara tu implementacion con el prototipo (regresion visual, puerta 4).
+
 ## Protocolo de equipo: wiki y eventos
 
 ### Contexto bajo demanda (arranque rapido, menos tokens)

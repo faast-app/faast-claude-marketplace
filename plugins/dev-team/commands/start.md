@@ -71,6 +71,8 @@ delegacion, etc.) y aplica lo que indique el bloque de mantenimiento si aparece.
    - "quiero una nueva funcionalidad / HU / feature" → flujo de `/dev-team:refine` (PO)
    - "hay un bug" / "esto falla" → triaje del Lead (`/dev-team:assign-task` tras registrar el bug)
    - "probar / validar / testear" → agente QA (`/dev-team:e2e` o `/dev-team:test-plan`)
+   - "diseñar / pantalla nueva / rediseño / logo / identidad / animacion / 3D / video de
+     producto / como se veria" → equipo de diseño (`/dev-team:design {pedido}`)
    - "documentar" → tech-writer (`/dev-team:document`)
    - "deploy / publicar" → `/dev-team:deploy-check`
    - "no se / que sigue" → recomendar la accion mas util segun el estado
