@@ -595,21 +595,33 @@ por natural key, y UTF-8 con acentos/ñ intactos (deteccion de mojibake incluida
 1. Recopila lo que falte: componentes y versiones exactas (de los repos, no
    inventadas), ¿que cliente si fuera productivo?, responsable (del config,
    jamas hardcodeado).
-2. **AUDITA los scripts del DBA** — sobre el paquete RESULTANTE, checklist
-   completo (agrupacion 1-7, idempotencia, guards contados, cero
-   `ON DUPLICATE KEY`, sin charset hardcodeado salvo `-- charset-exception:`
-   marcado, UTF-8 sin mojibake). **Si algo falla: RECHAZA** y devuelve al DBA con
-   archivo+linea+regla — nada se consolida hasta que pase completo.
-3. Consolida **`Scripts.zip`** (los .sql numerados en la raiz del zip).
-4. Llena la **solicitud de pase** desde la plantilla oficial (secciones:
-   componentes y versiones, temas a publicar, acciones, appsettings del ambiente
-   DESTINO resaltados, tabla de BD, consideraciones) y exporta a PDF.
-5. Entrega la **carpeta de pase completa**:
+2. **Gate "pase empaquetado"**: rechaza si faltan componentes, hay versiones
+   dobles, mas de una rama por componente, ramas de otro pais, tema no explicito
+   o entregas por partes. El pase se pide UNA vez, completo.
+3. **AUDITA los scripts del DBA** — sobre el paquete RESULTANTE: layout por
+   motor → base numerada → tipo (`MYSQL/1_db_fintec/1_createTable.sql`),
+   idempotencia, guards contados, cero `ON DUPLICATE KEY`, UTF-8. **Si algo
+   falla: RECHAZA** y devuelve al DBA con archivo+linea+regla.
+4. Consolida **`Scripts.zip`** con esa misma estructura de carpetas (o
+   `Scripts_CL.zip` / `Scripts_PE.zip` si hay data distinta por pais).
+5. Llena la **solicitud de pase** en FORMATO SIMPLE (1-2 paginas, regla dura):
+   control de versiones · datos generales (objetivo de 1 linea) · componentes con
+   UNA version final · temas (`Release: Sprint 13 T480 T500`) · acciones en bullets
+   cortos · **ramas utilizadas limpias** (una rama consolidada por componente, sin
+   tickets ni negritas) · BD derivada del zip · adicionales solo si aplican. Sin
+   narrativa, sin runbooks, sin SHAs como version.
+6. Genera el **correo listo para enviar** (asunto `Solicitud de Pase Ambiente -
+   {Ambiente} : {Tema}`, cuerpo con la tabla, temas, acciones y "Favor tu V.B
+   @aprobador", destinatarios de `pase.to`/`pase.cc`) — como borrador en Outlook si
+   el conector esta activo, o `correo-pase.txt`. Tu lo envias.
+7. Entrega la **carpeta de pase completa**:
    ```
    Release v2.4.0 16julio2026 - Notificaciones Cobranza/
    ├── Solicitud de Pase Ambientes - Preprod PE.pdf
    ├── Solicitud de Pase Ambientes - Preprod PE.docx
-   └── Scripts.zip
+   ├── Scripts.zip
+   ├── S3.zip                (si aplica)
+   └── correo-pase.txt
    ```
 
 **Cuando lleva documento:** certificacion, puente, demo (CL/PE/CO), preprod
@@ -769,7 +781,10 @@ Todo vive en `.coordination/config.json` (lo crean new-project/onboard):
   "pase": {
     "templatePath": "(opcional — default: plantilla del plugin)",
     "outputDir": "(opcional — default: .coordination/pases/)",
-    "elaboradoPor": "{Nombre Apellido}"
+    "elaboradoPor": "{Nombre Apellido}",
+    "to": ["mesa-de-servicio@...", "plataformas@..."],
+    "cc": ["dev@...", "qa@..."],
+    "aprobador": "{Nombre del que da el V.B}"
   },
   "team": {
     "models": { "architect": "opus" }
@@ -786,7 +801,7 @@ Todo vive en `.coordination/config.json` (lo crean new-project/onboard):
 | `tracker.overheadEpicId` | Epica/PBI padre para fixes sueltos sin epica propia |
 | `git.defaultBranch` | Rama base OBLIGATORIA para ramificar (via `git fetch origin`) |
 | `git.identity` | Identidad de commits del proyecto (nunca la default del agente) |
-| `pase.*` | Plantilla, carpeta de salida y "elaborado por" de las solicitudes |
+| `pase.*` | Plantilla, carpeta de salida, "elaborado por", destinatarios (`to`/`cc`) y `aprobador` del correo de pase |
 | `team.models.{agente}` | Override de modelo en ESTE proyecto (no aplica a setup/tech-writer) |
 | `urls.dev` | URL del ambiente que QA usa para validar |
 

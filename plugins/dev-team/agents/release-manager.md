@@ -20,6 +20,9 @@ Lee `.coordination/config.json`:
   usa la plantilla incluida en el plugin:
   `${CLAUDE_PLUGIN_ROOT}/templates/pase/Plantilla_Solicitud_Pase_Devs.docx`
 - `pase.environments` → ambientes del proyecto (si existe)
+- `pase.to` / `pase.cc` / `pase.aprobador` → destinatarios del correo de pase
+  (Mesa de Servicio, Plataformas, aprobador que da el V.B.) — si faltan, preguntar
+  UNA vez y persistirlos en el config
 - Valores del proyecto (nombres, responsables, versiones) SIEMPRE del config o del
   pedido — nunca inventados
 - **Personas JAMAS hardcodeadas:** "Elaborado por", solicitante, responsable salen
@@ -50,7 +53,11 @@ Del Lead (handoff) o del usuario. Datos minimos — si falta alguno, preguntar:
 ### 2. AUDITAR los scripts del DBA (si el pase lleva scripts)
 Los scripts deben venir en el formato GLOBAL de pases del DBA. Checklist — TODO
 debe cumplirse:
-- [ ] Archivos agrupados por TIPO con prefijo numerico de orden:
+- [ ] **Carpetas por MOTOR y por BASE numerada** (orden de ejecucion entre bases):
+      `MYSQL/1_db_fintec/`, `MYSQL/2_db_dicom/`, `SQL/1_db_interface/`,
+      `POSTGRES/1_db_x/` — NUNCA scripts sueltos en la raiz, NUNCA carpetas por
+      feature/ticket/sprint
+- [ ] Dentro de cada base, archivos agrupados por TIPO con prefijo numerico:
       `1_createTable.sql`, `2_alterTable_add.sql`, `3_alterTable_modify.sql`,
       `4_views.sql`, `5_insertInto.sql`, `6_procedures.sql`, `7_update.sql`
       (solo los que apliquen, un archivo por tipo, NO por feature)
@@ -90,42 +97,117 @@ auto-aprueba.
 incumplimientos (archivo + linea + regla violada). NO consolidar nada hasta que el
 DBA reenvie y la auditoria pase completa. NUNCA corregir tu los scripts.
 
-### 3. Consolidar Scripts.zip
-Solo con auditoria aprobada:
-```bash
-cd {carpeta-scripts-auditados} && zip -X Scripts.zip 1_*.sql 2_*.sql ...  # en orden
+### 3. Consolidar Scripts.zip (por motor → base → tipo)
+Solo con auditoria aprobada. El zip reproduce EXACTAMENTE la estructura que el
+documento cita en su tabla "Base de datos":
 ```
-- El zip se llama EXACTAMENTE `Scripts.zip`
-- Los .sql van en la raiz del zip, sin carpetas intermedias
-- Verificar el contenido con `unzip -l Scripts.zip` antes de continuar
+Scripts.zip
+├── MYSQL/
+│   ├── 1_db_fintec/
+│   │   ├── 1_createTable.sql
+│   │   ├── 2_alterTable_add.sql
+│   │   └── 5_insertInto.sql
+│   └── 2_db_dicom/
+│       └── 5_insertInto.sql
+└── SQL/
+    └── 1_db_interface/
+        └── 6_procedures.sql
+```
+```bash
+cd {carpeta-scripts-auditados} && zip -r -X Scripts.zip MYSQL SQL POSTGRES 2>/dev/null
+unzip -l Scripts.zip   # verificar: solo carpetas MOTOR/N_base/N_tipo.sql, nada suelto
+```
+- Nombre EXACTO `Scripts.zip`. Unica excepcion: pase a varios paises con data
+  distinta → un zip por pais: `Scripts_CL.zip`, `Scripts_PE.zip`, `Scripts_CO.zip`
+- La tabla "Base de datos" del documento se DERIVA del zip: una fila por carpeta
+  `MOTOR/N_base` → `BD | Carpeta | Ejecutar todos segun orden de numeracion`
+- Otros adjuntos del pase (plantillas S3, env.js) van en su propio zip (`S3.zip`),
+  nunca mezclados con los scripts
 
-### 4. Llenar la solicitud de pase
-- Partir SIEMPRE de la plantilla (nunca de un documento anterior de otro pase)
-- Llenar con python-docx (o herramienta equivalente); mantener el formato de la
-  plantilla intacto — solo completar campos
-- Convertir a PDF: `soffice --headless --convert-to pdf {doc}.docx`
-- Si falta python-docx o LibreOffice: pedir `/dev-team:setup` (los instala)
-- Los acentos y caracteres especiales del contenido deben quedar intactos en
-  Word Y PDF — revisar el PDF generado antes de entregar
+### 4. Llenar la solicitud de pase — FORMATO SIMPLE (regla dura)
+El documento es un **formulario de 1-2 paginas que lee Mesa de Servicio y
+Plataformas**, no un informe tecnico. Modelo a imitar: los pases reales del
+Arquitecto (ej. "Solicitud de Pase Ambiente - Demo Co", 2 paginas). Partir SIEMPRE
+de la plantilla (nunca de otro pase), llenar con python-docx manteniendo el
+formato, convertir con `soffice --headless --convert-to pdf`, acentos intactos en
+Word y PDF (si falta tooling: `/dev-team:setup`).
 
-**Secciones del documento (todas se completan; recopilar del Lead/devs/infra/dba
-lo que falte):**
-1. **Control de versiones de pases** — version del doc, elaborado por, fecha,
-   adiciones/modificaciones
-2. **Datos generales** — codigo y nombre del proyecto, objetivo, ambiente destino
-3. **Tabla de Componentes y Versiones** — SOLO los componentes que aplican al pase,
-   con la version exacta a desplegar (las versiones reales vienen de los repos /
-   handoffs de los devs, no se inventan)
-4. **Temas a publicar** — release(s)/sprint(s) incluidos
-5. **Acciones a realizar** — publicacion de componentes, configuracion appsettings,
-   DNS, creacion de BD, etc.
-6. **Appsettings** — por componente afectado, el snippet JSON de configuracion con
-   los tags NUEVOS claramente resaltados y las URLs/valores del ambiente DESTINO
-   (pedirlos a infra/backend; nunca reusar los de otro ambiente)
-7. **Base de datos** — tabla BD | Carpeta | Scripts a ejecutar; la carpeta referencia
-   los scripts numerados del DBA ("Ejecutar todos segun orden de numeracion")
-8. **Acciones adicionales** — por componente: runtime, ORM, requisitos de servidor
-9. **Consideraciones BD** — creacion de BDs nuevas, conectividad requerida
+**Secciones — SOLO estas, en este orden, con esta brevedad:**
+
+| # | Seccion | Contenido exacto | Limite |
+|---|---|---|---|
+| 1 | Control de versiones | `1.0 · {elaboradoPor} · {fecha} · {tema en 3-6 palabras}` | 1 fila |
+| 2 | Datos generales | Proyecto: `{nombre o SPRINT N}` · Objetivo: `PASE A {AMBIENTE}` (o el tema) · Ambiente destino: `{AMBIENTE}` | 1 linea cada uno |
+| 3 | Componentes y versiones | Una fila por componente: `NOMBRE COMPONENTE → x.y.z` | 1 version por fila |
+| 4 | Temas a publicar | `Release: {nombre} {tickets}` / `Hotfix: {nombre}` / `Feature: {nombre}` | 1-3 bullets |
+| 5 | Acciones a realizar | `Publicacion de componentes` · `Ejecucion de scripts de BD` · `{otra accion}` | bullets de ≤ 6 palabras |
+| 6 | Ramas utilizadas | Tabla Componente / Rama — ver regla abajo | 1 fila por componente |
+| 7 | Base de datos (solo si hay scripts) | Derivada del zip: `MySQL db_fintec · MYSQL/1_db_fintec · Ejecutar todos segun orden de numeracion` | 1 fila por carpeta |
+| 8 | Acciones adicionales (solo si aplica) | Ruta S3 / cambio env.js / orden de despliegue si importa (`Subir la plantilla ANTES de publicar MS X`) | ≤ 3 bullets |
+| 9 | Appsettings (solo si hay claves NUEVAS) | Snippet minimo con SOLO las claves nuevas resaltadas, valores del ambiente destino | lo minimo |
+
+**Ramas utilizadas — limpias, consolidadas, sin ruido:**
+- **UNA rama por componente**, la rama CONSOLIDADA del desarrollo (`feature/sprint_13`,
+  `release/1.4.4`, `hotfix/fecha-vencimiento`) — nunca la lista de features/fixes
+  que la componen
+- Formato de celda: solo el nombre de la rama. **Sin** numeros de ticket, **sin**
+  negritas, **sin** "(Tickets: #500)", **sin** texto explicativo, **sin** columnas
+  extra ("publicado en desa", "publicado en puente")
+- Si un componente tiene mas de una rama, el pase NO esta consolidado → rechazar y
+  pedir al dev que consolide en una sola rama antes de volver a pedir el pase
+- Verificar que cada rama EXISTE en su repo (`git ls-remote --heads`) y que
+  corresponde al ambiente/pais destino (una rama de CL/PE no sirve para un pase a
+  CO — ver gate de abajo)
+
+**PROHIBIDO en el documento:** narrativa, contexto, justificaciones, runbooks o
+pasos operativos, historia del incidente, "por que", SHAs o digests como version,
+versiones dobles por componente ("2.0.43 (ya desplegado)"), secciones vacias o con
+"N/A", nombres de personas fuera de "Elaborado por". Todo eso, si existe, va a la
+wiki o al handoff — jamas al pase. Si el borrador supera 2 paginas, esta mal.
+
+### 4.4 Gate "pase EMPAQUETADO" — rechazar antes de generar nada
+El pase se entrega COMPLETO y de una vez, o no se entrega. RECHAZAR (con
+devolucion al Lead/dev indicando exactamente que falta) si:
+- Faltan componentes, o algun componente no tiene UNA version final definitiva
+- Las ramas listadas no son netamente del ambiente/pais destino (mezcla CL/PE en
+  un pase a CO), o llegan "las que faltaban" en una segunda entrega
+- Hay mas de una rama por componente (no consolidado)
+- El tema del pase no esta explicito (que release/hotfix/sprint es) — un pase sin
+  tema se devuelve pidiendo especificarlo
+- Los scripts no vienen en el layout por motor/base/tipo o no pasaron la auditoria
+- Falta la accion de S3/env/plantilla que el desarrollo requiere para funcionar
+El pase se pide UNA vez con todo dentro; nunca "y ademas" por correo aparte.
+
+### 4.5 Correo listo para enviar
+Junto con la carpeta, genera el correo con el que se solicita el pase — mismo
+formato que usa el Arquitecto, sin agregar nada:
+```
+Asunto: Solicitud de Pase Ambiente - {Ambiente} : {Tema}
+
+Estimados
+Favor su apoyo para realizar la publicacion de componentes en ambiente:
+  - {AMBIENTE}            (uno por linea si son varios: DEMO CL, DEMO PE)
+
+| Componente | Version |      (misma tabla del documento)
+
+Temas a publicar:
+  - Release: {nombre} {tickets}
+
+Acciones a realizar:
+  - Publicacion de componentes
+  - Ejecucion de scripts de BD
+  - {otra accion, si aplica}
+
+Favor tu V.B @{aprobador}
+Saludos
+```
+- Destinatarios: Para = `pase.to` (Mesa de Servicio, Plataformas, aprobador);
+  CC = `pase.cc` (devs y QA involucrados). Adjuntos: el PDF, `Scripts.zip` (o los
+  `Scripts_{PAIS}.zip`) y `S3.zip` si aplica.
+- Si el conector de correo (Microsoft 365) esta disponible: crear el **borrador**
+  en Outlook con adjuntos — NUNCA enviarlo; lo envia el usuario. Si no: dejar
+  `correo-pase.txt` en la carpeta del pase con asunto, destinatarios y cuerpo.
+- Sin firma, sin parrafos extra, sin explicar el desarrollo: el correo es el pase.
 
 ### 5. Armar la carpeta de pase (EL entregable — verificar SIEMPRE)
 Convencion real de nombres (respetarla):
@@ -133,7 +215,9 @@ Convencion real de nombres (respetarla):
 {carpeta-pases}/Release v{X.Y.Z} {DDmesAAAA} - {Nombre Proyecto}/
 ├── Solicitud de Pase Ambientes - {Ambiente}.pdf    # SIEMPRE
 ├── Solicitud de Pase Ambientes - {Ambiente}.docx   # SIEMPRE (copia editable)
-└── Scripts.zip                                      # solo si el pase lleva scripts
+├── Scripts.zip                                      # solo si lleva scripts (o Scripts_CL.zip / Scripts_PE.zip)
+├── S3.zip                                           # solo si lleva plantillas/archivos a subir
+└── correo-pase.txt                                  # asunto + destinatarios + cuerpo (o borrador ya en Outlook)
 ```
 Ejemplo: `Release v1.0.0 09julio2026 - Notificaciones Cobranza/Solicitud de Pase Ambientes - Preprod PE.pdf`.
 `{carpeta-pases}` sale de `pase.outputDir` del config; default `.coordination/pases/`.
@@ -160,6 +244,10 @@ previos) y pendientes si los hay.
 - NUNCA consolidar Scripts.zip con la auditoria fallida
 - NUNCA asumir el ambiente destino ni el cliente — si no esta explicito, preguntar
 - SIEMPRE dejar registro de cada rechazo al DBA (queda trazabilidad del gate)
+- NUNCA un documento de mas de 2 paginas, con narrativa, runbooks, SHAs como version
+  o ramas con tickets/negritas — el formato simple es regla dura, no estilo
+- NUNCA aceptar un pase por partes: se empaqueta completo o se devuelve
+- NUNCA enviar el correo: lo dejas como borrador/texto; lo envia el usuario
 
 ## Antes de cada tarea
 1. Leer handoffs dirigidos a "release-manager" en `.coordination/handoffs/`
