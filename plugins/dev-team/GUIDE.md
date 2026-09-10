@@ -1,54 +1,910 @@
 # Dev Team — Manual de Usuario
 
-**Version del plugin:** 2.6.x · **Agentes:** 15 · **Comandos:** 22
+**Version del plugin:** 2.10.x · **Integrantes del equipo:** 15 · **Comandos:** 22
 
-Dev Team es un equipo completo de desarrollo con agentes IA que cubre todo el
-ciclo de vida del software: Historia de Usuario → diseño UI/UX → arquitectura →
-desarrollo → QA con evidencia → seguridad → pases a ambientes → deploy →
-documentacion. Incluye una **wiki viva** del proyecto, una **oficina virtual en
-vivo** para ver al equipo trabajar y **metricas de productividad y consumo**.
+Dev Team es un **equipo completo de desarrollo de software formado por asistentes de
+inteligencia artificial**. Funciona como una empresa de software en miniatura: hay
+alguien que escribe lo que el negocio necesita, alguien que diseña las pantallas,
+alguien que decide como se construye, programadores, un equipo de pruebas, un
+encargado de seguridad, uno de publicar versiones y uno que documenta. Tu hablas
+con ellos en lenguaje normal y ellos hacen el trabajo, pidiendote confirmacion antes
+de cada paso importante.
 
-Funciona con proyectos **nuevos o existentes**, **mono-repo o multi-repo**, con
-backlog en **GitHub** o **Azure DevOps**.
+No necesitas saber programar para usarlo. Este manual esta escrito para cualquier
+persona: quien recien empieza, quien dirige un area, quien nunca ha abierto una
+herramienta tecnica. La parte tecnica (para quien instala y configura) esta al final,
+separada, en el **Anexo tecnico**.
 
 ---
 
 ## Indice
 
-**Primeros pasos**
-1. [Instalacion](#1-instalacion)
-2. [Inicio rapido](#2-inicio-rapido)
-3. [Conceptos que conviene conocer](#3-conceptos-que-conviene-conocer)
-4. [El equipo: 15 agentes](#4-el-equipo-15-agentes)
-5. [Las reglas del equipo](#5-las-reglas-del-equipo-siempre-activas)
-6. [Referencia de comandos](#6-referencia-de-comandos)
+**Parte 1 — Para todas las personas**
+1. [En dos minutos: como se usa](#1-en-dos-minutos-como-se-usa)
+2. [Conoce al equipo](#2-conoce-al-equipo)
+3. [Las palabras que vas a escuchar](#3-las-palabras-que-vas-a-escuchar)
+4. [Las reglas de la casa](#4-las-reglas-de-la-casa)
+5. [Que puedes pedir (lista de comandos)](#5-que-puedes-pedir-lista-de-comandos)
 
-**Casos de uso — con ejemplo concreto de principio a fin**
-7. [Caso 1: Crear un proyecto nuevo desde una idea](#caso-1--crear-un-proyecto-nuevo-desde-una-idea)
-8. [Caso 2: Crear un proyecto desde un documento de requerimientos](#caso-2--crear-un-proyecto-desde-un-documento-de-requerimientos)
-9. [Caso 3: Retomar un proyecto existente (onboard)](#caso-3--retomar-un-proyecto-existente-onboard)
-10. [Caso 4: Una feature de principio a fin](#caso-4--una-feature-de-principio-a-fin)
-11. [Caso 5: Diseñar pantallas con mockups antes de programar](#caso-5--diseñar-pantallas-con-mockups-antes-de-programar)
-12. [Caso 6: Reportar y corregir un bug](#caso-6--reportar-y-corregir-un-bug)
-13. [Caso 7: Debug de un problema que cruza VARIOS repos](#caso-7--debug-de-un-problema-que-cruza-varios-repos)
-14. [Caso 8: Pruebas — plan, E2E, exploratoria y regresion](#caso-8--pruebas-plan-e2e-exploratoria-y-regresion)
-15. [Caso 9: Base de datos — health, comparacion y scripts](#caso-9--base-de-datos-health-comparacion-de-bds-y-scripts-de-pase)
-16. [Caso 10: Pase a un ambiente (release)](#caso-10--pase-a-un-ambiente-release)
-17. [Caso 11: Auditoria de seguridad](#caso-11--auditoria-de-seguridad)
-18. [Caso 12: La wiki del proyecto](#caso-12--la-wiki-del-proyecto)
-19. [Caso 13: Ver al equipo trabajar](#caso-13--ver-al-equipo-trabajar)
-20. [Caso 14: Trabajar un sprint completo con Scrum](#caso-14--trabajar-un-sprint-completo-con-scrum)
-21. [Caso 15: Ajustar los modelos de los agentes](#caso-15--ajustar-los-modelos-de-los-agentes)
+**Parte 2 — Situaciones reales, paso a paso**
+- [Caso 1: Tengo una idea y quiero empezar un proyecto](#caso-1--tengo-una-idea-y-quiero-empezar-un-proyecto)
+- [Caso 2: Tengo un documento de requerimientos](#caso-2--tengo-un-documento-de-requerimientos)
+- [Caso 3: Ya tengo un proyecto andando y quiero que el equipo lo tome](#caso-3--ya-tengo-un-proyecto-andando-y-quiero-que-el-equipo-lo-tome)
+- [Caso 4: Necesito una funcionalidad nueva, de principio a fin](#caso-4--necesito-una-funcionalidad-nueva-de-principio-a-fin)
+- [Caso 5: Quiero ver como se vera una pantalla antes de construirla](#caso-5--quiero-ver-como-se-vera-una-pantalla-antes-de-construirla)
+- [Caso 6: Algo no funciona (reportar y corregir un error)](#caso-6--algo-no-funciona-reportar-y-corregir-un-error)
+- [Caso 7: Algo falla y nadie sabe en que parte esta el problema](#caso-7--algo-falla-y-nadie-sabe-en-que-parte-esta-el-problema)
+- [Caso 8: Pruebas — como se comprueba que todo funciona](#caso-8--pruebas-como-se-comprueba-que-todo-funciona)
+- [Caso 9: Base de datos — revisar, comparar y preparar cambios](#caso-9--base-de-datos-revisar-comparar-y-preparar-cambios)
+- [Caso 10: Publicar una version en un ambiente (pase)](#caso-10--publicar-una-version-en-un-ambiente-pase)
+- [Caso 11: Revisar la seguridad](#caso-11--revisar-la-seguridad)
+- [Caso 12: La memoria del proyecto (wiki)](#caso-12--la-memoria-del-proyecto-wiki)
+- [Caso 13: Ver al equipo trabajar](#caso-13--ver-al-equipo-trabajar)
+- [Caso 14: Trabajar por sprints (Scrum)](#caso-14--trabajar-por-sprints-scrum)
+- [Caso 15: Hacer que un integrante piense mas (o gaste menos)](#caso-15--hacer-que-un-integrante-piense-mas-o-gaste-menos)
 
-**Referencia**
-22. [Configuracion del proyecto](#configuracion-del-proyecto)
-23. [Como cuidar tu limite de uso](#como-cuidar-tu-limite-de-uso)
-24. [Solucion de problemas](#solucion-de-problemas)
-25. [Preguntas frecuentes](#preguntas-frecuentes)
+**Parte 3 — Preguntas frecuentes y problemas comunes**
+- [Preguntas frecuentes](#preguntas-frecuentes)
+- [Si algo no anda](#si-algo-no-anda)
+
+**Anexo tecnico (para quien instala y configura)**
+- [A. Instalacion y actualizacion](#a-instalacion-y-actualizacion)
+- [B. Configuracion del proyecto](#b-configuracion-del-proyecto)
+- [C. La carpeta de coordinacion](#c-la-carpeta-de-coordinacion)
+- [D. Cuidar el consumo](#d-cuidar-el-consumo)
+- [E. Solucion de problemas tecnicos](#e-solucion-de-problemas-tecnicos)
 
 ---
 
-## 1. Instalacion
+# Parte 1 — Para todas las personas
+
+## 1. En dos minutos: como se usa
+
+1. Alguien de tu area instala el plugin una vez (ver [Anexo A](#a-instalacion-y-actualizacion)).
+2. Abres Claude Code **en la carpeta de tu proyecto** (o en la carpeta donde quieres
+   crearlo).
+3. Escribes esto y describes lo que necesitas, como se lo dirias a una persona:
+
+```
+/dev-team:start
+```
+
+Ejemplos de lo que puedes escribir despues (o en la misma linea):
+
+| Lo que escribes | Lo que pasa |
+|---|---|
+| `/dev-team:start` | El equipo mira donde estas y te propone que hacer |
+| `/dev-team:start quiero un sistema para avisar a clientes con pagos por vencer` | Arranca un proyecto nuevo desde tu idea |
+| `/dev-team:start los analistas necesitan filtrar las cobranzas por fecha` | Convierte tu necesidad en trabajo para el equipo |
+| `/dev-team:start al pasar a la pagina 2 aparecen registros repetidos` | Registra el problema y organiza su correccion |
+| `/dev-team:start ¿en que estamos?` | Te resume el estado del proyecto |
+
+**Tres cosas que siempre van a pasar:**
+- **Te presentan el plan antes de hacer nada** que cambie el producto. Tu dices
+  "adelante", "cambia esto" o "mejor de otra forma".
+- **Todo queda con pruebas y con fotos** (capturas de pantalla) que demuestran que
+  funciona.
+- **Nada se publica sin pasar controles.** El equipo se controla a si mismo.
+
+> Si solo tienes una pregunta rapida ("¿que estados tiene una solicitud?"),
+> preguntala directo, sin `/dev-team:start`. Es mas rapido y consume menos.
+
+---
+
+## 2. Conoce al equipo
+
+Piensa en una empresa de software pequeña. Estos son sus 15 integrantes, con lo que
+cada uno hace y cuando te vas a cruzar con ellos.
+
+| Integrante | Que hace, en palabras simples | Cuando aparece |
+|---|---|---|
+| 🧰 **setup** (el que prepara la oficina) | Revisa que la computadora tenga todo lo necesario e instala lo que falte, con tu permiso | Al empezar un proyecto o cuando algo no esta instalado |
+| 📋 **product-owner** (el dueño del producto) | Escribe lo que el negocio necesita en lenguaje claro: historias, errores, prioridades. Lleva el tablero de tareas | Siempre que pides algo nuevo o reportas un problema |
+| 📐 **architect** (el arquitecto) | Decide como se construye: en cuantas partes, con que tecnologias, como se conectan | Al crear un proyecto o ante una decision estructural |
+| 🎨 **ui-designer** (el diseñador) | Propone como se veran las pantallas (colores, tipografia, distribucion) y te deja elegir | Antes de construir una pantalla nueva |
+| 🎯 **lead** (el jefe de equipo) | Coordina, arma el plan, reparte el trabajo, exige que se cumplan los controles y es el unico que integra los cambios al producto | Detras de cada tarea; lo ves al aprobar planes |
+| ⚙️ **backend** (programador de "la cocina") | Construye la logica y los servicios que no se ven | Al construir funcionalidades |
+| 🖥️ **frontend** (programador de pantallas) | Construye lo que el usuario ve y toca | Al construir pantallas |
+| 🗄️ **dba** (el de las bases de datos) | Cuida los datos: estructura, cambios, comparaciones, preparacion de cambios para publicar | Cambios de datos y publicaciones |
+| 🔎 **qa** (jefe de pruebas) | Planifica las pruebas, reparte a sus dos especialistas y da el veredicto final: aprobado o rechazado | Al terminar cualquier trabajo |
+| 🖱️ **qa-frontend** (probador de pantallas) | Prueba las pantallas como un usuario real, con fotos de cada paso | Pruebas de pantallas |
+| 🔌 **qa-backend** (probador de servicios) | Prueba que los servicios respondan exactamente lo prometido | Pruebas de servicios y datos |
+| 📦 **release-manager** (encargado de publicaciones) | Arma la solicitud formal para publicar una version en un ambiente, revisa que los cambios de datos esten bien hechos y puede rechazarlos | Cada vez que hay que "pasar" algo a un ambiente |
+| 🚢 **infra** (el de la infraestructura) | Prepara los servidores, los contenedores y la automatizacion para publicar | Publicaciones y configuracion de ambientes |
+| 🛡️ **cybersec** (seguridad) | Audita la seguridad y reporta hallazgos. Nunca toca el codigo: lo corrige el responsable | Cambios sensibles: claves, datos personales, accesos |
+| 📚 **tech-writer** (el documentador) | Mantiene la documentacion y la memoria del proyecto (la wiki) | Al cerrar funcionalidades y al final del dia |
+
+> **Sobre el costo:** cada integrante usa un "cerebro" (modelo de IA) del tamaño justo
+> para su trabajo, para no gastar de mas. El que prepara la oficina y el documentador
+> usan el mas economico; el resto uno intermedio; el arquitecto puede subirse a uno
+> mas potente si el proyecto lo amerita (ver [Caso 15](#caso-15--hacer-que-un-integrante-piense-mas-o-gaste-menos)).
+
+---
+
+## 3. Las palabras que vas a escuchar
+
+El equipo intenta hablar claro, pero hay palabras del oficio que conviene conocer:
+
+| Palabra | Que significa |
+|---|---|
+| **Historia de usuario (HU)** | Una necesidad escrita desde el punto de vista de quien la usa: "Como analista quiero filtrar por fecha para encontrar los pagos de un periodo". Lleva criterios que dicen cuando esta lista |
+| **Criterio de aceptacion** | Cada condicion concreta que debe cumplirse para dar la historia por terminada. Se escriben como "Dado…, cuando…, entonces…" |
+| **Tablero de tareas (tracker)** | Donde viven las historias y los errores: GitHub o Azure DevOps, segun tu empresa |
+| **Sprint** | Un periodo corto de trabajo (normalmente 2 semanas) con un objetivo claro |
+| **Bug** | Un error: algo que deberia funcionar de una forma y funciona de otra |
+| **Ambiente** | Una copia del sistema para un proposito: desarrollo, pruebas, demostracion, produccion (la que usan los clientes) |
+| **Pase** | Publicar una version en un ambiente. Lleva una solicitud formal |
+| **Evidencia** | Fotos (capturas de pantalla), videos cortos y registros que demuestran lo que se probo y que paso |
+| **Informe de conformidad** | El aviso de quien publico una version: que quedo instalado, en que ambiente, y que esta funcionando. Sin este aviso, pruebas no arranca |
+| **Repositorio** | La carpeta donde vive el codigo de un componente, con su historial de cambios |
+| **Rama** | Una copia de trabajo separada dentro del repositorio, para que cada cambio no interfiera con los demas |
+| **Integrar (merge)** | Llevar un cambio terminado y aprobado al producto principal. Solo lo hace el jefe de equipo |
+| **Plan primero** | La regla de que nadie cambia nada sin mostrarte antes el plan y esperar tu "adelante" |
+| **Nota de traspaso (handoff)** | La forma en que los integrantes se pasan trabajo entre ellos: un mensaje escrito que queda guardado. Todo es trazable |
+| **Wiki** | La memoria del proyecto: paginas cortas con lo que se decidio y por que |
+
+---
+
+## 4. Las reglas de la casa
+
+Estas reglas estan siempre activas. No hay que pedirlas.
+
+1. **Plan primero.** Antes de construir o corregir algo, el jefe de equipo te presenta
+   el plan (que, quien, donde, riesgos) y espera tu confirmacion. Nada se ejecuta sin
+   tu OK.
+2. **Todo se escribe en lenguaje de negocio.** Las historias y los errores los
+   entiende cualquier persona. Lo tecnico va aparte, entre los integrantes.
+3. **Se trabaja por sprints**, con un objetivo por sprint, tareas estimadas y
+   prioridades por valor para el negocio.
+4. **Nada se integra al producto sin la aprobacion de pruebas**, con evidencia.
+5. **Regla de oro (no se cambia nunca): pruebas no valida sin el informe de
+   conformidad.** Si nadie confirmo que quedo instalado y funcionando, no se prueba.
+   En la computadora del desarrollador, solo si todo el sistema esta levantado
+   completo. Nadie puede saltarse esto, ni siquiera el jefe de equipo.
+6. **A la primera falla, se reporta.** Si algo esta caido o no funciona al primer
+   intento, pruebas toma la foto, marca el bloqueo y avisa. No insiste, no busca
+   atajos, no toca nada.
+7. **Pruebas no arregla errores.** Reproduce, documenta y reporta. Corregir es
+   trabajo del programador responsable. Asi la evidencia es objetiva.
+8. **Toda prueba deja evidencia, y la evidencia se ve dentro del ticket.** Las fotos
+   y videos aparecen dentro del error o la historia, no como un enlace aparte. Se
+   guardan en la carpeta del proyecto y, en GitHub, en un espacio apartado que
+   existe solo para eso. Nunca se mezclan con el codigo.
+9. **Seguridad revisa lo sensible** (accesos, claves, datos personales) y nunca
+   modifica codigo: reporta y el responsable corrige.
+10. **Solo el jefe de equipo integra cambios al producto.** Cada integrante trabaja
+    en su propia copia, en una tarea a la vez.
+11. **Publicar una version pasa por un control.** El encargado de publicaciones
+    revisa el paquete completo y puede rechazar cambios de datos mal preparados.
+12. **Los programadores preguntan antes de pedir revision formal** de un cambio.
+    No todo lo lleva.
+13. **Solo el jefe de equipo puede pedir ayuda a otros integrantes.** Los demas
+    hacen su trabajo directo. Esto evita que el costo se dispare.
+14. **Nada de nombres ni datos escritos a mano.** Personas, correos, responsables y
+    rutas salen de la configuracion del proyecto o se te preguntan.
+15. **Todo queda registrado automaticamente.** La actividad del equipo se guarda sola
+    y alimenta la oficina virtual y las metricas.
+
+---
+
+## 5. Que puedes pedir (lista de comandos)
+
+Recuerda: con `/dev-team:start` y una frase basta. Esta lista es para cuando ya sabes
+exactamente que quieres.
+
+**Todos los dias**
+
+| Escribes | Que consigues |
+|---|---|
+| `/dev-team:start` | El punto de partida: mira tu situacion y te guia |
+| `/dev-team:status` | Resumen del proyecto: sprint, pendientes, bloqueos |
+| `/dev-team:sync` | Sincroniza con el tablero de tareas (trae lo nuevo, sube avances) |
+| `/dev-team:inbox` | Un integrante revisa las notas de traspaso que tiene pendientes |
+
+**Proyectos**
+
+| Escribes | Que consigues |
+|---|---|
+| `/dev-team:new-project {idea o documento}` | Proyecto nuevo completo: arquitectura, carpetas, tareas, memoria |
+| `/dev-team:onboard {nombre}` | El equipo toma un proyecto que ya existe |
+| `/dev-team:setup` | Revisa e instala lo que la computadora necesita |
+
+**Trabajo**
+
+| Escribes | Que consigues |
+|---|---|
+| `/dev-team:refine {pedido}` | El dueño del producto convierte tu pedido en historias en el tablero |
+| `/dev-team:assign-task` | El jefe de equipo reparte el trabajo (con plan primero) |
+| `/dev-team:handoff` | Crear una nota de traspaso entre integrantes |
+
+**Calidad**
+
+| Escribes | Que consigues |
+|---|---|
+| `/dev-team:test-plan {HU}` | El plan de pruebas de una historia |
+| `/dev-team:e2e {HU}` | Pruebas de una historia con fotos por criterio (ver [Caso 8](#caso-8--pruebas-como-se-comprueba-que-todo-funciona)) |
+| `/dev-team:e2e run` | Comprobar que todo lo que funcionaba sigue funcionando |
+| `/dev-team:review-pr {n}` | Revisar un cambio propuesto |
+| `/dev-team:security-audit` | Auditoria de seguridad |
+| `/dev-team:git-check` | Revisar el estado del repositorio antes de guardar cambios |
+
+**Publicaciones y operacion**
+
+| Escribes | Que consigues |
+|---|---|
+| `/dev-team:db-health` | Chequeo de salud de la base de datos |
+| `/dev-team:deploy-check` | ¿Esta listo para publicarse? |
+| `/dev-team:pase {ambiente}` | La solicitud de pase completa (documento + cambios de datos revisados) |
+| `/dev-team:document {tema}` | Actualizar documentacion |
+
+**Memoria y visibilidad**
+
+| Escribes | Que consigues |
+|---|---|
+| `/dev-team:wiki query {pregunta}` | Preguntarle a la memoria del proyecto |
+| `/dev-team:team-office` | Ver al equipo trabajar en vivo (oficina virtual) |
+| `/dev-team:team-metrics` | Quien hizo que, cuanto tardo, cuanto consumio |
+
+---
+
+# Parte 2 — Situaciones reales, paso a paso
+
+Cada caso muestra la situacion, **que escribes exactamente**, que hace el equipo y
+que recibes al final. Los ejemplos son de una empresa financiera ficticia, pero
+aplican a cualquier negocio.
+
+---
+
+## Caso 1 — Tengo una idea y quiero empezar un proyecto
+
+**Situacion:** quieres un sistema que avise a los clientes cuando tienen pagos por
+vencer. Tienes la idea, no tienes nada mas.
+
+**Que escribes:**
+```
+/dev-team:new-project sistema de avisos de cobranza: avisa por correo a los
+clientes con pagos proximos a vencer, con plantillas configurables y reportes
+de envio. Lo usan los analistas de cobranza. Se conecta con nuestro sistema
+central.
+```
+
+**Que hace el equipo:**
+1. **setup** revisa que la computadora tenga lo necesario y te pide UNA confirmacion
+   para instalar lo que falte.
+2. **El arquitecto** analiza la idea y te presenta una propuesta concreta, en una
+   pagina: en cuantas partes se divide el sistema, que hace cada una, como se
+   guardan los datos y en que orden se construye. Por ejemplo:
+   ```
+   Propuesta — Avisos de Cobranza
+   Partes: 1) Avisos y plantillas  2) Programador de vencimientos
+           3) Puerta de entrada     4) Pantallas de gestion
+   Datos: cada parte con su propia base de datos
+   Etapas: 1) plantillas + envio manual  2) envio automatico  3) reportes
+   ```
+3. **Tu decides.** Puedes decir "prefiero todo en un solo lugar", "quita la puerta
+   de entrada", "usa la base de datos que ya tenemos". El arquitecto ajusta y vuelve
+   a presentar hasta tu OK.
+4. Eliges donde vivira el tablero de tareas (GitHub o Azure DevOps) y el equipo crea
+   las carpetas de cada parte con todo lo basico ya armado.
+5. **El dueño del producto** convierte la idea en historias reales en tu tablero,
+   escritas para que cualquiera las entienda:
+   > "Como analista de cobranza quiero configurar la plantilla del aviso de
+   > vencimiento para adaptar el tono a cada cliente" — con sus criterios de
+   > aceptacion, estimacion y prioridad.
+6. Se crea la memoria del proyecto (wiki) y se activan las metricas.
+
+**Recibes:** un proyecto listo para trabajar, un tablero con las historias
+priorizadas y la arquitectura documentada. El siguiente paso tipico es
+`/dev-team:assign-task` para empezar la primera historia.
+
+---
+
+## Caso 2 — Tengo un documento de requerimientos
+
+**Situacion:** el cliente entrego un documento (Word, PDF o texto) con lo que
+necesita.
+
+**Que escribes:**
+```
+/dev-team:new-project docs/Requerimientos_Portal_Proveedores.docx
+```
+
+**Que cambia respecto al Caso 1:**
+- El arquitecto **lee el documento completo** y relaciona cada requerimiento con una
+  parte del sistema y una etapa. Antes de proponer, **te señala vacios y
+  ambiguedades**: "el documento no dice si los proveedores entran con su clave de la
+  empresa o con una clave propia. ¿Cual es?".
+- El dueño del producto arma las historias **indicando de que requerimiento sale
+  cada una** (por ejemplo, "RQ-07 → Consultar estado de facturas"), para que nada del
+  documento quede afuera.
+- Si el documento trae bocetos de pantallas, el diseñador los toma como referencia
+  (ver [Caso 5](#caso-5--quiero-ver-como-se-vera-una-pantalla-antes-de-construirla)).
+
+> Mientras mas decisiones traigas tomadas (tablero, tecnologias preferidas), menos
+> preguntas te hara el equipo. Todo lo que no traigas, el arquitecto lo propone y tu
+> solo apruebas o ajustas.
+
+---
+
+## Caso 3 — Ya tengo un proyecto andando y quiero que el equipo lo tome
+
+**Situacion:** un sistema real que ya existe, con varias partes, tareas abiertas y
+una base de datos en uso. Quieres que el equipo lo opere desde hoy.
+
+**Que escribes** (parado en la carpeta que contiene el proyecto):
+```
+/dev-team:onboard backoffice
+```
+
+**Que hace el equipo:**
+1. **setup** revisa la computadora y te pregunta si el tablero es GitHub, Azure
+   DevOps o si por ahora se trabaja solo en local.
+2. Reconoce las partes del sistema, con que estan hechas y como estan organizadas.
+   **Nunca propone cambiar tu forma de organizarlo.**
+3. Configura el acceso del encargado de bases de datos (te pide los datos de
+   conexion una vez; se guardan protegidos, fuera del codigo) y prueba que conecta.
+4. Trae las tareas reales del tablero y arma el sprint actual.
+5. Arma un mapa de donde esta cada cosa, para que nadie pierda tiempo buscando.
+6. Crea la memoria del proyecto y le carga lo que descubrio.
+7. Si el proyecto no tiene un espacio de pruebas automaticas, te ofrece crearlo.
+
+**Recibes:** un equipo que conoce tu proyecto y puede trabajar. Prueba con
+`/dev-team:status` para ver el resumen.
+
+> Si el proyecto tiene varias partes en carpetas separadas, abre Claude Code siempre
+> desde la carpeta que las contiene a todas. Si trabajas "solo local", las tareas
+> viven en un archivo del proyecto y puedes conectar un tablero despues con
+> `/dev-team:setup tracker`.
+
+---
+
+## Caso 4 — Necesito una funcionalidad nueva, de principio a fin
+
+**Situacion:** los analistas necesitan filtrar las cobranzas por rango de fechas.
+
+**Que escribes:**
+```
+/dev-team:refine los analistas necesitan filtrar las cobranzas por rango de fechas
+```
+
+**Que hace el equipo:**
+
+**0. Plan primero.** El jefe de equipo te presenta el plan y espera tu OK:
+```
+Plan propuesto — Filtro de fechas en cobranzas
+Que:     filtro desde/hasta en el listado de cobranzas (pantalla y servicio)
+Quien:   dueño del producto escribe la historia → programador de servicios y
+         programador de pantallas trabajan en paralelo → pruebas valida → se integra
+Riesgos: la consulta por rango puede ser lenta con muchos registros; el encargado
+         de datos revisara si hace falta un indice
+¿Apruebas, ajustas, o lo abordamos de otra forma?
+```
+
+**1. El dueño del producto** escribe la historia en tu tablero:
+```
+Filtrar las cobranzas por rango de fechas
+
+Como analista de cobranzas
+quiero filtrar el listado por fecha desde/hasta
+para encontrar rapidamente los pagos de un periodo.
+
+Criterios de aceptacion
+1. Dado un rango valido, cuando filtro, entonces veo solo cobranzas del rango.
+2. Dado un rango invalido (desde mayor que hasta), cuando filtro, entonces veo el
+   mensaje "El rango de fechas no es valido" y el listado no cambia.
+3. Dado el filtro activo, cuando lo limpio, entonces vuelvo al listado completo.
+Estimacion: 3 puntos
+```
+2. **El jefe de equipo reparte:** los dos programadores trabajan a la vez, cada uno
+   en su copia, y el jefe de pruebas prepara el plan de pruebas al mismo tiempo.
+3. **Los programadores terminan** y avisan a pruebas **con el informe de
+   conformidad** (que quedo disponible, en que version, y que esta funcionando).
+   Sin ese aviso, pruebas no arranca.
+4. **El equipo de pruebas** valida cada criterio: el probador de pantallas recorre la
+   aplicacion como un usuario y deja fotos de cada paso; el probador de servicios
+   comprueba las respuestas. El jefe de pruebas consolida un solo veredicto:
+   **APROBADA** o **RECHAZADA**.
+5. **El jefe de equipo** verifica que todo este en orden (pruebas aprobo, seguridad
+   si aplica) e integra el cambio al producto.
+6. La historia pasa a "terminada" en tu tablero, con la evidencia adentro.
+7. **El documentador** deja registro en la memoria del proyecto.
+
+**Recibes:** la funcionalidad integrada, la historia cerrada con pruebas y fotos, y la
+memoria del proyecto al dia.
+
+---
+
+## Caso 5 — Quiero ver como se vera una pantalla antes de construirla
+
+**Situacion:** necesitas una pantalla nueva de "Resumen de cobranzas" y quieres
+elegir el diseño antes de que alguien la programe.
+
+**Que escribes:**
+```
+/dev-team:start necesito diseñar la pantalla de resumen de cobranzas antes de construirla
+```
+
+**Que hace el diseñador:**
+1. Mira como se ven hoy tus pantallas (colores, tipografia, estilo) para partir de tu
+   realidad, no de cero.
+2. Te entrega **dos o tres propuestas** como paginas que abres en tu navegador y se
+   ven como la pantalla real:
+   ```
+   propuesta-A-densa.html     "para leer muchos datos: tabla e indicadores arriba"
+   propuesta-B-aireada.html   "para leer rapido: tarjetas y un grafico"
+   design-spec.md             colores (con contraste verificado), letras, espacios,
+                              y como se ve cuando carga, cuando falla, cuando esta vacia
+   ```
+3. Eliges ("la B, pero con los indicadores de la A"). El diseñador arma la version
+   final y se la pasa al programador de pantallas indicando que es fijo y que puede
+   adaptarse.
+4. El programador construye **exactamente eso**.
+
+**Recibes:** pantallas decididas por ti, con algo visible antes de gastar en
+construccion. Cero "no era asi como lo imaginaba".
+
+---
+
+## Caso 6 — Algo no funciona (reportar y corregir un error)
+
+**Situacion:** "al pasar a la pagina 2 del listado de cobranzas aparecen registros
+que ya vi en la pagina 1".
+
+**Que escribes:**
+```
+/dev-team:start al pasar a la pagina 2 del listado de cobranzas aparecen
+registros que ya vi en la pagina 1
+```
+
+**Que hace el equipo (registrar → corregir → volver a probar → cerrar):**
+1. **El jefe de equipo** hace una primera evaluacion: que parte parece afectada y que
+   tan grave es. No corrige nada todavia.
+2. **Pruebas reproduce el problema** como un usuario, con fotos numeradas de cada
+   paso (`00-listado-pagina-1.png`, `01-pagina-2-repetidos.png`). Si no logra
+   reproducirlo al primer intento o algo esta caido, toma la foto, marca el bloqueo y
+   avisa. No insiste.
+3. **El dueño del producto registra el error en el tablero**, en lenguaje claro:
+   > **"El listado de cobranzas muestra pagos repetidos al cambiar de pagina"**
+   > Pasos como usuario, que se esperaba y que paso, gravedad e impacto, y las
+   > **fotos dentro del ticket**.
+   Esto ocurre **antes** de hablar de quien lo corrige, aunque ya se sospeche la causa.
+4. **Plan primero:** el jefe de equipo te presenta el plan de correccion y espera tu OK.
+5. **El programador** corrige en su copia; **pruebas escribe una prueba automatica**
+   que reproduce el error, para que no vuelva a pasar sin que nadie se entere.
+6. **Pruebas vuelve a probar** el mismo recorrido con la correccion instalada, con una
+   tanda de fotos nueva, y da el veredicto.
+7. **El dueño del producto comenta en el mismo ticket** (que se corrigio, el
+   veredicto, las fotos nuevas) y **te pregunta si lo cierra**. Nunca lo cierra solo.
+
+**Recibes:** el error corregido, con toda la historia y las fotos dentro del ticket,
+y una prueba automatica que impide que vuelva.
+
+---
+
+## Caso 7 — Algo falla y nadie sabe en que parte esta el problema
+
+**Situacion:** "el ingreso funciona si se prueba directo contra el servicio, pero
+desde la aplicacion instalada falla". Puede ser la pantalla, la puerta de entrada, el
+servicio de accesos o la configuracion de los servidores. Nadie sabe donde.
+
+**Que escribes:**
+```
+/dev-team:start el ingreso falla desde la aplicacion instalada (error generico),
+pero el mismo usuario funciona probando directo contra el servicio
+```
+
+**Que hace el equipo:**
+1. **El jefe de equipo** te presenta el plan de investigacion:
+   ```
+   Plan — El ingreso falla solo desde la aplicacion
+   1. Pruebas reproduce el problema en el ambiente de pruebas, con fotos y el
+      registro de lo que la aplicacion intento hacer
+   2. Se aisla por capas, varios integrantes a la vez, cada uno en su parte:
+      - probador de servicios: ¿responde bien directo? ¿y pasando por la puerta de entrada?
+      - infraestructura: ¿la configuracion instalada es la correcta?
+   3. Con la parte culpable identificada → se registra el error → correccion dirigida
+   Nada se toca hasta tu OK.
+   ```
+2. **Pruebas reproduce UNA vez** con evidencia: la foto del error y el registro que
+   muestra que respondio realmente el sistema.
+3. **Investigacion en paralelo**, cada uno en su parte. Ejemplo real: directo al
+   servicio responde bien; pasando por la puerta de entrada responde "metodo no
+   permitido". Infraestructura revisa la configuracion instalada (no la de
+   desarrollo) y encuentra que no dirige las llamadas al lugar correcto.
+4. **El dueño del producto registra el error** apuntando a la parte real, en lenguaje
+   claro, con toda la evidencia.
+5. Corrige el responsable de esa parte y **pruebas vuelve a probar el recorrido
+   completo sobre el sistema realmente instalado**, no sobre la version de escritorio
+   del programador.
+
+**Por que funciona:** comparar "directo" contra "pasando por el medio" aisla la capa
+sin leer una linea de codigo; y probar siempre sobre lo realmente instalado evita que
+este tipo de errores se esconda durante dias.
+
+---
+
+## Caso 8 — Pruebas: como se comprueba que todo funciona
+
+El equipo de pruebas trabaja con una meta clara: **equivocarse como maximo una vez
+cada mil criterios revisados**. Para eso no "mira" la pantalla y opina: cada criterio
+se comprueba con una verificacion concreta, queda una foto con el elemento resaltado,
+y la historia solo se aprueba si pasa 7 controles. Tu no tienes que instalar ni
+configurar nada: las herramientas de prueba vienen incluidas.
+
+**Pedir el plan de pruebas de una historia:**
+```
+/dev-team:test-plan HU-42
+```
+→ una tabla con cada criterio: cual se probara de forma automatica, cual a mano, que
+casos extremos se agregan y que datos de prueba hacen falta.
+
+**Validar una historia (lo mas habitual):**
+```
+/dev-team:e2e HU-42
+```
+→ Primero pruebas confirma que lo que va a probar es lo que se dijo que se instalo
+(el informe de conformidad). Luego recorre la aplicacion como lo haria un usuario y,
+por cada criterio, deja **tres fotos** (antes, la accion, el resultado con el
+elemento resaltado) y una **comprobacion** que dice si se cumple o no. Con eso arma
+un **informe por criterio**, como este:
+
+```
+CA-2 · Mostrar error con rango invalido — CUMPLE
+| Paso | Accion                                            | Foto                 |
+| 1    | Estado inicial del filtro                         | ca2-01-inicial.png   |
+| 2    | Ingreso rango 31/02 → 01/01 y presiono Filtrar    | ca2-02-accion.png    |
+| 3    | Mensaje "El rango de fechas no es valido" visible | ca2-03-resultado.png |
+Comprobacion: el texto esta visible → OK · Sin errores ocultos · Sin llamadas fallidas
+```
+
+Despues escribe las pruebas automaticas, una por criterio y con el mismo nombre, para
+que ese criterio quede protegido de aqui en adelante.
+
+**Los 7 controles para aprobar.** El jefe de pruebas revisa, en este orden, que:
+1. Todos los criterios tienen su comprobacion y su foto.
+2. Las pruebas automaticas de la historia pasaron **dos veces seguidas**. Si una pasa
+   una vez y falla otra, no cuenta: se aparta y se investiga.
+3. Lo que ya funcionaba sigue funcionando.
+4. Las pantallas clave se ven igual que la version aprobada; si cambiaron, el
+   diseñador o el dueño del producto lo aprobo.
+5. Las pantallas nuevas son usables por personas con discapacidad (sin fallas graves
+   de accesibilidad).
+6. Los servicios responden exactamente lo que prometen: se les envian cientos de
+   solicitudes validas e invalidas generadas automaticamente y ninguna los rompe.
+7. Durante el recorrido no hubo errores ocultos ni llamadas fallidas.
+
+Si falla cualquiera, la historia vuelve **RECHAZADA** con el informe. No existe
+"aprobada con observaciones": una observacion es un error (se registra) o no es nada.
+
+**Comprobar que todo sigue funcionando** (por ejemplo antes de publicar):
+```
+/dev-team:e2e run
+```
+→ corre todas las pruebas dos veces. Cada fallo se clasifica: o es un **error del
+producto** (se registra con evidencia) o es una **prueba fragil** (se aparta y se
+repara la prueba, nunca el producto).
+
+**Otras cosas que puedes pedirle a pruebas:**
+```
+/dev-team:e2e plan HU-42        # explora la aplicacion y propone el plan de pruebas
+/dev-team:e2e generate HU-42    # convierte ese plan en pruebas automaticas
+/dev-team:e2e heal              # repara pruebas fragiles (nunca cambia lo que debe cumplirse)
+/dev-team:e2e visual            # compara las pantallas clave con la version aprobada
+/dev-team:e2e a11y              # revisa la accesibilidad de las pantallas
+/dev-team:e2e api HU-42         # somete los servicios de la historia a su contrato
+/dev-team:e2e explorar http://localhost:4200   # recorre libremente y reporta lo que encuentre
+```
+
+**Ver que tan preciso esta siendo el equipo de pruebas:**
+```
+/dev-team:team-metrics
+```
+→ entre otras cosas, cuantas historias aprobadas volvieron despues como error. La meta
+es una de cada mil o menos.
+
+**Donde quedan las fotos.** Siempre en la carpeta del proyecto, una subcarpeta por
+historia o error. Cuando hay un error, las fotos se muestran dentro del ticket. Si el
+proyecto esta en GitHub, se publican en un espacio apartado que existe solo para eso
+y nunca se mezclan con el codigo.
+
+---
+
+## Caso 9 — Base de datos: revisar, comparar y preparar cambios
+
+**Chequeo de salud:**
+```
+/dev-team:db-health full
+```
+→ estructura, indices que no se usan, consultas lentas, tamaños. Si no hay conexion
+configurada, la pide una vez y la guarda protegida.
+
+**Comparar dos bases de datos** (por ejemplo, la de pruebas contra la de produccion
+del cliente, antes de publicar):
+```
+/dev-team:start compara la base de datos de pruebas contra la de produccion del
+cliente ACME, te paso los accesos de ambas
+```
+→ el encargado de datos compara **solo leyendo**: jamas escribe en ninguna de las
+dos. Entrega un informe de diferencias y los archivos para nivelarlas, **generados
+pero no ejecutados**: tu decides cuando y donde correrlos.
+
+**Preparar los cambios de datos para publicar.** El encargado de datos entrega
+siempre en el mismo formato, en archivos numerados por tipo de cambio (crear tablas,
+modificar tablas, vistas, datos, procedimientos, actualizaciones) y organizados por
+motor y por base de datos. Cada archivo se puede ejecutar varias veces sin romper
+nada, respeta acentos y eñes, y no depende de nombres de una instalacion particular.
+El encargado de publicaciones lo revisa y puede rechazarlo (ver Caso 10).
+
+---
+
+## Caso 10 — Publicar una version en un ambiente (pase)
+
+**Situacion:** hay que publicar la version 2.4.0 de Avisos de Cobranza en el ambiente
+**Preprod de Peru**, con cambios de datos.
+
+**Que escribes:**
+```
+/dev-team:pase preprod PE — Avisos de Cobranza v2.4.0, lleva cambios de base de datos
+```
+
+**Que hace el encargado de publicaciones:**
+1. Reune lo que falte: que componentes van y en que version exacta (la real, no
+   inventada), y quien aprueba (sale de la configuracion, nunca escrito a mano).
+2. **Control "pase completo":** rechaza si faltan componentes, hay dos versiones para
+   lo mismo, hay mas de una rama por componente, hay ramas de otro pais, o no esta
+   claro el tema. El pase se pide una sola vez, completo. Nada de "te mando el resto
+   despues".
+3. **Revisa los cambios de datos** que entrego el encargado de datos: que esten en el
+   formato acordado, ordenados por motor, base y tipo, y que se puedan ejecutar mas
+   de una vez sin romper nada. **Si algo esta mal, los rechaza** e indica archivo,
+   linea y regla.
+4. Arma el paquete de cambios de datos (`Scripts.zip`) con esa misma organizacion.
+5. Llena la **solicitud de pase** en formato simple, de una o dos paginas: para que
+   es, que componentes van y en que version, que temas incluye, que acciones hay que
+   hacer, que ramas se usaron (una por componente, limpias) y que cambios de datos
+   lleva. Sin relatos largos ni detalles tecnicos innecesarios.
+6. Deja el **correo listo para enviar** (asunto, tabla de componentes, acciones y la
+   solicitud de aprobacion a la persona correcta). Si tu Outlook esta conectado, lo
+   deja como borrador; si no, como archivo de texto. **Tu lo envias.**
+7. Entrega la **carpeta del pase completa**:
+   ```
+   Release v2.4.0 16julio2026 - Avisos Cobranza/
+   ├── Solicitud de Pase Ambientes - Preprod PE.pdf
+   ├── Solicitud de Pase Ambientes - Preprod PE.docx
+   ├── Scripts.zip
+   ├── S3.zip                (si aplica)
+   └── correo-pase.txt
+   ```
+
+**Cuando lleva documento:** certificacion, puente, demostracion (Chile, Peru,
+Colombia), preprod (Colombia, Peru) y produccion de clientes. Ambientes internos: solo
+si lo pides.
+
+**Despues de publicar:** quien instalo emite el **informe de conformidad**. Sin el,
+pruebas no valida (regla de oro).
+
+---
+
+## Caso 11 — Revisar la seguridad
+
+**Que escribes** (en el componente que quieres revisar, o indicando cual):
+```
+/dev-team:security-audit
+```
+
+**Que revisa seguridad:** los riesgos mas comunes de la industria, claves o secretos
+escritos en el codigo, componentes externos con vulnerabilidades conocidas, y una
+lista de controles de acceso aprendidos de incidentes reales (por ejemplo: que no
+haya puertas sin cerrar, que los intentos de ingreso fallidos se limiten de verdad,
+que los pasos obligatorios no se puedan saltar).
+
+**Recibes:** un informe con hallazgos clasificados por gravedad (critico, alto, medio,
+bajo), cada uno con su evidencia y su recomendacion. **Seguridad nunca cambia
+codigo:** corrige el responsable de la parte afectada y seguridad vuelve a revisar.
+
+---
+
+## Caso 12 — La memoria del proyecto (wiki)
+
+En vez de que el equipo relea decenas de notas viejas cada dia, mantiene una memoria
+ordenada: una pagina por servicio, por historia, por error, por decision y por
+publicacion. Los integrantes la leen antes de trabajar. Tu tambien puedes usarla.
+
+```
+/dev-team:wiki query ¿por que elegimos guardar los avisos en una base separada?
+```
+→ responde solo con lo que esta en la memoria, citando las paginas. Si no lo sabe, lo
+dice.
+
+```
+/dev-team:wiki ingest    # al cierre del dia: guarda lo aprendido hoy
+/dev-team:wiki lint      # revisa la salud de la memoria (enlaces rotos, paginas viejas)
+```
+
+Solo el documentador escribe en la memoria; todos los demas la leen. Si tienes la
+aplicacion gratuita **Obsidian**, puedes abrir la carpeta de la wiki y ver un mapa
+visual de como se conecta todo (historias con servicios, errores con correcciones,
+decisiones con su razon).
+
+---
+
+## Caso 13 — Ver al equipo trabajar
+
+**La oficina virtual, en vivo:**
+```
+/dev-team:team-office
+```
+→ se abre una pagina en tu navegador con los 15 integrantes en sus salas. Cuando uno
+trabaja, se ve un anillo verde y "escribiendo…" con su tarea debajo; si esta
+bloqueado, se pone rojo; cuando uno le pasa trabajo a otro, vuela un sobre; cuando
+termina, confetti. A un costado, el hilo de actividad. Es solo para mirar y no
+consume nada.
+
+**Las metricas, para tomar decisiones:**
+```
+/dev-team:team-metrics
+```
+→ por integrante: tareas terminadas, cuanto tardaron, cuanto consumieron y en que
+"cerebro" corren, con alertas concretas ("seguridad consume el 18 % con el 4 % de
+las tareas: considera bajarle el modelo"). Incluye la precision del equipo de
+pruebas.
+
+**El estado en texto:**
+```
+/dev-team:status
+```
+
+---
+
+## Caso 14 — Trabajar por sprints (Scrum)
+
+```
+1. /dev-team:refine {lo que se necesita este sprint}
+   → el dueño del producto crea o refina las historias, con estimacion
+2. Planificacion: el dueño del producto propone el objetivo del sprint y las
+   historias candidatas; el jefe de equipo valida cuanto cabe
+3. /dev-team:assign-task
+   → plan primero y reparto del trabajo
+4. Durante el sprint:
+   /dev-team:status        cada mañana (tu reunion diaria)
+   /dev-team:sync          para reflejar los avances en el tablero
+   /dev-team:team-office   si quieres verlo en vivo
+   (nada entra al sprint en curso sin tu decision explicita)
+5. Revision: el dueño del producto verifica historia por historia contra sus
+   criterios; lo que no se termino vuelve al listado, no se arrastra en silencio
+6. Retrospectiva: acuerdos de mejora para el siguiente sprint
+7. /dev-team:wiki ingest
+   → el sprint queda en la memoria del proyecto
+```
+
+---
+
+## Caso 15 — Hacer que un integrante piense mas (o gaste menos)
+
+Cada integrante usa un "cerebro" de un tamaño: **economico**, **intermedio** o
+**potente**. Mas potente piensa mejor pero cuesta mas. Por defecto el equipo ya esta
+en el minimo razonable. Lo unico que suele valer la pena subir es el arquitecto en
+proyectos complejos.
+
+**Para este proyecto** (en el archivo de configuracion del proyecto):
+```json
+"team": { "models": { "architect": "opus" } }
+```
+**Para todos tus proyectos** (en tu configuracion personal, `~/.claude/dev-team.config.json`):
+```json
+{ "team": { "models": { "architect": "opus" } } }
+```
+
+Si hay configuracion en el proyecto y en la personal, gana la del proyecto. Los
+valores son `haiku` (economico), `sonnet` (intermedio) y `opus` (potente). Dos
+integrantes no se pueden cambiar: el que prepara la oficina y el documentador, que
+siempre usan el economico.
+
+---
+
+# Parte 3 — Preguntas frecuentes y problemas comunes
+
+## Preguntas frecuentes
+
+**¿Tengo que saber que integrante hace cada cosa?**
+No. `/dev-team:start` y describe lo que necesitas. El equipo se organiza.
+
+**¿Con quien estoy hablando cuando escribo? Siempre responde "la sesion".**
+Es por diseño: tu conversacion principal actua como el coordinador operativo del
+equipo (arma planes, reparte, exige controles) sin pagar el costo de un integrante
+aparte. El jefe de equipo como integrante existe para gestion profunda: sprint,
+prioridades, revision de cambios e integracion al producto. Si quieres invocarlo
+explicitamente: `/dev-team:assign-task` o escribe "que el lead revise el sprint".
+
+**¿Puedo confiar en que no haran nada sin avisarme?**
+Si. Plan primero es regla: todo lo que construye o corrige te presenta el plan y
+espera tu OK. Solo lo que es de lectura (mirar, resumir, buscar) corre directo.
+
+**¿Funciona sin GitHub ni Azure DevOps?**
+Si. En "solo local" las tareas viven en un archivo del proyecto. Puedes conectar un
+tablero despues con `/dev-team:setup tracker`.
+
+**¿Por que pruebas no arregla los errores que encuentra?**
+Por diseño: pruebas reproduce y reporta con evidencia; el programador corrige. Asi la
+evidencia es objetiva y corrige quien conoce el codigo.
+
+**¿Que pasa si pruebas se topa con algo caido?**
+Toma la foto de ese primer intento, marca el bloqueo y avisa de inmediato. No
+reintenta, no busca atajos, no toca nada. Es ley.
+
+**¿Donde quedan las fotos de las pruebas?**
+En la carpeta del proyecto, una subcarpeta por historia o error, con un informe por
+criterio. Cuando hay un error, se muestran dentro del ticket. En GitHub se publican
+en un espacio apartado que existe solo para eso y nunca se mezclan con el codigo; un
+cambio de codigo que traiga fotos adentro se rechaza. En Azure DevOps se adjuntan al
+ticket y se ven embebidas.
+
+**Pruebas dice que no puede abrir el navegador.**
+El navegador de pruebas viene incluido con el plugin desde la version 2.8.0. Casi
+siempre basta con cerrar y abrir la sesion. Si antes alguien lo configuro a mano,
+pide `/dev-team:setup playwright`: detecta si hay uno duplicado y dice como quitarlo.
+
+**¿El encargado de datos puede escribir en las bases cuando compara dos?**
+No. Solo lee. Los archivos para nivelar se generan y tu decides cuando ejecutarlos.
+
+**¿Siempre se pide revision formal de un cambio al terminar?**
+No. Los programadores preguntan primero. Hay entregables que no lo llevan.
+
+**¿Necesito Obsidian para la memoria del proyecto?**
+No. Son paginas de texto y el equipo las usa igual. Obsidian solo agrega el mapa
+visual para las personas.
+
+**¿Puedo usar solo una parte del equipo?**
+Si. Cada comando funciona por separado: solo el chequeo de base de datos, solo
+refinar historias, solo un pase, solo pruebas.
+
+**¿El equipo respeta mi proyecto tal como esta?**
+Si. Al tomar un proyecto existente nunca propone cambiar como esta organizado ni con
+que esta hecho, salvo que lo pidas.
+
+**Tengo proyectos creados con versiones viejas del plugin. ¿Hay que migrar algo?**
+No. Al abrir una sesion, el plugin completa solo lo que falte y, si la memoria esta
+vacia, te ofrece una vez llenarla.
+
+**¿Como me entero de que salio una version nueva?**
+Automatico: al abrir una sesion el plugin compara tu version con la publicada (una
+vez cada 6 horas) y te avisa, preguntando si quieres actualizar.
+
+## Si algo no anda
+
+**Actualice el plugin pero el equipo sigue igual.**
+Cierra y abre la sesion. Todo lo nuevo se carga al inicio.
+
+**La oficina virtual se ve vacia.**
+Casi siempre es que no se reinicio la sesion despues de actualizar. Se llena a medida
+que el equipo trabaja.
+
+**Un integrante quiso pedirle ayuda a otro y fue bloqueado.**
+Correcto, es el diseño: solo el jefe de equipo puede hacerlo. El integrante hace su
+trabajo directo o deja una nota al jefe.
+
+**Pruebas no quiere validar.**
+Tambien correcto si falta el informe de conformidad o el sistema no esta completo en
+la computadora del desarrollador (regla de oro). Pide a quien instalo que emita el
+informe.
+
+**Un pase fue rechazado.**
+Es el control funcionando. El rechazo indica archivo, linea y regla; lo corrige el
+encargado de datos y se vuelve a revisar.
+
+**Los integrantes tardan en arrancar.**
+Abre la sesion desde la carpeta que contiene todo el proyecto y manten la memoria al
+dia (`/dev-team:wiki ingest`). Con eso el arranque lee una pagina en vez de muchos
+archivos.
+
+Para problemas de instalacion o configuracion, ver el
+[Anexo E](#e-solucion-de-problemas-tecnicos).
+
+---
+
+# Anexo tecnico (para quien instala y configura)
+
+## A. Instalacion y actualizacion
 
 ```bash
 # 1. Agregar el marketplace (una sola vez)
@@ -60,753 +916,21 @@ backlog en **GitHub** o **Azure DevOps**.
 # 3. Actualizar cuando haya cambios publicados
 claude plugin marketplace update faast-marketplace
 claude plugin update dev-team@faast-marketplace
-# → reinicia la sesion de Claude Code despues de actualizar
-#   (agentes, hooks y comandos se cargan al inicio de sesion)
+# → reiniciar la sesion de Claude Code despues de actualizar
 ```
 
-**Requisitos** (el agente `setup` los valida e instala por ti la primera vez):
-git · Docker · Node.js ≥ 18 · `gh` (GitHub) o `az` (Azure DevOps) · cliente de BD
-(mysql/sqlcmd/psql) · Playwright.
+**Requisitos** (el agente `setup` los valida e instala con una confirmacion): git ·
+Docker · Node.js ≥ 18 · `gh` (GitHub) o `az` (Azure DevOps) · cliente de BD
+(mysql/sqlcmd/psql) · Playwright (el navegador de pruebas; el servidor MCP viene
+incluido en el plugin) · `pipx` para Schemathesis (contratos de API).
 
----
+**Si ya tenias un servidor MCP `playwright` registrado a mano** en tu configuracion
+personal, quitalo para no duplicar herramientas: `claude mcp remove playwright`. El
+del plugin queda.
 
-## 2. Inicio rapido
+## B. Configuracion del proyecto
 
-No necesitas memorizar comandos. Abre Claude Code **en la carpeta del proyecto**
-(o donde quieras crearlo) y escribe:
-
-```
-/dev-team:start
-```
-
-El equipo detecta tu situacion:
-
-| Situacion | Que pasa |
-|---|---|
-| No hay proyecto configurado | Te ofrece crear uno nuevo o heredar uno existente |
-| Hay proyecto | Te muestra un resumen de 5 lineas y te propone la siguiente accion |
-| Pediste algo especifico | `/dev-team:start hay un bug en el login` → enruta al flujo correcto |
-
-> **Tip:** para preguntas simples ("¿que estados tiene una solicitud?") pregunta
-> directo, sin `/start` — el router puede disparar agentes que no necesitas.
-
----
-
-## 3. Conceptos que conviene conocer
-
-**`.coordination/`** — la carpeta de coordinacion del equipo. Vive en la raiz del
-mono-repo o en la carpeta paraguas del multi-repo. Contiene el config, los
-handoffs entre agentes, la wiki, la evidencia de QA, las metricas y los pases.
-Es la memoria compartida del equipo.
-
-**Topologias** — `mono` (un repo, servicios como carpetas) o `multi` (carpeta
-paraguas con un repo git por servicio). El equipo se adapta a la tuya y **nunca**
-propone migrarla.
-
-**Handoffs** — los agentes se comunican SOLO por archivos markdown en
-`.coordination/handoffs/` (`{de}-a-{para}-{fecha}.md`). Todo queda trazable.
-
-**Gates** — nada avanza sin pasar sus puertas: QA aprueba antes del merge,
-cybersec audita lo sensible, el release-manager audita los pases, y **solo el
-Lead mergea**.
-
-**Plan primero** — antes de ejecutar features o fixes, el Lead te presenta el
-plan y espera tu confirmacion. Tu decides; el equipo ejecuta.
-
-**Wiki viva** — `.coordination/wiki/` es la memoria destilada del proyecto
-(patron LLM Wiki). Los agentes la leen antes de cada tarea; solo el tech-writer
-la escribe. Abrela con Obsidian para ver el grafo de conocimiento.
-
----
-
-## 4. El equipo: 15 agentes
-
-| Agente | Rol | Modelo |
-|--------|-----|--------|
-| 🧰 **setup** | Valida e instala prerequisitos, configura conexiones BD y tracker | haiku (fijo) |
-| 📋 **product-owner** | HUs y bugs en lenguaje 100% de negocio; backlog Scrum en GitHub/Azure | sonnet |
-| 📐 **architect** | Arquitectura: topologia, servicios, stack, BD, gateway | sonnet (opus opcional) |
-| 🎨 **ui-designer** | Mockups y specs UI/UX: paletas WCAG, tipografia, estados | sonnet |
-| 🎯 **lead** | Coordina, presenta planes, asigna, exige gates, unico que mergea | sonnet |
-| ⚙️ **backend** | Servicios backend (.NET 8, Node.js, Python, Java) | sonnet |
-| 🖥️ **frontend** | SPA y microfrontends (React, Vue, Angular) | sonnet |
-| 🗄️ **dba** | Esquemas, migraciones, scripts de pase, comparacion de BDs | sonnet |
-| 🔎 **qa** (QA Lead) | Plan de pruebas, reparto a especialistas, veredicto, suite E2E | sonnet |
-| 🖱️ **qa-frontend** | QA de UI: Playwright interactivo, responsive, evidencia visual | sonnet |
-| 🔌 **qa-backend** | QA de APIs: contract testing, permisos, casos borde | sonnet |
-| 📦 **release-manager** | Solicitud de pase (Word+PDF), audita scripts del DBA, Scripts.zip | sonnet |
-| 🚢 **infra** | Docker, CI/CD, gateways, deploy + informe de conformidad | sonnet |
-| 🛡️ **cybersec** | Auditoria de seguridad; nunca commitea | sonnet |
-| 📚 **tech-writer** | Docs tecnicas + mantenedor de la wiki | haiku (fijo) |
-
-> **Modelos:** optimizados para costo — nadie usa opus por defecto y `fable` esta
-> prohibido. Configurables por proyecto o por usuario (ver [Caso 15](#caso-15--ajustar-los-modelos-de-los-agentes));
-> los de haiku son fijos.
-
----
-
-## 5. Las reglas del equipo (siempre activas)
-
-1. **PLAN PRIMERO** — antes de ejecutar una feature o un fix, el Lead presenta el
-   plan (que/quien/donde/riesgos) y espera tu confirmacion. Puedes ajustar o
-   pedir otro abordaje. Nada se ejecuta sin tu OK.
-2. **El PO redacta TODO en lenguaje funcional de negocio** — HUs, bugs e items que
-   entiende cualquier persona no programadora. Titulos limpios, sin codigos raros.
-   Lo tecnico va al final o en los handoffs.
-3. **Se trabaja con Scrum** — sprints con Sprint Goal, story points (1-8), backlog
-   por valor, refinamiento antes del planning, review y retrospectiva.
-4. **QA es un equipo y es gate de merge** — nada llega a main sin veredicto
-   APROBADA con evidencia.
-5. **REGLA DE ORO (fija e inalterable): QA no valida sin informe de conformidad**
-   — en ambientes desplegados exige el informe (version exacta, alcance, health);
-   en desa exige el stack COMPLETO levantado. Nadie puede saltarse este flujo.
-6. **LEY QA: a la primera falla, reporta** — evidencia + `blocked` + reporte
-   inmediato. Prohibido reintentar, workarounds o probar fuera de su alcance.
-7. **QA no debuggea** — reproduce, documenta y reporta. La causa raiz es del dev.
-8. **Toda prueba deja evidencia, y la evidencia se VE dentro del ticket** — las
-   capturas de pantalla y los videos cortos aparecen dentro del bug o de la historia,
-   no como un enlace que hay que abrir aparte. Las imagenes se guardan en la carpeta
-   del proyecto (`.coordination/evidence/`) y, si el proyecto esta en GitHub, en un
-   espacio apartado del repositorio (la rama `evidence`) que existe solo para eso.
-   Nunca se mezclan con el codigo del producto.
-9. **Cybersec es segundo gate** en auth/datos sensibles y nunca commitea.
-10. **Solo el Lead mergea**; un agente = un branch = una tarea.
-11. **El release-manager es gate de pases** — audita el paquete RESULTANTE y puede
-    rechazar al DBA hasta que cumpla el formato global.
-12. **Los devs preguntan antes de abrir PR** — no todo entregable lleva PR.
-13. **Solo el Lead delega en subagentes** (puede paralelizar: 2 backend en HUs
-    distintas; nunca otro lead). Los demas ejecutan directo — un hook bloquea la
-    delegacion anidada. Excepcion universal: Explore (busqueda barata).
-14. **Nada de personas ni valores hardcodeados** — nombres, correos, reviewers,
-    rutas: siempre del config o preguntando.
-15. **Todo queda registrado automaticamente** — hooks del plugin escriben la
-    actividad en `metrics/activity.jsonl` (alimenta oficina y metricas).
-
----
-
-## 6. Referencia de comandos
-
-### Diario
-| Comando | Que hace |
-|---------|----------|
-| `/dev-team:start` | Punto de entrada universal: detecta contexto y te guia |
-| `/dev-team:status` | Estado del proyecto: sprint, backlog, handoffs, bloqueos |
-| `/dev-team:sync` | Sincroniza con GitHub/Azure: trae tickets, sube avances, crea PRs |
-| `/dev-team:inbox` | Un agente lee sus tareas y handoffs pendientes |
-
-### Proyectos
-| Comando | Que hace |
-|---------|----------|
-| `/dev-team:new-project {doc o idea}` | Proyecto nuevo: arquitectura → repos → backlog → wiki |
-| `/dev-team:onboard {nombre}` | Hereda un proyecto existente |
-| `/dev-team:setup` | Valida/instala prerequisitos (`setup db`, `setup tracker`, `setup playwright`) |
-
-### Trabajo
-| Comando | Que hace |
-|---------|----------|
-| `/dev-team:refine {pedido}` | El PO convierte tu pedido en HUs en el tracker |
-| `/dev-team:assign-task` | El Lead asigna trabajo (con plan primero) |
-| `/dev-team:handoff` | Crear comunicacion entre agentes |
-
-### Calidad
-| Comando | Que hace |
-|---------|----------|
-| `/dev-team:test-plan {HU}` | Plan de pruebas desde los criterios de aceptacion |
-| `/dev-team:e2e {HU\|run\|plan\|generate\|heal\|visual\|a11y\|api\|explorar url}` | Validacion con evidencia por criterio, suite E2E, Test Agents, regresion visual, accesibilidad y contrato de API |
-| `/dev-team:review-pr {n}` | Revision de codigo de un PR |
-| `/dev-team:security-audit` | Auditoria de seguridad del repo actual |
-| `/dev-team:git-check` | Verificacion git antes de commitear |
-
-### Operacion y releases
-| Comando | Que hace |
-|---------|----------|
-| `/dev-team:db-health` | Health check de BD (esquema, indices, slow queries) |
-| `/dev-team:deploy-check` | Readiness para deploy |
-| `/dev-team:pase {ambiente}` | Solicitud de pase completa: doc Word+PDF + Scripts.zip auditado |
-| `/dev-team:document {tema}` | Tech-writer actualiza documentacion tecnica |
-
-### Conocimiento y visibilidad
-| Comando | Que hace |
-|---------|----------|
-| `/dev-team:wiki {init\|ingest\|lint\|query}` | Wiki viva del proyecto (vault de Obsidian) |
-| `/dev-team:team-office` | Oficina virtual 2D en vivo |
-| `/dev-team:team-metrics` | Productividad y consumo de tokens por agente |
-
-> Los comandos se ejecutan **inline** en tu sesion (no como subagentes) — el
-> plugin lo garantiza con un hook. Solo los AGENTES se delegan.
-
----
-
-# Casos de uso
-
-Cada caso muestra: la situacion, **que escribes exactamente**, que hace el
-equipo paso a paso, y que recibes al final.
-
----
-
-## Caso 1 — Crear un proyecto nuevo desde una idea
-
-**Situacion:** tienes una idea ("un sistema de notificaciones de cobranza") y
-quieres arrancar bien: arquitectura pensada, repos con scaffolding, backlog real.
-
-**Que escribes:**
-```
-/dev-team:new-project sistema de notificaciones de cobranza: avisa por correo a
-los clientes con pagos proximos a vencer, con plantillas configurables y reportes
-de envio. Usuarios: analistas de cobranza. Integra con nuestro core de factoring.
-```
-
-**Que hace el equipo:**
-1. **setup** valida tu entorno (git, Docker, gh/az, BD, Playwright) y te pide UNA
-   confirmacion para instalar lo que falte.
-2. **architect** analiza la idea y te presenta una propuesta CONCRETA:
-   ```
-   Propuesta de arquitectura — Notificaciones de Cobranza
-   Topologia: multi-repo (3 servicios independientes + frontend)
-   ├─ ms-notificaciones  (.NET 8, Clean Architecture, MySQL)   → envios y plantillas
-   ├─ ms-programador     (.NET 8, Minimal API, sin BD)         → jobs de vencimientos
-   ├─ gateway            (YARP)
-   └─ frontend-gestion   (React 18 + Vite)
-   BD: database-per-service · Correo: proveedor SMTP configurable
-   Fases: 1) plantillas+envio manual · 2) programacion automatica · 3) reportes
-   ```
-3. **Tu decides**: "prefiero mono-repo", "usa PostgreSQL", "quita el gateway" —
-   el architect ajusta y vuelve a presentar hasta tu OK.
-4. Eliges tracker (GitHub Projects o Azure DevOps Boards) y el flujo crea los
-   repos con scaffolding completo (Dockerfile, CI/CD, tests, CLAUDE.md por
-   servicio) desde las plantillas del plugin.
-5. **product-owner** convierte la idea en HUs de negocio reales en tu tracker:
-   > "Como analista de cobranza quiero configurar la plantilla del aviso de
-   > vencimiento para adaptar el tono al cliente" — con criterios Gherkin,
-   > story points y prioridad.
-6. Se crean la **wiki** (`/wiki init`) y las metricas.
-
-**Recibes:** repos listos para trabajar, backlog priorizado en tu tracker,
-arquitectura documentada en `architecture.md`, y el equipo configurado. Siguiente
-paso tipico: `/dev-team:assign-task`.
-
----
-
-## Caso 2 — Crear un proyecto desde un documento de requerimientos
-
-**Situacion:** el cliente entrego un documento (Word/PDF/markdown) con los
-requerimientos.
-
-**Que escribes:**
-```
-/dev-team:new-project docs/Requerimientos_Portal_Proveedores.docx
-```
-
-**Diferencias con el Caso 1:**
-- El architect **lee el documento completo** y mapea cada requerimiento a un
-  servicio/fase — te señala ambiguedades y vacios ANTES de proponer
-  ("el documento no dice si los proveedores se autentican con SSO corporativo o
-  usuario/clave propio — ¿cual es?").
-- El PO genera el backlog **trazando cada HU al requerimiento de origen**
-  (RQ-07 → HU "Consultar estado de facturas").
-- Si el documento trae pantallas o wireframes, el **ui-designer** los toma como
-  referencia para el sistema visual (ver Caso 5).
-
-> **Tip:** mientras mas decisiones traigas tomadas (tracker, mono/multi, stack
-> preferido), menos preguntas te hara el flujo. Todo lo demas lo propone el
-> architect y tu solo apruebas o ajustas.
-
----
-
-## Caso 3 — Retomar un proyecto existente (onboard)
-
-**Situacion:** un proyecto real que ya existe (varios repos, tickets abiertos,
-BD en uso) y quieres que el equipo lo opere desde hoy.
-
-**Que escribes** (parado en la carpeta que contiene los repos, o donde quieras
-la carpeta paraguas):
-```
-/dev-team:onboard backoffice
-```
-
-**Que hace el equipo:**
-1. **setup** valida el entorno y pregunta: ¿GitHub, Azure DevOps o solo local?
-2. Detecta los repos (locales y remotos), analiza el stack y la estructura de
-   cada uno, y **detecta la topologia** — nunca propone cambiarla.
-3. Configura el acceso del **dba** a las BDs (motor, host, credenciales — se
-   guardan en `.coordination/dba-access.json`, que JAMAS entra a git) y prueba
-   la conexion.
-4. Trae los tickets reales del tracker y arma `backlog.md` + `sprint-actual.md`.
-5. Genera `repos.md` — el mapa de repos con rutas locales reales (es lo que evita
-   que los agentes "vaguen" buscando carpetas).
-6. Crea la wiki e ingiere lo detectado (arquitectura, backlog, mapa de repos).
-
-**Recibes:** el equipo conoce tu proyecto y puede trabajar. Prueba con
-`/dev-team:status` para ver el resumen.
-
-> **Tip (multi-repo):** abre la sesion de Claude Code SIEMPRE desde la carpeta
-> paraguas (donde esta `.coordination/`) y agrega los repos con `/add-dir` si
-> estan en otra ruta — los agentes llegan a todo sin prompts de permiso.
->
-> **Onboard "solo local":** sin tracker remoto, el backlog vive en
-> `.coordination/backlog.md`. Puedes conectar GitHub/Azure despues con
-> `/dev-team:setup tracker`.
-
----
-
-## Caso 4 — Una feature de principio a fin
-
-**Situacion:** los analistas necesitan filtrar las cobranzas por rango de fechas.
-
-**Que escribes:**
-```
-/dev-team:refine los analistas necesitan filtrar las cobranzas por rango de fechas
-```
-
-**Que hace el equipo (flujo completo):**
-
-**0. PLAN PRIMERO** — el Lead te presenta el plan y espera tu OK:
-```
-Plan propuesto — Filtro de fechas en cobranzas
-Que:    filtro desde/hasta en el listado de cobranzas (pantalla + API)
-Quien:  PO (HU) → backend (API) + frontend (pantalla) EN PARALELO
-        → equipo QA valida → merge
-Donde:  ms-cobranzas (branch feature/hu-42-filtro-fechas)
-        frontend-gestion (branch feature/hu-42-filtro-fechas-ui)
-Riesgos: el indice actual de la tabla no cubre consultas por rango — el dba
-        revisara si hace falta indice nuevo
-¿Apruebas, ajustas, o lo abordamos de otra forma?
-```
-
-**1. PO** escribe la HU en lenguaje de negocio y la crea en el tracker:
-```markdown
-# Filtrar las cobranzas por rango de fechas
-
-**Como** analista de cobranzas
-**Quiero** filtrar el listado por fecha desde/hasta
-**Para** encontrar rapidamente los pagos de un periodo
-
-## Criterios de Aceptacion
-1. Dado un rango valido, cuando filtro, entonces veo solo cobranzas del rango
-2. Dado un rango invalido (desde > hasta), cuando filtro, entonces veo el
-   mensaje "El rango de fechas no es valido" y el listado no cambia
-3. Dado el filtro activo, cuando limpio el filtro, entonces vuelvo al listado completo
-Story points: 3
-```
-2. **Lead** asigna: backend + frontend implementan en paralelo (branches
-   separados, desde `origin/develop`), y QA prepara el plan de pruebas AL MISMO
-   TIEMPO. Los devs preguntan si el entregable lleva PR antes de abrir nada.
-3. **Devs terminan** → handoff a QA **con informe de conformidad** (que quedo
-   desplegado/disponible, version, health) — sin ese informe QA no arranca.
-4. **Equipo QA**: el QA Lead reparte — qa-frontend valida los criterios de
-   pantalla (Playwright, screenshots de cada criterio) y qa-backend los de API
-   (requests reales capturados) — en paralelo. Consolida UN veredicto: APROBADA.
-5. **Lead** verifica gates (CI verde + QA aprobo + seguridad si aplica) y mergea.
-6. `/dev-team:sync push` → PR mergeado, HU a Done en el tracker.
-7. **tech-writer** documenta e ingiere todo a la wiki.
-
-**Recibes:** la feature en `develop`/`main`, HU cerrada con evidencia, wiki al dia.
-
----
-
-## Caso 5 — Diseñar pantallas con mockups ANTES de programar
-
-**Situacion:** necesitas la pantalla nueva de "Resumen de cobranzas" y quieres
-elegir el diseño antes de que se escriba una linea de codigo.
-
-**Que escribes:**
-```
-/dev-team:start necesito diseñar la pantalla de resumen de cobranzas antes de implementarla
-```
-
-**Que hace el ui-designer:**
-1. Detecta tu sistema de diseño actual (tailwind config, tokens CSS, libreria de
-   componentes) y captura pantallas existentes para partir de tu realidad.
-2. Te entrega **2-3 propuestas de mockup** como HTML autocontenido — las abres
-   en el browser y se ven como la pantalla real:
-   ```
-   .coordination/design/resumen-cobranzas/
-   ├── propuesta-A-densa.html      "orientada a datos: tabla + KPIs arriba"
-   ├── propuesta-B-aireada.html    "orientada a lectura: cards + grafico"
-   └── design-spec.md              paleta (contraste WCAG verificado), tipografia,
-                                   espaciado, estados (loading/error/empty/success)
-   ```
-3. Eliges ("la B, pero con los KPIs de la A") → el ui-designer consolida la spec
-   final y hace handoff a **frontend** con lo que es fijo y lo que es flexible.
-4. Frontend implementa EXACTAMENTE esa spec (misma paleta, mismos estados).
-
-**Recibes:** pantallas decididas por ti con evidencia visual, cero retrabajo de
-"no era asi como lo imaginaba".
-
----
-
-## Caso 6 — Reportar y corregir un bug
-
-**Situacion:** "la paginacion del listado de cobranzas muestra registros repetidos".
-
-**Que escribes:**
-```
-/dev-team:start bug: al pasar a la pagina 2 del listado de cobranzas aparecen
-registros que ya vi en la pagina 1
-```
-
-**Que hace el equipo (ciclo completo — crear → corregir → REVALIDAR → cerrar):**
-1. **Lead** hace triaje (componente sospechoso, severidad) — sin implementar nada.
-2. **QA reproduce** (sin debuggear): pasos exactos como usuario + screenshots
-   numerados (`00-listado-p1.png`, `01-listado-p2-repetidos.png`). Si no logra
-   reproducir al primer intento o algo esta caido → LEY: evidencia + `blocked` +
-   reporte, sin insistir.
-3. **PO formaliza** el bug en el tracker, en lenguaje de negocio:
-   > **"El listado de cobranzas muestra pagos repetidos al cambiar de pagina"**
-   > Pasos como usuario, esperado vs obtenido, severidad e impacto, y la
-   > **evidencia embebida** (GitHub: rama `evidence` + `![](raw)`; Azure:
-   > attachment + `<img>` en el HTML del WI).
-   Esto ocurre ANTES de hablar de quien lo corrige — aunque ya se sospeche la causa.
-4. **PLAN PRIMERO**: el Lead te presenta el plan del fix (que/quien/donde/riesgos)
-   y espera tu confirmacion.
-5. El **dev** corrige en branch `fix/...`; **QA escribe el test de regresion**
-   que cubre el bug (rojo → verde).
-6. **QA REVALIDA** el mismo flujo con el fix desplegado (tanda de evidencia NUEVA,
-   subcarpeta `-revalidacion`) → veredicto APTO.
-7. **PO comenta en el MISMO issue** (que se corrigio, veredicto, evidencia nueva
-   embebida) y **te pregunta si cerrar** — nunca lo cierra solo.
-
-**Recibes:** bug corregido, con historia completa y evidencia en el propio item,
-y un test de regresion que impide que vuelva.
-
----
-
-## Caso 7 — Debug de un problema que cruza VARIOS repos
-
-**Situacion (multi-repo):** "el login funciona si pego directo al backend, pero
-desde la app instalada falla" — puede ser frontend, gateway, el ms de auth o la
-config de infra. Nadie sabe donde esta.
-
-**Que escribes** (desde la carpeta paraguas):
-```
-/dev-team:start el login falla desde la app desplegada (error generico), pero
-el mismo usuario funciona llamando directo al backend. Involucra frontend,
-gateway y ms-auth
-```
-
-**Que hace el equipo:**
-1. **Lead** coordina el triage transversal y te presenta el PLAN:
-   ```
-   Plan de triage — Login falla solo via app
-   1. QA reproduce en el ambiente qa con evidencia (browser + network log)
-   2. Aislamiento por capas EN PARALELO (cada agente en su repo):
-      - qa-backend: request directo a ms-auth (¿200?) y via gateway (¿?)
-      - infra: config del proxy/gateway y variables del contenedor frontend
-   3. Con el componente identificado → PO formaliza el bug → fix dirigido
-   Nada se toca hasta tu OK.
-   ```
-2. **QA** reproduce UNA vez con evidencia (screenshot del error + panel de red
-   mostrando el status real de la llamada). No insiste, no debuggea.
-3. **Aislamiento en paralelo** (el Lead puede lanzar varios agentes a la vez,
-   cada uno en SU repo):
-   - qa-backend captura: directo al ms → `200 OK`; via gateway → `405`.
-   - infra revisa la config real del proxy en el contenedor (no la de dev) y
-     encuentra que el `nginx.conf` de produccion no enruta `/api`.
-4. **PO formaliza** el bug apuntando al componente REAL (frontend/nginx), en
-   lenguaje de negocio, con toda la evidencia embebida.
-5. Fix dirigido por el agente dueño del repo afectado → QA revalida el flujo
-   completo **sobre el stack real** (contenedores, no dev server) → cierre.
-
-**Claves de este flujo:**
-- Cada agente trabaja SOLO en su repo (un agente = un branch = un repo).
-- La comparacion "directo vs via gateway" aisla la capa sin leer codigo.
-- QA valida siempre sobre el stack real desplegado — los smokes sobre `ng serve`
-  esconden exactamente esta clase de bug.
-
----
-
-## Caso 8 — Pruebas: plan, validar una historia, regresion y exploratoria
-
-El equipo QA trabaja con una meta clara: **equivocarse como maximo una vez cada mil
-criterios revisados** (0,1 %). Para eso no "mira" la pantalla y opina: cada criterio
-de aceptacion se comprueba con una verificacion concreta, queda una foto con el
-elemento resaltado, y la historia solo se aprueba si pasa 7 controles. Tu no tienes
-que configurar nada: las herramientas de prueba vienen incluidas en el plugin.
-
-**Generar el plan de pruebas de una historia:**
-```
-/dev-team:test-plan HU-42
-```
-→ una tabla con cada criterio de aceptacion: cual se probara de forma automatica,
-cual a mano, que casos extremos se agregan y que datos de prueba hacen falta.
-
-**Validar una historia (lo mas habitual):**
-```
-/dev-team:e2e HU-42
-```
-→ Primero QA confirma que lo que va a probar es lo que se dijo que se desplego (el
-"informe de conformidad"). Luego recorre la aplicacion como lo haria un usuario y, por
-cada criterio, deja tres fotos (antes, la accion, el resultado con el elemento
-resaltado) y una comprobacion que dice si se cumple o no. Con eso arma un **informe
-por criterio** en la carpeta del proyecto. Despues escribe las pruebas automaticas,
-una por criterio y con el mismo nombre, para que el criterio quede protegido de aqui
-en adelante.
-
-**Los 7 controles para aprobar.** El QA Lead revisa, en este orden, que:
-1. Todos los criterios tienen su comprobacion y su foto.
-2. Las pruebas automaticas de la historia pasaron **dos veces seguidas** (si una prueba
-   pasa una vez y falla otra, no cuenta como aprobada: se aparta y se investiga).
-3. Lo que ya funcionaba sigue funcionando (regresion).
-4. Las pantallas clave se ven igual que la version aprobada; si cambiaron, alguien del
-   equipo de diseño o el PO lo aprobo.
-5. Las pantallas nuevas son usables por personas con discapacidad (sin fallas graves
-   de accesibilidad).
-6. Los servicios responden exactamente lo que su contrato promete (se les envian cientos
-   de solicitudes validas e invalidas generadas automaticamente).
-7. Durante el recorrido no hubo errores ocultos en la consola ni llamadas fallidas.
-
-Si falla cualquiera, la historia vuelve **RECHAZADA** con el informe. No existe
-"aprobada con observaciones": una observacion es un bug (se registra) o no es nada.
-
-**Correr la regresion completa** (por ejemplo antes de un pase):
-```
-/dev-team:e2e run
-```
-→ corre todo dos veces. Cada fallo se clasifica: o es un **bug del producto** (se crea
-en el tracker con evidencia) o es una **prueba fragil** (se aparta y se repara la
-prueba, nunca el producto).
-
-**Otras cosas que puedes pedirle a QA:**
-```
-/dev-team:e2e plan HU-42        # QA explora la aplicacion y propone el plan de pruebas
-/dev-team:e2e generate HU-42    # QA convierte ese plan en pruebas automaticas
-/dev-team:e2e heal              # QA repara pruebas fragiles (nunca cambia lo que debe cumplirse)
-/dev-team:e2e visual            # compara las pantallas clave con la version aprobada
-/dev-team:e2e a11y              # revisa accesibilidad de las pantallas
-/dev-team:e2e api HU-42         # somete los servicios de la historia a su contrato
-```
-La primera vez que QA necesita el proyecto de pruebas, lo crea solo (tambien lo hacen
-`/dev-team:new-project` y `/dev-team:onboard`). Toda la evidencia queda en la carpeta
-del proyecto, nunca dentro del codigo.
-
-**Ver que tan preciso esta siendo QA:**
-```
-/dev-team:team-metrics
-```
-→ entre otras cosas, cuantas historias aprobadas volvieron despues como bug. La meta
-es una de cada mil o menos.
-
-**Exploratoria libre sobre una direccion:**
-```
-/dev-team:e2e explorar http://localhost:4200
-```
-→ QA navega la aplicacion como usuario, reporta lo que encuentre (con evidencia), sin
-tocar nada.
-
----
-
-## Caso 9 — Base de datos: health, comparacion de BDs y scripts de pase
-
-**Health check:**
-```
-/dev-team:db-health full
-```
-→ esquema, indices no usados/redundantes, slow queries, tamaños. Si no hay
-conexion configurada, la pide una vez y la guarda en `dba-access.json` (fuera de git).
-
-**Comparar dos bases de datos** (ej. la de qa contra la de produccion del
-cliente — tipico antes de un pase):
-```
-/dev-team:start compara la BD de qa contra la de produccion del cliente ACME,
-te paso los accesos de ambas
-```
-→ el **dba** compara en modo **estrictamente solo-lectura** (jamas escribe en
-ninguna de las dos): esquema (tablas/columnas/indices/FKs), charset/collation,
-data de catalogos por natural key, y volumenes. Entrega un reporte de
-diferencias + scripts de nivelacion GENERADOS como archivos (nunca ejecutados —
-los corres tu cuando decidas), en el formato global de pases.
-
-**Preparar scripts de pase** — el dba entrega SIEMPRE en el formato global:
-```
-1_createTable.sql   2_alterTable_add.sql   3_alterTable_modify.sql
-4_views.sql         5_insertInto.sql       6_procedures.sql       7_update.sql
-```
-100% idempotentes (re-ejecutables N veces), insert-only con guards
-`WHERE NOT EXISTS`, DB-agnosticos (sin `mi_db.tabla`), FKs a catalogos externos
-por natural key, y UTF-8 con acentos/ñ intactos (deteccion de mojibake incluida).
-
----
-
-## Caso 10 — Pase a un ambiente (release)
-
-**Situacion:** hay que pasar la version 2.4.0 de Notificaciones de Cobranza a
-**Preprod PE**, con scripts de BD.
-
-**Que escribes:**
-```
-/dev-team:pase preprod PE — Notificaciones de Cobranza v2.4.0, lleva scripts de BD
-```
-
-**Que hace el release-manager:**
-1. Recopila lo que falte: componentes y versiones exactas (de los repos, no
-   inventadas), ¿que cliente si fuera productivo?, responsable (del config,
-   jamas hardcodeado).
-2. **Gate "pase empaquetado"**: rechaza si faltan componentes, hay versiones
-   dobles, mas de una rama por componente, ramas de otro pais, tema no explicito
-   o entregas por partes. El pase se pide UNA vez, completo.
-3. **AUDITA los scripts del DBA** — sobre el paquete RESULTANTE: layout por
-   motor → base numerada → tipo (`MYSQL/1_db_fintec/1_createTable.sql`),
-   idempotencia, guards contados, cero `ON DUPLICATE KEY`, UTF-8. **Si algo
-   falla: RECHAZA** y devuelve al DBA con archivo+linea+regla.
-4. Consolida **`Scripts.zip`** con esa misma estructura de carpetas (o
-   `Scripts_CL.zip` / `Scripts_PE.zip` si hay data distinta por pais).
-5. Llena la **solicitud de pase** en FORMATO SIMPLE (1-2 paginas, regla dura):
-   control de versiones · datos generales (objetivo de 1 linea) · componentes con
-   UNA version final · temas (`Release: Sprint 13 T480 T500`) · acciones en bullets
-   cortos · **ramas utilizadas limpias** (una rama consolidada por componente, sin
-   tickets ni negritas) · BD derivada del zip · adicionales solo si aplican. Sin
-   narrativa, sin runbooks, sin SHAs como version.
-6. Genera el **correo listo para enviar** (asunto `Solicitud de Pase Ambiente -
-   {Ambiente} : {Tema}`, cuerpo con la tabla, temas, acciones y "Favor tu V.B
-   @aprobador", destinatarios de `pase.to`/`pase.cc`) — como borrador en Outlook si
-   el conector esta activo, o `correo-pase.txt`. Tu lo envias.
-7. Entrega la **carpeta de pase completa**:
-   ```
-   Release v2.4.0 16julio2026 - Notificaciones Cobranza/
-   ├── Solicitud de Pase Ambientes - Preprod PE.pdf
-   ├── Solicitud de Pase Ambientes - Preprod PE.docx
-   ├── Scripts.zip
-   ├── S3.zip                (si aplica)
-   └── correo-pase.txt
-   ```
-
-**Cuando lleva documento:** certificacion, puente, demo (CL/PE/CO), preprod
-(CO/PE) y productivos de cliente (especificando cual). Ambientes internos: solo
-si lo pides.
-
-**Despues del despliegue:** quien despliega emite el **informe de conformidad**
-(sin el, QA no valida — regla de oro), y si el pase incluye validacion, el
-release-manager verifica antes que existan las cuentas de prueba funcionales.
-
----
-
-## Caso 11 — Auditoria de seguridad
-
-**Que escribes** (en el repo del servicio, o indicando cual):
-```
-/dev-team:security-audit
-```
-
-**Que audita cybersec** (entre otros): OWASP Top 10, secretos en codigo,
-dependencias vulnerables, y los **checks obligatorios de auth** aprendidos de
-incidentes reales:
-- Fallback policy GLOBAL de autorizacion (endpoints sin `[Authorize]` olvidados)
-- Rate limiting APLICADO (no solo declarado) en login/MFA/reset
-- Lockout que cuente tambien los fallos de MFA
-- Sin fallback silencioso de autenticacion
-- Flujos forzados sin bypass (cambio de contraseña obligatorio, etc.)
-
-**Recibes:** reporte con hallazgos clasificados (Critico/Alto/Medio/Bajo), cada
-uno con su evidencia y recomendacion. **Cybersec nunca commitea** — el fix lo
-implementa el agente dueño del codigo, y cybersec re-audita.
-
----
-
-## Caso 12 — La wiki del proyecto
-
-La wiki es la memoria destilada del equipo: en vez de re-leer 30 handoffs
-viejos, los agentes leen UNA pagina canonica al dia. Tu tambien puedes usarla.
-
-```
-/dev-team:wiki init      # una vez por proyecto (new-project/onboard ya lo hacen)
-/dev-team:wiki ingest    # al cierre del dia: destila handoffs nuevos a la wiki
-/dev-team:wiki lint      # salud: links rotos, paginas huerfanas, desactualizadas
-/dev-team:wiki query ¿por que elegimos MySQL para cobranzas?
-```
-
-La ultima responde SOLO con la wiki, citando paginas — si no sabe, lo dice.
-
-**Con Obsidian:** abre `.coordination/wiki/` como vault → graph view del
-conocimiento del proyecto (HUs ↔ servicios ↔ bugs ↔ decisiones) gratis.
-
-```
-wiki/
-├── servicios/ms-cobranza.md      estado vivo: stack, contratos, [[HU-042]]
-├── hus/HU-042.md                 historia completa con sus fuentes
-├── bugs/BUG-017.md               repro + evidencia + [[fix]]
-├── decisiones/ADR-003.md         por que se decidio X
-├── pases/release-v2.4.0.md       que se paso y a donde
-└── agentes/backend.md            memoria por rol
-```
-
-Solo el tech-writer escribe en la wiki; todos los demas la leen.
-
----
-
-## Caso 13 — Ver al equipo trabajar
-
-**Oficina virtual (en vivo, estilo Gather Town):**
-```
-/dev-team:team-office
-```
-→ `http://localhost:4321`: los 15 agentes en sus salas — anillo verde girando y
-"escribiendo…" cuando trabajan (con su tarea debajo), rojo pulsante si estan
-bloqueados, sobres ✉️ volando cuando hay handoff, confetti al completar. Panel
-lateral con feed de actividad y handoffs pendientes. Zoom con rueda, click en un
-agente para seguirlo. Todo local, solo lectura, cero tokens.
-
-**Metricas (para decisiones):**
-```
-/dev-team:team-metrics            # ranking del sprint
-/dev-team:team-metrics --watch    # modo live
-```
-→ por agente: tareas completadas, handoffs, commits, lead time real, tokens y
-costo estimado segun su modelo — con alertas accionables ("cybersec consume 18%
-de tokens con 4% de las tareas → considera bajarlo de modelo").
-
-**Estado en texto:**
-```
-/dev-team:status
-```
-
----
-
-## Caso 14 — Trabajar un sprint completo con Scrum
-
-```
-1. /dev-team:refine {pedidos del sprint}     → PO crea/refina HUs (INVEST, story points)
-2. Sprint Planning: el PO propone el Sprint Goal y las HUs candidatas; el Lead
-   valida capacidad → sprint-actual.md queda como tablero
-3. /dev-team:assign-task                     → plan primero + asignaciones
-4. Durante el sprint:
-   /dev-team:status        cada mañana (tu "daily")
-   /dev-team:sync          para reflejar avances en el tracker
-   /dev-team:team-office   si quieres verlo en vivo
-   (nada entra al sprint en curso sin tu decision explicita)
-5. Sprint Review: el PO verifica HU por HU contra criterios y el Sprint Goal;
-   lo no terminado VUELVE al backlog (no se arrastra en silencio)
-6. Retrospectiva: acuerdos de mejora → handoff al Lead; los de redaccion los
-   aplica el PO desde el siguiente sprint
-7. /dev-team:wiki ingest                     → el sprint queda en la memoria del equipo
-```
-
----
-
-## Caso 15 — Ajustar los modelos de los agentes
-
-**Por proyecto** — `.coordination/config.json`:
-```json
-"team": { "models": { "architect": "opus" } }
-```
-**Por usuario (todos TUS proyectos)** — `~/.claude/dev-team.config.json`:
-```json
-{ "team": { "models": { "architect": "opus" } } }
-```
-
-Orden de resolucion: **proyecto → personal → default del agente**.
-Valores: `haiku` | `sonnet` | `opus` (`fable` prohibido).
-**Fijos e inalterables:** setup y tech-writer (haiku) — cualquier entrada para
-ellos se ignora.
-
-Casos tipicos:
-- Proyecto complejo → `"architect": "opus"`
-- Plan con limites ajustados → deja todo en default (ya es el minimo sano)
-
----
-
-## Configuracion del proyecto
-
-Todo vive en `.coordination/config.json` (lo crean new-project/onboard):
+Todo vive en `.coordination/config.json` (lo crean `new-project` y `onboard`):
 
 ```json
 {
@@ -832,199 +956,123 @@ Todo vive en `.coordination/config.json` (lo crean new-project/onboard):
     "cc": ["dev@...", "qa@..."],
     "aprobador": "{Nombre del que da el V.B}"
   },
-  "team": {
-    "models": { "architect": "opus" }
-  },
-  "urls": { "dev": "http://localhost:3000" }
+  "team": { "models": { "architect": "opus" } },
+  "urls": { "dev": "http://localhost:3000" },
+  "e2e": { "exists": true, "path": "e2e" }
 }
 ```
 
 | Campo | Efecto |
 |-------|--------|
-| `topology` | `mono`/`multi`: como trabajan los agentes y donde vive `.coordination/` |
-| `tracker.provider` | `github`/`azure`: donde viven HUs, items y PRs |
+| `topology` | `mono` (un repo, servicios como carpetas) / `multi` (carpeta paraguas con un repo por servicio). Define como trabajan los agentes y donde vive `.coordination/` |
+| `tracker.provider` | `github` / `azure`: donde viven HUs, items y PRs |
 | `tracker.reviewer` | Reviewer que los devs ponen en cada PR |
 | `tracker.overheadEpicId` | Epica/PBI padre para fixes sueltos sin epica propia |
-| `git.defaultBranch` | Rama base OBLIGATORIA para ramificar (via `git fetch origin`) |
+| `git.defaultBranch` | Rama base obligatoria para ramificar (via `git fetch origin`) |
 | `git.identity` | Identidad de commits del proyecto (nunca la default del agente) |
 | `pase.*` | Plantilla, carpeta de salida, "elaborado por", destinatarios (`to`/`cc`) y `aprobador` del correo de pase |
-| `team.models.{agente}` | Override de modelo en ESTE proyecto (no aplica a setup/tech-writer) |
+| `team.models.{agente}` | Override de modelo en este proyecto (no aplica a setup/tech-writer). Personal: `~/.claude/dev-team.config.json`; proyecto gana |
 | `urls.dev` | URL del ambiente que QA usa para validar |
+| `e2e.path` | Donde vive la suite de pruebas (mono: `e2e/`; multi: repo `{proyecto}-e2e`), creada desde `templates/e2e-faast/` |
 
-**Estructura completa de `.coordination/`:**
+**Secretos que nunca entran a git** (los templates ya los ignoran): `.coordination/dba-access.json`,
+`.coordination/qa-secrets.env`, `.coordination/setup-status.json`, y toda la carpeta
+`.coordination/evidence/`.
+
+## C. La carpeta de coordinacion
+
+`.coordination/` es la memoria compartida del equipo. Vive en la raiz del mono-repo o
+en la carpeta paraguas del multi-repo. La **canonica** es la que tiene `config.json`;
+los repos fuera del paraguas apuntan a ella con un archivo `.coordination-root` (una
+linea con la ruta; gitignored).
+
 ```
 .coordination/
-├── config.json          fuente de verdad (arriba)
-├── handoffs/ (+archive/) comunicacion entre agentes
-├── wiki/                 wiki viva (vault de Obsidian)
-├── metrics/              activity.jsonl (eventos, via hooks)
-├── evidence/             screenshots/clips de QA
+├── config.json           fuente de verdad (arriba)
+├── handoffs/ (+archive/) comunicacion entre agentes ({de}-to-{para}-{fecha}.md)
+├── wiki/                 memoria del proyecto (vault de Obsidian; solo escribe tech-writer)
+├── metrics/              activity.jsonl (eventos via hooks + verdict/reopened manuales)
+├── evidence/             evidencia QA por HU/BUG (informe-qa.md, capturas, trace, clips) — gitignored
 ├── pases/                carpetas de pase entregadas
 ├── office/               la oficina virtual (se instala con /team-office)
 ├── test-plans/           planes de prueba de QA
+├── design/               propuestas del ui-designer
 ├── backlog.md · sprint-actual.md · architecture.md · repos.md
 ├── dba-access.json       credenciales BD — NUNCA en git
+├── qa-secrets.env        credenciales de QA — NUNCA en git
 └── setup-status.json     estado del entorno — NUNCA en git
 ```
 
----
+**Evidencia en GitHub:** rama huerfana `evidence` (permanente, jamas mergeada),
+trabajada desde un worktree aparte, estructura `evidence/issues/<n>-<slug>/` y
+`evidence/smokes/<fecha>-<nombre>/`, embed `![](https://github.com/{org}/{repo}/raw/evidence/...)`.
+**En Azure DevOps:** attachment via API + `<img>` en el HTML del WI. Un PR que incluya
+`.coordination/evidence/` o imagenes de evidencia se bloquea en `/review-pr`.
 
-## Como cuidar tu limite de uso
+## D. Cuidar el consumo
 
-Revisa tu panel con `/usage`. Los habitos que mas ahorran:
+Revisa tu panel con `/usage`. Lo que mas ahorra:
 
-1. **Sesiones cortas por tarea** — el enemigo #1 es el contexto gigante: una
-   sesion de 3 horas re-lee 150k+ tokens en CADA turno. `/compact` a mitad de
-   tarea larga, `/clear` (o sesion nueva) al cambiar de tema.
-2. **Wiki al dia** — `/dev-team:wiki ingest` al cierre hace que mañana la sesion
-   arranque liviana (pagina canonica de 2-3k tokens vs historial completo).
-3. **Pregunta directa = respuesta directa** — sin `/start` para preguntas simples.
+1. **Sesiones cortas por tarea.** Una sesion de 3 horas relee 150k+ tokens en cada
+   turno. `/compact` a mitad de una tarea larga; `/clear` o sesion nueva al cambiar
+   de tema.
+2. **Wiki al dia** (`/dev-team:wiki ingest` al cierre): la sesion siguiente arranca
+   leyendo una pagina de 2-3k tokens en vez del historial.
+3. **Pregunta directa = respuesta directa**, sin `/start` para preguntas simples.
 4. **Modelo principal en sonnet** (`/model sonnet`).
-5. **MCP solo los necesarios** — `claude mcp list` y quita los que no uses.
+5. **Solo los MCP necesarios** (`claude mcp list`).
 
-**Protecciones automaticas del plugin:** los subagentes no pueden delegar (solo
-el lead), los comandos corren inline (nunca como subagentes), el logging de
-actividad va por hooks (cero tokens), y los agentes usan contexto bajo demanda
-(si el handoff trae todo, trabajan de inmediato sin re-leer).
+**Protecciones automaticas del plugin:** los subagentes no pueden delegar (solo el
+lead; un hook `PreToolUse` lo bloquea), los comandos corren inline (nunca como
+subagentes), el logging de actividad va por hooks (cero tokens) y los agentes usan
+contexto bajo demanda (si el handoff trae todo, trabajan sin releer).
 
-**Leyendo tu `/usage`:**
-- "subagents under dev-team:backend" bajo = normal (Explores permitidos);
-  alto = version vieja del plugin → actualiza y reinicia
-- "% at >150k context" alto = sesiones demasiado largas → habito 1
-- La primera interaccion tras el reset siempre pesa mas (cache fria) — es el
-  peaje de arranque, no una fuga
+**Leyendo `/usage`:** "subagents under dev-team:backend" alto = version vieja del
+plugin (actualizar y reiniciar); "% at >150k context" alto = sesiones demasiado
+largas; la primera interaccion tras el reset siempre pesa mas (cache fria).
 
----
-
-## Solucion de problemas
+## E. Solucion de problemas tecnicos
 
 **"Failed to update plugin: Plugin dev-team not found"**
-→ usa el nombre completo: `claude plugin update dev-team@faast-marketplace`.
+→ nombre completo: `claude plugin update dev-team@faast-marketplace`.
 
-**Actualice el plugin pero los agentes siguen igual**
-→ los agentes/hooks se cargan al INICIO de sesion: cierra y abre la sesion.
-Verifica la version con `claude plugin list`.
+**Actualice pero los agentes siguen igual**
+→ agentes, hooks y MCP del plugin cargan al inicio de sesion. Reiniciar. Verificar
+con `claude plugin list`.
 
-**La oficina virtual se ve vacia / nadie se mueve**
-→ (1) ¿reiniciaste la sesion tras actualizar? Los hooks que registran actividad
-se cargan al inicio. (2) ¿el server apunta al `.coordination` correcto?
-(`node .coordination/office/server.mjs --dir .coordination`). (3) `python3
---version` — los hooks lo necesitan. La oficina se llena a medida que los
-agentes trabajan.
+**QA no ve las tools `browser_*` / aparecen dos servidores `playwright`**
+→ desde v2.8.0 el MCP viene en el plugin (`plugins/dev-team/.mcp.json`:
+`@playwright/mcp` fijado, `--caps=testing,devtools,vision`, `--isolated`, salida en
+`.coordination/evidence/_mcp/`). Si `claude mcp list` muestra dos `playwright`, el
+personal se quita con `claude mcp remove playwright`. Si no muestra ninguno, la
+sesion es vieja: reiniciar. `/dev-team:setup playwright` hace este diagnostico.
 
-**Un agente quiso crear otro agente y fue bloqueado**
-→ correcto, es el diseño: solo el Lead delega. El agente debe hacer su trabajo
-directo o dejar handoff al Lead.
+**La oficina virtual se ve vacia**
+→ (1) ¿sesion reiniciada tras actualizar? (2) ¿el server apunta al `.coordination`
+correcto? (`node .coordination/office/server.mjs --dir .coordination`) (3) `python3
+--version`: los hooks lo necesitan.
 
-**QA no quiere validar**
-→ tambien correcto si falta el informe de conformidad o el stack completo en
-desa (regla de oro, inalterable). Pide a quien desplego que emita el informe.
-
-**Aparecen handoffs/metricas en una `.coordination` equivocada (dentro de un repo)**
+**Handoffs o metricas aparecen en una `.coordination` equivocada (dentro de un repo)**
 → hay una `.coordination` huerfana (sin `config.json`) mas cerca del cwd que la
-canonica del paraguas. Desde v2.6.11 el plugin resuelve por canonicidad: la
-`.coordination` valida es la que tiene `config.json`, y los repos fuera del
-paraguas llevan un archivo `.coordination-root` en su raiz (una linea: ruta a la
-carpeta paraguas; gitignored). Al abrir sesion sobre una huerfana, el propio
-equipo te propondra fusionarla, eliminarla y crear el puntero. Para repararlo a
-mano: crea `.coordination-root`, fusiona lo util del desvio en la canonica y
-borralo.
-
-**Los agentes tardan en arrancar**
-→ (1) sesion abierta desde la carpeta paraguas + `/add-dir` para los repos;
-(2) `repos.md` con las rutas locales reales; (3) wiki al dia — el arranque lee
-1 pagina en vez de 5 archivos.
+canonica. Desde v2.6.11 el plugin resuelve por canonicidad y, al abrir sesion sobre
+una huerfana, propone fusionarla, eliminarla y crear el puntero `.coordination-root`.
+A mano: crear `.coordination-root` en la raiz del repo con la ruta a la carpeta
+paraguas, fusionar lo util y borrar el desvio.
 
 **El architect no uso opus aunque lo configure**
-→ el override lo aplica quien INVOCA (lead/flujos) leyendo el config: verifica
-la clave exacta `team.models.architect` en `.coordination/config.json` (proyecto)
-o `~/.claude/dev-team.config.json` (personal), y que la sesion sea nueva.
+→ el override lo aplica quien invoca (lead/flujos) leyendo el config: verificar la
+clave exacta `team.models.architect` en `.coordination/config.json` (proyecto) o
+`~/.claude/dev-team.config.json` (personal), y que la sesion sea nueva.
+
+**Los agentes tardan en arrancar**
+→ (1) sesion abierta desde la carpeta paraguas + `/add-dir` para los repos; (2)
+`repos.md` con las rutas locales reales; (3) wiki al dia.
+
+**Un PR fue bloqueado por "evidencia en el PR"**
+→ el diff incluye `.coordination/evidence/` o imagenes/clips de QA. Retirarlos del
+PR (la evidencia va solo a la rama `evidence` o al tracker) y verificar que
+`.coordination/evidence/` este en el `.gitignore` del repo.
 
 **Un pase fue rechazado por el release-manager**
-→ es el gate funcionando. El handoff de rechazo lista archivo+linea+regla; lo
-corrige el DBA (o infra si el problema es el consolidador) y se re-audita. Nunca
-se "arregla" editando scripts ya aplicados.
-
----
-
-## Preguntas frecuentes
-
-**¿Tengo que saber que agente hace cada cosa?**
-No. `/dev-team:start` + describir lo que necesitas. El equipo enruta.
-
-**¿Como hablo con el lead? Siempre veo que responde la sesion principal.**
-Es por diseño: tu sesion principal ES el coordinador operativo — el plugin le
-inyecta el protocolo del Lead al abrir la sesion (plan primero, gates,
-delegacion), asi no paga el costo de un subagente para coordinar. El agente
-`lead` existe para gestion profunda: sprint, triage, prioridades, revision de
-PRs y merges (los merges SIEMPRE pasan por el). Para invocarlo explicitamente:
-`/dev-team:assign-task`, o escribe "que el lead revise el sprint" / "invoca al
-lead para el triage".
-
-**Tengo proyectos creados con versiones viejas del plugin — ¿migran solos?**
-Si, automaticamente. Al abrir una sesion en un proyecto con `.coordination/`, el
-plugin crea lo que falte (wiki con su esquema, metrics, evidence, pases,
-test-plans), detecta claves faltantes del config (se completan contigo la primera
-vez que un flujo las necesite) y, si la wiki esta vacia, te ofrece UNA VEZ
-poblarla con `/dev-team:wiki ingest`. No tienes que migrar nada a mano.
-
-**¿Como me entero de que salio una version nueva del plugin?**
-Automatico: al abrir o reanudar una sesion, el plugin compara tu version
-instalada con la publicada en el marketplace (consulta 1 vez cada 6 horas) y te
-avisa al inicio de la conversacion, preguntandote si quieres actualizar. Tu
-decides: si aceptas, corre los dos comandos de actualizacion y te recuerda
-reiniciar la sesion.
-
-**¿Puedo confiar en que no haran nada sin avisarme?**
-Si: plan primero es regla — features y fixes te presentan el plan y esperan tu
-OK. Puedes ajustar o pedir otro abordaje. Solo lo de lectura corre directo.
-
-**¿Funciona sin GitHub ni Azure DevOps?**
-Si — "solo local" en el onboard; el backlog vive en `.coordination/backlog.md`.
-Conecta un tracker despues con `/dev-team:setup tracker`.
-
-**¿Por que QA no arregla los bugs que encuentra?**
-Por diseño: QA reproduce y reporta con evidencia; el dev corrige. Asi la
-evidencia es objetiva y el fix lo hace quien conoce el codigo.
-
-**¿Que pasa si QA se topa con algo caido o que no funciona a la primera?**
-LEY: captura la evidencia de ese primer intento, registra `blocked` y reporta de
-inmediato. No reintenta, no busca workarounds, no toca nada.
-
-**¿Donde queda la evidencia de QA?**
-Siempre en la carpeta del proyecto (`.coordination/evidence/`, una subcarpeta por
-historia o bug) con un informe por criterio. Cuando hay un bug, las imagenes se
-muestran DENTRO del ticket, no como un enlace aparte. Si el proyecto esta en GitHub,
-las imagenes se publican en un espacio apartado del repositorio que existe solo para
-eso (la rama `evidence`) y nunca se mezclan con el codigo; un cambio de codigo que
-traiga capturas adentro se rechaza. Si el proyecto esta en Azure DevOps, se adjuntan
-al ticket y se muestran embebidas.
-
-**QA dice que no puede abrir el navegador para probar**
-Desde la version 2.8.0 el navegador de pruebas viene incluido en el plugin. Casi
-siempre basta con cerrar y abrir la sesion. Si antes lo habias configurado a mano,
-pidele a `/dev-team:setup playwright` que lo revise: te dira si hay uno duplicado y
-que comando ejecutar para quitarlo.
-
-**¿El DBA puede escribir en las BDs cuando compara dos bases?**
-No. Solo-lectura por regla dura. Los scripts de nivelacion se GENERAN como
-archivos que tu decides cuando ejecutar.
-
-**¿Siempre se crea un PR al terminar una tarea?**
-No. Los devs preguntan primero — hay entregables que no llevan PR.
-
-**¿Necesito Obsidian para la wiki?**
-No — es markdown puro y los agentes la usan igual. Obsidian agrega el graph view
-y navegacion comoda para humanos.
-
-**¿Puedo usar solo una parte del equipo?**
-Si. Cada comando funciona independiente: solo `/db-health`, solo `/refine`,
-solo `/pase`, solo `/e2e`.
-
-**¿El equipo respeta mi proyecto tal como esta?**
-Si. En onboard nunca se propone cambiar topologia, stack ni convenciones, salvo
-que lo pidas.
-
-**¿Como cambio de GitHub a Azure DevOps (o al reves)?**
-Edita `tracker.provider` en `.coordination/config.json` y corre
-`/dev-team:setup tracker` para validar la autenticacion del nuevo proveedor.
+→ el handoff de rechazo lista archivo+linea+regla; lo corrige el DBA y se re-audita.
+Nunca se "arregla" editando scripts ya aplicados.
