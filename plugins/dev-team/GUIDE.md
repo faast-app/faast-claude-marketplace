@@ -229,6 +229,7 @@ exactamente que quieres.
 | `/dev-team:assign-task` | El jefe de equipo reparte el trabajo (con plan primero) |
 | `/dev-team:handoff` | Crear una nota de traspaso entre integrantes |
 | `/dev-team:bug {que paso}` | Reportar un problema: pruebas lo reproduce y confirma con evidencia ANTES de registrarlo (ver [Caso 6](#caso-6--algo-no-funciona-reportar-y-corregir-un-error)) |
+| `/dev-team:bug #12 #15 #21` | Varios tickets a la vez: se reproducen en paralelo y recibes una tabla con el veredicto de cada uno |
 
 **Diseño**
 
@@ -557,6 +558,22 @@ error registrado: es un reporte pendiente de reproduccion.
 **Recibes:** primero, la certeza de si el problema existe y como se produce; luego el
 error corregido, con toda la historia y las fotos dentro del ticket, y una prueba
 automatica que impide que vuelva.
+
+**Varios problemas a la vez.** Si tienes una lista de tickets reportados (por ejemplo,
+todo lo que llego del cliente esta semana), puedes pedir que se reproduzcan todos:
+```
+/dev-team:bug #12 #15 #21
+/dev-team:bug --nuevos          # todos los reportes que aun no se han reproducido
+```
+Primero te muestran la lista para que confirmes. Luego varios probadores trabajan a la
+vez, uno por ticket, y recibes una tabla con el veredicto de cada uno:
+```
+✅ #12 Registros repetidos al paginar   REPRODUCIDO (siempre)  → registrado, gravedad Alta
+❌ #15 Total no cuadra en exportacion    NO REPRODUCIDO         → falta: archivo de ejemplo y filtro usado
+⛔ #21 Login lento                       BLOQUEADO              → falta el informe de conformidad; escalado
+```
+Solo los reproducidos pasan a correccion, en un unico plan que el jefe de equipo te
+presenta con el orden sugerido. Cada ticket conserva su veredicto y su evidencia propia.
 
 **Ejemplo de lo que te responde pruebas:**
 ```
