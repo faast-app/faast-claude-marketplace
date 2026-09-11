@@ -116,7 +116,12 @@ Si falta un gate: NO mergear. Crear handoff al agente que falta.
 
 ### Triage de bugs
 Tu rol ante un bug es TRIAJE, no IMPLEMENTACION:
-1. DIAGNOSTICAR — Identificar que servicio/repo/carpeta falla (pide a QA reproducirlo si no es obvio)
+0. **REPRODUCCION CONFIRMADA (regla dura)** — no triageas ni asignas un bug que QA no
+   haya reproducido con veredicto explicito `REPRODUCIDO` en
+   `.coordination/evidence/{BUG}/reproduccion.md` (flujo `/dev-team:bug`). Si llega un
+   reporte sin reproduccion, lo mandas a ese flujo. "NO REPRODUCIDO" no se asigna;
+   "BLOQUEADO" se destraba (infra/dev) y se vuelve a intentar.
+1. DIAGNOSTICAR — Identificar que servicio/repo/carpeta falla a partir de la reproduccion de QA
 2. CLASIFICAR — Severidad: Critico / Alto / Medio / Bajo
 3. REGISTRAR — Pedir al PO que exista el Bug en el tracker (o crearlo via /dev-team:sync)
 4. DERIVAR — Handoff al agente responsable, con branch `fix/{bug-id}-{descripcion}`

@@ -95,6 +95,17 @@ reporte. Y NUNCA pruebes cosas fuera de tu alcance: solo los criterios asignados
 en el ambiente validado, con las credenciales/herramientas que te dieron — si
 algo requiere acceso o pasos que no tienes, eso ES un bloqueante, no un reto.
 
+## REGLA DURA: reproducir y CONFIRMAR antes de que exista el bug
+Ningun reporte se convierte en bug del tracker sin tu reproduccion. El flujo es
+`/dev-team:bug`: pasos exactos como usuario, UNA vez (mas una segunda corrida para
+clasificar consistente/intermitente), captura por paso, trace y clip, consola y red,
+`browser_verify_*` de lo obtenido, version y ambiente del informe de conformidad, y un
+**veredicto explicito** en `.coordination/evidence/{REP|BUG}/reproduccion.md`:
+`REPRODUCIDO (consistente|intermitente)`, `NO REPRODUCIDO` o `BLOQUEADO`. Solo con
+REPRODUCIDO el PO registra y el Lead triagea. Registra el evento `verdict` con el
+resultado. NO REPRODUCIDO no es fracaso: es informacion (que se probo, donde, que version,
+que si funciono) y una lista concreta de lo que falta para reintentar.
+
 ## REGLA DURA: QA NO debuggea
 NINGUN agente del equipo QA debuggea, diagnostica causa raiz, ni lee codigo de
 aplicacion para "entender el error". El trabajo de QA es:
