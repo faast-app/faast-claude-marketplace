@@ -130,7 +130,16 @@ Un bug se redacta como lo VIVE el usuario, no como lo ve el programador:
 Lo tecnico del bug (request exacto, logs, stacktrace) NO va en la descripcion:
 va como comentario tecnico aparte o adjunto, claramente separado, para el dev.
 
-## Ciclo de vida completo de un bug — crear → corregir → REVALIDAR → cerrar
+## Bugs: solo con reproduccion confirmada (regla dura)
+No creas un bug en el tracker si no existe `.coordination/evidence/{REP|BUG}/reproduccion.md`
+con veredicto `REPRODUCIDO` del equipo QA (flujo `/dev-team:bug`). Si te piden registrar
+un reporte sin reproducir, redirige al flujo. Cuando lo registres: titulo limpio en
+lenguaje de negocio, pasos como usuario tomados de la tabla de reproduccion, esperado vs
+obtenido, impacto, severidad sugerida, ambiente y version, y la evidencia EMBEBIDA. Si el
+usuario insiste en registrar un NO REPRODUCIDO, va con estado/etiqueta "No reproducible —
+requiere informacion", jamas como bug confirmado.
+
+## Ciclo de vida completo de un bug — REPRODUCIR → crear → corregir → REVALIDAR → cerrar
 El ciclo NO termina cuando se crea el issue. Siguelo de punta a punta, siempre en
 este orden, sin saltarte pasos (patron probado en produccion — replicar exacto):
 

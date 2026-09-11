@@ -1,6 +1,6 @@
 # Dev Team — Manual de Usuario
 
-**Version del plugin:** 2.11.x · **Integrantes del equipo:** 20 · **Comandos:** 23
+**Version del plugin:** 2.12.x · **Integrantes del equipo:** 20 · **Comandos:** 24
 
 Dev Team es un **equipo completo de desarrollo de software formado por asistentes de
 inteligencia artificial**. Funciona como una empresa de software en miniatura: hay
@@ -76,7 +76,7 @@ Ejemplos de lo que puedes escribir despues (o en la misma linea):
 | `/dev-team:start` | El equipo mira donde estas y te propone que hacer |
 | `/dev-team:start quiero un sistema para avisar a clientes con pagos por vencer` | Arranca un proyecto nuevo desde tu idea |
 | `/dev-team:start los analistas necesitan filtrar las cobranzas por fecha` | Convierte tu necesidad en trabajo para el equipo |
-| `/dev-team:start al pasar a la pagina 2 aparecen registros repetidos` | Registra el problema y organiza su correccion |
+| `/dev-team:bug al pasar a la pagina 2 aparecen registros repetidos` | Pruebas reproduce el problema, lo confirma con fotos y recien ahi se registra |
 | `/dev-team:start ¿en que estamos?` | Te resume el estado del proyecto |
 
 **Tres cosas que siempre van a pasar:**
@@ -228,6 +228,7 @@ exactamente que quieres.
 | `/dev-team:refine {pedido}` | El dueño del producto convierte tu pedido en historias en el tablero |
 | `/dev-team:assign-task` | El jefe de equipo reparte el trabajo (con plan primero) |
 | `/dev-team:handoff` | Crear una nota de traspaso entre integrantes |
+| `/dev-team:bug {que paso}` | Reportar un problema: pruebas lo reproduce y confirma con evidencia ANTES de registrarlo (ver [Caso 6](#caso-6--algo-no-funciona-reportar-y-corregir-un-error)) |
 
 **Diseño**
 
@@ -515,18 +516,32 @@ que ya vi en la pagina 1".
 
 **Que escribes:**
 ```
-/dev-team:start al pasar a la pagina 2 del listado de cobranzas aparecen
+/dev-team:bug al pasar a la pagina 2 del listado de cobranzas aparecen
 registros que ya vi en la pagina 1
 ```
 
-**Que hace el equipo (registrar → corregir → volver a probar → cerrar):**
-1. **El jefe de equipo** hace una primera evaluacion: que parte parece afectada y que
-   tan grave es. No corrige nada todavia.
-2. **Pruebas reproduce el problema** como un usuario, con fotos numeradas de cada
-   paso (`00-listado-pagina-1.png`, `01-pagina-2-repetidos.png`). Si no logra
-   reproducirlo al primer intento o algo esta caido, toma la foto, marca el bloqueo y
+**La regla de este comando:** nada se registra ni se corrige hasta que pruebas haya
+**reproducido el problema y lo confirme con evidencia**. "Me paso una vez" no es un
+error registrado: es un reporte pendiente de reproduccion.
+
+**Que hace el equipo (reproducir → confirmar → registrar → corregir → volver a probar → cerrar):**
+1. **Se ordena tu reporte** en pasos como usuario, que esperabas y que paso. Si falta un
+   dato indispensable (direccion, usuario, un registro que debe existir), te lo preguntan
+   una sola vez, todo junto.
+2. **Pruebas reproduce el problema** en el ambiente correcto (con su informe de
+   conformidad) siguiendo tus pasos exactos, como un usuario, con una foto por paso
+   (`00-listado-pagina-1.png`, `01-pagina-2-repetidos.png`), un video corto y el registro
+   de lo que respondio el sistema. Lo repite una segunda vez para saber si pasa siempre o
+   a veces. Si algo esta caido antes de llegar al punto, toma la foto, marca el bloqueo y
    avisa. No insiste.
-3. **El dueño del producto registra el error en el tablero**, en lenguaje claro:
+3. **Pruebas emite el veredicto**, explicito y con evidencia:
+   - **REPRODUCIDO** (siempre o intermitente): se sigue al paso 4.
+   - **NO REPRODUCIDO**: no se registra nada. Te muestran que probaron, donde, con que
+     version y la foto de que funciono bien, y te piden lo que falta para volver a intentar
+     (otro usuario, otro dato, hora exacta). Si igual quieres registrarlo, queda como
+     "no reproducible, requiere informacion", nunca como error confirmado.
+   - **BLOQUEADO**: se destraba el ambiente y se vuelve a intentar.
+4. **El dueño del producto registra el error en el tablero**, en lenguaje claro:
    > **"El listado de cobranzas muestra pagos repetidos al cambiar de pagina"**
    > Pasos como usuario, que se esperaba y que paso, gravedad e impacto, y las
    > **fotos dentro del ticket**.
@@ -539,8 +554,18 @@ registros que ya vi en la pagina 1
 7. **El dueño del producto comenta en el mismo ticket** (que se corrigio, el
    veredicto, las fotos nuevas) y **te pregunta si lo cierra**. Nunca lo cierra solo.
 
-**Recibes:** el error corregido, con toda la historia y las fotos dentro del ticket,
-y una prueba automatica que impide que vuelva.
+**Recibes:** primero, la certeza de si el problema existe y como se produce; luego el
+error corregido, con toda la historia y las fotos dentro del ticket, y una prueba
+automatica que impide que vuelva.
+
+**Ejemplo de lo que te responde pruebas:**
+```
+Reproduccion del problema "Registros repetidos al cambiar de pagina"
+Veredicto: REPRODUCIDO (pasa siempre) en el ambiente de pruebas, version 2.4.1
+Pasos: 2 · Evidencia: 3 fotos, video de 18 s · Sin errores ocultos
+→ Error registrado: #1234 (con las fotos dentro) · Gravedad sugerida: Alta
+Siguiente paso: el jefe de equipo te presenta el plan de correccion para tu OK.
+```
 
 ---
 
