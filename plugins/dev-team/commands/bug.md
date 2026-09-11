@@ -1,6 +1,6 @@
 ---
 description: Reporta un bug con REPRODUCCION OBLIGATORIA - QA replica el problema paso a paso en el ambiente real, con evidencia, y emite un veredicto explicito (REPRODUCIDO / NO REPRODUCIDO / BLOQUEADO) ANTES de que se registre el bug o se hable de la correccion. Uso - /dev-team:bug {descripcion, ID o URL del ticket}
-argument-hint: '{descripcion del problema como usuario} | {ID o URL de un ticket existente} [--ambiente qa|desa|demo] [--url http://...]'
+argument-hint: '{descripcion} | {ID o URL} | #12 #15 #21 (lote) | --nuevos | --etiqueta bug --estado Nuevo | --sprint actual  [--ambiente qa|desa|demo] [--paralelo N]'
 ---
 
 > **Ejecucion INLINE obligatoria:** este es un COMANDO, no un agente. Ejecuta su
@@ -17,6 +17,38 @@ Reporte: $ARGUMENTS
 **REGLA DE ESTE COMANDO (dura):** ningun bug se registra en el tracker, se triagea ni se
 asigna a un dev hasta que el equipo QA lo haya **reproducido y confirmado con evidencia**.
 "Me paso una vez" no es un bug registrado: es un reporte pendiente de reproduccion.
+
+## Modo LOTE (varios tickets a la vez)
+Si $ARGUMENTS trae **varios IDs/URLs** (`#12 #15 #21`), un **filtro** (`--nuevos` = bugs en
+estado inicial sin reproduccion; `--etiqueta bug --estado Nuevo`; `--sprint actual`) o un
+**archivo** (`--lista bugs.txt`, un ticket por linea), el flujo es el mismo por ticket, con
+estas reglas de lote:
+1. **Listar y confirmar** primero: mostrar la tabla de tickets candidatos (ID, titulo,
+   ambiente inferido) y esperar el OK del usuario antes de reproducir nada. Maximo 15 por
+   lote; si hay mas, proponer cortes.
+2. **Un ambiente valido por lote** (Paso 1 se hace UNA vez por ambiente). Tickets que
+   requieren otro ambiente van a un sub-lote.
+3. **Reproduccion en PARALELO**: la sesion principal / el Lead lanza varias instancias de
+   `qa-frontend` y/o `qa-backend`, cada una con UN ticket y su propia carpeta
+   `.coordination/evidence/REP-.../` (`--paralelo N`, default 3; nunca dos instancias
+   sobre el mismo ticket). Cada instancia aplica los Pasos 0-3 completos y deja su
+   `reproduccion.md`. El agente `qa` (QA Lead) consolida.
+4. **Consolidado** en `.coordination/evidence/REP-lote-{fecha}/lote.md`:
+   ```markdown
+   # Lote de reproduccion — {fecha} — ambiente qa (version 2.4.1)
+   | Ticket | Titulo | Veredicto | Consistencia | Severidad sugerida | Evidencia |
+   |---|---|---|---|---|---|
+   | #12 | Registros repetidos al paginar | ✅ REPRODUCIDO | 2/2 | Alta | REP-…-1/ |
+   | #15 | Total no cuadra en exportacion | ❌ NO REPRODUCIDO | — | — | REP-…-2/ (funciona: 01-export-ok.png) |
+   | #21 | Login lento | ⛔ BLOQUEADO | — | — | sin informe de conformidad de auth |
+   Resumen: 1 reproducido · 1 no reproducido · 1 bloqueado
+   ```
+5. **Paso 4 solo para los REPRODUCIDOS**, en un solo pase del PO (registra/actualiza cada
+   ticket con su evidencia embebida) y un solo triaje del Lead (prioriza el lote y presenta
+   UN plan con el orden de correccion). Los NO REPRODUCIDOS se comentan en su ticket con lo
+   probado y lo que falta; los BLOQUEADOS se agrupan por bloqueo y se escala una vez.
+6. La salida al usuario es la tabla consolidada + el plan. Nunca "aprobar" un lote en
+   bloque: cada ticket tiene su veredicto propio con su evidencia propia.
 
 ## Paso 0 — Entender el reporte (sesion principal, sin agentes)
 1. Si $ARGUMENTS es un ID o URL de ticket: leerlo del tracker (`gh issue view` / `az boards
@@ -96,6 +128,15 @@ QA escribe `.coordination/evidence/REP-.../reproduccion.md` con UNO de estos ver
    correccion** (PLAN PRIMERO) → el usuario aprueba → `fix/{bug-id}-...`.
 4. QA deja anotado el **test de regresion** que escribira en rojo antes del fix
    (mismos pasos exactos de la reproduccion → `tests/bug-{id}.spec.ts`).
+
+## Salida al usuario en lote
+```
+Lote de reproduccion — 3 tickets — ambiente qa, version 2.4.1
+✅ #12 Registros repetidos al paginar      REPRODUCIDO (siempre)   → registrado con evidencia, severidad Alta
+❌ #15 Total no cuadra en exportacion       NO REPRODUCIDO          → comentado en el ticket; falta: archivo de ejemplo y filtro usado
+⛔ #21 Login lento                          BLOQUEADO               → sin informe de conformidad de auth; escalado a infra
+Siguiente paso: el Lead te presenta el plan de correccion para #12.
+```
 
 ## Salida al usuario (siempre, en lenguaje claro)
 ```

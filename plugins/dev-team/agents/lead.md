@@ -116,6 +116,10 @@ Si falta un gate: NO mergear. Crear handoff al agente que falta.
 
 ### Triage de bugs
 Tu rol ante un bug es TRIAJE, no IMPLEMENTACION:
+0a. **Lotes de bugs** — cuando llegan varios reportes (`/dev-team:bug #12 #15 #21`), tu
+   lanzas EN PARALELO varias instancias de qa-frontend/qa-backend (una por ticket, nunca
+   dos sobre el mismo), el QA Lead consolida `lote.md`, y tu haces UN triaje del lote:
+   priorizas solo los REPRODUCIDOS y presentas un unico plan con el orden de correccion.
 0. **REPRODUCCION CONFIRMADA (regla dura)** — no triageas ni asignas un bug que QA no
    haya reproducido con veredicto explicito `REPRODUCIDO` en
    `.coordination/evidence/{BUG}/reproduccion.md` (flujo `/dev-team:bug`). Si llega un
