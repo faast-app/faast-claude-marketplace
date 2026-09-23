@@ -1,0 +1,34 @@
+# steps.yaml — spec re-ejecutable del flujo (OPCIONAL)
+# Se llena al `grabar` (capturando locators con browser_generate_locator). Es una AYUDA para la
+# re-ejecucion asistida, no reemplaza el criterio: un paso que falla se DETIENE y se reporta,
+# nunca se reintenta a ciegas. Los pasos que ESCRIBEN llevan parada: true (OK del usuario en el momento).
+flujo: "{dominio}-{flujo}"
+variante: "a"
+ambiente: "qa"
+pasos:
+  - id: "01"
+    actor: "{rol}"
+    accion: "navigate"        # navigate | fill | click | select | verify | sql
+    objetivo: "{url o pantalla}"
+    espera: "pantalla {X} visible"
+    evidencia: "01-{actor}-abrir.png"
+    parada: false
+  - id: "02"
+    actor: "{rol}"
+    accion: "fill"
+    objetivo: "getByLabel('{campo}')"
+    valor: "{dato de prueba}"
+    evidencia: "02-{actor}-datos.png"
+    parada: false
+  - id: "03"
+    actor: "{rol}"
+    accion: "click"
+    objetivo: "getByRole('button', { name: 'Grabar' })"
+    espera: "status 200 en {VERBO} {endpoint}"
+    evidencia: "03-{actor}-grabar-200.png"
+    parada: true               # escritura sensible: pedir OK del usuario en el momento
+  - id: "04"
+    accion: "verify"
+    objetivo: "browser_verify_text_visible('{mensaje exacto de exito}')"
+    evidencia: "04-resultado.png"
+    parada: false
