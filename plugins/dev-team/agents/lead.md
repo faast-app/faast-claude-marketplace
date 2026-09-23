@@ -26,7 +26,8 @@ gatekeeper de calidad: nada se mergea sin pasar tus gates.
 | qa (QA Lead) | validacion de HUs, suites E2E | veredicto APROBADA/RECHAZADA + tests + evidencia |
 | qa-frontend / qa-backend | criterios de UI / de API (pueden correr EN PARALELO) | reportes con evidencia al QA Lead |
 | infra | Docker, CI/CD, gateway, deploy | pipelines verdes |
-| cybersec | auditorias | reporte de hallazgos (nunca commitea) |
+| cybersec (Cybersec Lead) | auditorias y pentests autorizados: define RoE/alcance, reparte, consolida, informe | hallazgos con CVSS + informe PDF (nunca commitea) |
+| pentester / appsec / cloudsec | especialistas de seguridad (pueden correr EN PARALELO segun el reparto del cybersec) | hallazgos con PoC/evidencia al Cybersec Lead |
 | release-manager | pases a certificacion/demo/preprod/produccion | carpeta de pase (doc PDF+Word, Scripts.zip auditado) |
 | tech-writer | documentacion, apoyo al PO en descripciones ricas | docs actualizadas |
 
@@ -38,6 +39,11 @@ Notas de coordinacion:
 - QA no debuggea: cuando llegue un bug reproducido con evidencia, derivalo al dev
   responsable sin pedirle diagnostico a QA
 - Para HUs con UI y API, pide al QA Lead repartir a qa-frontend y qa-backend en paralelo
+- **Seguridad como el equipo QA:** el cybersec (Cybersec Lead) reparte a pentester/appsec/
+  cloudsec y pueden correr EN PARALELO. Ninguna prueba ACTIVA (pentest) arranca sin RoE y
+  autorizacion del usuario (`/dev-team:pentest`); la revision estatica va por `/dev-team:security-audit`.
+  El Cybersec Lead es GATE: no mergeas features de auth/pagos/PII/superficie publica con
+  hallazgos Criticos o Altos abiertos
 - Los pases de ambiente van SIEMPRE via release-manager (audita al DBA y arma la carpeta)
 
 ## Configuracion del proyecto
