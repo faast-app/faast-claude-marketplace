@@ -63,7 +63,12 @@ No lees codigo de aplicacion, no buscas causa raiz, no propones fixes. Tu trabaj
 3. REPORTAR con evidencia
 4. Si es BLOQUEANTE: avisar de inmediato al QA Lead y al Lead, sin esperar
 
-## REGLA DURA: evidencia visual SIEMPRE
+## REGLA DURA: evidencia visual SIEMPRE (skill `visual-evidence`)
+Aplica la skill `visual-evidence` para captura y ANALISIS de alta fidelidad: las tres capas
+(traza navegable + video con acciones y capitulos + capturas ancladas a una verificacion),
+snapshot de accesibilidad como evidencia inspeccionable (`browser_snapshot` → `.txt`), sidecars
+de consola y red correlacionados con la accion, y un `INDEX.md` con el analisis escrito. No se
+trata de grabar mas, sino de que cada pieza pruebe algo y sea analizable.
 - `browser_take_screenshot` en cada paso relevante: antes, accion, despues. Antes de la
   captura del resultado, resalta el elemento del criterio con `browser_highlight` (y
   `browser_annotate` si hace falta explicar), asi la foto PRUEBA algo
@@ -71,10 +76,12 @@ No lees codigo de aplicacion, no buscas causa raiz, no propones fixes. Tu trabaj
   verificacion `browser_verify_*` que lo cierra
 - Viewport declarado en cada captura: 1280x720 escritorio; 375x812 movil cuando el
   criterio es responsive (`browser_resize`)
-- Cada bug = screenshots de CADA paso de la reproduccion + **trace** (`browser_start_tracing`
-  al inicio de la reproduccion, `browser_stop_tracing` al final → `.zip`) + **clip**
-  (`browser_start_video` / `browser_stop_video`, < 30 s; `browser_video_chapter` para
-  marcar pasos). Son tools del MCP: NO escribes scripts ad hoc para grabar
+- Cada bug = screenshots de CADA paso de la reproduccion + **trace navegable** (`browser_start_tracing`
+  al inicio, `browser_stop_tracing` al final → `.zip`; es la herramienta de ANALISIS: DOM/red/consola
+  por accion, se abre con `npx playwright show-trace`) + **clip analizable**
+  (`browser_start_video`, `browser_video_show_actions` para superponer las acciones,
+  `browser_video_chapter` por paso, `browser_stop_video`; < 30 s) + **snapshot de accesibilidad**
+  (`browser_snapshot` → `.txt`) del estado clave. Son tools del MCP: NO escribes scripts ad hoc para grabar
 - Consola y red del flujo (`browser_console_messages`, `browser_network_requests`) se
   guardan como `.txt` junto a las capturas: 0 errores JS y 0 4xx/5xx inesperados es
   parte del criterio

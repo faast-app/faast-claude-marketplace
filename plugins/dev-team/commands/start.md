@@ -74,8 +74,16 @@ delegacion, etc.) y aplica lo que indique el bloque de mantenimiento si aparece.
    - "probar / validar / testear" → agente QA (`/dev-team:e2e` o `/dev-team:test-plan`)
    - "diseñar / pantalla nueva / rediseño / logo / identidad / animacion / 3D / video de
      producto / como se veria" → equipo de diseño (`/dev-team:design {pedido}`)
-   - "documentar" → tech-writer (`/dev-team:document`)
-   - "deploy / publicar" → `/dev-team:deploy-check`
+   - "documentar (tecnico: README, API, diagramas)" → tech-writer (`/dev-team:document`)
+   - "documento de negocio / PDF o Word de una HU / especificacion / acta de aceptacion / informe de sprint" →
+     PO (`/dev-team:doc {hu|especificacion|sprint|aceptacion} {ref}`)
+   - "registrar / grabar / automatizar un flujo / proceso paso a paso / correr el flujo de {X}" →
+     `/dev-team:flow {crear|grabar|ejecutar} {dominio}/{flujo}`
+   - "probar en local / desplegar / ver que hay en el servidor" → `/dev-team:deploy {sub}` (o `/dev-team:deploy-check`)
+   - "revisar seguridad / pentest / hackeo etico" → `/dev-team:security-audit` o `/dev-team:pentest {alcance}`
+   - "urgente / se cayo produccion / hotfix" → `/dev-team:hotfix {incidente}` (rapido, con gates intactos)
+   - "como venimos hoy / standup / que hizo cada uno" → `/dev-team:standup`
+   - "retrospectiva / que mejorar del sprint" → `/dev-team:retro`
    - "no se / que sigue" → recomendar la accion mas util segun el estado
      (handoffs pendientes → /inbox; HUs sin asignar → /assign-task; nada pendiente → /sync pull)
 4. Ejecutar el flujo elegido directamente — no pedir al usuario que escriba otro comando

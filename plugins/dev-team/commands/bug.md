@@ -70,11 +70,14 @@ version corre: el veredicto seria invalido.
 ## Paso 2 — Reproduccion (agente qa; reparte a qa-frontend / qa-backend si aplica)
 Invocar al agente `qa` con el reporte estructurado. QA (o su especialista) ejecuta los
 pasos EXACTOS, una sola vez, como usuario:
-- Frontend: Playwright MCP del plugin — `browser_navigate`, acciones, `browser_take_screenshot`
-  en CADA paso (`00-`, `01-`...), `browser_start_tracing`/`browser_start_video` desde el
-  inicio, `browser_console_messages` y `browser_network_requests` guardados como `.txt`,
-  y `browser_verify_*` para afirmar lo obtenido (ej. "el registro X aparece en ambas
-  paginas"). Viewport declarado.
+- Frontend: Playwright MCP del plugin, aplicando la skill `visual-evidence` para captura y
+  ANALISIS de alta fidelidad — `browser_navigate`, acciones, `browser_take_screenshot`
+  resaltado (`browser_highlight`) en CADA paso (`00-`, `01-`...), `browser_start_tracing`
+  (traza navegable: DOM/red/consola por accion) y `browser_start_video` con
+  `browser_video_show_actions` + `browser_video_chapter` por paso desde el inicio,
+  `browser_snapshot` (accesibilidad) del estado clave, `browser_console_messages` y
+  `browser_network_requests` guardados como `.txt` y correlacionados con la accion, y
+  `browser_verify_*` para afirmar lo obtenido. Viewport declarado.
 - Backend/API: request exacto reproducible (curl copy-paste) + response completa
   capturada + comparacion con el contrato (`openapi.yml`).
 - Registrar version desplegada, ambiente, usuario/rol, datos usados, fecha/hora.
@@ -128,6 +131,13 @@ QA escribe `.coordination/evidence/REP-.../reproduccion.md` con UNO de estos ver
    correccion** (PLAN PRIMERO) → el usuario aprueba → `fix/{bug-id}-...`.
 4. QA deja anotado el **test de regresion** que escribira en rojo antes del fix
    (mismos pasos exactos de la reproduccion → `tests/bug-{id}.spec.ts`).
+5. **Revalidacion tras el fix (skill `visual-evidence`):** cuando el fix este desplegado (con
+   informe de conformidad de la version nueva), QA repite los MISMOS pasos en una tanda
+   `-revalidacion` (numeracion nueva, jamas mezclada con el intento fallido) y entrega el par
+   antes/despues: la captura del bug original junto a la de ahora, ambas resaltadas y con la
+   `browser_verify_*` que antes fallaba y ahora pasa, consola y red limpias, y el veredicto
+   APTO / APTO CON OBSERVACIONES / SIGUE FALLANDO. El PO comenta el MISMO issue con esa evidencia
+   embebida; el cierre lo confirma el usuario.
 
 ## Salida al usuario en lote
 ```

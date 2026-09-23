@@ -16,15 +16,16 @@ import json, sys
 
 TEAM = {"setup","product-owner","architect","ui-designer","lead","backend","frontend",
         "dba","qa","qa-frontend","qa-backend","release-manager","infra","cybersec","tech-writer",
-            "ux-researcher","visual-designer","motion-designer","artist-3d","design-engineer"}
+            "ux-researcher","visual-designer","motion-designer","artist-3d","design-engineer",
+            "pentester","appsec","cloudsec"}
 CHEAP_OK = {"explore"}  # agentes de busqueda solo-lectura, baratos: permitidos
 # comandos del plugin (NO son agentes): correrlos como subagente recarga todo el
 # contexto y quema tokens — se ejecutan inline con el Skill tool. "setup" no esta
 # aqui porque tambien existe el AGENTE setup (legitimo).
-SKILLS_NOT_AGENTS = {"assign-task","db-health","deploy-check","document","e2e",
-        "git-check","handoff","inbox","new-project","onboard","pase","refine",
-        "review-pr","security-audit","start","status","sync","team-metrics",
-        "team-office","test-plan","wiki"}
+SKILLS_NOT_AGENTS = {"assign-task","db-health","deploy","deploy-check","doc","document","e2e",
+        "flow","git-check","handoff","hotfix","inbox","new-project","onboard","pase","refine",
+        "retro","review-pr","security-audit","pentest","security-report","standup","start",
+        "status","sync","team-metrics","team-office","test-plan","wiki"}
 
 def short(name):
     return (name or "").strip().split(":", 1)[-1].lower()
