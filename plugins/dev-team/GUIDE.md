@@ -93,8 +93,9 @@ Ejemplos de lo que puedes escribir despues (o en la misma linea):
 
 ## 2. Conoce al equipo
 
-Piensa en una empresa de software pequeña con su propio estudio de diseño. Estos son
-sus 20 integrantes, con lo que cada uno hace y cuando te vas a cruzar con ellos.
+Piensa en una empresa de software pequeña con su propio estudio de diseño y su equipo
+de seguridad. Estos son sus 23 integrantes, con lo que cada uno hace y cuando te vas a
+cruzar con ellos.
 
 | Integrante | Que hace, en palabras simples | Cuando aparece |
 |---|---|---|
@@ -116,7 +117,10 @@ sus 20 integrantes, con lo que cada uno hace y cuando te vas a cruzar con ellos.
 | 🔌 **qa-backend** (probador de servicios) | Prueba que los servicios respondan exactamente lo prometido | Pruebas de servicios y datos |
 | 📦 **release-manager** (encargado de publicaciones) | Arma la solicitud formal para publicar una version en un ambiente, revisa que los cambios de datos esten bien hechos y puede rechazarlos | Cada vez que hay que "pasar" algo a un ambiente |
 | 🚢 **infra** (el de la infraestructura) | Prepara los servidores, los contenedores y la automatizacion para publicar | Publicaciones y configuracion de ambientes |
-| 🛡️ **cybersec** (seguridad) | Audita la seguridad y reporta hallazgos. Nunca toca el codigo: lo corrige el responsable | Cambios sensibles: claves, datos personales, accesos |
+| 🛡️ **cybersec** (jefe de seguridad) | Dirige el equipo de seguridad: define el alcance y la autorizacion, reparte, junta los hallazgos y firma el informe. Es un control: nada grave abierto llega al producto | Cambios sensibles y auditorias de seguridad |
+| 🥷 **pentester** (hacker etico) | Ataca la aplicacion con permiso, como un atacante real, para encontrar brechas (ver datos de otro, saltarse el ingreso) antes que alguien malo | Pruebas de intrusion autorizadas |
+| 🔬 **appsec** (seguridad del codigo) | Revisa el codigo por dentro: secretos, componentes vulnerables, fallos de acceso y de cifrado | Revision de seguridad del codigo |
+| ☁️ **cloudsec** (seguridad de plataforma) | Revisa contenedores, red, certificados, cabeceras y automatizacion; que nada quede expuesto | Revision de seguridad de infraestructura |
 | 📚 **tech-writer** (el documentador) | Mantiene la documentacion y la memoria del proyecto (la wiki) | Al cerrar funcionalidades y al final del dia |
 
 > **Sobre el costo:** cada integrante usa un "cerebro" (modelo de IA) del tamaño justo
@@ -210,8 +214,10 @@ exactamente que quieres.
 |---|---|
 | `/dev-team:start` | El punto de partida: mira tu situacion y te guia |
 | `/dev-team:status` | Resumen del proyecto: sprint, pendientes, bloqueos |
+| `/dev-team:standup` | El dia de un vistazo: que hizo cada uno, que esta en curso, que esta bloqueado |
 | `/dev-team:sync` | Sincroniza con el tablero de tareas (trae lo nuevo, sube avances) |
 | `/dev-team:inbox` | Un integrante revisa las notas de traspaso que tiene pendientes |
+| `/dev-team:retro` | Retrospectiva del sprint con datos y acciones concretas |
 
 **Proyectos**
 
@@ -230,6 +236,9 @@ exactamente que quieres.
 | `/dev-team:handoff` | Crear una nota de traspaso entre integrantes |
 | `/dev-team:bug {que paso}` | Reportar un problema: pruebas lo reproduce y confirma con evidencia ANTES de registrarlo (ver [Caso 6](#caso-6--algo-no-funciona-reportar-y-corregir-un-error)) |
 | `/dev-team:bug #12 #15 #21` | Varios tickets a la vez: se reproducen en paralelo y recibes una tabla con el veredicto de cada uno |
+| `/dev-team:hotfix {incidente}` | Correccion urgente con los controles intactos (reproducir, plan, arreglo minimo, revalidacion con evidencia, seguridad si aplica) |
+| `/dev-team:flow {sub}` | Registrar, grabar y re-ejecutar un flujo de negocio paso a paso (ver [Caso 8b](#caso-8b--registrar-y-repetir-un-flujo-de-negocio)) |
+| `/dev-team:doc {tipo} {ref}` | El dueño del producto genera un documento de negocio en PDF y Word (ver [Caso 12b](#caso-12b--un-documento-de-negocio-en-pdf-o-word)) |
 
 **Diseño**
 
@@ -249,7 +258,9 @@ exactamente que quieres.
 | `/dev-team:e2e {HU}` | Pruebas de una historia con fotos por criterio (ver [Caso 8](#caso-8--pruebas-como-se-comprueba-que-todo-funciona)) |
 | `/dev-team:e2e run` | Comprobar que todo lo que funcionaba sigue funcionando |
 | `/dev-team:review-pr {n}` | Revisar un cambio propuesto |
-| `/dev-team:security-audit` | Auditoria de seguridad |
+| `/dev-team:security-audit` | Auditoria de seguridad (revision de codigo e infra, sin atacar) |
+| `/dev-team:pentest {alcance}` | Prueba de intrusion autorizada (ethical hacking) con alcance y tu OK (ver [Caso 11](#caso-11--revisar-la-seguridad)) |
+| `/dev-team:security-report PENTEST-{n}` | Informe de seguridad en PDF con evidencia |
 | `/dev-team:git-check` | Revisar el estado del repositorio antes de guardar cambios |
 
 **Publicaciones y operacion**
@@ -257,7 +268,8 @@ exactamente que quieres.
 | Escribes | Que consigues |
 |---|---|
 | `/dev-team:db-health` | Chequeo de salud de la base de datos |
-| `/dev-team:deploy-check` | ¿Esta listo para publicarse? |
+| `/dev-team:deploy-check` | ¿Esta listo para publicarse? (revisa el estandar de contenedor) |
+| `/dev-team:deploy {sub}` | Probar en local, ver un servidor sin tocarlo, desplegar guiado, cutover o auditar estandar (ver [Caso 10b](#caso-10b--contenerizar-probar-en-local-y-desplegar-a-un-servidor)) |
 | `/dev-team:pase {ambiente}` | La solicitud de pase completa (documento + cambios de datos revisados) |
 | `/dev-team:document {tema}` | Actualizar documentacion |
 
@@ -712,6 +724,58 @@ historia o error. Cuando hay un error, las fotos se muestran dentro del ticket. 
 proyecto esta en GitHub, se publican en un espacio apartado que existe solo para eso
 y nunca se mezclan con el codigo.
 
+**Evidencia mas rica y facil de analizar.** Ademas de las fotos, cada prueba deja una
+**grabacion navegable** (una traza que muestra, paso a paso, que se toco, que respondio
+el sistema, la red y los mensajes internos en cada momento) y un **video con las acciones
+marcadas y capitulos por paso** — no para saltarse nada, sino para entender el video
+mejor. Las capturas van con el elemento resaltado y una nota de que mirar, y cada carpeta
+lleva un pequeño resumen que explica que muestra cada archivo. **Cuando se corrige un
+error y hay que verificarlo**, la evidencia pone lado a lado el "antes" y el "despues"
+para que se vea el arreglo de un vistazo, y todo se entrega dentro del ticket, con la
+version en que se probo.
+
+---
+
+## Caso 8b — Registrar y repetir un flujo de negocio
+
+**Situacion:** cada vez que hay que crear una operacion de factoring de punta a punta
+(cargar la operacion, aprobarla, firmarla, desembolsar) alguien lo hace de memoria. Lo
+quieres **registrado, ordenado y repetible**, con evidencia.
+
+Un flujo se guarda en una carpeta ordenada, por ejemplo `flujos/factoring/creacion-operacion/`,
+con sus pasos numerados, sus verificaciones y sus puntos de control. Se maneja con un comando:
+
+**Crear el flujo (darlo de alta):**
+```
+/dev-team:flow crear factoring/creacion-operacion
+```
+Te hace unas pocas preguntas (que hace, que caminos tiene, en que ambiente, donde hay
+pasos delicados) y arma la carpeta con su estructura.
+
+**Grabarlo mientras lo recorres:**
+```
+/dev-team:flow grabar factoring/creacion-operacion
+```
+Vas haciendo el flujo por la pantalla y el equipo captura cada paso (que se toca, que
+responde el sistema, una foto de cada uno) y arma el instructivo. En cada paso que
+**escribe algo importante** (grabar, aprobar, confirmar un giro), se detiene y te pide
+tu OK en el momento.
+
+**Repetirlo despues, con garantias:**
+```
+/dev-team:flow ejecutar factoring/creacion-operacion
+```
+Primero te muestra el plan y espera tu OK. Luego: revisa que todo este en su sitio
+(solo mirando), y si el flujo cambia algun parametro sensible lo hace el encargado de
+datos con resguardo (anota el valor original para devolverlo al final). Ejecuta paso a
+paso con fotos, **se detiene antes de cada accion importante para pedir tu OK**, verifica
+el resultado y, al cerrar, te pregunta si restaurar los parametros. Si algo falla, se
+detiene y avisa: no reintenta a ciegas, porque cada intento crea datos de verdad.
+
+**Otras:** `/dev-team:flow listar` muestra los flujos que ya tienes; `/dev-team:flow
+verificar {flujo}` chequea que esten dadas las condiciones sin ejecutar nada. Los flujos
+se guardan y se comparten; las fotos de cada corrida quedan en la carpeta del proyecto.
+
 ---
 
 ## Caso 9 — Base de datos: revisar, comparar y preparar cambios
@@ -790,22 +854,84 @@ pruebas no valida (regla de oro).
 
 ---
 
+## Caso 10b — Contenerizar, probar en local y desplegar a un servidor
+
+El equipo sigue un **estandar de contenedores y despliegue** (un solo puerto interno,
+nunca corre como administrador, sin claves dentro de la imagen, version en un solo
+archivo, y una carpeta fija por componente en el servidor). Todo esto lo maneja el
+encargado de infraestructura con un comando:
+
+**Probar en tu maquina:**
+```
+/dev-team:deploy local {servicio}
+```
+Arma el contenedor y lo levanta en tu computador, te dice en que puerto responde y
+confirma que quedo sano. Antes te pregunta si la base de datos es **local (en Docker,
+con datos de prueba)** o **remota (la de desarrollo compartida)** y recuerda tu eleccion.
+
+**Ver que hay en un servidor SIN tocar nada:**
+```
+/dev-team:deploy inventario {servidor}
+```
+Solo mira y anota: que componentes estan instalados, en que version, si estan sanos, en
+que carpeta y en que puerto. **No cambia ni borra nada.** Es el paso previo obligatorio
+antes de desplegar, justamente para no pisar algo que ya estaba.
+
+**Desplegar a un servidor (con tu permiso):**
+```
+/dev-team:deploy servidor {instancia} {servicio}
+```
+Primero inventaria, luego te presenta el plan (que version va, a donde, que cambia, y a
+que version se vuelve si algo falla) y **espera tu OK**. Recien ahi despliega, verifica
+salud, deja registro y emite el informe de conformidad para que pruebas pueda validar.
+Si el destino es un ambiente formal (certificacion, puente, demo, preprod, produccion),
+la solicitud de pase sigue yendo por `/dev-team:pase` (Caso 10).
+
+**Otras:** `/dev-team:deploy cutover {servicio}` pasa un componente del modo viejo al
+nuevo sin cortar el servicio; `/dev-team:deploy estandar {servicio}` revisa que el
+componente cumpla el estandar; `/dev-team:deploy-check` responde "¿esta listo para
+publicarse?". **Regla de oro:** para descubrir, solo mira; para cambiar algo, siempre
+plan y tu confirmacion. Nunca borra lo de otros componentes.
+
+---
+
 ## Caso 11 — Revisar la seguridad
 
-**Que escribes** (en el componente que quieres revisar, o indicando cual):
+Seguridad no es una persona: es un **equipo profesional** con un jefe (Cybersec Lead)
+y tres especialistas — uno que revisa el codigo (appsec), uno que revisa la
+infraestructura (cloudsec) y uno que **ataca de verdad, con permiso** (pentester,
+ethical hacking) para encontrar las brechas antes que un atacante real. Hay dos formas
+de pedir su trabajo:
+
+**Revision rapida (sin atacar la app viva):**
 ```
 /dev-team:security-audit
 ```
+Revisa el codigo, los secretos escritos por error, los componentes externos con
+vulnerabilidades conocidas y la configuracion de infraestructura. No necesita permisos
+especiales, solo confirmar que revisa un componente tuyo.
 
-**Que revisa seguridad:** los riesgos mas comunes de la industria, claves o secretos
-escritos en el codigo, componentes externos con vulnerabilidades conocidas, y una
-lista de controles de acceso aprendidos de incidentes reales (por ejemplo: que no
-haya puertas sin cerrar, que los intentos de ingreso fallidos se limiten de verdad,
-que los pasos obligatorios no se puedan saltar).
+**Prueba de intrusion autorizada (ethical hacking):**
+```
+/dev-team:pentest {que quieres que prueben}
+```
+Aqui el equipo ataca la aplicacion desplegada como lo haria un atacante: intenta ver
+datos de otro cliente, saltarse el ingreso, saltarse pasos obligatorios, inyectar
+datos. **Antes de tocar nada te presenta un documento de alcance y autorizacion** (que
+se prueba, que NO, en que ambiente) y espera tu OK por escrito. Solo prueba lo que es
+tuyo, nunca sistemas de terceros, nunca de forma destructiva, y todo lo sensible sale
+tachado de los informes.
 
-**Recibes:** un informe con hallazgos clasificados por gravedad (critico, alto, medio,
-bajo), cada uno con su evidencia y su recomendacion. **Seguridad nunca cambia
-codigo:** corrige el responsable de la parte afectada y seguridad vuelve a revisar.
+**Recibes:** hallazgos clasificados por gravedad (critico, alto, medio, bajo), cada uno
+con la prueba de que existe (paso a paso reproducible), su evidencia (imagenes) y la
+recomendacion de como corregirlo. Para un documento formal presentable a gerencia:
+```
+/dev-team:security-report PENTEST-{numero}
+```
+que arma un **informe en PDF** con resumen ejecutivo, hallazgos, evidencia embebida y
+plan de correccion. **Seguridad nunca cambia codigo:** corrige el responsable de la
+parte afectada y seguridad vuelve a probar (reprueba). Nada con un hallazgo grave
+abierto llega al producto.
 
 ---
 
@@ -830,6 +956,34 @@ Solo el documentador escribe en la memoria; todos los demas la leen. Si tienes l
 aplicacion gratuita **Obsidian**, puedes abrir la carpeta de la wiki y ver un mapa
 visual de como se conecta todo (historias con servicios, errores con correcciones,
 decisiones con su razon).
+
+---
+
+## Caso 12b — Un documento de negocio en PDF o Word
+
+**Situacion:** necesitas presentar una funcionalidad a gerencia, o entregar al cliente un
+documento de una historia, o un acta de que algo quedo aceptado. Los tickets estan muy
+bien para el equipo, pero quieres un **documento presentable**.
+
+El dueño del producto lo arma en lenguaje de negocio (sin tecnicismos) y te lo entrega en
+**PDF y Word**:
+```
+/dev-team:doc hu HU-42                  # el documento de una historia
+/dev-team:doc especificacion {epica}   # una funcionalidad completa (varias historias)
+/dev-team:doc sprint actual             # informe del sprint para gerencia
+/dev-team:doc aceptacion HU-42          # acta de entrega, con la evidencia de las pruebas
+```
+
+**Que hace:** toma el contenido REAL de los tickets (no inventa nada), lo redacta como lo
+entiende una persona de negocio, con los criterios en formato "Dado… cuando… entonces…", y
+deja lo tecnico (numeros de ticket, versiones) en un anexo aparte al final. Lo genera desde
+una plantilla y lo convierte a PDF (para presentar o firmar) y a Word (para editar o
+compartir), con los acentos intactos. Los documentos quedan en la carpeta del proyecto y
+puedes elegir un solo formato con `--formato pdf` o `--formato docx`.
+
+Esto **complementa** los tickets, no los reemplaza. La documentacion tecnica (manuales del
+codigo, contratos de las APIs, diagramas de arquitectura) la hace el documentador con
+`/dev-team:document`; los documentos de negocio los hace el dueño del producto con `/dev-team:doc`.
 
 ---
 
@@ -1072,7 +1226,17 @@ Todo vive en `.coordination/config.json` (lo crean `new-project` y `onboard`):
   "team": { "models": { "architect": "opus" } },
   "urls": { "dev": "http://localhost:3000" },
   "e2e": { "exists": true, "path": "e2e" },
-  "design": { "tools": { "canvas": "pencil", "imagegen": "none", "video": "hyperframes" } }
+  "design": { "tools": { "canvas": "pencil", "imagegen": "none", "video": "hyperframes" } },
+  "deploy": {
+    "registry": "ghcr.io/{org}",
+    "inventoryPath": ".coordination/deploy/inventario-servidores.csv",
+    "db": { "devTarget": "local-docker", "remoteHost": "(si devTarget=remota)" },
+    "servers": [{ "instancia": "{repo}-qa", "host": "{dns-o-ip}", "acceso": "runner|ssh" }]
+  },
+  "doc": {
+    "templatePath": "(opcional — default: plantilla del plugin)",
+    "outputDir": "(opcional — default: .coordination/docs-negocio/)"
+  }
 }
 ```
 
@@ -1091,6 +1255,11 @@ Todo vive en `.coordination/config.json` (lo crean `new-project` y `onboard`):
 | `design.tools.canvas` | `pencil` / `figma` / `penpot` / `none`: lienzo con el que sincroniza el design-engineer (Figma: `claude mcp add --transport http --scope user figma https://mcp.figma.com/mcp`) |
 | `design.tools.imagegen` | MCP de generacion de imagenes (opcional, API key del usuario) o `none` |
 | `design.tools.video` | `hyperframes` (plugin de HeyGen, Node ≥ 22 + FFmpeg) o `none` |
+| `deploy.registry` | Registry de imagenes (ej. GHCR del proyecto) para el estandar de despliegue |
+| `deploy.inventoryPath` | Archivo del inventario de servidores (que corre en cada host); lo llena `/dev-team:deploy inventario` en solo lectura |
+| `deploy.db` | `devTarget`: `local-docker` (BD en Docker con datos dummy) o `remota` (BD de desarrollo compartida) para pruebas locales. En ambientes reales la BD siempre es gestionada |
+| `deploy.servers` | Instancias/hosts de despliegue y su metodo de acceso (runner/ssh). Valores del proyecto, nunca hardcodeados en el plugin |
+| `doc.*` | Plantilla y carpeta de salida de los documentos de negocio del PO (`/dev-team:doc`, PDF+DOCX) |
 
 **Skills de diseño recomendadas (opcionales).** El equipo de diseño trae las suyas en el
 plugin; estas lo elevan: `npx skills add emilkowalski/skills`, `npx skills add
@@ -1115,8 +1284,13 @@ linea con la ruta; gitignored).
 ├── handoffs/ (+archive/) comunicacion entre agentes ({de}-to-{para}-{fecha}.md)
 ├── wiki/                 memoria del proyecto (vault de Obsidian; solo escribe tech-writer)
 ├── metrics/              activity.jsonl (eventos via hooks + verdict/reopened manuales)
-├── evidence/             evidencia QA por HU/BUG (informe-qa.md, capturas, trace, clips) — gitignored
+├── evidence/             evidencia QA y de seguridad (PENTEST-*/) por HU/BUG (informe, capturas, trace, clips) — gitignored
 ├── pases/                carpetas de pase entregadas
+├── deploy/               inventario de servidores (que corre en cada host) — lo llena /dev-team:deploy inventario
+├── flows/                flujos de negocio registrados ({dominio}/{flujo}/: FLUJO.md, referencias, runbook) — se versionan
+├── docs-negocio/         documentos de negocio del PO en PDF/DOCX (los genera /dev-team:doc)
+├── retros/               retrospectivas del sprint con sus acuerdos (los genera /dev-team:retro)
+├── env-reales/           .env reales tomados de los servidores — NUNCA en git
 ├── office/               la oficina virtual (se instala con /team-office)
 ├── test-plans/           planes de prueba de QA
 ├── design/               propuestas de diseño (DSN-nnn-*/: brief, ux, ui, visual, motion, 3d, prototipo, deck); `_media/` gitignored
