@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>{{TITULO}}</title>
+<!--
+  Plantilla de DOCUMENTO DE NEGOCIO (dev-team / Product Owner).
+  Convierte a PDF y DOCX con LibreOffice:
+    soffice --headless --convert-to pdf  --outdir {salida} documento-negocio.html
+    soffice --headless --convert-to docx --outdir {salida} documento-negocio.html
+  Reglas al rellenar:
+   - Reemplaza {{PLACEHOLDERS}}. Muestra SOLO las secciones del tipo de documento; borra el resto.
+   - Cuerpo 100% en lenguaje de negocio: SIN endpoints, tablas, codigo ni jerga. Lo tecnico va al Anexo.
+   - Criterios de aceptacion SIEMPRE en Gherkin (Dado/Cuando/Entonces).
+   - Autor/proyecto/fecha del config, nunca a mano. Mantener acentos y eñes.
+   - Tipo (una): DOCUMENTO DE HISTORIA · ESPECIFICACION FUNCIONAL · INFORME DE SPRINT · DOCUMENTO DE ACEPTACION
+-->
+<style>
+  :root{ --tinta:#1a2332; --suave:#5b6472; --linea:#e3e8ef; --marca:#123a5e; --acento:#0e7490; --ok:#15803d; }
+  *{box-sizing:border-box}
+  body{margin:0;color:var(--tinta);background:#fff;
+    font:14px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  .page{max-width:800px;margin:0 auto;padding:28px 40px}
+  h1,h2,h3{color:var(--marca);line-height:1.25;margin:1.3em 0 .5em}
+  h1{font-size:25px} h2{font-size:18px;border-bottom:2px solid var(--linea);padding-bottom:.25em} h3{font-size:15px;color:var(--acento)}
+  .cover{padding:70px 40px 32px;border-bottom:4px solid var(--marca)}
+  .kicker{letter-spacing:.16em;text-transform:uppercase;font-size:12px;color:var(--acento);font-weight:700}
+  .cover h1{font-size:32px;margin:.15em 0}
+  .meta{display:grid;grid-template-columns:150px 1fr;gap:5px 16px;margin:18px 0}
+  .meta div:nth-child(odd){color:var(--suave);font-weight:600}
+  table{border-collapse:collapse;width:100%;margin:.7em 0;font-size:13px}
+  th,td{border:1px solid var(--linea);padding:7px 9px;text-align:left;vertical-align:top}
+  th{background:#f5f8fb;color:var(--marca);font-weight:600}
+  .gherkin{background:#f7faf9;border-left:4px solid var(--ok);padding:10px 14px;border-radius:0 6px 6px 0;margin:.6em 0}
+  .gherkin b{color:var(--ok)}
+  ul,ol{margin:.4em 0 .8em 1.2em}
+  .muted{color:var(--suave)}
+  .anexo{margin-top:32px;padding-top:14px;border-top:1px dashed var(--linea);font-size:13px;color:var(--suave)}
+  footer{margin-top:36px;padding-top:12px;border-top:1px solid var(--linea);font-size:11px;color:var(--suave)}
+  @media print{ .page{padding:0 12mm} h2{page-break-after:avoid} }
+</style>
+</head>
+<body>
+
+<section class="cover">
+  <div class="kicker">{{TIPO_DOCUMENTO}}</div>
+  <h1>{{TITULO}}</h1>
+  <p class="muted">{{SUBTITULO_NEGOCIO}}</p>
+  <div class="meta">
+    <div>Proyecto</div><div>{{PROYECTO}}</div>
+    <div>Version</div><div>{{VERSION}}</div>
+    <div>Fecha</div><div>{{FECHA}}</div>
+    <div>Autor</div><div>{{AUTOR}}</div>
+    <div>Estado</div><div>{{ESTADO}}</div>
+  </div>
+</section>
+
+<div class="page">
+
+  <h2>Resumen</h2>
+  <p>{{RESUMEN}}</p>
+
+  <!-- ==== DOCUMENTO DE HISTORIA (borrar si es otro tipo) ==== -->
+  <h2>Historia</h2>
+  <p><b>Como</b> {{ROL}}<br><b>Quiero</b> {{ACCION}}<br><b>Para</b> {{BENEFICIO}}</p>
+  <h2>Contexto</h2>
+  <p>{{CONTEXTO}}</p>
+
+  <!-- ==== ESPECIFICACION FUNCIONAL (borrar si es otro tipo) ==== -->
+  <h2>Objetivo de negocio</h2>
+  <p>{{OBJETIVO}}</p>
+  <h2>Actores y flujos</h2>
+  <p>{{ACTORES_FLUJOS}}</p>
+  <h2>Reglas de negocio</h2>
+  <ul>{{REGLAS}}</ul>
+  <h2>Historias incluidas</h2>
+  <table><thead><tr><th>Historia</th><th>Resultado esperado (negocio)</th></tr></thead>
+    <tbody>{{FILAS_HUS}}</tbody></table>
+
+  <!-- ==== INFORME DE SPRINT (borrar si es otro tipo) ==== -->
+  <h2>Objetivo del sprint</h2>
+  <p>{{SPRINT_GOAL}}</p>
+  <h2>Resultado por historia</h2>
+  <table><thead><tr><th>Historia</th><th>Comprometida</th><th>Completada</th><th>Nota de negocio</th></tr></thead>
+    <tbody>{{FILAS_SPRINT}}</tbody></table>
+
+  <!-- ==== CRITERIOS (HU / especificacion / aceptacion) ==== -->
+  <h2>Criterios de aceptacion</h2>
+  <div class="gherkin"><b>Dado</b> {{PRECONDICION}} <b>cuando</b> {{ACCION_USUARIO}}
+    <b>entonces</b> {{RESULTADO_VISIBLE}}</div>
+  <!-- repetir .gherkin por criterio -->
+
+  <!-- ==== DOCUMENTO DE ACEPTACION (borrar si es otro tipo) ==== -->
+  <h2>Que se entrego</h2>
+  <p>{{ENTREGADO}}</p>
+  <h2>Criterios cumplidos y evidencia</h2>
+  <table><thead><tr><th>Criterio</th><th>Resultado</th><th>Evidencia</th></tr></thead>
+    <tbody>{{FILAS_ACEPTACION}}</tbody></table>
+  <h2>Como demostrarlo</h2>
+  <p>{{DEMO}}</p>
+
+  <!-- ==== ALCANCE / DoD (HU) ==== -->
+  <h2>Alcance</h2>
+  <p><b>Incluye:</b> {{INCLUYE}}<br><b>Fuera de alcance:</b> {{FUERA}}</p>
+  <h2>Definicion de hecho</h2>
+  <ul>{{DOD}}</ul>
+
+  <!-- ==== DIAGRAMA FUNCIONAL opcional (flujo del usuario; nunca tecnico) ==== -->
+  <!-- Renderizar el Mermaid a imagen antes de convertir, o incluir la imagen ya renderizada:
+       <figure><img src="flujo.png" alt="Flujo del usuario"><figcaption>{{PIE}}</figcaption></figure> -->
+
+  <div class="anexo">
+    <b>Anexo tecnico</b> (referencia, no forma parte del contenido de negocio):
+    {{ANEXO_TECNICO}} — Historias en el tracker: {{IDS_TRACKER}}.
+  </div>
+
+  <footer>
+    {{PROYECTO}} · {{TIPO_DOCUMENTO}} · v{{VERSION}} · {{FECHA}} · Documento de negocio generado
+    por el Product Owner (dev-team). Complementa los items del tracker, no los reemplaza.
+  </footer>
+</div>
+</body>
+</html>

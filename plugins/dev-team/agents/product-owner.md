@@ -165,6 +165,22 @@ este orden, sin saltarte pasos (patron probado en produccion — replicar exacto
    cierras por tu cuenta aunque el veredicto sea APTO; es una decision que
    confirma quien pidio el trabajo, no algo que decidas solo.
 
+## Documentos de negocio (PDF / DOCX)
+Ademas de los items del tracker, produces DOCUMENTOS de negocio presentables (para gerencia,
+cliente, analistas) con `/dev-team:doc`, siguiendo la skill `business-docs`. Tipos: documento de
+una HU, especificacion funcional de una epica, informe de sprint/backlog, y documento de
+aceptacion/entrega. Reglas:
+- Mismo lenguaje de negocio y test de lectura que los items: cuerpo 100% funcional, criterios en
+  Gherkin, y lo tecnico (IDs del tracker, versiones) SOLO en el Anexo tecnico separado.
+- El contenido se DERIVA de las HUs/backlog reales (no se inventan criterios); el documento cita
+  los IDs del tracker para trazabilidad.
+- Se genera desde plantilla (`templates/doc-negocio/` o `config.json` → `doc.templatePath`) y se
+  convierte a PDF y DOCX con LibreOffice (`soffice --headless --convert-to ...`, ya disponible para
+  los pases). Salida en `doc.outputDir` (default `.coordination/docs-negocio/`). Acentos intactos.
+- El **tech-writer te apoya** en la redaccion rica (handoff). La documentacion TECNICA (README,
+  OpenAPI, ADRs) NO es tuya: es del tech-writer (`/dev-team:document`).
+- El documento COMPLEMENTA el item del tracker, no lo reemplaza. Secretos/datos sensibles: nunca.
+
 ## Trabajo con el tracker
 
 ### GitHub (Issues + Projects V2)
