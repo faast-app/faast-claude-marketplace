@@ -88,6 +88,40 @@ Configurar segun lo que el Arquitecto decidio:
 - Terraform, Pulumi, CDK
 - SSL/TLS: Let's Encrypt, ACM
 
+## Estandar de dockerizacion y despliegue (skill `deployment-standard`)
+Cuando dockerizas un componente, preparas un despliegue o revisas un Dockerfile, sigues el
+estandar FAAST de la skill `deployment-standard` (cargala). En resumen, las 9 reglas duras que
+NO se rompen: **R1** un solo puerto interno (`8080`, host por `${HOST_PORT}`); **R2** non-root por
+UID del host (`user: "${RUN_UID:-1000}:${RUN_GID:-1000}"`, el Dockerfile no crea usuario ni pone
+`USER`); **R3** HEALTHCHECK real con herramientas que la imagen tiene; **R4** cero secretos en la
+imagen (solo `--mount=type=secret`); **R5** multi-stage siempre; **R6** `.dockerignore`
+obligatorio; **R7** logs a stdout/stderr; **R8** `provenance:false` + tag `sha-<sha>` permanente;
+**R9** `init:true`. La version tiene UNA fuente: `version.txt` (nunca `--build-arg`). Todo el
+`appsettings` va a variables de entorno (`Seccion__Clave`), con el repo en `SET_VIA_ENV`. Familia
+de Dockerfile segun lo que ES el componente (.NET, gateway Ocelot/YARP, frontend/nginx, node,
+python, batch). Los VALORES del proyecto (puertos existentes, hosts, instancias) salen del
+inventario y de `config.json` (`deploy`), nunca hardcodeados. El comando operativo es
+`/dev-team:deploy` (local, inventario, servidor, bd, cutover, estandar); `/dev-team:deploy-check`
+verifica readiness.
+
+## Operacion segura de servidores (regla de oro: no romper nada)
+Antes de tocar un servidor, un contenedor o un pipeline: **descubre en solo lectura, cambia solo
+con plan y confirmacion**. La fase de descubrimiento (`/dev-team:deploy inventario`) usa SOLO
+comandos de lectura (`ls ~/deploy`, `docker ps`, `docker inspect`, `tail deploy-history.log`,
+`curl /health`) y registra el resultado en el inventario de servidores del proyecto
+(`.coordination/deploy/inventario-servidores.csv`, desde `templates/deploy/`). Reglas duras de
+operacion:
+- NUNCA borres carpetas de deploy, `.env` previos, ni contenedores/imagenes de OTROS componentes.
+- NUNCA `docker compose down` de un servicio compartido; NUNCA `restart` del reverse proxy compartido.
+- Carpeta de despliegue fija (ADR-002): `~/deploy/<repo>/<instancia>/` con `docker-compose.yml`,
+  `.env.<instancia>` (permisos 600, fuera de git) y `deploy-history.log` (una linea por despliegue).
+- Vhost: backup `.bak-<ts>` + `httpd -t` + `reload`, jamas `restart`.
+- Cutover PM2→Docker: contenedor healthy en el mismo puerto → smoke por el vhost real → cambiar
+  ProxyPass + reload → `pm2 stop` sin borrar → probar rollback en el momento (QA valida con capturas).
+- Cada despliegue a un ambiente real deja su linea en `deploy-history.log`, actualiza el inventario
+  y **emite el informe de conformidad** (abajo). El pase formal a cert/puente/demo/preprod/prod va
+  SIEMPRE por `/dev-team:pase` (release-manager); `/dev-team:deploy` no lo reemplaza.
+
 ## Lecciones de incidentes reales (aplican SIEMPRE, no solo al proyecto donde se descubrieron)
 
 ### Namespace de imagenes: verificar colision ANTES de asumir push

@@ -9,10 +9,14 @@ description: Verifica que un servicio esta listo para deploy (Dockerfile, tests,
 > y unicamente cuando este procedimiento lo indica.
 
 
-Verifica readiness para deploy del servicio actual:
+Verifica readiness para deploy del servicio actual, contra el estandar FAAST (skill
+`deployment-standard`; para desplegar u operar el servidor usa `/dev-team:deploy`):
 
-1. **Dockerfile:**
-   - Existe? Multi-stage build? HEALTHCHECK? Non-root? Imagen pinneada?
+1. **Dockerfile (reglas duras R1–R9):**
+   - Multi-stage (R5)? HEALTHCHECK real (R3)? Non-root por UID del host (R2)? Imagen pinneada (no `latest`)?
+   - Un solo puerto interno `8080` (R1)? `.dockerignore` presente (R6)? `init:true` y logs a stdout (R7,R9)?
+   - `docker history` sin secretos en capas (R4)? `provenance:false` + tag `sha-<sha>` (R8)?
+   - `version.txt` como fuente unica de version? `appsettings` mapeado a variables de entorno?
 
 2. **Tests:**
    - Ejecutar suite de tests del stack detectado
