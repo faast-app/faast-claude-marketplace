@@ -14,8 +14,12 @@ argument-hint: 'HU-042 | run | plan HU-042 | generate HU-042 | heal | visual [up
 
 Pedido: $ARGUMENTS
 
-Invoca al agente `qa` (QA Lead). Antes de cualquier subcomando que valide: **REGLA DE
-ORO** — sin informe de conformidad (o stack COMPLETO en desa) no se valida; `blocked`.
+Invoca al agente `qa` (QA Lead). Toda evidencia (validacion, reproduccion, revalidacion de un
+fix, entrega) se produce con la skill `visual-evidence`: traza navegable + video con acciones y
+capitulos + capturas ancladas a `browser_verify_*` + snapshot de accesibilidad + sidecars de
+consola/red, con `INDEX.md` de analisis; al revalidar un fix, tanda `-revalidacion` con par
+antes/despues. Antes de cualquier subcomando que valide: **REGLA DE ORO** — sin informe de
+conformidad (o stack COMPLETO en desa) no se valida; `blocked`.
 Si no existe suite (`e2e/` o repo `{proyecto}-e2e` con `playwright.config.ts`): crearla
 desde `templates/e2e-faast/` del plugin (reemplazar `{{ProjectName}}`, `npm install`,
 `npx playwright install chromium`, copiar `.env.example` → `.env` con los NOMBRES de

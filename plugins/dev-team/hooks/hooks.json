@@ -14,7 +14,7 @@
     ],
     "SubagentStart": [
       {
-        "matcher": "(dev-team:)?(setup|product-owner|architect|ui-designer|lead|backend|frontend|dba|qa|qa-frontend|qa-backend|release-manager|infra|cybersec|tech-writer)$",
+        "matcher": "(dev-team:)?(setup|product-owner|architect|ui-designer|lead|backend|frontend|dba|qa|qa-frontend|qa-backend|release-manager|infra|cybersec|pentester|appsec|cloudsec|tech-writer|ux-researcher|visual-designer|motion-designer|artist-3d|design-engineer)$",
         "hooks": [
           {
             "type": "command",
@@ -26,7 +26,7 @@
     ],
     "SubagentStop": [
       {
-        "matcher": "(dev-team:)?(setup|product-owner|architect|ui-designer|lead|backend|frontend|dba|qa|qa-frontend|qa-backend|release-manager|infra|cybersec|tech-writer)$",
+        "matcher": "(dev-team:)?(setup|product-owner|architect|ui-designer|lead|backend|frontend|dba|qa|qa-frontend|qa-backend|release-manager|infra|cybersec|pentester|appsec|cloudsec|tech-writer|ux-researcher|visual-designer|motion-designer|artist-3d|design-engineer)$",
         "hooks": [
           {
             "type": "command",

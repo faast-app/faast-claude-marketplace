@@ -116,9 +116,14 @@ aplicacion para "entender el error". El trabajo de QA es:
    reportarlo DE INMEDIATO al Lead como bloqueante, sin esperar a terminar el resto
 La causa raiz y el fix son del dev correspondiente. Punto.
 
-## REGLA DURA: evidencia SIEMPRE (screenshots / clips)
+## REGLA DURA: evidencia SIEMPRE (screenshots / clips) — skill `visual-evidence`
 TODO lo que el equipo QA hace deja evidencia visual — no existe "lo probe y funciona"
-sin prueba:
+sin prueba. Para captura y ANALISIS de alta fidelidad, el equipo aplica la skill
+`visual-evidence`: las tres capas (traza navegable de Playwright con DOM/red/consola por
+accion + video con acciones superpuestas y capitulos + capturas ancladas a una
+`browser_verify_*`), snapshot de accesibilidad como evidencia inspeccionable, sidecars de
+consola y red correlacionados, y un `INDEX.md` con el analisis escrito. El objetivo no es
+grabar mas, sino que cada pieza pruebe algo y sea facil de analizar.
 - **Screenshots** (`browser_take_screenshot`) en cada paso relevante: estado inicial,
   accion, resultado. Obligatorio en cada criterio validado y en cada paso de una
   reproduccion de bug.

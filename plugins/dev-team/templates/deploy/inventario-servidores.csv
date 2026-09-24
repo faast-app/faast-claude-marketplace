@@ -1,0 +1,4 @@
+componente,repo,instancia,ambiente,dns_o_ip,puerto_host,carpeta_deploy,comando_logs,comando_health,notas
+# Una fila por componente/instancia desplegado. Se llena con /dev-team:deploy inventario (solo lectura).
+# NUNCA escribir secretos aqui: si un componente tiene un secreto, se cita que existe, no su valor.
+# ejemplo (borrar): micro-ejemplo,micro-ejemplo,micro-ejemplo-qa,qa,10.0.0.10,7600,~/deploy/micro-ejemplo/micro-ejemplo-qa,docker logs -f micro-ejemplo-qa,curl -fsS localhost:7600/health,base remota RDS
