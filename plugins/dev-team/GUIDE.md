@@ -1,6 +1,6 @@
 # Dev Team — Manual de Usuario
 
-**Version del plugin:** 2.12.x · **Integrantes del equipo:** 20 · **Comandos:** 24
+**Version del plugin:** 2.17.x · **Integrantes del equipo:** 23 · **Comandos:** 32
 
 Dev Team es un **equipo completo de desarrollo de software formado por asistentes de
 inteligencia artificial**. Funciona como una empresa de software en miniatura: hay
