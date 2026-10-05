@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>{{ID}} — {{TITULO}}</title>
+<!--
+  DOCUMENTO ESTANDARIZADO de la Mesa de Servicios (BUG / PRY / CTZ).
+  Convertir: soffice --headless --convert-to pdf|docx --outdir {salida} documento.html
+  Reglas al rellenar:
+   - Reemplaza {{PLACEHOLDERS}}. Conserva SOLO las secciones del TIPO del documento; borra las demas.
+   - Cuerpo 100% en lenguaje de negocio: sin codigo, tablas, servicios, endpoints ni ramas.
+   - Nada inventado: lo no cerrado va en "Pendientes". Datos personales de personas: nunca.
+   - Imagenes (prototipo / evidencia) copiadas junto al HTML o en base64, con pie de foto.
+-->
+<style>
+  :root{ --tinta:#1a2332; --suave:#5b6472; --linea:#e3e8ef; --marca:#123a5e; --acento:#0e7490; --ok:#15803d; --alerta:#b45309; }
+  *{box-sizing:border-box}
+  body{margin:0;color:var(--tinta);background:#fff;font:14px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  .page{max-width:800px;margin:0 auto;padding:28px 40px}
+  h1,h2,h3{color:var(--marca);line-height:1.25;margin:1.3em 0 .5em}
+  h1{font-size:25px} h2{font-size:18px;border-bottom:2px solid var(--linea);padding-bottom:.25em} h3{font-size:15px;color:var(--acento)}
+  .cover{padding:64px 40px 30px;border-bottom:4px solid var(--marca)}
+  .kicker{letter-spacing:.16em;text-transform:uppercase;font-size:12px;color:var(--acento);font-weight:700}
+  .cover h1{font-size:30px;margin:.15em 0}
+  .meta{display:grid;grid-template-columns:170px 1fr;gap:5px 16px;margin:18px 0}
+  .meta div:nth-child(odd){color:var(--suave);font-weight:600}
+  .badge{display:inline-block;padding:2px 10px;border-radius:999px;font-size:12px;font-weight:700;background:#eef2f6;color:var(--marca)}
+  table{border-collapse:collapse;width:100%;margin:.7em 0;font-size:13px}
+  th,td{border:1px solid var(--linea);padding:7px 9px;text-align:left;vertical-align:top}
+  th{background:#f5f8fb;color:var(--marca);font-weight:600}
+  .pendiente{background:#fffbeb;border-left:4px solid var(--alerta);padding:10px 14px;border-radius:0 6px 6px 0}
+  .veredicto{background:#f7faf9;border-left:4px solid var(--ok);padding:10px 14px;border-radius:0 6px 6px 0;font-weight:600}
+  figure{margin:12px 0} figure img{max-width:100%;border:1px solid var(--linea);border-radius:6px}
+  figcaption{font-size:12px;color:var(--suave);margin-top:4px}
+  .anexo{margin-top:32px;padding-top:14px;border-top:1px dashed var(--linea);font-size:13px;color:var(--suave)}
+  footer{margin-top:36px;padding-top:12px;border-top:1px solid var(--linea);font-size:11px;color:var(--suave)}
+  @media print{ .page{padding:0 12mm} h2{page-break-after:avoid} figure{page-break-inside:avoid} }
+</style>
+</head>
+<body>
+
+<section class="cover">
+  <div class="kicker">Mesa de Servicios · {{TIPO_LARGO}}</div>
+  <h1>{{TITULO}}</h1>
+  <span class="badge">{{ID}}</span> &nbsp; <span class="badge">{{ALCANCE}}</span> &nbsp; <span class="badge">{{PRODUCTO}}</span>
+  <div class="meta">
+    <div>Tipo</div><div>{{TIPO_LARGO}}</div>
+    <div>Alcance</div><div>{{ALCANCE}}</div>
+    <div>Producto(s)</div><div>{{PRODUCTO}}</div>
+    <div>Prioridad sugerida</div><div>{{PRIORIDAD}} — {{PRIORIDAD_MOTIVO}}</div>
+    <div>Fecha</div><div>{{FECHA}}</div>
+    <div>Version</div><div>v{{VERSION}}</div>
+    <div>Elaborado por</div><div>{{ELABORADO_POR}} (Mesa de Servicios)</div>
+    <div>Estado</div><div>{{ESTADO}}</div>
+  </div>
+</section>
+
+<div class="page">
+
+  <h2>Resumen ejecutivo</h2>
+  <p>{{RESUMEN_EJECUTIVO}}</p>
+
+  <!-- ===================== BUG (borrar si no es BUG) ===================== -->
+  <h2>Que ve mal el usuario</h2>
+  <p>{{QUE_VE_MAL}}</p>
+  <h2>Pasos como usuario</h2>
+  <ol>{{PASOS}}</ol>
+  <h2>Resultado esperado vs. obtenido</h2>
+  <p><b>Esperado:</b> {{ESPERADO}}<br><b>Obtenido:</b> {{OBTENIDO}}</p>
+  <h2>Desde cuando y con que frecuencia</h2>
+  <p>{{DESDE_CUANDO}}</p>
+  <h2>A quien afecta e impacto</h2>
+  <p>{{IMPACTO}}</p>
+  <h2>Evidencia</h2>
+  <div class="veredicto">Veredicto de reproduccion: {{VEREDICTO}} · Ambiente: {{AMBIENTE}} · Perfil: {{PERFIL}} · {{FECHA_REPRO}}</div>
+  <table><thead><tr><th>#</th><th>Que se hizo</th><th>Que paso</th><th>Captura</th></tr></thead><tbody>{{FILAS_REPRO}}</tbody></table>
+  <figure><img src="{{EVIDENCIA_IMG}}" alt="Evidencia"><figcaption>{{EVIDENCIA_PIE}}</figcaption></figure>
+  <p class="muted">Traza y video completos en la carpeta de evidencia de la solicitud; referenciados en el ticket.</p>
+
+  <!-- ===================== PRY / CTZ (borrar si es BUG) ===================== -->
+  <h2>Problema u oportunidad</h2>
+  <p>{{PROBLEMA}}</p>
+  <h2>Objetivo</h2>
+  <p>{{OBJETIVO}}</p>
+  <h2>Quienes lo usan y quien aprueba</h2>
+  <p>{{USUARIOS}}</p>
+  <h2>Alcance</h2>
+  <p><b>Incluye:</b></p><ul>{{INCLUYE}}</ul>
+  <p><b>No incluye:</b></p><ul>{{NO_INCLUYE}}</ul>
+  <h2>Como funciona hoy</h2>
+  <figure><img src="{{HOY_IMG}}" alt="Como funciona hoy"><figcaption>{{HOY_PIE}}</figcaption></figure>
+  <h2>Flujo deseado</h2>
+  <p>{{FLUJO}}</p>
+  <p><b>Ejemplos que dio el cliente:</b></p><ul>{{EJEMPLOS}}</ul>
+  <h2>Prototipo (boceto, no diseno final)</h2>
+  <figure><img src="{{PROTO_IMG}}" alt="Prototipo"><figcaption>{{PROTO_PIE}}</figcaption></figure>
+  <h2>Reglas de negocio</h2>
+  <ul>{{REGLAS}}</ul>
+  <h2>Dependencias y restricciones</h2>
+  <ul>{{DEPENDENCIAS}}</ul>
+  <h2>Criterios de exito</h2>
+  <ul>{{CRITERIOS}}</ul>
+
+  <!-- ===================== solo CTZ (borrar si no es CTZ) ===================== -->
+  <h2>Entregables</h2>
+  <ul>{{ENTREGABLES}}</ul>
+  <h2>Supuestos</h2>
+  <ul>{{SUPUESTOS}}</ul>
+  <h2>Exclusiones</h2>
+  <ul>{{EXCLUSIONES}}</ul>
+  <h2>Plazo esperado y condiciones</h2>
+  <p>{{PLAZO}}</p>
+  <h2>Quien decide y que necesita</h2>
+  <p>{{DECISOR}}</p>
+
+  <!-- ===================== pedido con scripts (borrar si no aplica) ===================== -->
+  <h2>Resolucion por datos</h2>
+  <p>{{RESOLUCION_DATOS}} — Quien autoriza: {{AUTORIZA}} · Quien ejecuta: {{EJECUTA}} (paquete preparado por la Mesa; la Mesa no ejecuta).</p>
+
+  <!-- ===================== comun ===================== -->
+  <h2>Pendientes</h2>
+  <div class="pendiente"><ul>{{PENDIENTES}}</ul></div>
+
+  <div class="anexo">
+    <b>Anexo</b> — Fuentes: {{FUENTES}} · Rondas de preguntas: {{RONDAS}} · Decisiones: {{DECISIONES}} ·
+    Ticket: {{TICKET}} · Cambios respecto a la version anterior: {{CAMBIOS}}
+  </div>
+
+  <footer>{{ID}} · {{TIPO_LARGO}} · {{ALCANCE}} · v{{VERSION}} · {{FECHA}} · Documento generado por la Mesa de Servicios. Complementa el ticket del backlog, no lo reemplaza.</footer>
+</div>
+</body>
+</html>

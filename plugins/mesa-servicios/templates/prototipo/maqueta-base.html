@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Maqueta — {{TITULO}}</title>
+<!--
+  KIT DE MAQUETA (wireframe estilo boceto) — Mesa de Servicios.
+  Un solo archivo, sin dependencias. Cada pantalla es una <section class="pantalla" data-pantalla="id">.
+  Los botones con data-ir="id" navegan entre pantallas. El indice se arma solo.
+  Notas al margen: <span class="nota" data-n="1"></span> dentro de la zona + lista en <aside class="notas">.
+  Reglas: gris, placeholders, texto en el idioma del cliente, datos ficticios, SIN colores de marca.
+-->
+<style>
+  :root{ --lapiz:#2f2f2f; --gris:#8a8a8a; --claro:#f3f3f3; --fondo:#fafafa; --borde:#5a5a5a; }
+  *{box-sizing:border-box}
+  body{margin:0;background:#e9e9e9;font-family:"Comic Sans MS","Segoe Print","Bradley Hand","Chalkboard SE",cursive,sans-serif;color:var(--lapiz)}
+  .barra{position:sticky;top:0;z-index:5;background:#fff;border-bottom:2px solid var(--borde);padding:8px 14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:13px}
+  .barra b{margin-right:8px}
+  .barra button{font:inherit;border:1.5px solid var(--borde);background:#fff;border-radius:6px;padding:3px 10px;cursor:pointer}
+  .barra button.activa{background:var(--claro);font-weight:700}
+  .lienzo{display:flex;gap:18px;padding:18px;align-items:flex-start;justify-content:center;flex-wrap:wrap}
+  .pantalla{display:none;width:1180px;max-width:100%;min-height:640px;background:var(--fondo);border:2px solid var(--borde);border-radius:4px;box-shadow:3px 3px 0 #bdbdbd;padding:0;position:relative}
+  .pantalla.visible{display:block}
+  .pantalla h1{font-size:18px;margin:0;padding:10px 16px;border-bottom:2px solid var(--borde);background:#fff}
+  .cuerpo{display:flex;min-height:580px}
+  .menu{width:200px;border-right:2px solid var(--borde);padding:12px;background:#f7f7f7}
+  .menu div{padding:6px 8px;border:1.5px dashed var(--gris);margin-bottom:6px;border-radius:4px;background:#fff}
+  .contenido{flex:1;padding:16px;display:flex;flex-direction:column;gap:14px}
+  /* componentes */
+  .caja{border:1.5px solid var(--borde);border-radius:4px;background:#fff;padding:10px;position:relative}
+  .fila{display:flex;gap:12px;flex-wrap:wrap}
+  .campo{flex:1;min-width:160px}
+  .campo label{display:block;font-size:12px;color:var(--gris);margin-bottom:3px}
+  .campo .input{border:1.5px solid var(--borde);border-radius:4px;height:32px;background:#fff;padding:5px 8px;color:var(--gris)}
+  .btn{display:inline-block;border:2px solid var(--borde);border-radius:6px;padding:6px 16px;background:#fff;cursor:pointer;font-weight:700}
+  .btn.principal{background:var(--claro)}
+  .tabla{width:100%;border-collapse:collapse;background:#fff}
+  .tabla th,.tabla td{border:1.5px solid var(--borde);padding:7px 9px;text-align:left}
+  .tabla th{background:var(--claro)}
+  .estado{display:inline-block;border:1.5px solid var(--borde);border-radius:999px;padding:1px 10px;font-size:12px;background:#fff}
+  .img{border:1.5px solid var(--borde);background:
+       linear-gradient(to top right,transparent calc(50% - 1px),var(--gris) 50%,transparent calc(50% + 1px)),
+       linear-gradient(to top left,transparent calc(50% - 1px),var(--gris) 50%,transparent calc(50% + 1px)),#fff;
+       min-height:120px;display:flex;align-items:center;justify-content:center;color:var(--gris);font-size:12px}
+  .grafico{border:1.5px solid var(--borde);background:#fff;min-height:140px;position:relative;overflow:hidden}
+  .grafico::after{content:"";position:absolute;left:8%;right:8%;bottom:20%;height:2px;background:var(--gris);transform:rotate(-8deg)}
+  .texto{color:var(--gris);font-size:13px;line-height:1.4}
+  .totales{display:flex;gap:12px}.totales .caja{flex:1;text-align:center}.totales b{font-size:20px;display:block}
+  .check{display:inline-block;width:14px;height:14px;border:1.5px solid var(--borde);vertical-align:middle;margin-right:6px;background:#fff}
+  /* notas al margen */
+  .nota{position:absolute;top:-10px;right:-10px;width:22px;height:22px;border-radius:50%;background:#fff;border:2px solid var(--lapiz);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center}
+  .nota::before{content:attr(data-n)}
+  .notas{width:260px;background:#fffbe6;border:1.5px dashed var(--borde);padding:12px;font-size:13px;border-radius:4px}
+  .notas h3{margin:0 0 8px;font-size:14px}
+  .notas li{margin-bottom:6px}
+  .pie{font-size:11px;color:var(--gris);padding:6px 16px;border-top:1.5px dashed var(--gris);background:#fff}
+</style>
+</head>
+<body>
+
+<div class="barra">
+  <b>Maqueta: {{TITULO}}</b> <span style="color:#8a8a8a">· boceto ilustrativo, no diseño final · v{{VERSION}}</span>
+  <span id="indice"></span>
+</div>
+
+<div class="lienzo">
+
+  <!-- ===== PANTALLA 1 (ejemplo: listado) — duplicar/adaptar por pantalla ===== -->
+  <section class="pantalla visible" data-pantalla="listado" data-nombre="{{PANTALLA_1_NOMBRE}}">
+    <h1>{{PANTALLA_1_NOMBRE}}</h1>
+    <div class="cuerpo">
+      <nav class="menu">
+        <div>Inicio</div><div><b>{{MODULO}}</b></div><div>Reportes</div><div>Configuración</div>
+      </nav>
+      <div class="contenido">
+        <div class="caja"><span class="nota" data-n="1"></span>
+          <div class="fila">
+            <div class="campo"><label>Buscar</label><div class="input">cliente, número…</div></div>
+            <div class="campo"><label>Estado</label><div class="input">Todos ▾</div></div>
+            <div class="campo"><label>Desde</label><div class="input">dd/mm/aaaa</div></div>
+            <div class="campo"><label>Hasta</label><div class="input">dd/mm/aaaa</div></div>
+            <div class="campo" style="flex:0"><label>&nbsp;</label><span class="btn">Filtrar</span></div>
+          </div>
+        </div>
+        <div class="totales">
+          <div class="caja"><b>12</b>Pendientes</div>
+          <div class="caja"><b>$ 48.500.000</b>Monto total</div>
+          <div class="caja"><b>3</b>Vencidas</div>
+        </div>
+        <div class="caja"><span class="nota" data-n="2"></span>
+          <table class="tabla">
+            <thead><tr><th><span class="check"></span></th><th>N°</th><th>Cliente</th><th>Monto</th><th>Vence</th><th>Estado</th><th></th></tr></thead>
+            <tbody>
+              <tr><td><span class="check"></span></td><td>10432</td><td>Empresa Ejemplo S.A.</td><td>$ 12.000.000</td><td>15/04/2026</td><td><span class="estado">Pendiente</span></td><td><span class="btn" data-ir="detalle">Ver</span></td></tr>
+              <tr><td><span class="check"></span></td><td>10433</td><td>Comercial Demo Ltda.</td><td>$ 8.500.000</td><td>18/04/2026</td><td><span class="estado">Aprobada</span></td><td><span class="btn" data-ir="detalle">Ver</span></td></tr>
+              <tr><td><span class="check"></span></td><td>10434</td><td>Servicios Prueba SpA</td><td>$ 28.000.000</td><td>02/04/2026</td><td><span class="estado">Vencida</span></td><td><span class="btn" data-ir="detalle">Ver</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div><span class="btn principal" data-ir="detalle">Aprobar seleccionadas</span> <span class="btn">Exportar</span></div>
+      </div>
+    </div>
+    <div class="pie">Pantalla 1 de {{N_PANTALLAS}} · {{PANTALLA_1_PROPOSITO}}</div>
+  </section>
+
+  <!-- ===== PANTALLA 2 (ejemplo: detalle / accion) ===== -->
+  <section class="pantalla" data-pantalla="detalle" data-nombre="{{PANTALLA_2_NOMBRE}}">
+    <h1>{{PANTALLA_2_NOMBRE}}</h1>
+    <div class="cuerpo">
+      <nav class="menu"><div>Inicio</div><div><b>{{MODULO}}</b></div><div>Reportes</div><div>Configuración</div></nav>
+      <div class="contenido">
+        <div class="fila">
+          <div class="caja" style="flex:2"><span class="nota" data-n="3"></span>
+            <div class="fila">
+              <div class="campo"><label>Cliente</label><div class="input">Empresa Ejemplo S.A.</div></div>
+              <div class="campo"><label>Monto</label><div class="input">$ 12.000.000</div></div>
+            </div>
+            <div class="fila">
+              <div class="campo"><label>Banco</label><div class="input">Seleccionar ▾</div></div>
+              <div class="campo"><label>Fecha de pago</label><div class="input">dd/mm/aaaa</div></div>
+            </div>
+            <div class="campo"><label>Observaciones</label><div class="input" style="height:70px">texto…</div></div>
+          </div>
+          <div class="caja" style="flex:1"><div class="img">documento adjunto</div><p class="texto">Resumen de la operación: lorem ipsum del negocio, con los datos que el usuario necesita ver antes de decidir.</p></div>
+        </div>
+        <div class="caja"><span class="nota" data-n="4"></span><div class="grafico"></div></div>
+        <div><span class="btn principal" data-ir="resultado">Aprobar</span> <span class="btn">Rechazar</span> <span class="btn" data-ir="listado">Volver</span></div>
+      </div>
+    </div>
+    <div class="pie">Pantalla 2 de {{N_PANTALLAS}} · {{PANTALLA_2_PROPOSITO}}</div>
+  </section>
+
+  <!-- ===== PANTALLA 3 (ejemplo: resultado) ===== -->
+  <section class="pantalla" data-pantalla="resultado" data-nombre="{{PANTALLA_3_NOMBRE}}">
+    <h1>{{PANTALLA_3_NOMBRE}}</h1>
+    <div class="cuerpo">
+      <nav class="menu"><div>Inicio</div><div><b>{{MODULO}}</b></div><div>Reportes</div><div>Configuración</div></nav>
+      <div class="contenido">
+        <div class="caja" style="text-align:center;padding:40px"><span class="nota" data-n="5"></span>
+          <div style="font-size:22px;font-weight:700">✓ Operación aprobada</div>
+          <p class="texto">Se envió la confirmación al cliente y la operación pasó a Tesorería.</p>
+          <span class="btn" data-ir="listado">Volver al listado</span>
+        </div>
+      </div>
+    </div>
+    <div class="pie">Pantalla 3 de {{N_PANTALLAS}} · {{PANTALLA_3_PROPOSITO}}</div>
+  </section>
+
+  <!-- ===== NOTAS AL MARGEN (que explica cada numero) ===== -->
+  <aside class="notas">
+    <h3>Notas</h3>
+    <ol>
+      <li>{{NOTA_1}}</li>
+      <li>{{NOTA_2}}</li>
+      <li>{{NOTA_3}}</li>
+      <li>{{NOTA_4}}</li>
+      <li>{{NOTA_5}}</li>
+    </ol>
+    <p class="texto">Boceto para validar la idea: estructura y flujo, no colores ni diseño final.</p>
+  </aside>
+</div>
+
+<script>
+  // navegacion entre pantallas + indice automatico
+  const pantallas=[...document.querySelectorAll('.pantalla')];
+  const indice=document.getElementById('indice');
+  function ir(id){pantallas.forEach(p=>p.classList.toggle('visible',p.dataset.pantalla===id));
+    [...indice.children].forEach(b=>b.classList.toggle('activa',b.dataset.ir===id));
+    history.replaceState(null,'','#'+id);}
+  pantallas.forEach((p,i)=>{const b=document.createElement('button');b.textContent=(i+1)+'. '+(p.dataset.nombre||p.dataset.pantalla);b.dataset.ir=p.dataset.pantalla;b.onclick=()=>ir(p.dataset.pantalla);indice.appendChild(b);});
+  document.body.addEventListener('click',e=>{const t=e.target.closest('[data-ir]');if(t){e.preventDefault();ir(t.dataset.ir);}});
+  ir((location.hash||'#'+pantallas[0].dataset.pantalla).slice(1));
+</script>
+</body>
+</html>

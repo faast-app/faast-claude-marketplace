@@ -1,0 +1,9 @@
+{
+  "name": "mesa-servicios",
+  "description": "Equipo de Mesa de Servicios con 10 agentes IA que recibe TODO lo que llega del cliente (tickets, reportes de bugs, cotizaciones, proyectos y pedidos de datos) desde cualquier fuente — correo, documento, transcripcion de Teams/Meet, audio o video (transcripcion local), chat — y lo convierte en un requerimiento cerrado: recepcion y normalizacion, analista que REPREGUNTA en lenguaje de negocio apoyado en el repo de conocimiento faast-brain, QA de negocio que reproduce bugs con Playwright MCP grabando todo (solo prueba, jamas causas), DBA de mesa con CERO ESCRITURA que arma scripts y flujos idempotentes, prototipador de maquetas wireframe, documento ejecutivo estandarizado (BUG / PRY / CTZ) con correlativo y alcance por cliente o transversal mas la Propuesta para el cliente en PDF y Word, y registro del ticket con etiquetas, documento y evidencia embebida en el Project de GitHub o Azure DevOps. Incluye curaduria del conocimiento y setup de credenciales y herramientas.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Carlos Fuentes",
+    "email": "carlos.fuentes@faast.cl"
+  }
+}
