@@ -1,0 +1,5 @@
+# secretos y datos sensibles: nunca
+*.env
+*.pem
+*.key
+*access*.json

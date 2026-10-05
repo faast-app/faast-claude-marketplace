@@ -1,0 +1,25 @@
+# steps.yaml — pasos re-ejecutables (OPCIONAL; lo llena `grabar`). Ayuda, no reemplaza el criterio:
+# un paso que falla se DETIENE y se reporta. Los pasos que escriben llevan parada: true.
+flujo: "{{dominio}}-{{flujo}}"
+clase: "consulta"
+ambiente: "pruebas"
+pasos:
+  - id: "01"
+    actor: "{{rol}}"
+    accion: "navigate"            # navigate | fill | click | select | verify | sql
+    objetivo: "{{url o pantalla}}"
+    espera: "pantalla visible"
+    evidencia: "01-abrir.png"
+    parada: false
+  - id: "02"
+    actor: "{{rol}}"
+    accion: "fill"
+    objetivo: "getByLabel('Cliente')"
+    valor: "<CLIENTE>"
+    evidencia: "02-filtro.png"
+    parada: false
+  - id: "03"
+    accion: "verify"
+    objetivo: "browser_verify_list_visible('{{columna o texto esperado}}')"
+    evidencia: "03-resultado.png"
+    parada: false

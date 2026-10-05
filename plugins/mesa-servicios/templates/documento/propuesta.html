@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Propuesta — {{TITULO}}</title>
+<!--
+  PROPUESTA para el cliente (Mesa de Servicios). Obligatoria en CTZ; opcional en PRY.
+  Convertir: soffice --headless --convert-to pdf|docx --outdir {salida} propuesta.html
+  Reglas: tono comercial-profesional, dirigida al cliente, en sus palabras; sin codigo.
+  La VALORIZACION la completa comercial / lider de mesa (la Mesa no pone precios ni esfuerzos).
+  Pantallas del prototipo con pie de foto, aclarando que son bocetos.
+-->
+<style>
+  :root{ --tinta:#1a2332; --suave:#5b6472; --linea:#e3e8ef; --marca:#123a5e; --acento:#0e7490; }
+  *{box-sizing:border-box}
+  body{margin:0;color:var(--tinta);background:#fff;font:14px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  .page{max-width:800px;margin:0 auto;padding:28px 40px}
+  h1,h2,h3{color:var(--marca);line-height:1.25;margin:1.3em 0 .5em}
+  h1{font-size:25px} h2{font-size:18px;border-bottom:2px solid var(--linea);padding-bottom:.25em}
+  .cover{padding:80px 40px 36px;border-bottom:4px solid var(--marca)}
+  .kicker{letter-spacing:.16em;text-transform:uppercase;font-size:12px;color:var(--acento);font-weight:700}
+  .cover h1{font-size:32px;margin:.15em 0}
+  .meta{display:grid;grid-template-columns:150px 1fr;gap:5px 16px;margin:18px 0}
+  .meta div:nth-child(odd){color:var(--suave);font-weight:600}
+  table{border-collapse:collapse;width:100%;margin:.7em 0;font-size:13px}
+  th,td{border:1px solid var(--linea);padding:7px 9px;text-align:left;vertical-align:top}
+  th{background:#f5f8fb;color:var(--marca);font-weight:600}
+  .valor{background:#f5f8fb;border:1px dashed var(--acento);padding:14px;border-radius:6px}
+  figure{margin:12px 0} figure img{max-width:100%;border:1px solid var(--linea);border-radius:6px}
+  figcaption{font-size:12px;color:var(--suave);margin-top:4px}
+  footer{margin-top:36px;padding-top:12px;border-top:1px solid var(--linea);font-size:11px;color:var(--suave)}
+  @media print{ .page{padding:0 12mm} h2{page-break-after:avoid} figure{page-break-inside:avoid} }
+</style>
+</head>
+<body>
+
+<section class="cover">
+  <div class="kicker">Propuesta</div>
+  <h1>{{TITULO}}</h1>
+  <p>Preparada para <b>{{CLIENTE}}</b></p>
+  <div class="meta">
+    <div>Referencia</div><div>{{ID}}</div>
+    <div>Fecha</div><div>{{FECHA}}</div>
+    <div>Version</div><div>v{{VERSION}}</div>
+    <div>Vigencia</div><div>{{VIGENCIA}}</div>
+    <div>Contacto</div><div>{{CONTACTO_FAAST}}</div>
+  </div>
+</section>
+
+<div class="page">
+  <h2>1. Contexto y objetivo</h2>
+  <p>{{CONTEXTO}}</p>
+  <p><b>Objetivo:</b> {{OBJETIVO}}</p>
+
+  <h2>2. Alcance</h2>
+  <p><b>Incluye:</b></p><ul>{{INCLUYE}}</ul>
+  <p><b>No incluye:</b></p><ul>{{NO_INCLUYE}}</ul>
+
+  <h2>3. Solucion propuesta</h2>
+  <p>{{SOLUCION}}</p>
+  <figure><img src="{{PROTO_IMG_1}}" alt="Pantalla propuesta"><figcaption>{{PROTO_PIE_1}} (boceto ilustrativo, no diseno final)</figcaption></figure>
+  <figure><img src="{{PROTO_IMG_2}}" alt="Pantalla propuesta"><figcaption>{{PROTO_PIE_2}} (boceto ilustrativo, no diseno final)</figcaption></figure>
+
+  <h2>4. Entregables</h2>
+  <ul>{{ENTREGABLES}}</ul>
+
+  <h2>5. Supuestos</h2>
+  <ul>{{SUPUESTOS}}</ul>
+
+  <h2>6. Exclusiones</h2>
+  <ul>{{EXCLUSIONES}}</ul>
+
+  <h2>7. Plan y plazos (estimados)</h2>
+  <table><thead><tr><th>Etapa</th><th>Que se entrega</th><th>Plazo estimado</th></tr></thead><tbody>{{ETAPAS}}</tbody></table>
+
+  <h2>8. Valorizacion</h2>
+  <div class="valor">{{VALORIZACION}}</div>
+
+  <h2>9. Condiciones</h2>
+  <ul>{{CONDICIONES}}</ul>
+
+  <h2>10. Proximos pasos</h2>
+  <ol>{{PROXIMOS_PASOS}}</ol>
+
+  <footer>{{ID}} · Propuesta v{{VERSION}} · {{FECHA}} · Vigente hasta {{VIGENCIA}} · Esta propuesta se basa en lo conversado y en los supuestos indicados; cambios en ellos pueden modificarla.</footer>
+</div>
+</body>
+</html>

@@ -15,6 +15,13 @@
       "homepage": "https://github.com/faast-app/faast-claude-marketplace"
     },
     {
+      "name": "mesa-servicios",
+      "description": "Equipo de Mesa de Servicios con 10 agentes IA: recibe todo lo que llega del cliente (tickets, bugs, cotizaciones, proyectos, pedidos de datos) desde cualquier fuente (correo, documentos, transcripciones de Teams/Meet, audio/video, chat), repregunta en lenguaje de negocio apoyado en el repo de conocimiento faast-brain, reproduce bugs con Playwright MCP grabando todo, arma scripts idempotentes sin ejecutarlos, maqueta wireframes, genera el documento ejecutivo estandarizado (BUG/PRY/CTZ) y la Propuesta en PDF/Word, y registra el ticket con etiquetas y evidencia embebida en GitHub Projects o Azure DevOps. Punto de entrada: /mesa-servicios:start.",
+      "category": "development",
+      "source": "./plugins/mesa-servicios",
+      "homepage": "https://github.com/faast-app/faast-claude-marketplace"
+    },
+    {
       "name": "dev-team",
       "description": "Equipo completo de desarrollo con 23 agentes IA: Product Owner (HUs en GitHub Projects o Azure DevOps), Arquitecto, equipo de Diseño (UX, UI, visual, motion, 3D, design engineer), Lead, Backend, Frontend, DBA, equipo QA (Playwright MCP incluido, evidencia visual), equipo de Ciberseguridad ofensiva (Cybersec Lead + pentester/appsec/cloudsec, pentest autorizado con RoE e informe PDF), Release Manager, Infra, Tech Writer y Setup. Soporta mono-repo y multi-repo, proyectos nuevos o existentes. Punto de entrada unico: /dev-team:start.",
       "category": "development",

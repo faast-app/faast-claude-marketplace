@@ -1,0 +1,28 @@
+{
+  "mesa": "{{nombre de la mesa o del proyecto}}",
+  "elaboradoPor": "{{Nombre Apellido — sale de aqui, nunca escrito a mano en documentos}}",
+  "tracker": {
+    "provider": "github",
+    "github": {
+      "org": "faast-app",
+      "repo": "{{repo-del-backlog}}",
+      "project": 0,
+      "columnaInicial": "Por priorizar",
+      "columnaCotizacion": "Pendiente aprobacion comercial",
+      "campos": { "estado": "Status", "prioridad": "Priority", "tipo": "Tipo", "cliente": "Cliente" }
+    },
+    "azure": { "organization": "https://dev.azure.com/{{org}}", "project": "{{proyecto}}", "areaPath": "", "iterationPath": "" },
+    "etiquetas": { "prefijos": { "tipo": "tipo:", "cliente": "cliente:", "producto": "producto:", "prioridad": "prioridad:", "origen": "origen:" } }
+  },
+  "clientes": [
+    { "codigo": "ACME", "nombre": "{{Nombre del cliente}}", "productos": ["factoring"] }
+  ],
+  "productos": ["factoring", "confirming", "leasing", "cobranza", "backoffice"],
+  "brain": { "path": "{{ruta local a faast-brain}}", "remote": "" },
+  "evidencia": { "repo": "faast-app/{{repo-con-rama-evidence}}" },
+  "ambientes": { "pruebas": { "url": "https://{{qa}}", "cuentasEnv": ["MESA_QA_ANALISTA"] }, "produccion": { "url": "", "requiereAutorizacion": true } },
+  "fuentes": { "transcripcion": { "motor": "whisper", "modelo": "medium", "idioma": "es" }, "conectores": [] },
+  "documentos": { "plantillas": "", "outputDir": "" },
+  "sql": { "sandbox": "" },
+  "team": { "models": {} }
+}
