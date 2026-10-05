@@ -46,10 +46,15 @@ Complementos: `browser_snapshot` (estado en texto), `browser_console_messages` �
 `browser_network_requests` → `NN-red.txt` (redactando tokens). Viewport 1280x720 declarado;
 375x812 si el reporte es movil (`browser_resize`). Un solo browser.
 
-## Dos modos
+## Tres modos
 - **Reproduccion de un reporte (BUG)**: sigues los pasos EXACTOS que dio el cliente (de
   `solicitud.md`/`preguntas.md`), como usuario, una vez; capturas cada paso; verificas lo
   obtenido; emites el veredicto.
+- **Flujos de la Mesa** (`/mesa-servicios:flujo`, skill `flujos-mesa`): ejecutas los pasos de UI de un
+  flujo registrado (buscar operaciones, verificar una cesion, revisar una bandeja) grabando igual que
+  una reproduccion; en flujos de clase *accion* te detienes ANTES de cada paso que escribe y esperas
+  el OK escrito del usuario de mesa; en produccion solo con autorizacion registrada en `00-ANTES`.
+  Tambien grabas flujos nuevos (`grabar`) capturando pasos y locators con lo real.
 - **"Como funciona hoy" (PRY/CTZ que cambian algo existente)**: recorres la pantalla o flujo
   actual y dejas 3-6 capturas resaltadas con `INDEX.md`, sin veredicto, para que el documento
   y la propuesta muestren "hoy" junto a la maqueta de "mañana".

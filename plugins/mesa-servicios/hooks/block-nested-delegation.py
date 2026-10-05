@@ -9,7 +9,7 @@ import json, sys
 TEAM = {"mesa-lead","recepcion","analista","qa-negocio","dba-mesa","prototipador",
         "redactor","registrador","curador","setup"}
 CHEAP_OK = {"explore"}
-SKILLS_NOT_AGENTS = {"start","recibir","analizar","reproducir","prototipo","sql",
+SKILLS_NOT_AGENTS = {"start","recibir","analizar","reproducir","prototipo","sql","flujo",
                      "documento","ticket","brain","estado"}   # "setup" tambien es AGENTE
 
 def short(name):

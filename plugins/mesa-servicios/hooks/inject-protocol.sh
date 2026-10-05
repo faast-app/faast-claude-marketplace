@@ -7,7 +7,7 @@ for _ in 1 2 3 4 5 6 7 8; do
   parent=$(dirname "$d"); [ "$parent" = "$d" ] && break; d="$parent"
 done
 [ -z "$found" ] && exit 0
-mkdir -p "$found/solicitudes" "$found/handoffs" "$found/metrics" "$found/evidencia" "$found/flujos-sql" 2>/dev/null
+mkdir -p "$found/solicitudes" "$found/handoffs" "$found/metrics" "$found/evidencia" "$found/flujos-sql" "$found/flujos" 2>/dev/null
 [ -f "$found/correlativos.json" ] || echo '{}' > "$found/correlativos.json" 2>/dev/null
 cat <<'PROTO'
 <mesa-servicios-protocolo>
@@ -24,7 +24,9 @@ coordinador operativo de la Mesa — aplicas las reglas del mesa-lead aunque no 
 4. Reglas duras: nada se inventa (lo no respondido queda pendiente); lenguaje de negocio sin
    codigo en preguntas, documentos y tickets; el QA de negocio SOLO prueba (jamas causas);
    el DBA de mesa tiene CERO ESCRITURA (arma scripts idempotentes, nunca los ejecuta);
-   evidencia embebida en el ticket; una cotizacion no es trabajo hasta su aprobacion comercial.
+   evidencia embebida en el ticket; una cotizacion no es trabajo hasta su aprobacion comercial;
+   los flujos propios de la Mesa (/mesa-servicios:flujo) en produccion requieren autorizacion
+   registrada por corrida y parada antes de cada paso que escribe.
 5. Correlativo TIPO-AÑO-NNN con alcance (cliente o transversal) en todo documento y ticket.
 6. Modelo por agente: team.models.{agente} en .mesa/config.json y luego
    ~/.claude/mesa-servicios.config.json; default sonnet; fable prohibido.

@@ -1,6 +1,6 @@
 # Mesa de Servicios
 
-Equipo de 10 agentes IA que recibe **todo lo que llega del cliente** — tickets, reportes de
+Equipo de 10 agentes IA (12 comandos) que recibe **todo lo que llega del cliente** — tickets, reportes de
 bugs, cotizaciones, proyectos, pedidos de datos — desde **cualquier fuente** (correo,
 documento, transcripcion de Teams/Meet, audio o video, chat, relato), y lo convierte en un
 requerimiento **cerrado, documentado y registrado** en el backlog, listo para que el equipo de
@@ -43,7 +43,10 @@ Eso es todo: detecta si la Mesa esta configurada y te guia. La primera vez corre
 7. **Ticket** (`/mesa-servicios:ticket`) — issue en el Project de GitHub (o PBI en Azure) con
    etiquetas completas, documento y evidencia embebida. Las cotizaciones esperan aprobacion
    comercial antes de ser trabajo.
-8. **Brain** (`/mesa-servicios:brain`) — el curador destila lo aprendido a `faast-brain` para que
+8. **Flujos propios** (`/mesa-servicios:flujo`) — la Mesa registra y re-ejecuta lo que hace a diario
+   (buscar operaciones, verificar una cesion, revisar una bandeja), con evidencia, verificaciones de
+   solo lectura y paradas antes de cualquier accion; en produccion con autorizacion registrada.
+9. **Brain** (`/mesa-servicios:brain`) — el curador destila lo aprendido a `faast-brain` para que
    la proxima solicitud se cierre con menos preguntas.
 
 ## El equipo

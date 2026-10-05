@@ -39,6 +39,7 @@ Interpretar $ARGUMENTS:
 - "reproducir / el cliente dice que falla / evidencia" → `/mesa-servicios:reproducir {ID}`
 - "maqueta / como se veria / prototipo / pantalla" → `/mesa-servicios:prototipo {ID}`
 - "script / revertir / corregir datos / consulta a la base" → `/mesa-servicios:sql …`
+- "flujo / siempre hago esto / buscar operaciones / registrar como lo hago" → `/mesa-servicios:flujo {crear|grabar|ejecutar} …`
 - "documento / propuesta / pdf / word" → `/mesa-servicios:documento {ID}`
 - "ticket / subir al backlog / registrar" → `/mesa-servicios:ticket {ID}`
 - "que sabemos de / el negocio / el cliente X" → `/mesa-servicios:brain query …`

@@ -29,16 +29,20 @@ escritura, lo reporta como riesgo. Nada se escribe.
    por que, quien autoriza y ambiente (`preguntas.md`). Si falta, volver a `analizar`.
 2. **Plan primero**: que se va a tocar, cuantas filas se espera, riesgos, quien ejecutara. OK.
 3. `dba-mesa`: diagnostico en lectura (`00-estado-actual.md` con before-image y conteos) →
-   scripts por la regla global (`MYSQL/1_base/7_update.sql`…, guards, PK + valor previo) →
-   `VERIFICACION.sql` + `REVERSA.sql` + `README.md` en negocio → checklist.
+   `00-verificacion-previa.sql` + `00-respaldo.sql` (solo lectura) → paquete ejecutable en la
+   regla global (`MYSQL/1_db_fintec/7_update.sql`…, guards, PK + valor previo) →
+   `00-verificacion-posterior.sql` → `reversa/MOTOR/N_base/N_tipo.sql` → `README.md` en
+   negocio → checklist.
 4. Salida: ruta del paquete en `.mesa/solicitudes/{ID}/scripts/`, filas afectadas, riesgos y
    **quien debe ejecutarlo**. Si el pedido se repite, propone dejarlo como flujo.
 
-## `flujo crear {dominio}/{flujo}` — flujo reutilizable
-Crea `.mesa/flujos-sql/{dominio}/{flujo}/` desde `templates/flujo-sql/` (README con parametros,
-`01-verificar-estado.sql`, `02-respaldo.sql`, `03-{cambio}.sql`, `04-verificar-posterior.sql`,
-`05-reversa.sql`) con placeholders `<PARAMETRO>`; el `dba-mesa` lo completa con el conocimiento
-del proceso (faast-brain) y el diagnostico en lectura de un caso real. Ejemplo:
+## `flujo crear {dominio}/{flujo}` — flujo reutilizable (regla global de formato)
+Crea `.mesa/flujos-sql/{dominio}/{flujo}/` desde `templates/flujo-sql/`: `README.md` (parametros,
+orden, riesgos, quien ejecuta), `00-verificacion-previa.sql` y `00-respaldo.sql` (solo lectura,
+fuera del paquete), **`MOTOR/N_base/N_tipo.sql`** (el cambio: `MYSQL/1_db_fintec/7_update.sql`,
+`5_insertInto.sql`, `8_delete.sql`…, un archivo por tipo), `00-verificacion-posterior.sql` y
+`reversa/MOTOR/N_base/N_tipo.sql`. Placeholders `<PARAMETRO>`; el `dba-mesa` lo completa con el
+conocimiento del proceso (faast-brain) y el diagnostico en lectura de un caso real. Ejemplo:
 `factoring/revertir-operacion`.
 
 ## `flujo listar` — flujos disponibles

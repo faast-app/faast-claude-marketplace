@@ -76,27 +76,38 @@ cliente o la conexion: `blocked` + `/mesa-servicios:setup`.
 - Cada script de cambio va acompañado de su **verificacion** (`SELECT` antes/despues con
   `-- Esperado:`) y de su **reversa** (script que deshace, tambien guardado e idempotente).
 
-## Flujos de scripts reutilizables (`.mesa/flujos-sql/{dominio}/{flujo}/`)
+## Flujos de scripts reutilizables (`.mesa/flujos-sql/{dominio}/{flujo}/`) — misma regla global
 Cuando un pedido se repite ("revertir operacion de factoring", "reabrir cesion"), lo dejas como
-flujo parametrizado:
+flujo parametrizado. Un flujo ES un paquete en la regla global con placeholders:
 ```
 flujos-sql/factoring/revertir-operacion/
-├── README.md              para que sirve, cuando aplica, parametros (ID_OPERACION…), riesgos, quien autoriza, quien ejecuta
-├── 01-verificar-estado.sql   SELECTs de precondicion con -- Esperado:
-├── 02-respaldo.sql           before-image (SELECT … para guardar el estado previo)
-├── 03-revertir.sql           cambio guardado e idempotente (7_update / 8_delete segun regla)
-├── 04-verificar-posterior.sql
-└── 05-reversa.sql            deshacer el cambio (guardado)
+├── README.md                              para que sirve, cuando aplica, parametros, orden, riesgos, quien autoriza, quien ejecuta
+├── 00-verificacion-previa.sql             SELECTs de precondicion con -- Esperado:  (solo lectura, fuera del paquete ejecutable)
+├── 00-respaldo.sql                        before-image (SELECT) — solo lectura
+├── MYSQL/1_db_fintec/7_update.sql         EL CAMBIO: motor → base numerada → tipo numerado (7_update / 8_delete / 5_insertInto), guardado por PK + valor previo
+├── 00-verificacion-posterior.sql          SELECTs de resultado — solo lectura
+└── reversa/MYSQL/1_db_fintec/7_update.sql la REVERSA: otro paquete, mismo formato
 ```
 Los parametros van como placeholders explicitos (`<ID_OPERACION>`), nunca valores de un caso
-pegados. El README dice en negocio que hace cada paso. `/mesa-servicios:sql flujo` los crea,
-lista y prepara (rellena parametros para un caso → paquete listo para ejecutar por el autorizado).
+pegados. El README dice en negocio que hace cada paso y en que orden. `/mesa-servicios:sql flujo`
+los crea (desde `templates/flujo-sql/`), lista y prepara (rellena parametros para un caso →
+paquete identico en la solicitud, listo para que lo ejecute el autorizado).
 
-## Paquete de entrega por solicitud (`.mesa/solicitudes/{ID}/scripts/`)
-`00-estado-actual.md` (before-image y conteos) · carpeta `MOTOR/N_base/` con los `.sql` por tipo ·
-`VERIFICACION.sql` · `REVERSA.sql` · `README.md` (que hace, filas afectadas, riesgos, orden de
-ejecucion, quien ejecuta, como se verifica despues). Si va a un ambiente formal, el paquete entra
-al pase del dev-team (`/dev-team:pase`) y el release-manager lo audita como cualquier otro.
+## Verificaciones dentro de los flujos de la Mesa
+En `/mesa-servicios:flujo` (skill `flujos-mesa`) corres SOLO los `SELECT` de
+`referencias/verificacion.md` (precondiciones y resultado) y reportas si se cumplen los
+`-- Esperado:`. Jamas un cambio por SQL dentro de un flujo: si el flujo necesita tocar datos, es un
+paquete de scripts (`/mesa-servicios:sql`) para el autorizado.
+
+## Paquete de entrega por solicitud (`.mesa/solicitudes/{ID}/scripts/`) — regla global, sin excepcion
+`README.md` (que hace, filas afectadas, riesgos, orden, quien autoriza, QUIEN EJECUTA) ·
+`00-estado-actual.md` (before-image y conteos) · `00-verificacion-previa.sql` · `00-respaldo.sql` ·
+**`MOTOR/N_base/N_tipo.sql`** (lo unico que se ejecuta como cambio: `MYSQL/1_db_fintec/7_update.sql`,
+`SQL/1_db_interface/5_insertInto.sql`…) · `00-verificacion-posterior.sql` ·
+**`reversa/MOTOR/N_base/N_tipo.sql`**. Los `00-*.sql` son solo `SELECT` y quedan fuera de las
+carpetas de motor: no forman parte de lo que audita y ejecuta Plataformas. Nada suelto, nada
+por paso, nada por ticket. Si va a un ambiente formal, el paquete entra al pase del dev-team
+(`/dev-team:pase`) y el release-manager lo audita como cualquier otro.
 
 ## Escenarios que manejas
 - **"Reviertan la operacion 10432"**: confirmas en lectura que existe, su estado y que depende de

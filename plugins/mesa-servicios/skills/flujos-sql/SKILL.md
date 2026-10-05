@@ -51,31 +51,43 @@ que el script apunte exactamente a lo correcto.
   sin mojibake (grep de `Ã`, `Â`, `�`), acentos y eñes intactos.
 - Vistas `CREATE OR REPLACE VIEW` sin DEFINER; procedures con `DROP … IF EXISTS`.
 
-## Paquete por solicitud (`.mesa/solicitudes/{ID}/scripts/`)
+## Paquete por solicitud (`.mesa/solicitudes/{ID}/scripts/`) — regla global, sin excepcion
 ```
-00-estado-actual.md     before-image: SELECTs de diagnostico con su resultado (sin datos personales), conteos, dependencias
-MYSQL/… · SQL/…         los scripts por motor/base/tipo (regla global)
-VERIFICACION.sql        SELECTs antes/despues con "-- Esperado:" por cada cambio
-REVERSA.sql             deshacer cada cambio, tambien guardado e idempotente
-README.md               en negocio: que hace, sobre que (IDs), cuantas filas, riesgos, orden de ejecucion, quien autoriza, QUIEN EJECUTA, como se verifica despues
+scripts/
+├── README.md                       en negocio: que hace, sobre que (IDs), cuantas filas, riesgos, orden, quien autoriza, QUIEN EJECUTA
+├── 00-estado-actual.md             before-image: SELECTs de diagnostico con su resultado (sin datos personales), conteos, dependencias
+├── 00-verificacion-previa.sql      SELECTs de precondicion con "-- Esperado:" — solo lectura, FUERA del paquete ejecutable
+├── 00-respaldo.sql                 SELECTs de before-image — solo lectura
+├── MYSQL/1_db_fintec/7_update.sql  EL PAQUETE EJECUTABLE: motor → base numerada → tipo numerado (1_…8_), un archivo por tipo
+├── SQL/1_db_interface/5_insertInto.sql
+├── 00-verificacion-posterior.sql   SELECTs de resultado — solo lectura
+└── reversa/MYSQL/1_db_fintec/7_update.sql   la REVERSA: otro paquete, mismo formato y rigor
 ```
+Lo que se EJECUTA es exactamente `MOTOR/N_base/N_tipo.sql` (y, si hay que deshacer,
+`reversa/MOTOR/N_base/N_tipo.sql`). Los `00-*.sql` son solo `SELECT` (verificar y respaldar) y
+no son parte del paquete que audita y ejecuta Plataformas: por eso llevan prefijo `00-` y
+quedan fuera de las carpetas de motor. Nada suelto, nada por paso, nada por ticket.
 
-## Flujos reutilizables (`.mesa/flujos-sql/{dominio}/{flujo}/`)
-Cuando un pedido se repite, se deja parametrizado para que la proxima vez sea rellenar y entregar:
+## Flujos reutilizables (`.mesa/flujos-sql/{dominio}/{flujo}/`) — misma regla
+Cuando un pedido se repite, se deja parametrizado para que la proxima vez sea rellenar y entregar.
+Un flujo ES un paquete en la regla global con placeholders:
 ```
 flujos-sql/factoring/revertir-operacion/
-├── README.md                 para que sirve · cuando aplica · parametros (<ID_OPERACION>, <MOTIVO>) · riesgos · quien autoriza · quien ejecuta · casos en que NO aplica
-├── 01-verificar-estado.sql   precondiciones (-- Esperado: estado = 'GIRADA', 1 fila)
-├── 02-respaldo.sql           before-image de todo lo que se tocara
-├── 03-revertir.sql           el cambio (segun regla: 7_update / 8_delete), guardado por PK + valor previo
-├── 04-verificar-posterior.sql
-└── 05-reversa.sql            deshacer (guardado)
+├── README.md                              para que sirve · cuando aplica · parametros (<ID_OPERACION>, <MOTIVO>) · orden · riesgos · quien autoriza · quien ejecuta
+├── 00-verificacion-previa.sql             precondiciones (-- Esperado: estado = 'GIRADA', 1 fila)
+├── 00-respaldo.sql                        before-image de todo lo que se tocara
+├── MYSQL/1_db_fintec/7_update.sql         el cambio: tipo segun regla (7_update, 8_delete, 5_insertInto), guardado por PK + valor previo
+├── 00-verificacion-posterior.sql
+└── reversa/MYSQL/1_db_fintec/7_update.sql deshacer, mismo formato
 ```
 - Parametros como placeholders explicitos `<NOMBRE>`; nunca valores de un caso pegados en el flujo.
 - `/mesa-servicios:sql flujo preparar {dominio}/{flujo} {ID}` rellena los parametros para un caso
-  y deja el paquete en la solicitud; el flujo base no se modifica.
-- Un flujo se versiona con la Mesa (`.mesa/flujos-sql/` si se versiona); los paquetes de casos
-  concretos viven en cada solicitud.
+  y deja el paquete (identica estructura) en `.mesa/solicitudes/{ID}/scripts/`; el flujo base no
+  se modifica.
+- Si un flujo toca varias bases, cada una va en su carpeta numerada en orden de ejecucion
+  (`MYSQL/1_db_fintec/`, `MYSQL/2_db_dicom/`); si toca varios motores, cada motor en su carpeta.
+- Un flujo se versiona con la Mesa (`.mesa/flujos-sql/`); los paquetes de casos concretos viven
+  en cada solicitud.
 
 ## Diagnostico en solo lectura (lo que SI se ejecuta)
 ```sql
@@ -91,7 +103,8 @@ Si el conteo no coincide con lo esperado (el cliente cree que esta en un estado 
 se reporta: puede ser otro problema; nunca se "fuerza" el script.
 
 ## Checklist de entrega (lo que audita el release-manager)
-- [ ] Carpetas por motor y base numerada; archivos por tipo con prefijo; nada suelto
+- [ ] Paquete ejecutable SOLO en `MOTOR/N_base/N_tipo.sql`; verificaciones `00-*.sql` fuera; reversa en `reversa/` con el mismo formato
+- [ ] Carpetas por motor y base numerada; archivos por tipo con prefijo; nada suelto, nada por paso ni por ticket
 - [ ] Cabecera por archivo con fuente y autorizacion
 - [ ] INSERTs = guards; cero `ON DUPLICATE`/`REPLACE`; UPDATE/DELETE por PK + valor previo
 - [ ] Sin esquemas calificados; FKs por clave natural; UTF-8 sin mojibake
