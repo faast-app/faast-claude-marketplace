@@ -76,11 +76,13 @@ trata de grabar mas, sino de que cada pieza pruebe algo y sea analizable.
   verificacion `browser_verify_*` que lo cierra
 - Viewport declarado en cada captura: 1280x720 escritorio; 375x812 movil cuando el
   criterio es responsive (`browser_resize`)
-- Cada bug = screenshots de CADA paso de la reproduccion + **trace navegable** (`browser_start_tracing`
-  al inicio, `browser_stop_tracing` al final → `.zip`; es la herramienta de ANALISIS: DOM/red/consola
-  por accion, se abre con `npx playwright show-trace`) + **clip analizable**
-  (`browser_start_video`, `browser_video_show_actions` para superponer las acciones,
-  `browser_video_chapter` por paso, `browser_stop_video`; < 30 s) + **snapshot de accesibilidad**
+- Cada bug = screenshots de CADA paso de la reproduccion + **clip analizable a tamaño real**
+  (navegador limpio → `browser_resize` → `browser_start_video` con `size` = viewport exacto →
+  `browser_video_show_actions` → `browser_video_chapter` por paso → `browser_stop_video`; < 30 s)
+  + **trace navegable** (`browser_start_tracing` SIEMPRE despues del video, nunca antes: si la traza
+  arranca primero el video sale chico y borroso; `browser_stop_tracing` al final → `.zip`; DOM/red/
+  consola por accion, se abre con `npx playwright show-trace`). Al cerrar, `normalizar_video.py` de
+  la skill `visual-evidence` verifica el video y deja `.mp4` + portada para entregar + **snapshot de accesibilidad**
   (`browser_snapshot` → `.txt`) del estado clave. Son tools del MCP: NO escribes scripts ad hoc para grabar
 - Consola y red del flujo (`browser_console_messages`, `browser_network_requests`) se
   guardan como `.txt` junto a las capturas: 0 errores JS y 0 4xx/5xx inesperados es

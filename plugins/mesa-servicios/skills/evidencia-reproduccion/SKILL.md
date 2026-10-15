@@ -31,12 +31,14 @@ tambien; esta es su version para la Mesa.
   consistente (2/2) o intermitente (1/2).
 
 ## Las tres capas (siempre las tres)
-1. **Traza navegable** — `browser_start_tracing` al inicio, `browser_stop_tracing` al final
-   (`.zip`). Es la herramienta de ANALISIS: por cada accion guarda el estado de la pantalla,
-   las llamadas de red y los mensajes de consola. Se abre con `npx playwright show-trace`.
+1. **Traza navegable** — `browser_start_tracing` al inicio, **justo despues de encender el
+   video**, y `browser_stop_tracing` al final (`.zip`). Es la herramienta de ANALISIS: por cada
+   accion guarda el estado de la pantalla, las llamadas de red y los mensajes de consola. Se abre
+   con `npx playwright show-trace`.
 2. **Video analizable** — `browser_start_video` + `browser_video_show_actions` (los clics y lo
    que se escribe quedan superpuestos) + `browser_video_chapter` por paso + `browser_stop_video`.
-   El video se mira completo; los capitulos lo hacen navegable, no se salta nada.
+   El video se mira completo; los capitulos lo hacen navegable, no se salta nada. Se graba a
+   tamaño real con la secuencia de abajo.
 3. **Capturas ancladas** — en cada paso, `browser_highlight` sobre lo relevante (y
    `browser_annotate` si hace falta explicar) antes de `browser_take_screenshot`; la captura del
    resultado va con la verificacion explicita (`browser_verify_text_visible`,
@@ -46,13 +48,36 @@ Complementos: `browser_snapshot` (estado de la pantalla en texto inspeccionable)
 `browser_console_messages` → `NN-consola.txt`, `browser_network_requests` → `NN-red.txt`
 (secretos y tokens redactados). Viewport declarado (1280x720; 375x812 si es movil).
 
+## Video a tamaño real (regla dura, verificada)
+Playwright usa UNA sola captura de pantalla por pagina para la traza y el video, y el tamaño lo
+fija quien la enciende primero. La traza la enciende reducida a 800 px: si arranca antes que el
+video, o si hubo cualquier traza antes en la misma sesion del navegador, el video sale con la
+pantalla chica en una esquina, el resto gris y el texto borroso. Secuencia obligatoria:
+1. **Navegador limpio**: si ya se uso traza o video en esta sesion, `browser_close` y volver a entrar.
+2. `browser_resize` al viewport (1280x720; 375x812 si es movil).
+3. `browser_start_video` con `size` **igual al viewport** (`{"width":1280,"height":720}`).
+4. `browser_video_show_actions`, y recien entonces `browser_start_tracing`.
+5. Los pasos con `browser_video_chapter`; sin cambiar el viewport a mitad de grabacion.
+6. `browser_stop_tracing` y luego `browser_stop_video`. Un video por sesion de navegador
+   (la segunda corrida va en otro navegador limpio).
+7. Verificar y preparar la entrega:
+   ```bash
+   python3 <carpeta-de-esta-skill>/scripts/normalizar_video.py .mesa/solicitudes/{ID}/evidencia/reproduccion.webm
+   ```
+   `OK` deja `reproduccion.mp4` (se abre en QuickTime, Teams y GitHub; el `.webm` no se abre en
+   QuickTime) y `reproduccion-portada.png`. `REPARADO` significa que la grabacion salio mal: el
+   `.mp4` ocupa la pantalla completa pero sigue borroso, se anota en `INDEX.md` y, si es la prueba
+   del bug, se regraba. El `.webm` original no se toca. Al ticket va la portada embebida con link
+   al `.mp4`.
+
 ## Carpeta y nombres
 ```
 .mesa/solicitudes/{ID}/evidencia/
 ├── 00-ANTES-datos-y-ambiente.md     que se va a hacer, con que cuenta (nombre de variable), que dato, que ambiente
 ├── 01-{accion}.png … NN-{accion}.png capturas numeradas por paso (fallas: NN-BLOQUEANTE-*.png)
 ├── reproduccion.trace.zip
-├── reproduccion.webm
+├── reproduccion.webm                 original (no se toca)
+├── reproduccion.mp4 · reproduccion-portada.png   para entregar (normalizar_video.py)
 ├── NN-consola.txt · NN-red.txt
 ├── INDEX.md                          2-4 lineas por archivo: que muestra y donde esta el punto clave
 └── reproduccion.md                   el informe con el veredicto
@@ -108,7 +133,9 @@ propuesta muestren "hoy" junto a la maqueta de "mañana". Sin veredicto; solo co
 ## Checklist de una reproduccion bien hecha
 - [ ] Ambiente acordado y cuentas de prueba por nombre de variable
 - [ ] `00-ANTES` escrito antes de tocar nada
+- [ ] Navegador limpio, video con `size` = viewport, traza DESPUES del video
 - [ ] Traza + video con acciones y capitulos + capturas resaltadas con verificacion
+- [ ] `normalizar_video.py` en OK (o REPARADO anotado / regrabado) → `.mp4` + portada
 - [ ] Consola y red guardadas y correlacionadas
 - [ ] Segunda corrida si se reprodujo (consistente/intermitente)
 - [ ] `INDEX.md` + `reproduccion.md` con veredicto explicito, en lenguaje de negocio

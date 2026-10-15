@@ -27,8 +27,9 @@ codigo, no toca datos, no reintenta. A la primera falla, reporta.
 Mostrar en 4 lineas que se va a hacer (pasos, ambiente, perfil, que se graba) y esperar OK.
 
 ## Paso 2 — Reproduccion (agente `qa-negocio`)
-Invocar al `qa-negocio`. Aplica la skill `evidencia-reproduccion`: `00-ANTES`, traza desde el
-inicio, video con acciones y capitulos, captura resaltada por paso con `browser_verify_*`,
+Invocar al `qa-negocio`. Aplica la skill `evidencia-reproduccion`: `00-ANTES`, video a tamaño
+real con acciones y capitulos y la traza encendida despues del video (navegador limpio; video
+verificado con `normalizar_video.py`), captura resaltada por paso con `browser_verify_*`,
 snapshot de accesibilidad, consola y red; un intento por paso; segunda corrida completa solo
 si se reprodujo (consistente 2/2 / intermitente 1/2). Con `--hoy`: recorre la pantalla actual
 y deja 3-6 capturas con `INDEX.md`, sin veredicto.
