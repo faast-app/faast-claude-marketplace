@@ -1,0 +1,72 @@
+{
+  "org": "mi-organizacion",
+  "repo": "mi-organizacion/backlog-transversal",
+  "project": "Portal de Clientes",
+  "project_label": "PortalClientes",
+  "generar_salidas": true,
+  "categoria_salidas": "Experiencia de uso",
+  "vistas": true,
+  "fases": [
+    {
+      "nombre": "Fase 0",
+      "titulo": "Base lista para probar",
+      "objetivo": "Que el equipo y los usuarios clave puedan entrar al portal en un ambiente de pruebas.",
+      "condicion_salida": "Un usuario de prueba entra al portal, ve su resumen de cuenta y el área de negocio lo aprueba."
+    },
+    {
+      "nombre": "Fase 1",
+      "titulo": "Autogestión del cliente",
+      "objetivo": "Que el cliente resuelva solo sus consultas más frecuentes sin llamar a soporte.",
+      "condicion_salida": "Los clientes piloto descargan sus documentos y actualizan sus datos sin ayuda durante una semana."
+    }
+  ],
+  "categorias": [
+    {
+      "nombre": "Experiencia de uso",
+      "descripcion": "Todo lo que el cliente ve y usa en el portal: ingreso, navegación y resumen de su cuenta."
+    },
+    {
+      "nombre": "Seguridad y acceso",
+      "descripcion": "Quién puede entrar, qué puede ver cada perfil y cómo se protegen los datos del cliente."
+    }
+  ],
+  "items": [
+    {
+      "titulo": "Poder entrar al portal y ver el resumen de mi cuenta",
+      "fase": "Fase 0",
+      "cat": "Experiencia de uso",
+      "prio": "Alta",
+      "tipo": "Historia",
+      "estado": "Backlog",
+      "body": "## Contexto\nHoy el cliente pide por correo el estado de su cuenta y espera la respuesta de un ejecutivo.\n\n## Historia de usuario\n**Como** cliente\n**Quiero** entrar al portal y ver el resumen de mi cuenta\n**Para** conocer mi situación sin tener que pedirla\n\n## Criterios de aceptación\n```gherkin\nEscenario: Ver el resumen al ingresar\n  Dado que soy un cliente con usuario activo\n  Cuando ingreso al portal con mi usuario y clave\n  Entonces veo el resumen de mi cuenta con saldo y últimos movimientos\n\nEscenario: Cliente sin movimientos\n  Dado que soy un cliente nuevo sin movimientos\n  Cuando ingreso al portal\n  Entonces veo un mensaje que explica que aún no tengo movimientos\n```\n\n## Alcance\n- Incluye: ingreso y pantalla de resumen.\n- No incluye: descarga de documentos (Fase 1).\n\n## Dependencias\n- Ambiente de pruebas disponible; si toca un ambiente, requiere el OK del usuario.\n\n## Clasificación\n- Fase 0 · Experiencia de uso · Historia · Prioridad Alta"
+    },
+    {
+      "titulo": "Definir qué perfiles de cliente pueden entrar al portal",
+      "fase": "Fase 0",
+      "cat": "Seguridad y acceso",
+      "prio": "Alta",
+      "tipo": "Decision",
+      "estado": "Hecho",
+      "comentario_hecho": "Decidido en la reunión de arranque: entran el titular y los apoderados registrados.",
+      "body": "## Contexto\nAntes de abrir el portal hay que acordar quién puede entrar.\n\n## Opciones\n1. Solo el titular de la cuenta.\n2. El titular y sus apoderados registrados.\n\n## Quién decide\nGerencia comercial junto con el área de cumplimiento.\n\n## Criterio de cierre\nQueda registrada por escrito la opción elegida y quién la aprobó.\n\n## Clasificación\n- Fase 0 · Seguridad y acceso · Decisión · Prioridad Alta"
+    },
+    {
+      "titulo": "Descargar mis documentos desde el portal",
+      "fase": "Fase 1",
+      "cat": "Experiencia de uso",
+      "prio": "Media",
+      "tipo": "Historia",
+      "estado": "Backlog",
+      "body": "## Contexto\nLos clientes piden copias de sus documentos varias veces al mes.\n\n## Historia de usuario\n**Como** cliente\n**Quiero** descargar mis documentos desde el portal\n**Para** tenerlos cuando los necesito sin esperar a un ejecutivo\n\n## Criterios de aceptación\n```gherkin\nEscenario: Descargar un documento disponible\n  Dado que tengo documentos emitidos en los últimos 12 meses\n  Cuando elijo un documento de la lista\n  Entonces se descarga una copia idéntica a la original\n\nEscenario: Sin documentos en el período\n  Dado que no tengo documentos en los últimos 12 meses\n  Cuando abro la sección de documentos\n  Entonces veo un aviso de que no hay documentos para mostrar\n```\n\n## Alcance\n- Incluye: documentos de los últimos 12 meses.\n\n## Dependencias\n- Salida de la Fase 0.\n\n## Clasificación\n- Fase 1 · Experiencia de uso · Historia · Prioridad Media"
+    },
+    {
+      "titulo": "Riesgo: que un cliente vea información de otro cliente",
+      "fase": "Fase 1",
+      "cat": "Seguridad y acceso",
+      "prio": "Alta",
+      "tipo": "Riesgo",
+      "estado": "Backlog",
+      "body": "## Contexto\nAl abrir la autogestión, cada cliente debe ver solo lo suyo.\n\n## Impacto\nPérdida de confianza, reclamos y posibles sanciones.\n\n## Cómo lo reducimos\n- Pruebas de calidad con dos clientes de prueba distintos en cada entrega.\n- Revisión de seguridad antes de abrir el portal a los clientes piloto.\n\n## Clasificación\n- Fase 1 · Seguridad y acceso · Riesgo · Prioridad Alta"
+    }
+  ]
+}
