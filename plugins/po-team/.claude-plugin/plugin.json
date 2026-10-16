@@ -1,0 +1,9 @@
+{
+  "name": "po-team",
+  "description": "Equipo del Product Owner con 8 agentes IA que toma lo que llega de la Mesa de Servicios, lo deja listo para desarrollo y acompaña cada ticket hasta el VB del cliente: refinador que redacta HUs y bugs 100% en lenguaje de negocio con criterios Gherkin y estimacion Fibonacci (GitHub Issues/Projects o Azure DevOps), planificador de sprint por capacidad con fechas de pase (Demo, Preprod, VB cliente) y deteccion de riesgos, seguimiento del tablero con avance por puntos, informe diario/semanal y dashboard HTML (publicable como artifact), validador-po de validacion funcional RAPIDA con Playwright MCP (VB PO u Observado, modo lote por sprint; no reemplaza a QA), documentador de documentos de negocio (HU, especificacion, acta de aceptacion, informe de sprint) en PDF + DOCX, manualista de manuales de usuario en dos versiones (QA y para cualquier persona) con capturas anotadas, y setup de prerequisitos y tablero. Ciclo de pase FaaST: Desarrollo -> Validacion QA -> Demo -> Validacion Demo/Preprod -> VB cliente. Punto de entrada: /po-team:start.",
+  "version": "1.0.0",
+  "author": {
+    "name": "FAAST",
+    "email": "dev@faast.cl"
+  }
+}

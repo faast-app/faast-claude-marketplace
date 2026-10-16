@@ -1,0 +1,34 @@
+{
+ "ejemplo": true,
+ "titulo": "Validaciones Sprint 12",
+ "producto": "Producto de ejemplo",
+ "sprint": "Sprint 12",
+ "ambiente": "Demo",
+ "fecha": "2026-10-16",
+ "repoUrl": "https://github.com/org-ejemplo/repo-ejemplo/issues/",
+ "grupos": [
+  {"id": "val", "nombre": "Validados en Demo", "descripcion": "Recorridos por el camino normal con los criterios de aceptación del ticket.",
+   "items": [
+    {"numero": 101, "titulo": "Filtrar operaciones por fecha de vencimiento", "estado": "ok", "etiqueta": "Cumple",
+     "nota": "16-10: el filtro trae solo las operaciones del rango y el Excel respeta el filtro.", "siguiente": "Listo para VB del cliente.",
+     "descripcion": {"trata": "El ejecutivo necesita ver solo las operaciones que vencen en un rango de fechas.", "validar": "Que el filtro funcione en la bandeja y en la exportación.",
+                     "criterios": ["Dado un rango, la bandeja muestra solo las operaciones que vencen en él", "El Excel exportado trae las mismas filas que la bandeja"]},
+     "casos": [{"caso": "C1", "que": "Filtrar por un rango con resultados", "estado": "ok", "resultado": "Cumple: 12 operaciones, todas dentro del rango", "falta": "—"},
+               {"caso": "C2", "que": "Exportar el listado filtrado", "estado": "ok", "resultado": "Cumple: el Excel trae las 12 filas", "falta": "—"}],
+     "evidencia": []},
+    {"numero": 103, "titulo": "El total del resumen no suma el IVA del gasto", "estado": "alert", "etiqueta": "No cumple",
+     "nota": "16-10: el total sigue sin sumar el IVA del gasto notarial.", "siguiente": "Vuelve a desarrollo con la observación.",
+     "casos": [{"caso": "C1", "que": "Total con un gasto afecto a IVA", "estado": "alert", "resultado": "No cumple: falta el IVA del gasto en el total", "falta": "Corrección del desarrollo",
+                "fuente": {"tipo": "observado", "fuente": "Resumen de la operación de prueba", "pasos": ["Abrir la operación de prueba", "Ir a Resumen", "Comparar el total con la suma de las líneas"]}}],
+     "evidencia": []}
+   ]},
+  {"id": "wait", "nombre": "Esperando confirmación", "descripcion": "No se validan hasta que se confirme su alcance o despliegue.",
+   "items": [
+    {"numero": 105, "titulo": "Nueva aprobación del Jefe Comercial para montos altos", "estado": "wait", "etiqueta": "Sin desplegar",
+     "nota": "El ticket no tiene entrega del desarrollo.", "siguiente": "Validar cuando se publique en Demo."}
+   ]}
+ ],
+ "bloqueos": [{"titulo": "Un solo usuario ejecutivo de prueba", "detalle": "Las pruebas se hacen en serie con el mismo usuario."}],
+ "decisiones": ["Los bugs preexistentes no influyen en el veredicto del ticket; se registran aparte."],
+ "bugs": [{"titulo": "El total no suma el IVA del gasto", "ticket": "#103 C1", "alcance": "en", "detalle": "Vuelve al desarrollo dentro del ticket."}]
+}

@@ -1,0 +1,69 @@
+{
+  "equipo": "{{nombre del equipo o producto que lleva el PO}}",
+  "po": { "nombre": "{{Nombre Apellido — sale de aqui, nunca escrito a mano en documentos}}", "githubUser": "{{usuario-github}}" },
+  "tracker": {
+    "provider": "github",
+    "github": {
+      "org": "{{org}}",
+      "repoDefault": "{{repo donde se crean HUs y bugs}}",
+      "repos": ["{{repo}}"],
+      "projects": [
+        {
+          "alias": "{{alias corto, ej. backlog}}",
+          "numero": 0,
+          "titulo": "{{titulo del Project}}",
+          "campos": {
+            "estado": "Status",
+            "puntos": "{{Estimate | Story Points | vacio si no existe}}",
+            "sprint": "{{Iteration | Sprint | vacio si se usa milestone}}",
+            "prioridad": "{{Priority | vacio}}",
+            "fechaDemo": "",
+            "fechaPreprod": "",
+            "fechaVB": ""
+          }
+        }
+      ],
+      "projectDefault": "{{alias}}",
+      "sprintVia": "iteration"
+    },
+    "azure": { "organization": "https://dev.azure.com/{{org}}", "project": "{{proyecto}}", "areaPath": "", "iterationPath": "", "campoPuntos": "Microsoft.VSTS.Scheduling.StoryPoints" },
+    "etiquetas": { "hu": "historia-usuario", "bug": "bug", "vbPO": "vb-po", "observadoPO": "observado-po", "vbCliente": "vb-cliente", "prefijoCliente": "cliente:", "prefijoAmbiente": "ambiente:" },
+    "reglas": {
+      "estadosSoloQA": ["{{estado que solo mueve QA humana, ej. Validado por QA}}"],
+      "cerrarIssues": false,
+      "estadoAlResolver": "{{estado que se usa cuando desarrollo termina, ej. Desarrollo Completado}}"
+    }
+  },
+  "ciclo": {
+    "etapas": [
+      { "clave": "desarrollo", "nombre": "Desarrollo", "estados": ["{{Todo}}", "{{In Progress}}", "{{Desarrollo Completado}}"], "etiquetas": [] },
+      { "clave": "qa", "nombre": "Validacion QA", "estados": ["{{En QA}}", "{{Validado por QA}}"], "etiquetas": [] },
+      { "clave": "demo", "nombre": "Pase a Demo", "estados": ["{{Pase a Demo}}"], "etiquetas": ["ambiente:demo"] },
+      { "clave": "validacion", "nombre": "Validacion Demo / Preprod", "estados": ["{{En validacion}}"], "etiquetas": ["vb-po"] },
+      { "clave": "vb", "nombre": "VB cliente", "estados": ["{{VB Cliente}}", "{{Done}}"], "etiquetas": ["vb-cliente"] }
+    ],
+    "estadosObservado": ["{{Observado}}"],
+    "estadosBloqueado": ["{{Bloqueado}}"],
+    "diasAlertaSinMovimiento": 5
+  },
+  "ambientes": {
+    "desa":    { "nombre": "{{como lo llama el equipo, ej. Desa}}", "url": "", "cuentasEnv": [] },
+    "qa":      { "nombre": "{{ej. QA}}", "url": "", "cuentasEnv": [] },
+    "demo": [
+      { "clave": "demo-xx", "nombre": "{{Demo CO | Demo CL | Demo PE}}", "url": "", "cuentasEnv": [], "paseEnLote": false }
+    ],
+    "preprod": [
+      { "clave": "preprod-{{cliente}}", "nombre": "{{Preprod Cliente}}", "cliente": "{{codigo cliente}}", "url": "", "cuentasEnv": [] }
+    ]
+  },
+  "clientes": [ { "codigo": "{{CODIGO}}", "nombre": "{{Nombre del cliente}}", "ambientes": ["{{demo-xx}}", "{{preprod-xx}}"] } ],
+  "capacidad": { "puntosPorSprint": 0, "duracionSprintDias": 10, "usarVelocidad": true, "sprintsVelocidad": 3 },
+  "estimacion": { "escala": [1, 2, 3, 5, 8, 13], "maximoEnSprint": 8, "bugsSuman": true, "validaEquipo": true },
+  "redaccion": { "idioma": "es", "prefijoAmbienteEnBugs": false },
+  "evidencia": { "repo": "{{org}}/{{repo-con-rama-evidence}}", "rama": "evidence", "carpeta": "evidence/po" },
+  "documentos": { "plantillas": "", "outputDir": ".po-team/documentos", "aprobadores": [] },
+  "manuales": { "outputDir": ".po-team/manuales" },
+  "tablero": { "outputDir": ".po-team/tablero", "artifactUrl": "", "artifactUrls": {}, "informe": "diario", "plantilla": "generica", "ultimaOpcion": "" },
+  "validacion": { "artifact": false, "artifactUrls": {} },
+  "team": { "models": {} }
+}

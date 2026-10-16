@@ -1,0 +1,181 @@
+{
+  "ejemplo": true,
+  "generado": "2026-10-16T12:00:00Z",
+  "equipo": "Producto de ejemplo",
+  "fuente": {
+    "org": "org-ejemplo",
+    "projects": [
+      {
+        "numero": 1,
+        "titulo": "Backlog de ejemplo"
+      }
+    ]
+  },
+  "etapas": [
+    {
+      "clave": "desarrollo",
+      "nombre": "Desarrollo"
+    },
+    {
+      "clave": "qa",
+      "nombre": "Validacion QA"
+    },
+    {
+      "clave": "demo",
+      "nombre": "Pase a Demo"
+    },
+    {
+      "clave": "validacion",
+      "nombre": "Validacion Demo / Preprod"
+    },
+    {
+      "clave": "vb",
+      "nombre": "VB cliente"
+    }
+  ],
+  "sprints": [
+    {
+      "nombre": "Sprint 12",
+      "inicio": "2026-10-06",
+      "fin": "2026-10-17",
+      "objetivo": "Que el ejecutivo pueda cursar una operacion con el nuevo calculo de gastos de punta a punta",
+      "fechas": {
+        "demo": "2026-10-14",
+        "preprod": {
+          "Cliente A": "2026-10-21"
+        },
+        "vb": "2026-10-28"
+      },
+      "tickets": [
+        {
+          "numero": 101,
+          "titulo": "Filtrar operaciones por fecha de vencimiento",
+          "tipo": "hu",
+          "estado": "VB Cliente",
+          "etapa": "vb",
+          "puntos": 3,
+          "veredictoPO": "vb",
+          "url": "#"
+        },
+        {
+          "numero": 102,
+          "titulo": "Mostrar el IVA de cada gasto en el resumen",
+          "tipo": "hu",
+          "estado": "En validacion",
+          "etapa": "validacion",
+          "puntos": 5,
+          "veredictoPO": "vb",
+          "url": "#"
+        },
+        {
+          "numero": 103,
+          "titulo": "El total del resumen no suma el IVA del gasto",
+          "tipo": "bug",
+          "estado": "Observado",
+          "etapa": "demo",
+          "observado": true,
+          "puntos": 2,
+          "veredictoPO": "observado",
+          "url": "#"
+        },
+        {
+          "numero": 104,
+          "titulo": "Exportar a Excel el listado filtrado",
+          "tipo": "hu",
+          "estado": "Validado por QA",
+          "etapa": "qa",
+          "puntos": 3,
+          "url": "#"
+        },
+        {
+          "numero": 105,
+          "titulo": "Nueva aprobacion del Jefe Comercial para montos altos",
+          "tipo": "hu",
+          "estado": "In Progress",
+          "etapa": "desarrollo",
+          "puntos": 8,
+          "url": "#",
+          "diasEnEstado": 7
+        },
+        {
+          "numero": 106,
+          "titulo": "Aviso por correo al aprobar una operacion",
+          "tipo": "hu",
+          "estado": "Bloqueado",
+          "etapa": "desarrollo",
+          "bloqueado": true,
+          "puntos": 3,
+          "url": "#"
+        }
+      ]
+    },
+    {
+      "nombre": "Sprint 13",
+      "inicio": "2026-10-20",
+      "fin": "2026-10-31",
+      "objetivo": "Que el cliente reciba el detalle de gastos en su liquidacion",
+      "fechas": {
+        "demo": "2026-11-04",
+        "vb": "2026-11-11"
+      },
+      "tickets": [
+        {
+          "numero": 110,
+          "titulo": "Detalle de gastos en la liquidacion",
+          "tipo": "hu",
+          "estado": "Todo",
+          "etapa": "desarrollo",
+          "puntos": 5,
+          "url": "#"
+        },
+        {
+          "numero": 111,
+          "titulo": "Ordenar la bandeja por monto",
+          "tipo": "hu",
+          "estado": "Todo",
+          "etapa": "desarrollo",
+          "puntos": 2,
+          "url": "#"
+        }
+      ]
+    }
+  ],
+  "backlog": [
+    {
+      "numero": 120,
+      "titulo": "Reporte mensual de cesiones por cliente",
+      "tipo": "hu",
+      "estado": "Backlog",
+      "etapa": "desarrollo",
+      "puntos": 0,
+      "url": "#"
+    }
+  ],
+  "cambios": [
+    {
+      "numero": 104,
+      "titulo": "Exportar a Excel el listado filtrado",
+      "de": "Desarrollo Completado",
+      "a": "Validado por QA"
+    },
+    {
+      "numero": 103,
+      "titulo": "El total del resumen no suma el IVA del gasto",
+      "de": "Pase a Demo",
+      "a": "Observado"
+    }
+  ],
+  "riesgos": [
+    {
+      "nivel": "medio",
+      "texto": "#105 lleva 7 dias sin moverse en Desarrollo"
+    }
+  ],
+  "sinEtapa": [],
+  "sinEstimar": [
+    {
+      "numero": 120,
+      "titulo": "Reporte mensual de cesiones por cliente"
+    }
+  ]
+}
