@@ -84,6 +84,9 @@ The **marketing, sales and advertising team** (8 agents, `plugins/marketing/`) f
 
 **Commands** (10): `/start`, `/propuesta-comercial` (always includes the chaptered keynote and per-part clips), `/desglose`, `/investigar`, `/presentacion`, `/video` (`keynote`, `parte {n}`, `clips`, `teaser`, `redes`, `preproduccion`, `revisar`), `/pieza`, `/tendencias` (schedulable weekly), `/marca`, `/estado`. **Skills** (7): `desglose-producto`, `investigacion-mercado`, `narrativa-comercial`, `presentacion-premium`, `video-lanzamiento` (+ `normalizar_video.py`, `qa_video.py`), `piezas-graficas`, `marca-faast` (only verified brand facts with source — faast.app and Faast2.0 design work — pending items listed for the user to confirm). **Templates**: campaign brief, product map and part card, research sources and benchmark, trend card, brand kit, and `video/` (script and storyboard per part, delivery spec, video QA checklist). Rules: nothing invented, product shown real, no piece leaves without user approval, plan-first, confidentiality.
 
+## User manuals
+Four business-language manuals (executive tone, step by step from installation, for non-programmers): `GUIDE.md` at the repo root (all teams and how they chain: Mesa → Dev Team → Marketing, with the architect as consultant) and `plugins/{dev-team,mesa-servicios,marketing}/GUIDE.md`. The PDFs are built with the FaaST brand (black cover with the working logo vector, green accents, light readable code blocks, footer with page numbers) by `python3 docs/manuales/build_manuales.py [clave]` (pandoc + Playwright Chromium via `render-pdf.mjs`; style in `docs/manuales/manual.css`, logos in `docs/manuales/assets/`). Box-drawing diagrams are kept on one line with a fitted font size. Regenerate the PDFs whenever a GUIDE changes.
+
 ## Conventions when editing
 
 - After changing any plugin, bump nothing automatically — but the change only reaches users after a push to `main` and a `marketplace update`.

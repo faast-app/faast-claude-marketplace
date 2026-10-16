@@ -1,0 +1,107 @@
+/* Manuales FaaST — estilo de marca para los PDF de usuario.
+   Paleta confirmada: verde #71af26, blanco, y a veces negro #151515 (sin azul).
+   Regla de legibilidad: el texto nunca va en verde sobre blanco (2,67:1); el verde es acento. */
+:root {
+  --verde: #71af26;
+  --verde-oscuro: #4f7d17;
+  --verde-tinte: #f1f7e9;
+  --verde-borde: #d5e8bd;
+  --negro: #151515;
+  --gris: #4a4f45;
+  --gris-claro: #f6f7f4;
+  --borde: #dfe3da;
+}
+@page { size: A4; margin: 18mm 16mm 20mm 16mm; }
+@page :first { margin: 0; }
+* { box-sizing: border-box; }
+html, body { background: #fff; }
+body {
+  font-family: "Lato", -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+  font-size: 10.6pt; line-height: 1.55; color: var(--negro); margin: 0;
+  -webkit-print-color-adjust: exact; print-color-adjust: exact;
+}
+
+/* ---------- Portada ---------- */
+.portada {
+  height: 297mm; width: 210mm; background: var(--negro); color: #fff;
+  position: relative; page-break-after: always; break-after: page; overflow: hidden;
+  padding: 34mm 22mm 0 22mm;
+}
+.portada .franja { position: absolute; left: 0; top: 0; bottom: 0; width: 9mm; background: var(--verde); }
+.portada .logo { height: 20mm; display: block; }
+.portada .etiqueta {
+  margin-top: 52mm; display: block; font-size: 10pt; letter-spacing: .22em;
+  text-transform: uppercase; color: var(--verde); font-weight: 700;
+}
+.portada h1.titulo {
+  font-size: 40pt; line-height: 1.05; margin: 6mm 0 0 0; font-weight: 900; color: #fff;
+  border: 0; padding: 0;
+}
+.portada .subtitulo { font-size: 14pt; color: #d9dcd4; margin-top: 7mm; max-width: 150mm; line-height: 1.4; }
+.portada .meta {
+  position: absolute; left: 22mm; right: 22mm; bottom: 26mm; display: flex; justify-content: space-between;
+  border-top: 1px solid #3a3d37; padding-top: 6mm; font-size: 9.5pt; color: #b9bdb3;
+}
+.portada .meta b { color: #fff; font-weight: 700; }
+.portada .isotipo-fondo { position: absolute; right: -30mm; bottom: 40mm; height: 150mm; opacity: .07; }
+
+/* ---------- Contenido ---------- */
+.contenido { padding: 0; }
+h1 {
+  font-size: 22pt; font-weight: 900; margin: 0 0 6mm 0; padding: 0 0 3mm 0;
+  border-bottom: 3px solid var(--verde); page-break-before: always; break-before: page;
+}
+.contenido > h1:first-child { page-break-before: avoid; break-before: avoid; }
+h2 {
+  font-size: 15pt; font-weight: 800; margin: 9mm 0 3mm 0; padding-left: 3.2mm;
+  border-left: 4px solid var(--verde); page-break-after: avoid; break-after: avoid;
+}
+h3 { font-size: 12pt; font-weight: 800; margin: 6mm 0 2mm 0; page-break-after: avoid; break-after: avoid; }
+h4 { font-size: 10.8pt; font-weight: 800; margin: 5mm 0 2mm 0; color: var(--gris); }
+p { margin: 2mm 0 3mm 0; orphans: 3; widows: 3; }
+a { color: var(--verde-oscuro); text-decoration: none; border-bottom: 1px solid var(--verde-borde); }
+strong { font-weight: 800; }
+ul, ol { margin: 2mm 0 3mm 0; padding-left: 6mm; }
+li { margin: 1mm 0; }
+li::marker { color: var(--verde-oscuro); font-weight: 700; }
+hr { border: 0; border-top: 1px solid var(--borde); margin: 7mm 0; }
+
+/* Recuadros (blockquote) */
+blockquote {
+  margin: 4mm 0; padding: 3mm 5mm; background: var(--verde-tinte);
+  border-left: 4px solid var(--verde); border-radius: 0 6px 6px 0; color: var(--negro);
+  page-break-inside: avoid; break-inside: avoid;
+}
+blockquote p { margin: 1mm 0; }
+
+/* Comandos: fondo claro, texto oscuro, siempre legibles */
+code {
+  font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace; font-size: 9pt;
+  background: var(--gris-claro); border: 1px solid var(--borde); border-radius: 4px; padding: .5px 4px;
+  color: var(--negro);
+}
+pre {
+  background: var(--gris-claro); border: 1px solid var(--borde); border-left: 4px solid var(--verde);
+  border-radius: 6px; padding: 3.5mm 4mm; margin: 3mm 0 4mm 0; white-space: pre-wrap; word-break: break-word;
+  page-break-inside: avoid; break-inside: avoid;
+}
+pre code { background: none; border: 0; padding: 0; font-size: 8.8pt; line-height: 1.5; }
+pre code span { color: var(--negro) !important; font-weight: normal !important; font-style: normal !important; }
+
+/* Tablas */
+table { width: 100%; border-collapse: collapse; margin: 3mm 0 5mm 0; font-size: 9.4pt; page-break-inside: auto; }
+thead { display: table-header-group; }
+tr { page-break-inside: avoid; break-inside: avoid; }
+th {
+  background: var(--negro); color: #fff; text-align: left; font-weight: 700; padding: 2.2mm 3mm;
+  border: 1px solid var(--negro);
+}
+td { padding: 2mm 3mm; border: 1px solid var(--borde); vertical-align: top; }
+tbody tr:nth-child(even) td { background: #fafbf8; }
+td code, th code { font-size: 8.4pt; }
+th code { background: #2b2d29; border-color: #3a3d37; color: #fff; }
+
+/* Indice: el primer bloque de enlaces del manual */
+.contenido h2#indice + ul, .contenido h2#índice + ul { columns: 2; column-gap: 8mm; font-size: 9.6pt; }
+
+img { max-width: 100%; }
