@@ -1,0 +1,65 @@
+# docker-compose.yml — <repo> — ÚNICO para todos los ambientes (byte-idéntico).
+# Toda diferencia de ambiente es VARIABLE, nunca se hardcodea acá.
+#
+# Uso:
+#   AMBIENTE=<instancia> IMAGE_TAG=sha-abc123 ASPNETCORE_ENVIRONMENT=<Env> \
+#     ENV_FILE_PATH=$HOME/deploy/<repo>/<instancia>/.env.<instancia> \
+#     docker compose -p <repo>-${AMBIENTE} --env-file ${ENV_FILE_PATH} \
+#     -f docker-compose.yml up -d
+#
+# AMBIENTE / IMAGE_TAG / ASPNETCORE_ENVIRONMENT se EXPORTAN en el step de CI:
+# nunca viven dentro del .env.<instancia> (ese archivo es solo configuración de
+# aplicación: connection strings, JWT, SMTP, API keys).
+#
+# ENV_FILE_PATH es ABSOLUTO: Compose resuelve `env_file:` contra el directorio
+# del checkout del runner, NO contra --env-file (bug real ya corregido en
+# micro-api-back; no repetirlo).
+
+name: <repo>-${AMBIENTE:?falta exportar AMBIENTE}
+
+services:
+  app:
+    image: ghcr.io/faast-app/<repo>:${IMAGE_TAG:?falta exportar IMAGE_TAG}
+    container_name: <repo>-${AMBIENTE}
+    # UID/GID del usuario de despliegue (p. ej. ec2-user) del servidor destino (regla dura #2, Plataforma FAAST 2026-09-22).
+    # Confirmar con `id <usuario-deploy>` (en Amazon Linux suele ser `ec2-user`) en CADA servidor antes de asumir 1000:1000.
+    user: "${RUN_UID:-1000}:${RUN_GID:-1000}"
+    env_file:
+      - ${ENV_FILE_PATH:?falta exportar ENV_FILE_PATH (ruta absoluta)}
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:?falta exportar ASPNETCORE_ENVIRONMENT}
+    ports:
+      # TIER PÚBLICO  → BIND_ADDR=127.0.0.1, Apache hace ProxyPass. NUNCA 0.0.0.0.
+      # TIER PRIVADO  → BIND_ADDR=0.0.0.0, perímetro = Security Group (origen: IP del público).
+      - "${BIND_ADDR:-127.0.0.1}:${HOST_PORT:?falta HOST_PORT}:8080"
+    volumes: []
+      # Solo lo que NO puede ir en la imagen. Siempre :ro.
+      # - ./cert:/app/cert:ro                  # firma JWT
+      # - ./ocelot.json:/app/ocelot.json:ro    # gateways Ocelot (D3)
+      # - ./firebase.json:/app/firebase.json:ro
+    # OBLIGATORIO, sin excepción (regla dura, hallazgo fleet-wide 2026-09-23).
+    # Dentro del contenedor la app es PID 1. El kernel IGNORA en PID 1 las señales sin
+    # handler cuya acción por defecto es terminar el proceso: una excepción .NET no
+    # atrapada llama a abort()/SIGABRT, pero como PID 1 el proceso NO sale — el
+    # contenedor queda "Up (unhealthy)" girando al 100% de un core PARA SIEMPRE, y
+    # `restart: unless-stopped` no rescata nada porque el proceso nunca termina.
+    # `init: true` pone tini como PID 1 real (la app corre como su hijo), que sí aplica
+    # la acción por defecto de la señal y el contenedor sale (confirmado empíricamente:
+    # código 134, SIGABRT) para que `restart` lo vuelva a levantar.
+    init: true
+    restart: unless-stopped
+    mem_limit: ${MEM_LIMIT:-512m}
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
+# Hosts de Hangfire (D6): UNA sola réplica por base de storage y ambiente.
+# Prohibido --scale y prohibido levantar este compose en dos hosts a la vez.

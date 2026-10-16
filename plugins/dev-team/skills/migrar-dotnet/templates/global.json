@@ -1,0 +1,22 @@
+{
+  "_comentario": [
+    "Plantilla FaaST — pin de SDK para la migración.",
+    "version     <- ${SDK_PIN} de templates/parametros.env",
+    "",
+    "rollForward: latestFeature es OBLIGATORIO.",
+    "Sin él, una máquina con un SDK de otra feature band falla con",
+    "'A compatible .NET SDK was not found' y el error no menciona global.json.",
+    "Caso real verificado en la flota: api-integracion-externa pinea 6.0.412 SIN",
+    "rollForward — ese repo no compila en una máquina con SDK 8 o 10 instalado.",
+    "",
+    "Durante los escalones, este archivo se actualiza en CADA escalón junto con",
+    "el TargetFramework. El SDK del escalón y el TFM del escalón van juntos.",
+    "",
+    "Borrar este bloque _comentario al copiar: global.json no admite comentarios",
+    "y una clave desconocida es tolerada, pero ensucia."
+  ],
+  "sdk": {
+    "version": "10.0.100",
+    "rollForward": "latestFeature"
+  }
+}

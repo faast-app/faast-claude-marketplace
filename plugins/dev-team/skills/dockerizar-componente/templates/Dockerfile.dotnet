@@ -1,0 +1,78 @@
+# syntax=docker/dockerfile:1
+# Plantilla FaaST D1/D2/D3/D6 — .NET API / gateway / host Hangfire
+#
+# Parámetros (build-args):
+#   DOTNET_VERSION  8.0 | 9.0 | 7.0 | 6.0   (3.1/5.0 = familia D5, requiere decisión previa)
+#   SOLUTION_DIR    carpeta que contiene el .sln ("." si está en la raíz)
+#   PROJECT         ruta del .csproj a publicar, relativa a SOLUTION_DIR
+#
+# Completar a mano: el .dll del ENTRYPOINT y el endpoint del HEALTHCHECK.
+
+ARG DOTNET_VERSION=8.0
+
+# ---- Stage 1: build ----
+FROM mcr.microsoft.com/dotnet/sdk:${DOTNET_VERSION} AS build
+ARG SOLUTION_DIR=.
+ARG PROJECT
+WORKDIR /src
+
+# El .sln se copia PRESERVANDO su carpeta contenedora: sus referencias a los
+# .csproj son relativas a la ubicación del propio .sln. Aplanarlo rompe el
+# restore con MSB3202 "project file not found" (lección de micro-api-back).
+COPY ${SOLUTION_DIR}/ ${SOLUTION_DIR}/
+
+# --- Feed privado: descomentar SOLO si el repo consume GitHub Packages ---
+# El token se monta como secreto de BuildKit: nunca queda en una capa.
+# COPY NuGet.config NuGet.config
+# RUN --mount=type=secret,id=nuget_auth_token \
+#     export GITHUB_ACTOR=faast-app && \
+#     export NUGET_AUTH_TOKEN=$(cat /run/secrets/nuget_auth_token) && \
+#     dotnet restore ${SOLUTION_DIR}/${PROJECT}
+
+RUN dotnet restore ${SOLUTION_DIR}/${PROJECT}
+RUN dotnet publish ${SOLUTION_DIR}/${PROJECT} -c Release -o /app/publish --no-restore
+
+# Guarda contra copiar DOTNET_VERSION de otro componente sin ajustarlo: un
+# binario compilado para net8.0 NO corre sobre la imagen runtime 10.0 (el host
+# no hace roll-forward de version mayor) — el build sale verde igual y la
+# imagen revienta recién en el servidor con "framework not found". Hallazgo
+# real (micro-venta-cartera, 2026-09-23): la plantilla se copió de un
+# componente YA migrado a net10 sin actualizar este ARG.
+RUN set -e; \
+    RTC=$(find /app/publish -maxdepth 1 -name '*.runtimeconfig.json'); \
+    PEDIDO=$(grep -o '"version": *"[0-9]*' "$RTC" | head -1 | grep -o '[0-9]*'); \
+    IMAGEN=$(echo "${DOTNET_VERSION}" | cut -d. -f1); \
+    if [ "$PEDIDO" != "$IMAGEN" ]; then \
+      echo "ERROR: el TargetFramework del proyecto (net${PEDIDO}.0) no coincide con DOTNET_VERSION (${DOTNET_VERSION})." >&2; \
+      echo "La imagen arrancaria con 'framework not found'. Ajusta el build-arg." >&2; \
+      exit 1; \
+    fi
+
+# ---- Stage 2: runtime ----
+FROM mcr.microsoft.com/dotnet/aspnet:${DOTNET_VERSION} AS prod
+WORKDIR /app
+
+# aspnet (Debian slim) NO trae curl: sin esto el HEALTHCHECK queda "unhealthy"
+# permanente aunque la app esté perfecta.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# El usuario que corre el proceso NO se fija aca: lo define docker-compose.yml
+# en runtime con `user: "${RUN_UID:-1000}:${RUN_GID:-1000}"` (= usuario de despliegue (p. ej. ec2-user) del
+# servidor destino, regla dura #2 de la skill). Se deja el archivo legible por
+# el owner/group por defecto del publish (root:root, 644/755), que el usuario de despliegue
+# puede leer igual sin necesitar chown a un usuario dedicado.
+COPY --from=build /app/publish .
+
+ENV ASPNETCORE_URLS=http://+:8080 \
+    DOTNET_BUNDLE_EXTRACT_BASE_DIR=/tmp
+# D6 (Hangfire) agrega: ENV TZ=America/Lima
+EXPOSE 8080
+
+# Si el componente no tiene /health, usar un endpoint existente y dejar
+# anotado el pendiente (apiback usa /swagger/index.html).
+HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
+    CMD curl -f http://localhost:8080/health || exit 1
+
+ENTRYPOINT ["dotnet", "COMPLETAR.dll"]

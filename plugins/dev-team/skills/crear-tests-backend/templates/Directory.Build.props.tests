@@ -1,0 +1,62 @@
+<!--
+  Directory.Build.props  —  va en <repo>/tests/
+  Política común de TODOS los proyectos de test del componente.
+
+  Se copia a tests/Directory.Build.props. No afecta a los proyectos de la app:
+  MSBuild solo lo aplica a los .csproj que estén debajo de esta carpeta.
+
+  REGLA: el TFM del test es el MISMO que el de la app, siempre, y sube en el
+  mismo commit durante una migración (E-CS-03 de migrar-dotnet).
+  Se cambia UNA vez acá, no en cada .csproj.
+-->
+<Project>
+
+  <PropertyGroup>
+    <!-- ↓↓↓ ÚNICO lugar donde se declara el TFM de los tests del componente ↓↓↓ -->
+    <TargetFramework>net8.0</TargetFramework>
+    <!-- Durante la migración: net8.0 → net10.0, en el MISMO commit que la app. -->
+
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+
+    <!-- Ningún proyecto de test se empaqueta ni se publica. -->
+    <IsPackable>false</IsPackable>
+    <IsPublishable>false</IsPublishable>
+
+    <!-- Que un test roto por un warning nuevo se vea. No se sube a error acá:
+         los warnings del código de producción no son culpa del proyecto de test. -->
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+
+    <!-- Determinismo: la suite declara su cultura, no la hereda del host.
+         Ver T-CULT-01. El valor real se fija por componente. -->
+    <InvariantGlobalization>false</InvariantGlobalization>
+
+    <!-- Verify escribe los .received.* al lado de los .verified.*;
+         los primeros NUNCA se commitean (T-SNAP-03). -->
+    <DefaultItemExcludes>$(DefaultItemExcludes);**/*.received.*</DefaultItemExcludes>
+  </PropertyGroup>
+
+  <!-- Estos tres van en TODOS los proyectos de test. Versiones desde
+       templates/parametros-tests.env — fijas, nunca con comodín (E-NU-03). -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.10.1" />
+    <PackageReference Include="xunit" Version="2.9.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+
+    <!-- Aserciones: Shouldly (BSD-3-Clause, verificado en nuget.org 2026-09-21).
+         PROHIBIDO FluentAssertions >= 8.0.0: licencia comercial (Xceed).
+         Ver reference/03-stack-y-licencias.md §2.1 -->
+    <PackageReference Include="Shouldly" Version="4.3.0" />
+
+    <!-- Cobertura: recolector, no runtime. -->
+    <PackageReference Include="coverlet.collector" Version="10.0.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+</Project>
