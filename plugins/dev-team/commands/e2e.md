@@ -33,8 +33,8 @@ variables; los valores los pone el usuario) y registrarla en `config.json` (`e2e
 3. **Validacion interactiva** con el Playwright MCP del plugin (`browser_navigate`,
    `browser_snapshot`, `browser_click`, `browser_fill_form`...): recorrer cada criterio
    y CERRARLO con `browser_verify_*` + captura resaltada (`browser_highlight` →
-   `browser_take_screenshot`); trace/clip con `browser_start_tracing` /
-   `browser_start_video` en bugs. Todo queda en `.coordination/evidence/{HU}/` con su
+   `browser_take_screenshot`); clip/trace en bugs con `browser_start_video` (size = viewport,
+   navegador limpio) y DESPUES `browser_start_tracing`, segun la skill `visual-evidence`. Todo queda en `.coordination/evidence/{HU}/` con su
    bloque en `informe-qa.md`. El reparto UI/API entre qa-frontend y qa-backend lo hace
    el QA Lead por handoff; el paralelismo lo orquesta el Lead
 4. **Automatizar**: `tests/hu-{nnn}-{slug}.spec.ts` con un test por criterio (convencion

@@ -34,11 +34,15 @@ La causa es del equipo de desarrollo.
   consistente (2/2) o intermitente (1/2).
 
 ## Herramientas (Playwright MCP del plugin, siempre las tres capas)
-1. **Traza navegable**: `browser_start_tracing` al inicio → `browser_stop_tracing` al final
-   (`reproduccion.trace.zip`). Guarda estado de pantalla, red y consola por accion.
-2. **Video analizable**: `browser_start_video` + `browser_video_show_actions` +
-   `browser_video_chapter` por paso + `browser_stop_video` (`reproduccion.webm`). Se mira
-   completo; los capitulos lo hacen navegable.
+1. **Video analizable a tamaño real** (PRIMERO): navegador limpio (`browser_close` si ya grabaste
+   en esta sesion) → `browser_resize` → `browser_start_video` con `size` = viewport exacto +
+   `browser_video_show_actions` + `browser_video_chapter` por paso + `browser_stop_video`
+   (`reproduccion.webm`). Se mira completo; los capitulos lo hacen navegable.
+2. **Traza navegable** (SIEMPRE despues del video): `browser_start_tracing` → `browser_stop_tracing`
+   al final (`reproduccion.trace.zip`). Guarda estado de pantalla, red y consola por accion. Si la
+   traza arranca antes, el video sale chico, con relleno gris y borroso.
+   Al cerrar, `normalizar_video.py` de la skill `evidencia-reproduccion` verifica el video y deja
+   `.mp4` + portada para entregar; si dice REPARADO, se regraba.
 3. **Capturas ancladas**: por paso, `browser_highlight` (y `browser_annotate` si hace falta
    explicar) → `browser_take_screenshot`; la del resultado con su `browser_verify_*` que afirma
    lo obtenido (`browser_verify_text_visible`, `browser_verify_list_visible`, `browser_verify_value`).

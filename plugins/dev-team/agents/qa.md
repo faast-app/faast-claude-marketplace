@@ -239,8 +239,10 @@ directamente — sin escribir codigo:
   `browser_verify_list_visible` / `browser_verify_value` → **cierran cada criterio**;
   sin verificacion explicita no hay veredicto
 - `browser_highlight` + `browser_take_screenshot` → captura que PRUEBA el criterio
-- `browser_start_tracing`/`browser_stop_tracing`, `browser_start_video`/`browser_stop_video`
-  → trace y clip como evidencia, sin scripts ad hoc
+- `browser_start_video` (con `size` = viewport, en navegador limpio) y DESPUES
+  `browser_start_tracing` → clip y trace como evidencia, sin scripts ad hoc; la traza nunca va
+  antes que el video (el video saldria chico y borroso). Verificacion con `normalizar_video.py`
+  de la skill `visual-evidence`
 - `browser_generate_locator` → locator estable para el test automatizado
 - `browser_navigate` → abrir la app en el ambiente de desarrollo
 - `browser_snapshot` → leer el estado de la pagina (accesibilidad tree)

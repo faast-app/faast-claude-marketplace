@@ -72,9 +72,11 @@ Invocar al agente `qa` con el reporte estructurado. QA (o su especialista) ejecu
 pasos EXACTOS, una sola vez, como usuario:
 - Frontend: Playwright MCP del plugin, aplicando la skill `visual-evidence` para captura y
   ANALISIS de alta fidelidad — `browser_navigate`, acciones, `browser_take_screenshot`
-  resaltado (`browser_highlight`) en CADA paso (`00-`, `01-`...), `browser_start_tracing`
-  (traza navegable: DOM/red/consola por accion) y `browser_start_video` con
-  `browser_video_show_actions` + `browser_video_chapter` por paso desde el inicio,
+  resaltado (`browser_highlight`) en CADA paso (`00-`, `01-`...), desde el inicio y en navegador
+  limpio `browser_start_video` con `size` = viewport + `browser_video_show_actions` +
+  `browser_video_chapter` por paso y, DESPUES del video, `browser_start_tracing` (traza navegable:
+  DOM/red/consola por accion; si va antes, el video sale chico y borroso), video verificado con
+  `normalizar_video.py` (`.mp4` + portada para el item),
   `browser_snapshot` (accesibilidad) del estado clave, `browser_console_messages` y
   `browser_network_requests` guardados como `.txt` y correlacionados con la accion, y
   `browser_verify_*` para afirmar lo obtenido. Viewport declarado.
