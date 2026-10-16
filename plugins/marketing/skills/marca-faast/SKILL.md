@@ -18,8 +18,8 @@ description: La marca FAAST verificada para el equipo de Marketing - SOLO lo com
 | Alt del logo en el producto | "FaaST.app" | Faast2.0 `.coordination/design/DSN-002-acceso-identidad/02-ui/tema-login.faast.json` |
 | Uso en documentos internos | "FAAST" (mayusculas) en repos y documentos del equipo | este marketplace (CLAUDE.md) |
 
-**PENDIENTE**: cual es la escritura oficial para piezas externas (FaaST, FaaST.app o FAAST). Mientras
-no se confirme, las piezas externas usan **FaaST** (como el sitio publico).
+**CONFIRMADO por el usuario (2026-10-16)**: en piezas externas el nombre se escribe **FaaST**.
+"FaaST.app" solo donde aparece el dominio o el wordmark del logo; "FAAST" queda para uso interno.
 
 ## 2. Mensaje publico (textual, citable con fuente)
 Fuente: https://faast.app (consultado 2026-10-16).
@@ -65,13 +65,17 @@ afirmaciones de liderazgo respaldadas con cifras. **PENDIENTE**: guia de voz ofi
 | Texto / wordmark claro | **#151515** | CSS del sitio (`--color-black-900`, el color de texto mas usado) y wordmark en `DSN-001.../brandkit/faast-real/README.md` | — |
 | Wordmark sobre oscuro | #f1f8ff | `DSN-001.../brandkit/faast-real/README.md` | version para fondo oscuro del producto |
 | Verdes del sitio | #22b14c (brillo/sombra), #2eb741, #4dca77, #56bca7, #bcec6d, #d0f88e; clases Tailwind green-500/600 | CSS de faast.app (`/_astro/*.css`, 2026-10-16) | acentos y degradados del sitio |
-| Azul en el sitio | `--color-primary-500: #4259f5`; `theme-color` **#0F72FF** | CSS y meta de faast.app (2026-10-16) | presencia secundaria; rol no confirmado |
+| Azul en el sitio | `--color-primary-500: #4259f5`; `theme-color` **#0F72FF** | CSS y meta de faast.app (2026-10-16) | **NO es color de marca** (confirmado por el usuario 2026-10-16): no se usa en piezas |
 | Neutros del sitio | #f6f6f6, #f0f0f0, #212121, #2b2b2b | CSS de faast.app | fondos y superficies |
 | Boton primario del login Faast2.0 | fill #487700, secundario #1f3a00 | `DSN-002.../02-ui/tema-login.faast.json` | derivado por contraste para UI del producto, NO es color de marca |
 
-**PENDIENTE**: paleta oficial de marca (primario, secundarios, uso del azul #0F72FF/#4259f5 frente al
-verde del isotipo). Hasta confirmarlo: el **verde del isotipo #71af26** como acento de marca y
-**#151515** como texto, con verdes del sitio como acentos; el azul no se usa como color principal.
+**CONFIRMADO por el usuario (2026-10-16) — paleta de marca: VERDE, BLANCO y, a veces, NEGRO.**
+- **Verde** del isotipo **#71af26** = el color de la marca (con los verdes del sitio como tonos de
+  apoyo para degradados, brillos y estados).
+- **Blanco #ffffff** = fondo principal de piezas claras (one-pager, panfletos, deck claro).
+- **Negro #151515** = texto, y fondo de piezas oscuras cuando la pieza lo pide (video de estudio,
+  apertura de keynote, lamina de impacto). "A veces": no es el fondo por defecto.
+- **Azul: no** (aunque aparezca en el sitio). Neutros grises solo como superficies de apoyo.
 Contraste: #71af26 como texto sobre blanco NO cumple AA (2,67:1 calculado WCAG; DSN-002 midio 2,51:1 sobre tarjeta #f6f8f8): se usa como
 acento grafico, no como texto pequeño.
 
@@ -102,23 +106,28 @@ One como el sitio?).
 ni filtrar el logo; zona de proteccion = media altura del isotipo; altura minima 24 px en pantalla;
 sobre foto, siempre sobre placa solida; si una pieza usa la version provisional, se anota en `NOTAS.md`.
 
-**PENDIENTE**: archivo vectorial oficial del logo (AI/EPS/PDF/SVG con el isotipo en formas, no raster),
-version monocroma, manual de marca. Pedirlo al dueño de la marca o a la agencia del sitio.
+**CONFIRMADO por el usuario (2026-10-16)**: no hay otro archivo de logo que los existentes. **Vector de
+trabajo** = el de Faast2.0 `DSN-002-acceso-identidad/03-visual/logos/` (`faast-isotipo-v2-ajustado.svg`,
+`faast-principal-v2-ajustado-claro.svg` / `-oscuro.svg`), aproximacion medida con el verde oficial: es
+el que se usa en piezas (anotar en `NOTAS.md` que es la version de trabajo). Para verificar fidelidad,
+comparar contra el raster oficial del sitio. Si algun dia aparece el vector o el manual oficial, reemplaza
+a este. Manual de marca: no existe; rigen las reglas de uso de esta seccion.
 
 ## 8. Imagen y estilo observado en el sitio
 Iconografia lineal en SVG, fotografia de personas en contexto de trabajo (hero), mapa de LATAM,
-fondos claros con degradados suaves de verde y azul, sombras con brillo verde. Logos de clientes en
-carrusel (`progreso`, `tsf`, `toquea`, `orsan`, `lateral`, `kaplen`, `ipsofactoring`): **son marcas de
-terceros**; en piezas solo con autorizacion registrada en el brief.
+fondos claros con degradados suaves (en piezas: solo verdes, sin azul), sombras con brillo verde. Logos de clientes en
+carrusel (`progreso`, `tsf`, `toquea`, `orsan`, `lateral`, `kaplen`, `ipsofactoring`): son marcas de
+terceros. **CONFIRMADO por el usuario (2026-10-16): hay autorizacion para mostrarlas** en piezas de
+FaaST (casos, carrusel de clientes). Se usan tal cual el archivo del cliente, sin recolorear, y se anota
+en el brief que pieza las usa.
 
 ## 9. Lista de pendientes de marca (para `/marketing:marca`)
-1. Escritura oficial del nombre en piezas externas.
-2. Paleta oficial y rol del azul frente al verde.
-3. Tipografias oficiales para piezas (y licencias).
-4. Vector oficial del logo, variantes y manual.
-5. Guia de voz oficial.
-6. Vigencia de las cifras publicas y fuente del reconocimiento IFC.
-7. Clientes cuyo logo o caso se puede mostrar (autorizacion por cliente).
+Resueltos el 2026-10-16: nombre (**FaaST**), paleta (verde, blanco, a veces negro; sin azul), logo
+(vector de trabajo de Faast2.0 DSN-002), logos de clientes (autorizados).
+Siguen pendientes:
+1. Tipografias oficiales para piezas (y licencias) — mientras tanto, las del sitio (Lato / Open Sauce One).
+2. Guia de voz oficial.
+3. Vigencia de las cifras publicas y fuente del reconocimiento IFC.
 
 ## 10. Contrastes calculados (WCAG 2.x, 2026-10-16)
 Calculo propio sobre los hex verificados (formula de luminancia relativa WCAG). Umbrales: 4,5:1 texto
@@ -128,8 +137,6 @@ normal · 3:1 texto grande (≥ 24 px o ≥ 18,66 px bold) y elementos graficos.
 | #71af26 (isotipo) | 2,67 | 6,84 | 2,47 | sobre oscuro: texto y graficos; sobre claro: solo grafico decorativo o con borde/placa |
 | #151515 (texto) | 18,26 | — | 16,90 | texto principal sobre claros |
 | #22b14c (verde sitio) | 2,81 | 6,49 | 2,60 | igual que el isotipo |
-| #4259f5 (azul sitio) | 5,28 | 3,46 | 4,88 | texto sobre blanco; sobre oscuro solo texto grande |
-| #0F72FF (theme-color) | 4,31 | 4,24 | 3,99 | texto grande o grafico; no texto chico |
 | #487700 (fill login Faast2.0) | 5,36 | 3,40 | 4,96 | boton/texto sobre claro (es derivado de UI, no color de marca) |
 Consecuencia practica: en fondos claros, el verde de marca va como acento grafico (bloques, lineas,
 isotipo) y el texto en #151515; en fondos oscuros (estudio, video), el verde puede ser texto.
@@ -137,8 +144,8 @@ isotipo) y el texto en #151515; en fondos oscuros (estudio, video), el verde pue
 ## 11. Como se aplica la marca por pieza (mientras no haya manual)
 | Pieza | Logo | Color | Tipografia | Notas |
 |---|---|---|---|---|
-| Deck | apertura y cierre; no en cada lamina | neutros + verde como acento | la del kit (sitio: Lato / Open Sauce One) | cifras en display |
-| Video | apertura (sting) y cierre; animacion solo aparicion por fundido/escala/luz (no deformar ni separar el isotipo sin manual) | fondo estudio oscuro + verde | la del kit | logo nunca recoloreado por el grade |
+| Deck | apertura y cierre; no en cada lamina | blanco + verde como acento; negro en laminas de impacto | la del kit (sitio: Lato / Open Sauce One) | cifras en display |
+| Video | apertura (sting) y cierre; animacion solo aparicion por fundido/escala/luz (no deformar ni separar el isotipo sin manual) | negro de estudio + verde; blanco en las partes de producto | la del kit | logo nunca recoloreado por el grade |
 | One-pager / panfletos | cabecera con zona de proteccion | blanco + tinte del verde | la del kit | version provisional anotada si se usa |
 | Redes | esquina o cierre de carrusel, tamaño discreto | segun pieza | la del kit | sin marca de agua |
 
@@ -154,5 +161,6 @@ isotipo) y el texto en #151515; en fondos oscuros (estudio, video), el verde pue
 - Redibujar, "mejorar", recolorear, deformar, invertir, filtrar o separar el logo sin manual.
 - Inventar un color "de marca" o una tipografia "corporativa" no verificada.
 - Usar el redibujo de DSN-001 como logo (no es fiel).
-- Usar logos de clientes del sitio en piezas sin autorizacion por cliente.
+- Recolorear o deformar logos de clientes (estan autorizados, pero se usan tal cual).
+- Usar azul como color de marca.
 - Citar cifras del sitio sin la fecha de consulta ni la etiqueta "segun FaaST".

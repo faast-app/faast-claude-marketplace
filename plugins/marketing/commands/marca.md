@@ -49,4 +49,4 @@ Pendientes criticos para piezas: {lista}
 ## Reglas
 - Solo lo verificado con fuente y fecha; lo demas, PENDIENTE.
 - El logo nunca se redibuja, recolorea ni se copia a un repo.
-- Marcas de clientes del sitio son de terceros: solo con autorizacion por cliente.
+- Marcas de clientes del sitio: autorizadas por el usuario (2026-10-16); se usan tal cual, sin recolorear, y se anota en el brief que pieza las usa.
