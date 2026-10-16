@@ -1,6 +1,6 @@
 # Dev Team — Manual de Usuario
 
-**Version del plugin:** 2.17.x · **Integrantes del equipo:** 23 · **Comandos:** 32
+**Version del plugin:** 2.18.x · **Integrantes del equipo:** 23 · **Comandos:** 33
 
 Dev Team es un **equipo completo de desarrollo de software formado por asistentes de
 inteligencia artificial**. Funciona como una empresa de software en miniatura: hay
@@ -29,6 +29,7 @@ separada, en el **Anexo tecnico**.
 **Parte 2 — Situaciones reales, paso a paso**
 - [Caso 1: Tengo una idea y quiero empezar un proyecto](#caso-1--tengo-una-idea-y-quiero-empezar-un-proyecto)
 - [Caso 2: Tengo un documento de requerimientos](#caso-2--tengo-un-documento-de-requerimientos)
+- [Caso 2b: Tengo una propuesta o un plan y quiero el tablero completo armado](#caso-2b--tengo-una-propuesta-o-un-plan-y-quiero-el-tablero-completo-armado)
 - [Caso 3: Ya tengo un proyecto andando y quiero que el equipo lo tome](#caso-3--ya-tengo-un-proyecto-andando-y-quiero-que-el-equipo-lo-tome)
 - [Caso 4: Necesito una funcionalidad nueva, de principio a fin](#caso-4--necesito-una-funcionalidad-nueva-de-principio-a-fin)
 - [Caso 5: Quiero ver como se vera el producto antes de construirlo (equipo de diseño)](#caso-5--quiero-ver-como-se-vera-el-producto-antes-de-construirlo-equipo-de-diseño)
@@ -86,6 +87,10 @@ Ejemplos de lo que puedes escribir despues (o en la misma linea):
   funciona.
 - **Nada se publica sin pasar controles.** El equipo se controla a si mismo.
 
+> **Lo que espera tu respuesta no se pierde.** Si un integrante te hizo una pregunta y no
+> alcanzaste a responder, queda anotada como pendiente y el equipo te la recuerda al abrir
+> la siguiente sesion, en una lista corta, para que decidas como seguir.
+
 > Si solo tienes una pregunta rapida ("¿que estados tiene una solicitud?"),
 > preguntala directo, sin `/dev-team:start`. Es mas rapido y consume menos.
 
@@ -123,6 +128,11 @@ cruzar con ellos.
 | ☁️ **cloudsec** (seguridad de plataforma) | Revisa contenedores, red, certificados, cabeceras y automatizacion; que nada quede expuesto | Revision de seguridad de infraestructura |
 | 📚 **tech-writer** (el documentador) | Mantiene la documentacion y la memoria del proyecto (la wiki) | Al cerrar funcionalidades y al final del dia |
 
+> **Profesionales de su oficio:** cada integrante trabaja con el estandar de un profesional
+> experimentado de su area: sigue un metodo paso a paso, entrega en un formato fijo, revisa
+> su propio trabajo con una lista de control antes de entregarlo y evita los errores tipicos
+> de su oficio.
+
 > **Sobre el costo:** cada integrante usa un "cerebro" (modelo de IA) del tamaño justo
 > para su trabajo, para no gastar de mas. El que prepara la oficina y el documentador
 > usan el mas economico; el resto uno intermedio; el arquitecto puede subirse a uno
@@ -142,9 +152,12 @@ El equipo intenta hablar claro, pero hay palabras del oficio que conviene conoce
 | **Sprint** | Un periodo corto de trabajo (normalmente 2 semanas) con un objetivo claro |
 | **Bug** | Un error: algo que deberia funcionar de una forma y funciona de otra |
 | **Ambiente** | Una copia del sistema para un proposito: desarrollo, pruebas, demostracion, produccion (la que usan los clientes) |
+| **Ambiente de pruebas / productivo** | Cada proyecto declara de que clase es cada uno de sus ambientes. En uno **de pruebas** (desarrollo, QA, certificacion, puente, demo… lo que el proyecto declare) un giro, un pago o una aprobacion son pruebas normales. En uno **productivo** mueven dinero y datos reales, y cada accion delicada necesita tu autorizacion |
 | **Pase** | Publicar una version en un ambiente. Lleva una solicitud formal |
 | **Evidencia** | Fotos (capturas de pantalla), videos cortos y registros que demuestran lo que se probo y que paso |
-| **Informe de conformidad** | El aviso de quien publico una version: que quedo instalado, en que ambiente, y que esta funcionando. Sin este aviso, pruebas no arranca |
+| **Informe de conformidad** | El aviso de quien publico una version: que quedo instalado, en que ambiente, y que esta funcionando. Ayuda a pruebas a saber que version esta probando, pero es **opcional**: sin el, pruebas anota que version vio y valida igual |
+| **Pendiente** | Algo que quedo esperando tu respuesta o una decision tuya. Queda registrado y el equipo te lo recuerda al abrir cada sesion |
+| **Carpeta del proyecto** | La carpeta donde el equipo guarda su trabajo (tareas, notas, fotos, memoria). Esta **al lado** de los repositorios, nunca adentro |
 | **Repositorio** | La carpeta donde vive el codigo de un componente, con su historial de cambios |
 | **Rama** | Una copia de trabajo separada dentro del repositorio, para que cada cambio no interfiera con los demas |
 | **Integrar (merge)** | Llevar un cambio terminado y aprobado al producto principal. Solo lo hace el jefe de equipo |
@@ -173,10 +186,12 @@ Estas reglas estan siempre activas. No hay que pedirlas.
 4b. **Ninguna pantalla nueva se programa sin diseño aprobado por ti.** El estudio de
    diseño te muestra caminos reales, eliges, y solo entonces se construye exactamente eso.
    Los ajustes pequeños dentro de lo que ya existe no lo necesitan.
-5. **Regla de oro (no se cambia nunca): pruebas no valida sin el informe de
-   conformidad.** Si nadie confirmo que quedo instalado y funcionando, no se prueba.
-   En la computadora del desarrollador, solo si todo el sistema esta levantado
-   completo. Nadie puede saltarse esto, ni siquiera el jefe de equipo.
+5. **Pruebas siempre dice que version probo.** Todo veredicto indica el ambiente y la
+   version exacta. Si quien publico emitio el informe de conformidad, se usa ese; si no
+   (lo desplego otra persona, o el desarrollador solo puede levantarlo en su computadora),
+   pruebas anota la version que ve en la aplicacion o la que tu le indicas, y valida igual.
+   Solo se detiene si no hay forma de saber la version o si se ve que el cambio no esta
+   instalado. Un proyecto puede volver a exigir el informe como requisito.
 6. **A la primera falla, se reporta.** Si algo esta caido o no funciona al primer
    intento, pruebas toma la foto, marca el bloqueo y avisa. No insiste, no busca
    atajos, no toca nada.
@@ -200,6 +215,23 @@ Estas reglas estan siempre activas. No hay que pedirlas.
     rutas salen de la configuracion del proyecto o se te preguntan.
 15. **Todo queda registrado automaticamente.** La actividad del equipo se guarda sola
     y alimenta la oficina virtual y las metricas.
+16. **Nada del equipo se guarda dentro de los repositorios.** Tareas, notas de
+    traspaso, fotos, metricas, memoria y accesos viven en la carpeta del proyecto. Al
+    repositorio solo va lo que es del producto: codigo, cambios de base de datos para el
+    despliegue automatico, documentacion tecnica y la automatizacion de publicacion. Un
+    control impide guardar la carpeta del equipo dentro de un repositorio; si un proyecto
+    antiguo la tiene adentro, el equipo te avisa y te propone moverla.
+17. **Tus pedidos valen aunque los pases por la sesion o por el jefe de equipo.** Si
+    escribes "dile al encargado de datos que revise X", el integrante lo hace: no exige
+    que le escribas a el directamente. La unica excepcion: cuando Claude Code te pide
+    aprobar un permiso en pantalla, eso lo apruebas tu.
+18. **En pruebas no se frena en cada paso; en productivo, si.** En un ambiente de
+    pruebas, giros, pagos y aprobaciones son acciones normales de prueba y el equipo las
+    hace sin pedirte OK una por una. En un ambiente productivo pide tu autorizacion
+    antes de cada accion delicada. Y **antes de cambiar parametros o datos en una base
+    de datos, siempre pide tu OK**, sea el ambiente que sea.
+19. **Los pendientes no se pierden.** Lo que espera tu respuesta queda registrado y
+    aparece al iniciar cada sesion hasta que lo resuelvas.
 
 ---
 
@@ -225,6 +257,7 @@ exactamente que quieres.
 |---|---|
 | `/dev-team:new-project {idea o documento}` | Proyecto nuevo completo: arquitectura, carpetas, tareas, memoria |
 | `/dev-team:onboard {nombre}` | El equipo toma un proyecto que ya existe |
+| `/dev-team:project {sub}` | Arma un tablero (Project de GitHub) completo desde una propuesta o plan: `crear`, `agregar`, `verificar`, `espejo` (ver [Caso 2b](#caso-2b--tengo-una-propuesta-o-un-plan-y-quiero-el-tablero-completo-armado)) |
 | `/dev-team:setup` | Revisa e instala lo que la computadora necesita |
 
 **Trabajo**
@@ -321,7 +354,10 @@ central.
    de entrada", "usa la base de datos que ya tenemos". El arquitecto ajusta y vuelve
    a presentar hasta tu OK.
 4. Eliges donde vivira el tablero de tareas (GitHub o Azure DevOps) y el equipo crea
-   las carpetas de cada parte con todo lo basico ya armado.
+   las carpetas de cada parte con todo lo basico ya armado. Te pregunta tambien que
+   ambientes usara el proyecto y cuales son de pruebas y cuales productivos. La carpeta
+   de trabajo del equipo queda en la carpeta del proyecto, al lado de los
+   repositorios, nunca adentro.
 5. **El dueño del producto** convierte la idea en historias reales en tu tablero,
    escritas para que cualquiera las entienda:
    > "Como analista de cobranza quiero configurar la plantilla del aviso de
@@ -354,11 +390,62 @@ necesita.
   cada una** (por ejemplo, "RQ-07 → Consultar estado de facturas"), para que nada del
   documento quede afuera.
 - Si el documento trae bocetos de pantallas, el diseñador los toma como referencia
-  (ver [Caso 5](#caso-5--quiero-ver-como-se-vera-una-pantalla-antes-de-construirla)).
+  (ver [Caso 5](#caso-5--quiero-ver-como-se-vera-el-producto-antes-de-construirlo-equipo-de-diseño)).
 
 > Mientras mas decisiones traigas tomadas (tablero, tecnologias preferidas), menos
 > preguntas te hara el equipo. Todo lo que no traigas, el arquitecto lo propone y tu
 > solo apruebas o ajustas.
+
+---
+
+## Caso 2b — Tengo una propuesta o un plan y quiero el tablero completo armado
+
+**Situacion:** tienes una propuesta aprobada, un plan por etapas o una lista de
+pendientes (por ejemplo, "Dockerizacion de todos los componentes en cuatro fases") y
+quieres verla convertida en un **tablero de GitHub ordenado**: por fases, por
+categorias, con cada historia escrita como corresponde. No unas pocas historias sueltas,
+sino el plan entero.
+
+**Que escribes:**
+```
+/dev-team:project crear docs/Propuesta_Dockerizacion.docx
+```
+
+**Que hace el dueño del producto:**
+1. **Lee la propuesta completa.** Si algo critico no esta claro, te hace como maximo tres
+   preguntas.
+2. **Ordena el plan:** las **fases** (cada una con su objetivo y una condicion clara para
+   darla por terminada), las **categorias** (grandes temas que agrupan historias), y dentro
+   de cada fase las historias, las decisiones que hay que tomar y los riesgos, ademas de lo
+   que ya esta hecho.
+3. **Redacta cada item en lenguaje de negocio:** las historias con "Como… quiero… para…" y
+   sus criterios "Dado… cuando… entonces…"; las decisiones con quien decide y cuando se dan
+   por cerradas; los riesgos con como se reducen. Cada fase cierra con su item "Salida de la
+   Fase N".
+4. **Plan primero, en modo prueba:** te muestra que se crearia, que ya existe y se
+   reutiliza, y cuantos items quedan por fase y por categoria, sin tocar GitHub todavia.
+5. **Te pregunta "¿Creo esto en GitHub?"** Sin tu si claro, no se escribe nada.
+6. Con tu OK, arma el tablero: historias reales (nunca borradores), agrupadas bajo su
+   categoria, con fase, categoria, prioridad, tipo y estado completos, etiquetas, una meta
+   por fase y las vistas listas. Si se corta a mitad de camino, se vuelve a correr y sigue
+   donde quedo, sin duplicar.
+
+**Recibes:** el enlace al tablero, cuantos items quedaron por fase y por categoria,
+ejemplos de titulos y lo que queda por hacer a mano (en GitHub, elegir como se agrupa cada
+vista; la herramienta no lo permite de forma automatica). El tablero queda reflejado tambien
+en la lista de tareas local del proyecto.
+
+**Despues, para mantenerlo:**
+```
+/dev-team:project agregar {nuevo pedido o documento}   # suma items sin duplicar lo existente
+/dev-team:project verificar                            # revisa la salud del tablero (solo mira)
+/dev-team:project verificar --corregir                 # corrige lo que encontro, con tu OK
+/dev-team:project espejo                               # actualiza la lista de tareas local
+```
+
+> Diferencia con `/dev-team:refine`: refine crea **unas pocas historias** a partir de un
+> pedido; `/dev-team:project` arma o completa **un tablero entero** ordenado por fases y
+> categorias. Es para GitHub; si tu tablero es Azure DevOps, usa `/dev-team:refine`.
 
 ---
 
@@ -381,8 +468,14 @@ una base de datos en uso. Quieres que el equipo lo opere desde hoy.
    conexion una vez; se guardan protegidos, fuera del codigo) y prueba que conecta.
 4. Trae las tareas reales del tablero y arma el sprint actual.
 5. Arma un mapa de donde esta cada cosa, para que nadie pierda tiempo buscando.
-6. Crea la memoria del proyecto y le carga lo que descubrio.
-7. Si el proyecto no tiene un espacio de pruebas automaticas, te ofrece crearlo.
+6. Te pregunta que ambientes usa el proyecto y de que clase es cada uno (de pruebas o
+   productivo). No supone nada por el nombre: lo que declares define cuando el equipo
+   avanza solo y cuando te pide autorizacion.
+7. Deja su carpeta de trabajo en la carpeta del proyecto, **fuera del repositorio**. Si
+   el proyecto ya traia esa carpeta guardada dentro del repositorio (version antigua), te
+   avisa y te propone moverla; no la mueve sin tu OK.
+8. Crea la memoria del proyecto y le carga lo que descubrio.
+9. Si el proyecto no tiene un espacio de pruebas automaticas, te ofrece crearlo.
 
 **Recibes:** un equipo que conoce tu proyecto y puede trabajar. Prueba con
 `/dev-team:status` para ver el resumen.
@@ -433,9 +526,10 @@ Estimacion: 3 puntos
 ```
 2. **El jefe de equipo reparte:** los dos programadores trabajan a la vez, cada uno
    en su copia, y el jefe de pruebas prepara el plan de pruebas al mismo tiempo.
-3. **Los programadores terminan** y avisan a pruebas **con el informe de
-   conformidad** (que quedo disponible, en que version, y que esta funcionando).
-   Sin ese aviso, pruebas no arranca.
+3. **Los programadores terminan** y avisan a pruebas que esta listo, idealmente con el
+   **informe de conformidad** (que quedo disponible, en que version, y que esta
+   funcionando). Si no lo hay — porque lo desplego otra persona o porque el programador
+   solo puede levantarlo en su computadora — pruebas anota la version que ve y valida igual.
 4. **El equipo de pruebas** valida cada criterio: el probador de pantallas recorre la
    aplicacion como un usuario y deja fotos de cada paso; el probador de servicios
    comprueba las respuestas. El jefe de pruebas consolida un solo veredicto:
@@ -541,8 +635,8 @@ error registrado: es un reporte pendiente de reproduccion.
 1. **Se ordena tu reporte** en pasos como usuario, que esperabas y que paso. Si falta un
    dato indispensable (direccion, usuario, un registro que debe existir), te lo preguntan
    una sola vez, todo junto.
-2. **Pruebas reproduce el problema** en el ambiente correcto (con su informe de
-   conformidad) siguiendo tus pasos exactos, como un usuario, con una foto por paso
+2. **Pruebas reproduce el problema** en el ambiente correcto (anotando que version
+   esta instalada) siguiendo tus pasos exactos, como un usuario, con una foto por paso
    (`00-listado-pagina-1.png`, `01-pagina-2-repetidos.png`), un video corto y el registro
    de lo que respondio el sistema. Lo repite una segunda vez para saber si pasa siempre o
    a veces. Si algo esta caido antes de llegar al punto, toma la foto, marca el bloqueo y
@@ -582,7 +676,7 @@ vez, uno por ticket, y recibes una tabla con el veredicto de cada uno:
 ```
 ✅ #12 Registros repetidos al paginar   REPRODUCIDO (siempre)  → registrado, gravedad Alta
 ❌ #15 Total no cuadra en exportacion    NO REPRODUCIDO         → falta: archivo de ejemplo y filtro usado
-⛔ #21 Login lento                       BLOQUEADO              → falta el informe de conformidad; escalado
+⛔ #21 Login lento                       BLOQUEADO              → el ambiente no responde; escalado
 ```
 Solo los reproducidos pasan a correccion, en un unico plan que el jefe de equipo te
 presenta con el orden sugerido. Cada ticket conserva su veredicto y su evidencia propia.
@@ -659,8 +753,8 @@ casos extremos se agregan y que datos de prueba hacen falta.
 ```
 /dev-team:e2e HU-42
 ```
-→ Primero pruebas confirma que lo que va a probar es lo que se dijo que se instalo
-(el informe de conformidad). Luego recorre la aplicacion como lo haria un usuario y,
+→ Primero pruebas confirma **que version esta probando**: la del informe de conformidad
+si existe, o la que muestra la aplicacion, o la que tu le indicas. Luego recorre la aplicacion como lo haria un usuario y,
 por cada criterio, deja **tres fotos** (antes, la accion, el resultado con el
 elemento resaltado) y una **comprobacion** que dice si se cumple o no. Con eso arma
 un **informe por criterio**, como este:
@@ -719,8 +813,8 @@ repara la prueba, nunca el producto).
 → entre otras cosas, cuantas historias aprobadas volvieron despues como error. La meta
 es una de cada mil o menos.
 
-**Donde quedan las fotos.** Siempre en la carpeta del proyecto, una subcarpeta por
-historia o error. Cuando hay un error, las fotos se muestran dentro del ticket. Si el
+**Donde quedan las fotos.** Siempre en la carpeta del proyecto (nunca dentro de un
+repositorio), una subcarpeta por historia o error. Cuando hay un error, las fotos se muestran dentro del ticket. Si el
 proyecto esta en GitHub, se publican en un espacio apartado que existe solo para eso
 y nunca se mezclan con el codigo.
 
@@ -733,6 +827,14 @@ lleva un pequeño resumen que explica que muestra cada archivo. **Cuando se corr
 error y hay que verificarlo**, la evidencia pone lado a lado el "antes" y el "despues"
 para que se vea el arreglo de un vistazo, y todo se entrega dentro del ticket, con la
 version en que se probo.
+
+**Videos que se ven bien.** Los videos de evidencia se graban **a tamaño real**: ocupan
+toda la pantalla y el texto se lee nitido, sin una imagen chica en una esquina. Llevan un
+**capitulo por paso** con un titulo que se entiende ("Doble clic en Confirmar giro"), y se
+entregan en **MP4**, que abre en cualquier equipo (Windows, Mac, Teams, el navegador). En
+el ticket aparece una **portada** del video que, al hacer clic, abre el video completo.
+Pruebas revisa cada video antes de entregarlo: **si uno salio chico o borroso, se vuelve a
+grabar**; un video que no se lee no cuenta como evidencia.
 
 ---
 
@@ -757,9 +859,10 @@ pasos delicados) y arma la carpeta con su estructura.
 /dev-team:flow grabar factoring/creacion-operacion
 ```
 Vas haciendo el flujo por la pantalla y el equipo captura cada paso (que se toca, que
-responde el sistema, una foto de cada uno) y arma el instructivo. En cada paso que
-**escribe algo importante** (grabar, aprobar, confirmar un giro), se detiene y te pide
-tu OK en el momento.
+responde el sistema, una foto de cada uno) y arma el instructivo. Si el ambiente es **de
+pruebas**, grabar, aprobar o confirmar un giro son acciones de prueba normales y se hacen
+sin frenar. Si es **productivo**, en cada paso que escribe algo importante se detiene y te
+pide tu OK en el momento.
 
 **Repetirlo despues, con garantias:**
 ```
@@ -767,10 +870,15 @@ tu OK en el momento.
 ```
 Primero te muestra el plan y espera tu OK. Luego: revisa que todo este en su sitio
 (solo mirando), y si el flujo cambia algun parametro sensible lo hace el encargado de
-datos con resguardo (anota el valor original para devolverlo al final). Ejecuta paso a
-paso con fotos, **se detiene antes de cada accion importante para pedir tu OK**, verifica
-el resultado y, al cerrar, te pregunta si restaurar los parametros. Si algo falla, se
-detiene y avisa: no reintenta a ciegas, porque cada intento crea datos de verdad.
+datos con resguardo (anota el valor original para devolverlo al final) y **siempre con tu
+OK en ese momento**. Ejecuta paso a paso con fotos y verifica el resultado:
+- **En un ambiente de pruebas**, los giros, pagos y aprobaciones del flujo se hacen sin
+  frenar: ya pediste correr el flujo y son pruebas normales.
+- **En un ambiente productivo**, **se detiene antes de cada accion importante para pedir
+  tu OK**.
+
+Al cerrar te pregunta si restaurar los parametros. Si algo falla, se detiene y avisa: no
+reintenta a ciegas, porque cada intento crea datos nuevos.
 
 **Otras:** `/dev-team:flow listar` muestra los flujos que ya tienes; `/dev-team:flow
 verificar {flujo}` chequea que esten dadas las condiciones sin ejecutar nada. Los flujos
@@ -804,6 +912,17 @@ motor y por base de datos. Cada archivo se puede ejecutar varias veces sin rompe
 nada, respeta acentos y eñes, y no depende de nombres de una instalacion particular.
 El encargado de publicaciones lo revisa y puede rechazarlo (ver Caso 10).
 
+**Dos tipos de cambios de datos, dos formatos.** Conviene no confundirlos:
+- **Las migraciones del repositorio** viven junto al codigo y las aplica sola la
+  publicacion automatica, cada vez que se despliega el componente. Es lo unico de base de
+  datos que se guarda en el repositorio.
+- **Los cambios que viajan en un pase** (a certificacion, puente, demo, preprod o
+  produccion, o que se entregan a otro equipo o a un cliente) van **siempre** en el formato
+  por tipo de cambio descrito arriba. Aunque el cambio ya exista como migracion en el
+  repositorio, el pase lleva su propio paquete en ese formato. Si alguien entrega "las
+  migraciones del repositorio" como cambios del pase, el encargado de publicaciones lo
+  rechaza y pide el paquete correcto.
+
 ---
 
 ## Caso 10 — Publicar una version en un ambiente (pase)
@@ -826,7 +945,8 @@ El encargado de publicaciones lo revisa y puede rechazarlo (ver Caso 10).
 3. **Revisa los cambios de datos** que entrego el encargado de datos: que esten en el
    formato acordado, ordenados por motor, base y tipo, y que se puedan ejecutar mas
    de una vez sin romper nada. **Si algo esta mal, los rechaza** e indica archivo,
-   linea y regla.
+   linea y regla. Tambien rechaza que se le entreguen las migraciones del repositorio en
+   lugar del paquete del pase (ver "Dos tipos de cambios de datos" en el Caso 9).
 4. Arma el paquete de cambios de datos (`Scripts.zip`) con esa misma organizacion.
 5. Llena la **solicitud de pase** en formato simple, de una o dos paginas: para que
    es, que componentes van y en que version, que temas incluye, que acciones hay que
@@ -849,8 +969,10 @@ El encargado de publicaciones lo revisa y puede rechazarlo (ver Caso 10).
 Colombia), preprod (Colombia, Peru) y produccion de clientes. Ambientes internos: solo
 si lo pides.
 
-**Despues de publicar:** quien instalo emite el **informe de conformidad**. Sin el,
-pruebas no valida (regla de oro).
+**Despues de publicar:** lo ideal es que quien instalo emita el **informe de
+conformidad** (que quedo instalado y en que version). Es opcional: si no llega, pruebas
+anota la version que ve en el ambiente y valida igual. Si tu proyecto necesita que el
+informe sea obligatorio, se configura asi (ver [Anexo B](#b-configuracion-del-proyecto)).
 
 ---
 
@@ -883,7 +1005,8 @@ antes de desplegar, justamente para no pisar algo que ya estaba.
 ```
 Primero inventaria, luego te presenta el plan (que version va, a donde, que cambia, y a
 que version se vuelve si algo falla) y **espera tu OK**. Recien ahi despliega, verifica
-salud, deja registro y emite el informe de conformidad para que pruebas pueda validar.
+salud, deja registro y emite el informe de conformidad, para que pruebas sepa
+exactamente que version quedo instalada.
 Si el destino es un ambiente formal (certificacion, puente, demo, preprod, produccion),
 la solicitud de pase sigue yendo por `/dev-team:pase` (Caso 10).
 
@@ -993,7 +1116,7 @@ codigo, contratos de las APIs, diagramas de arquitectura) la hace el documentado
 ```
 /dev-team:team-office
 ```
-→ se abre una pagina en tu navegador con los 15 integrantes en sus salas. Cuando uno
+→ se abre una pagina en tu navegador con los 23 integrantes en sus salas. Cuando uno
 trabaja, se ve un anillo verde y "escribiendo…" con su tarea debajo; si esta
 bloqueado, se pone rojo; cuando uno le pasa trabajo a otro, vuela un sobre; cuando
 termina, confetti. A un costado, el hilo de actividad. Es solo para mirar y no
@@ -1075,9 +1198,33 @@ aparte. El jefe de equipo como integrante existe para gestion profunda: sprint,
 prioridades, revision de cambios e integracion al producto. Si quieres invocarlo
 explicitamente: `/dev-team:assign-task` o escribe "que el lead revise el sprint".
 
+**¿Puedo pedirle algo a un integrante a traves de la sesion?**
+Si. "Dile al encargado de datos que compare las dos bases" o "que pruebas revise la
+historia 42" funciona: la sesion le pasa tu pedido tal cual y el integrante lo toma como
+si se lo hubieras dicho a el. No tienes que escribirle por separado. Lo unico que no se
+puede pasar asi es la aprobacion de un permiso que te pide Claude Code en pantalla: esa
+la das tu.
+
 **¿Puedo confiar en que no haran nada sin avisarme?**
 Si. Plan primero es regla: todo lo que construye o corrige te presenta el plan y
 espera tu OK. Solo lo que es de lectura (mirar, resumir, buscar) corre directo.
+
+**¿Por que en pruebas el equipo hace giros y aprobaciones sin preguntarme?**
+Porque en un ambiente de pruebas son acciones de prueba normales: preguntarte en cada
+paso solo haria lento el trabajo. En un ambiente productivo es al reves: cada accion
+delicada espera tu autorizacion. Cada proyecto declara la clase de sus ambientes; si
+aparece uno sin declarar, el equipo te pregunta una vez y lo recuerda. Cambiar
+parametros o datos de una base de datos siempre lleva tu OK, en cualquier ambiente.
+
+**Deje una pregunta del equipo sin responder. ¿Se pierde?**
+No. Queda registrada como pendiente y, al abrir la siguiente sesion, el equipo te
+muestra la lista de lo que espera tu respuesta para que decidas como seguir.
+
+**¿Por que no veo las tareas ni las fotos del equipo en el repositorio?**
+Porque no van ahi. El trabajo del equipo vive en la carpeta del proyecto, al lado de
+los repositorios. Al repositorio solo va lo que es del producto (codigo, migraciones de
+base de datos, documentacion tecnica y la automatizacion de publicacion). Asi el
+repositorio queda limpio y nada interno se publica por error.
 
 **¿Funciona sin GitHub ni Azure DevOps?**
 Si. En "solo local" las tareas viven en un archivo del proyecto. Puedes conectar un
@@ -1131,7 +1278,10 @@ que esta hecho, salvo que lo pidas.
 
 **Tengo proyectos creados con versiones viejas del plugin. ¿Hay que migrar algo?**
 No. Al abrir una sesion, el plugin completa solo lo que falte y, si la memoria esta
-vacia, te ofrece una vez llenarla.
+vacia, te ofrece una vez llenarla. Si en un proyecto antiguo la carpeta del equipo quedo
+guardada dentro de un repositorio, te avisa y te propone moverla a la carpeta del
+proyecto; no hace nada sin tu OK. Si falta declarar la clase de los ambientes, te lo
+pregunta la primera vez que haga falta.
 
 **¿Como me entero de que salio una version nueva?**
 Automatico: al abrir una sesion el plugin compara tu version con la publicada (una
@@ -1151,9 +1301,23 @@ Correcto, es el diseño: solo el jefe de equipo puede hacerlo. El integrante hac
 trabajo directo o deja una nota al jefe.
 
 **Pruebas no quiere validar.**
-Tambien correcto si falta el informe de conformidad o el sistema no esta completo en
-la computadora del desarrollador (regla de oro). Pide a quien instalo que emita el
-informe.
+Pruebas solo se detiene si no puede saber que version esta probando o si ve que el
+cambio no esta instalado. Dile la version ("en puente esta la 2.0.44") o pide a quien
+instalo que emita el informe de conformidad. Si tu proyecto esta configurado para
+exigir el informe, sin el no se valida.
+
+**Un integrante dice que no puede guardar en esa carpeta.**
+Es el control que impide guardar el trabajo del equipo dentro de un repositorio. Acepta
+la propuesta de mover la carpeta a la carpeta del proyecto (o pide ayuda a quien
+configura, ver [Anexo C](#c-la-carpeta-de-coordinacion)).
+
+**Claude Code me pide aprobar un permiso a mitad de un trabajo.**
+Es normal y lo apruebas tu en pantalla. Es lo unico que el equipo no puede dar por
+autorizado aunque tu pedido haya llegado a traves de la sesion.
+
+**Un video de evidencia se ve chico o borroso.**
+No deberia pasar: pruebas revisa cada video y lo regraba si salio mal. Si te llega uno
+asi, pide que lo regraben; un video que no se lee no cuenta como evidencia.
 
 **Un pase fue rechazado.**
 Es el control funcionando. El rechazo indica archivo, linea y regla; lo corrige el
@@ -1197,7 +1361,8 @@ del plugin queda.
 
 ## B. Configuracion del proyecto
 
-Todo vive en `.coordination/config.json` (lo crean `new-project` y `onboard`):
+Todo vive en `.coordination/config.json`, dentro de la **carpeta del proyecto** (nunca
+dentro de un repo; lo crean `new-project` y `onboard`):
 
 ```json
 {
@@ -1225,6 +1390,13 @@ Todo vive en `.coordination/config.json` (lo crean `new-project` y `onboard`):
   },
   "team": { "models": { "architect": "opus" } },
   "urls": { "dev": "http://localhost:3000" },
+  "ambientes": {
+    "desa":   { "clase": "pruebas",    "url": "http://localhost:3000" },
+    "qa":     { "clase": "pruebas",    "url": "https://qa.{dominio}" },
+    "puente": { "clase": "pruebas",    "url": "https://puente.{dominio}" },
+    "prod-cl": { "clase": "productivo", "url": "https://{dominio}" }
+  },
+  "qa": { "conformidad": "opcional" },
   "e2e": { "exists": true, "path": "e2e" },
   "design": { "tools": { "canvas": "pencil", "imagegen": "none", "video": "hyperframes" } },
   "deploy": {
@@ -1251,6 +1423,9 @@ Todo vive en `.coordination/config.json` (lo crean `new-project` y `onboard`):
 | `pase.*` | Plantilla, carpeta de salida, "elaborado por", destinatarios (`to`/`cc`) y `aprobador` del correo de pase |
 | `team.models.{agente}` | Override de modelo en este proyecto (no aplica a setup/tech-writer). Personal: `~/.claude/dev-team.config.json`; proyecto gana |
 | `urls.dev` | URL del ambiente que QA usa para validar |
+| `ambientes.{nombre}.clase` | `pruebas` (giros, pagos, aprobaciones y desembolsos son acciones de prueba normales, sin OK paso a paso) / `productivo` (cada accion sensible exige autorizacion explicita). No se presupone por el nombre: si un ambiente no esta declarado, se pregunta UNA vez y se persiste. Cambios de parametros o de BD piden OK siempre |
+| `qa.conformidad` | `opcional` (default: sin informe de conformidad QA registra la version observada — pantalla de version, `/health`, tag — o la indicada por el usuario, y valida) / `obligatoria` (sin informe, QA no inicia) |
+| `tracker.github.{org,repo,project}` | Org, repo de issues y nombre EXACTO del Project que usa `/dev-team:project` (lo actualiza el script al ejecutar) |
 | `e2e.path` | Donde vive la suite de pruebas (mono: `e2e/`; multi: repo `{proyecto}-e2e`), creada desde `templates/e2e-faast/` |
 | `design.tools.canvas` | `pencil` / `figma` / `penpot` / `none`: lienzo con el que sincroniza el design-engineer (Figma: `claude mcp add --transport http --scope user figma https://mcp.figma.com/mcp`) |
 | `design.tools.imagegen` | MCP de generacion de imagenes (opcional, API key del usuario) o `none` |
@@ -1269,21 +1444,57 @@ core-skills@hyperframes`. `/dev-team:setup design` las detecta y las ofrece.
 
 **Secretos que nunca entran a git** (los templates ya los ignoran): `.coordination/dba-access.json`,
 `.coordination/qa-secrets.env`, `.coordination/setup-status.json`, y toda la carpeta
-`.coordination/evidence/`.
+`.coordination/evidence/`. Como `.coordination/` vive fuera de los repos, ninguno de ellos
+llega a un repo; el `.gitignore` de los templates queda como red de seguridad.
+
+**Registro personal de proyectos** (`~/.claude/dev-team.config.json` → `proyectos`). Le dice
+al plugin, por usuario y sin tocar el repo, en que carpeta del proyecto esta la coordinacion
+de cada repo. Sirve cuando el repo no vive dentro de la carpeta del proyecto (p. ej. repos en
+`~/Repositorios/` y proyecto en `~/Proyectos/`). La clave es la ruta de un repo o carpeta; el
+valor, la carpeta que contiene `.coordination/`. Gana el prefijo mas largo:
+
+```json
+{
+  "team": { "models": { "architect": "opus" } },
+  "proyectos": {
+    "~/Repositorios/front-backoffice": "~/Proyectos/backoffice",
+    "~/Repositorios/micro-factoring":  "~/Proyectos/backoffice",
+    "~/Repositorios/confirming2.0":    "~/Proyectos/confirming"
+  }
+}
+```
+
+`onboard` lo completa cuando el repo no esta dentro de una carpeta del proyecto, y la sesion
+lo propone al detectar una coordinacion dentro de un repo.
 
 ## C. La carpeta de coordinacion
 
-`.coordination/` es la memoria compartida del equipo. Vive en la raiz del mono-repo o
-en la carpeta paraguas del multi-repo. La **canonica** es la que tiene `config.json`;
-los repos fuera del paraguas apuntan a ella con un archivo `.coordination-root` (una
-linea con la ruta; gitignored).
+`.coordination/` es la memoria compartida del equipo. Vive en la **carpeta del
+proyecto**, **nunca dentro de un repositorio git**: en multi-repo es la carpeta paraguas;
+en mono-repo, la carpeta que contiene al repo unico (`{proyecto}/.coordination/` junto a
+`{proyecto}/{proyecto}/`). La **canonica** es la que tiene `config.json`. Al repo solo va
+codigo, migraciones de BD (`Migrations/Sql/`, `docs/database/migrations/`), documentacion
+tecnica (README, ADR, OpenAPI, CHANGELOG), pipelines y configuracion del servicio.
+
+**Como se resuelve la canonica** (en este orden): (1) el registro `~/.claude/dev-team.config.json`
+→ `proyectos` (ver Anexo B); (2) el puntero legado `.coordination-root` en la raiz del repo
+(una linea con la ruta; gitignored); (3) subir directorios buscando una `.coordination/` con
+`config.json`, prefiriendo la que esta fuera de repos.
+
+**Protecciones:** un hook bloquea escribir dentro de una `.coordination/` que este dentro de un
+repo, y al iniciar sesion el plugin agrega localmente `.coordination/`, `.coordination-root`,
+`.mesa/` y `.playwright-mcp/` a `.git/info/exclude` del repo abierto (nada se commitea). Si un
+proyecto legado tiene la coordinacion dentro del repo, la sesion propone migrarla con OK:
+acordar la carpeta del proyecto, moverla con `mv`, registrarla en `proyectos`; sacarla del
+historial del repo es un PR aparte, solo si el usuario lo pide.
 
 ```
 .coordination/
 ├── config.json           fuente de verdad (arriba)
 ├── handoffs/ (+archive/) comunicacion entre agentes ({de}-to-{para}-{fecha}.md)
 ├── wiki/                 memoria del proyecto (vault de Obsidian; solo escribe tech-writer)
-├── metrics/              activity.jsonl (eventos via hooks + verdict/reopened manuales)
+├── metrics/              activity.jsonl (eventos via hooks + verdict/reopened/esperando_usuario/respondido manuales)
+├── project-state/        spec y estado de /dev-team:project (<nombre>.spec.json, <nombre>.json)
 ├── evidence/             evidencia QA y de seguridad (PENTEST-*/) por HU/BUG (informe, capturas, trace, clips) — gitignored
 ├── pases/                carpetas de pase entregadas
 ├── deploy/               inventario de servidores (que corre en cada host) — lo llena /dev-team:deploy inventario
@@ -1351,10 +1562,28 @@ correcto? (`node .coordination/office/server.mjs --dir .coordination`) (3) `pyth
 
 **Handoffs o metricas aparecen en una `.coordination` equivocada (dentro de un repo)**
 → hay una `.coordination` huerfana (sin `config.json`) mas cerca del cwd que la
-canonica. Desde v2.6.11 el plugin resuelve por canonicidad y, al abrir sesion sobre
-una huerfana, propone fusionarla, eliminarla y crear el puntero `.coordination-root`.
-A mano: crear `.coordination-root` en la raiz del repo con la ruta a la carpeta
-paraguas, fusionar lo util y borrar el desvio.
+canonica. El plugin resuelve por canonicidad y, al abrir sesion sobre una huerfana,
+propone fusionarla en la canonica y eliminarla (con OK). A mano: registrar el repo en
+`~/.claude/dev-team.config.json` → `proyectos` (ver Anexo B), fusionar lo util y borrar el
+desvio. El puntero `.coordination-root` sigue funcionando, pero el registro no deja nada
+dentro del repo.
+
+**Un agente dice que un hook le bloqueo escribir en `.coordination/`**
+→ esa `.coordination/` esta dentro de un repo git (proyecto legado o creada por error).
+Migrarla: acordar la carpeta del proyecto, `mv` de la carpeta, registrar
+`"proyectos": {"<ruta del repo>": "<carpeta del proyecto>"}` y reiniciar la sesion. Si estaba
+commiteada, sacarla del historial del repo es un PR aparte, solo con OK explicito.
+
+**El video de evidencia salio chico en una esquina o con relleno gris**
+→ la traza se encendio antes que el video en esa sesion del navegador. La secuencia correcta
+(navegador limpio → `browser_resize` → `browser_start_video` con `size` = viewport →
+`browser_video_show_actions` → recien ahi `browser_start_tracing`) esta en la skill
+`visual-evidence`, seccion "Video a tamaño real". `normalizar_video.py` deja el `.mp4` (H.264)
+y la portada; si responde `REPARADO` (codigo 2) y es la prueba principal, se regraba.
+
+**`/dev-team:project` dice que no tiene acceso al Project**
+→ falta el scope `project` en `gh`: `gh auth refresh -s project`. Si el tracker es Azure
+DevOps, este comando no aplica: usar `/dev-team:refine`.
 
 **El architect no uso opus aunque lo configure**
 → el override lo aplica quien invoca (lead/flujos) leyendo el config: verificar la

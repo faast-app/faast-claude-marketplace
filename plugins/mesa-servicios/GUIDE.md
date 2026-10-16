@@ -1,6 +1,6 @@
 # Mesa de Servicios — Manual de Usuario
 
-**Version del plugin:** 1.0.x · **Integrantes del equipo:** 10 · **Comandos:** 12
+**Version del plugin:** 1.1.x · **Integrantes del equipo:** 10 · **Comandos:** 12
 
 La Mesa de Servicios es un **equipo de asistentes de inteligencia artificial que recibe todo lo
 que llega de un cliente** — un ticket, un reporte de que algo falla, una cotizacion, un proyecto,
@@ -82,6 +82,10 @@ Ejemplos de lo que puedes escribir despues (o en la misma linea):
 - **Te presentan el plan antes de hacer nada** que cambie algo: antes de mandar preguntas,
   de maquetar, de armar scripts o de subir un ticket. Tu dices "adelante".
 
+> **Lo que espera tu respuesta no se pierde.** Si el equipo te dejo una pregunta o una
+> decision pendiente, queda anotada y te la recuerda al abrir la siguiente sesion, en una
+> lista corta, para que decidas como seguir.
+
 > Si solo quieres saber algo del negocio ("¿que productos usa ACME?"), pregunta directo con
 > `/mesa-servicios:brain query`. Es rapido y no mueve nada.
 
@@ -104,6 +108,11 @@ datos, su maquetador y su redactor. Estos son sus 10 integrantes.
 | 🎫 **registrador** (el del tablero) | Sube el ticket al tablero con todas sus etiquetas, el documento y las fotos dentro | Al final, para que desarrollo lo tome |
 | 📚 **curador** (el bibliotecario) | Guarda lo que se aprendio de cada pedido en la memoria del negocio, para que el proximo se cierre con menos preguntas | Al cerrar cada pedido |
 | 🧰 **setup** (el que prepara la oficina) | Revisa que la computadora tenga todo e instala lo que falte, con tu permiso | Al empezar o cuando algo no esta instalado |
+
+> **Profesionales de su oficio:** cada integrante trabaja con el estandar de un profesional
+> experimentado de su area: sigue un metodo paso a paso, entrega en un formato fijo, revisa
+> su propio trabajo con una lista de control antes de entregarlo y evita los errores tipicos
+> de su oficio.
 
 > **Sobre el costo:** todos los integrantes usan el mismo "cerebro" intermedio por defecto. Si
 > algun pedido es especialmente complejo, se puede subir a uno mas potente para un integrante
@@ -129,6 +138,9 @@ datos, su maquetador y su redactor. Estos son sus 10 integrantes.
 | **Propuesta** | El documento para el cliente cuando hay que cotizar: que se hara, que no, plazos y condiciones. La valorizacion la pone comercial |
 | **Ticket** | La tarjeta en el tablero (GitHub o Azure DevOps) con todo adentro: resumen, decisiones, pendientes, documento y fotos |
 | **Scripts** | Instrucciones preparadas para corregir o revertir datos. La mesa los arma; **los ejecuta quien esta autorizado** |
+| **Ambiente de pruebas / productivo** | Cada ambiente del sistema esta declarado como **de pruebas** (donde aprobar, girar o pagar son pruebas normales) o **productivo** (el que usan los clientes de verdad, donde todo cambio necesita autorizacion) |
+| **Pendiente** | Algo que quedo esperando tu respuesta o una decision tuya. Queda registrado y el equipo te lo recuerda al abrir cada sesion |
+| **Carpeta de la mesa** | Donde el equipo guarda su trabajo (solicitudes, fotos, documentos, flujos). Esta fuera de los repositorios de codigo, nunca adentro |
 | **Flujo propio** | Una operacion que la mesa repite (buscar operaciones de un cliente, revisar una bandeja) registrada paso a paso para hacerla siempre igual y con evidencia |
 | **faast-brain** | La memoria del negocio: que productos hay, como opera cada cliente, que reglas rigen, que palabras usa cada uno. La mesa la lee antes de preguntar |
 | **Plan primero** | La regla de que nadie manda preguntas, maqueta, arma scripts ni sube tickets sin mostrarte antes el plan y esperar tu "adelante" |
@@ -158,13 +170,26 @@ Estan siempre activas. No hay que pedirlas.
 9. **Una cotizacion no es trabajo** hasta que comercial la aprueba y queda registrado quien y cuando.
 10. **Numero y alcance en todo.** Cada solicitud lleva su correlativo y dice si es de un
     cliente o transversal.
-11. **Produccion, con permiso escrito.** Si un flujo propio o una reproduccion toca el ambiente
-    productivo, se registra quien lo autorizo y para que, y el equipo se detiene antes de cada
-    paso que cambie algo.
+11. **En pruebas no se frena; en produccion, con permiso escrito.** En un ambiente de pruebas,
+    aprobar, girar o pagar son acciones de prueba normales y el equipo las hace sin pedirte OK
+    una por una. Si un flujo propio o una reproduccion toca el ambiente productivo, se registra
+    quien lo autorizo, cuando y para que caso (en cada corrida), y el equipo se detiene antes
+    de cada paso que cambie algo. Cada ambiente esta declarado como de pruebas o productivo; si
+    aparece uno sin declarar, te preguntan una vez.
 12. **Lo que se aprende se guarda.** Al cerrar cada solicitud, la memoria del negocio crece y
     la siguiente se cierra con menos preguntas.
 13. **Sin secretos ni datos personales** en documentos, tickets ni memoria. Se habla de
     empresas y roles, no de personas.
+14. **Nada de la mesa se guarda dentro de los repositorios.** Solicitudes, fotos, documentos,
+    flujos y accesos viven en la carpeta de la mesa, fuera de cualquier repositorio de codigo.
+    Un control impide guardarla dentro de uno; si una mesa antigua la tiene adentro, el equipo
+    te avisa y te propone moverla.
+15. **Tus pedidos valen aunque los pases por la sesion o por el jefe de mesa.** Si escribes
+    "dile al de los datos que revise la operacion 10432", el integrante lo hace: no exige que
+    le escribas a el directamente. La unica excepcion: cuando Claude Code te pide aprobar un
+    permiso en pantalla, eso lo apruebas tu.
+16. **Los pendientes no se pierden.** Lo que espera tu respuesta queda registrado y aparece al
+    iniciar cada sesion hasta que lo resuelvas.
 
 ---
 
@@ -339,7 +364,8 @@ Siguiente: /mesa-servicios:prototipo SOL-2026-03-11-1
    mesa lo autorizan, y queda registrado.
 2. Hace **exactamente** los pasos del cliente, una vez, como un usuario. Graba todo: un video
    con las acciones marcadas y un capitulo por paso, una foto de cada paso con lo importante
-   resaltado, y los registros internos.
+   resaltado, y los registros internos. En el ambiente de pruebas, si los pasos del cliente
+   incluyen aprobar, confirmar o girar, los hace con normalidad: son parte de la prueba.
 3. Si se reproduce, lo repite una segunda vez para saber si pasa **siempre** o **a veces**.
 4. Si algo lo frena antes de llegar al punto (no entra, el ambiente no responde), **se
    detiene y lo reporta**; no insiste ni busca atajos.
@@ -351,6 +377,13 @@ Veredicto: REPRODUCIDO (siempre) en pruebas · perfil analista
 Pasos: 2 · Evidencia: 3 fotos, video 18 s, registros · Observacion: 1 llamada interna con respuesta inesperada
 Siguiente: /mesa-servicios:documento SOL-2026-03-11-2
 ```
+
+**Videos que se ven bien.** El video se graba **a tamaño real**: ocupa toda la pantalla y el
+texto se lee nitido, sin una imagen chica en una esquina. Lleva un **capitulo por paso** con un
+titulo que se entiende, y se entrega en **MP4**, que abre en cualquier equipo (Windows, Mac,
+Teams, el navegador). En el ticket aparece una **portada** del video que, al hacer clic, abre el
+video completo. El probador revisa cada video antes de entregarlo: **si salio chico o borroso,
+se vuelve a grabar**; un video que no se lee no cuenta como evidencia.
 
 **Importante:** el probador **nunca dice por que falla**. Solo demuestra que falla, con
 evidencia. La causa es del equipo de desarrollo. Si **no** se reproduce, no se inventa el bug:
@@ -474,9 +507,12 @@ entrega el resultado con la evidencia.
 **Dos clases de flujo:**
 - **Consulta** (solo mira: buscar, verificar, exportar): sin paradas, con evidencia de que
   solo se miro.
-- **Accion** (algo cambia por la pantalla: aprobar, reasignar): el equipo **se detiene antes de
-  cada paso que cambie algo** y espera tu OK en ese momento. En produccion, ademas, con la
-  autorizacion registrada.
+- **Accion** (algo cambia por la pantalla: aprobar, reasignar):
+  - **En un ambiente de pruebas**, las acciones se hacen sin frenar: ya pediste correr el flujo y
+    son pruebas normales.
+  - **En produccion**, cada corrida necesita su autorizacion registrada (quien, cuando, para que
+    caso; no vale "ya autorizado para todo"), y el equipo **se detiene antes de cada paso que
+    cambie algo** y espera tu OK en ese momento.
 
 > Dentro de un flujo, el de los datos solo **mira** (verifica antes y despues). Si el flujo
 > necesita cambiar datos, eso es un paquete de scripts (Caso 7) para quien esta autorizado.
@@ -502,7 +538,7 @@ tambien la Propuesta.
 ```
 El registrador te muestra titulo, etiquetas y columna, y con tu OK sube la tarjeta al tablero:
 titulo limpio, resumen, decisiones tomadas, pendientes, **fotos y video dentro** (no como
-enlace), el documento adjunto, y etiquetas completas (tipo, cliente o transversal, producto,
+enlace; el video aparece con su portada y abre en MP4), el documento adjunto, y etiquetas completas (tipo, cliente o transversal, producto,
 prioridad sugerida, de donde vino). Si ya existia un ticket parecido, no duplica: te avisa.
 
 **Recibes:**
@@ -604,6 +640,22 @@ y nunca se reutiliza. Ademas, cada solicitud dice si es de un cliente o transver
 **¿La mesa se puede usar junto con el equipo de desarrollo?** Si. Usan carpetas distintas y la
 mesa deja el ticket justo donde el equipo de desarrollo empieza.
 
+**¿Puedo pedirle algo a un integrante a traves de la sesion?** Si. "Dile al probador que
+reproduzca la SOL-2026-03-11-2" funciona: la sesion le pasa tu pedido tal cual y el integrante
+lo toma como si se lo hubieras dicho a el. Lo unico que no se pasa asi es la aprobacion de un
+permiso que te pide Claude Code en pantalla: esa la das tu.
+
+**¿Por que en pruebas el equipo aprueba o gira sin preguntarme?** Porque en un ambiente de
+pruebas son acciones de prueba normales. En produccion es al reves: cada corrida lleva su
+autorizacion registrada y el equipo se detiene antes de cada paso que cambie algo.
+
+**Deje una pregunta del equipo sin responder. ¿Se pierde?** No. Queda como pendiente y aparece
+en la lista que el equipo te muestra al abrir la siguiente sesion.
+
+**¿Por que la carpeta de la mesa no esta en el repositorio?** Porque ahi no va. Solicitudes,
+fotos, documentos y accesos son trabajo de la mesa, no codigo. Viven fuera de los repositorios
+para que nada interno se publique por error.
+
 ## Si algo no anda
 
 - **"No puedo registrar tickets"** → falta acceso al tablero: `/mesa-servicios:setup tracker`.
@@ -613,6 +665,11 @@ mesa deja el ticket justo donde el equipo de desarrollo empieza.
   prueba: `/mesa-servicios:setup playwright`.
 - **"El de los datos no se conecta"** → revisa la conexion de solo lectura: `/mesa-servicios:setup db`.
 - **"Preguntas que el negocio ya sabia"** → la memoria esta desactualizada: `/mesa-servicios:brain ingest --pendientes`.
+- **"Un integrante dice que no puede guardar en esa carpeta"** → la carpeta de la mesa quedo
+  dentro de un repositorio; acepta la propuesta de moverla (ver [Anexo C](#c-la-carpeta-de-la-mesa)).
+- **"Claude Code me pide aprobar un permiso"** → es normal y lo apruebas tu en pantalla.
+- **"El video de la reproduccion se ve chico o borroso"** → pide que lo regraben; no cuenta
+  como evidencia.
 
 ---
 
@@ -648,7 +705,8 @@ grandes, bases en red privada).
 
 ## B. Configuracion de la mesa
 
-Todo vive en `.mesa/config.json` (lo crea `setup` la primera vez):
+Todo vive en `.mesa/config.json`, en la carpeta de la mesa **fuera de cualquier repo git** (lo
+crea `setup` la primera vez):
 
 ```json
 {
@@ -663,8 +721,9 @@ Todo vive en `.mesa/config.json` (lo crea `setup` la primera vez):
   "productos": ["factoring", "confirming", "leasing", "cobranza", "backoffice"],
   "brain": { "path": "~/Repositorios/faast-brain", "remote": "faast-app/faast-brain" },
   "evidencia": { "repo": "faast-app/{repo-con-rama-evidence}" },
-  "ambientes": { "pruebas": { "url": "https://qa...", "cuentasEnv": ["MESA_QA_ANALISTA"] },
-                 "produccion": { "url": "https://...", "requiereAutorizacion": true } },
+  "ambientes": { "qa":         { "clase": "pruebas",    "url": "https://qa...", "cuentasEnv": ["MESA_QA_ANALISTA"] },
+                 "puente":     { "clase": "pruebas",    "url": "https://puente..." },
+                 "produccion": { "clase": "productivo", "url": "https://...", "requiereAutorizacion": true } },
   "fuentes": { "transcripcion": { "motor": "whisper", "modelo": "medium", "idioma": "es" }, "conectores": [] },
   "team": { "models": { "analista": "opus" } }
 }
@@ -678,18 +737,43 @@ Todo vive en `.mesa/config.json` (lo crea `setup` la primera vez):
 | `productos[]` | Catalogo de productos (etiquetas y memoria) |
 | `brain.path` / `brain.remote` | Donde vive la memoria del negocio (`faast-brain`) |
 | `evidencia.repo` | Repo donde se publican fotos y documentos para verlos dentro del ticket (rama `evidence`) |
-| `ambientes.*` | URLs y nombres de las variables con las cuentas de prueba; produccion exige autorizacion |
+| `ambientes.{nombre}` | `clase` (`pruebas` / `productivo`), URL y nombres de las variables con las cuentas de prueba. En `pruebas` las acciones de negocio de prueba (aprobar, girar, pagar) son normales y no frenan; en `productivo` un flujo exige autorizacion registrada por corrida (`00-ANTES.md`) y parada antes de cada paso que escribe. La clase no se asume por el nombre: si falta, se pregunta UNA vez y se persiste; sin clase declarada el equipo no opera ahi |
 | `fuentes.transcripcion` | Motor y modelo de transcripcion local |
 | `team.models.{agente}` | Subir un integrante a un modelo mas potente solo en esta mesa (default `sonnet`) |
 
 **Secretos que nunca entran a git**: `.mesa/accesos.env` (cuentas de prueba), `.mesa/db-access.json`
 (conexiones de solo lectura), `.mesa/setup-status.json`, toda la carpeta `.mesa/evidencia/`, las
-carpetas `evidencia/` de cada solicitud y los archivos de audio/video de las fuentes.
+carpetas `evidencia/` de cada solicitud y los archivos de audio/video de las fuentes. Como `.mesa/`
+vive fuera de los repos, ninguno llega a un repo.
+
+**Registro personal de carpetas** (`~/.claude/mesa-servicios.config.json` → `proyectos`). Le dice
+al plugin, por usuario y sin tocar el repo, donde esta la carpeta de la mesa cuando abres la sesion
+dentro de un repo. La clave es la ruta de un repo o carpeta; el valor, la carpeta que contiene
+`.mesa/`. Gana el prefijo mas largo:
+
+```json
+{
+  "team": { "models": { "analista": "opus" } },
+  "proyectos": {
+    "~/Repositorios/faast-backlog":   "~/Mesa/mesa-faast",
+    "~/Repositorios/front-backoffice": "~/Mesa/mesa-faast"
+  }
+}
+```
 
 ## C. La carpeta de la mesa
 
 `.mesa/` es la memoria operativa de la mesa. Es independiente de `.coordination/` del plugin
-dev-team: pueden convivir.
+dev-team: pueden convivir. Vive en la carpeta de la mesa, **nunca dentro de un repositorio git**
+(el `setup` lo verifica con `git -C "<carpeta>" rev-parse --is-inside-work-tree`, que debe fallar).
+
+**Como se resuelve:** (1) el registro `~/.claude/mesa-servicios.config.json` → `proyectos` (ver
+Anexo B); (2) el puntero `.mesa-root`; (3) subir directorios buscando `.mesa/` con `config.json`,
+prefiriendo la que esta fuera de repos. **Protecciones:** un hook bloquea escribir en una `.mesa/`
+que este dentro de un repo, y al iniciar sesion el plugin agrega localmente `.mesa/`, `.mesa-root`,
+`.coordination/` y `.playwright-mcp/` a `.git/info/exclude` del repo abierto (nada se commitea). Si
+una mesa antigua quedo dentro de un repo, la sesion propone moverla (`mv`) y registrarla en
+`proyectos`; sacarla del historial del repo es un PR aparte, solo con OK.
 
 ```
 .mesa/
@@ -702,7 +786,7 @@ dev-team: pueden convivir.
 ├── flujos-sql/{dominio}/{flujo}/  flujos de scripts reutilizables (regla global de formato)
 ├── evidencia/            corridas de flujos y staging del navegador — gitignored
 ├── handoffs/             notas entre integrantes
-├── metrics/              activity.jsonl (actividad automatica)
+├── metrics/              activity.jsonl (actividad automatica + esperando_usuario/respondido: los pendientes de cada sesion)
 ├── accesos.env           cuentas de prueba — NUNCA en git
 ├── db-access.json        conexiones de solo lectura — NUNCA en git
 └── setup-status.json     estado del entorno — NUNCA en git
@@ -736,3 +820,6 @@ quedan fuera y la reversa en `reversa/` con el mismo formato. La mesa nunca ejec
 | El PDF sale sin acentos | Conversion con fuente incorrecta | `/mesa-servicios:setup documentos` (prueba real de conversion) |
 | La cuenta de base de datos puede escribir | Cuenta mal creada | Pedir una de solo lectura; el setup lo reporta como riesgo y no la usa para escribir |
 | Dos solicitudes con el mismo numero | Edicion manual de `correlativos.json` | No editar a mano; el redactor lo lleva de forma atomica |
+| Un hook bloquea escribir en `.mesa/` | La carpeta de la mesa esta dentro de un repo git | Moverla con `mv` a una carpeta fuera de repos, registrar `"proyectos": {"<ruta del repo>": "<carpeta que contiene .mesa>"}` en `~/.claude/mesa-servicios.config.json` y reiniciar la sesion. Sacarla del historial del repo es un PR aparte, solo con OK |
+| El equipo pregunta la clase de un ambiente | Falta `clase` en `ambientes.{nombre}` | Responder una vez (`pruebas` / `productivo`); queda guardada en `.mesa/config.json` |
+| El video sale chico en una esquina o con relleno gris | La traza se encendio antes que el video en esa sesion del navegador | Seguir la secuencia de la skill `evidencia-reproduccion` ("Video a tamaño real"); `normalizar_video.py` deja `.mp4` + portada; si responde `REPARADO` y es la prueba del bug, regrabar |
