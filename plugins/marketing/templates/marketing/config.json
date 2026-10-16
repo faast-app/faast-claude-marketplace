@@ -1,0 +1,37 @@
+{
+  "proyecto": "{{nombre del proyecto, p. ej. Faast2.0}}",
+  "elaboradoPor": "{{Nombre Apellido — sale de aqui, nunca escrito a mano en piezas}}",
+  "ubicacion": {
+    "carpetaProyecto": "{{ruta ABSOLUTA de la carpeta del proyecto (fuera de todo repo git)}}",
+    "verificadoFueraDeRepo": "{{AAAA-MM-DD}}"
+  },
+  "producto": {
+    "nombre": "{{p. ej. Faast2.0}}",
+    "version": "",
+    "productos": ["factoring", "confirming", "ordering"]
+  },
+  "fuentes": {
+    "coordination": "{{ruta absoluta a .coordination/ del dev-team, o vacio}}",
+    "mesa": "{{ruta absoluta a .mesa/ de la Mesa de Servicios, o vacio}}",
+    "prototipos": [],
+    "repos": []
+  },
+  "ambientes": {
+    "demo": { "url": "", "clase": "pruebas", "cuentasEnv": ["MKT_DEMO_USUARIO"], "datos": "ficticios" }
+  },
+  "publicos": ["ceo", "gerente-comercial", "cliente-final"],
+  "paises": ["CL", "PE", "CO"],
+  "marca": { "kit": "", "kitFecha": "", "manualOficial": "", "logoOficial": "" },
+  "formatos": {
+    "deck": ["pptx", "pdf"],
+    "video": { "keynote": ["16x9-2160p", "16x9-1080p", "muda"], "clips": ["16x9", "9x16", "1x1"], "fps": 30, "lufs": -14 },
+    "impresos": { "papel": "A4", "imprenta": false }
+  },
+  "confidencialidad": {
+    "clientesNombrables": [],
+    "cifrasInternasAutorizadas": false,
+    "preciosLosEntrega": "comercial"
+  },
+  "tendencias": { "vigenciaDias": { "mercado": 90, "producto": 90, "diseno": 90, "video": 90, "regulacion": 180, "coyuntura": 30 } },
+  "team": { "models": {} }
+}

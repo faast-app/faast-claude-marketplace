@@ -1,0 +1,35 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Agent|Task",
+        "hooks": [
+          { "type": "command", "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/block-nested-delegation.py\"", "timeout": 10 }
+        ]
+      },
+      {
+        "matcher": "Write|Edit|MultiEdit|NotebookEdit|Bash",
+        "hooks": [
+          { "type": "command", "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/guard-repo-clean.py\"", "timeout": 10 }
+        ]
+      }
+    ],
+    "SubagentStart": [
+      {
+        "matcher": "(marketing:)?(director-marketing|investigador-mercado|analista-producto|estratega-comercial|redactor-publicitario|disenador-presentaciones|director-motion|disenador-grafico)$",
+        "hooks": [ { "type": "command", "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/log-activity.sh\"", "timeout": 10 } ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "matcher": "(marketing:)?(director-marketing|investigador-mercado|analista-producto|estratega-comercial|redactor-publicitario|disenador-presentaciones|director-motion|disenador-grafico)$",
+        "hooks": [ { "type": "command", "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/log-activity.sh\"", "timeout": 10 } ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [ { "type": "command", "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/inject-protocol.sh\"", "timeout": 10 } ]
+      }
+    ]
+  }
+}
