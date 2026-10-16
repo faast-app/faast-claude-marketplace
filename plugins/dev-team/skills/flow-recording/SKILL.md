@@ -59,7 +59,7 @@ Enunciar riesgos reales (crea datos reales, cambia parametros que afectan a usua
 ### 1. Verificar precondiciones (solo lectura) y registrar valores iniciales
 ### 2. (si aplica) Cambiar parametros: PARADA OBLIGATORIA (cambio guardado por DBA)
 ### 3. Ejecutar el flujo (delegado) — pasos del runbook, captura por paso
-### 4. Puntos de parada obligatorios — OK escrito del usuario EN EL MOMENTO
+### 4. Puntos de parada — en ambiente productivo, OK escrito del usuario EN EL MOMENTO (en pruebas, sin parada)
 ### 5. Verificar resultado (solo lectura + UI) contra lo esperado
 ### 6. Cierre — informe + restaurar parametros a los valores del paso 1 (misma parada del paso 2)
 
@@ -117,17 +117,21 @@ nunca se reintenta a ciegas.
 - **A la primera falla, detener** (login falla, servicio caido, dato que no existe): capturar el
   primer intento, marcar bloqueante, reportar. Sin reintentos, sin workarounds, sin debug.
   Cada reintento de un flujo que ESCRIBE crea datos reales — por eso no se reintenta a la ligera.
-- **Puntos de parada obligatorios**: antes de cualquier ESCRITURA sensible (grabar, aprobar,
-  confirmar giro/desembolso, elegir banco, cambiar un parametro, cualquier write en BD) se pide
-  OK del usuario EN EL MOMENTO, por texto, y ese OK vale solo ahi (no se "hereda" ni se relata).
+- **Puntos de parada segun el ambiente** (`config.json` → `ambientes`): en un ambiente
+  **productivo**, antes de cualquier ESCRITURA sensible (grabar, aprobar, confirmar
+  giro/desembolso, elegir banco, cualquier write) se pide OK del usuario EN EL MOMENTO, por texto,
+  y ese OK vale solo ahi. En un ambiente de **pruebas** (desarrollo, QA, certificacion, puente,
+  demo, o el que el proyecto declare asi) esas acciones de negocio son normales y se ejecutan sin
+  parada: el usuario ya pidio correr el flujo. **Siempre** hay parada (en cualquier ambiente) antes
+  de cambiar un parametro o escribir en BD, porque eso afecta a otros que usan el mismo ambiente.
 - **Cambios de parametros/BD**: los ejecuta el DBA con el patron guardado (§verificacion), nunca
   el flujo por su cuenta; se cambian y se restauran JUNTOS si son varios que deben coincidir.
 - **Documentar el estado planeado ANTES** de crear nada (`00-ANTES-*.md`): que datos, con que
   cuentas, en que ambiente.
 - **Secretos**: passwords/tokens se leen de los archivos de acceso del proyecto por NOMBRE de
   variable, nunca se escriben en el flujo, la evidencia ni el chat.
-- **Ambiente**: preferente NO productivo; si el flujo toca un ambiente sensible, es una decision
-  explicita del usuario con sus riesgos enunciados.
+- **Ambiente**: preferente de pruebas; si el flujo toca un ambiente productivo, es una decision
+  explicita del usuario con sus riesgos enunciados. Un ambiente no declarado se pregunta una vez.
 
 ## Evidencia de una corrida (skill `visual-evidence`)
 La captura y el analisis siguen la skill `visual-evidence` (traza navegable + video con acciones

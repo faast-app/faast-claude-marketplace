@@ -276,8 +276,13 @@ Resolved → In Review, Closed/Done → Done). Luego saltar a la clasificacion p
 
 Segun la topologia detectada:
 - **multi** → carpeta paraguas `~/projects/{proyecto}/` con `.coordination/` y los repos
-- **mono** → `.coordination/` en la raiz del repo unico (agregar `dba-access.json` y
-  `setup-status.json` al .gitignore)
+- **mono** → `.coordination/` en la **carpeta del proyecto** que contiene el repo unico, NUNCA
+  dentro del repo. Si el repo no vive dentro de una carpeta del proyecto, preguntar al usuario
+  cual usar (p. ej. `~/projects/{proyecto}/` o su carpeta de Proyectos) y registrarla en
+  `~/.claude/dev-team.config.json` → `"proyectos": {"<ruta del repo>": "<carpeta del proyecto>"}`.
+- Si el repo ya trae una `.coordination/` commiteada (proyecto legado): moverla (mv) a la carpeta
+  del proyecto con OK del usuario; sacarla del historial del repo es un PR aparte, solo si el
+  usuario lo pide. El hook de sesion excluye las carpetas de equipo en `.git/info/exclude` (local).
 
 ```
 .coordination/
@@ -305,9 +310,17 @@ Segun la topologia detectada:
     "azure": { "organization": "https://dev.azure.com/{org}", "project": "{proyecto}" }
   },
   "urls": { "dev": "http://localhost:{puerto}" },
-  "e2e": { "exists": true, "path": "{ruta-suite-o-repo}" }
+  "e2e": { "exists": true, "path": "{ruta-suite-o-repo}" },
+  "ambientes": {
+    "{nombre}": { "clase": "pruebas|productivo", "url": "{url}" }
+  },
+  "qa": { "conformidad": "opcional" }
 }
 ```
+`ambientes`: preguntar al usuario la clase de CADA ambiente que el proyecto usa (no
+presuponer ninguna). En `pruebas`, giros, pagos y aprobaciones son acciones de prueba normales;
+en `productivo`, cada accion sensible requiere autorizacion explicita. `qa.conformidad`:
+`"opcional"` (default) u `"obligatoria"`.
 
 **repos.md** debe contener:
 ```markdown

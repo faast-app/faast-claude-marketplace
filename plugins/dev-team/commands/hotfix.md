@@ -37,7 +37,8 @@ Un hotfix toca lo justo. Si aparece deuda relacionada, se registra como item apa
 ## Paso 4 — Gates intactos (comprimidos, no omitidos)
 - **QA revalida** con la skill `visual-evidence`: mismos pasos del incidente, tanda `-revalidacion`,
   par antes/despues + `browser_verify_*` que ahora pasa, consola/red limpias, veredicto APTO.
-  Sin informe de conformidad de la version del fix, QA no valida (regla de oro; tambien en urgencia).
+  QA identifica la version que contiene el fix (informe de conformidad si existe, OPCIONAL; si no,
+  la version observada o la indicada por el usuario) y la cita en el veredicto.
 - **cybersec** si el incidente o el fix tocan auth, pagos, datos personales o superficie publica
   (gate del Cybersec Lead; no se omite por urgencia).
 - **Solo el Lead mergea** (a la rama que corresponda), con los gates verdes. `git diff` solo del fix.

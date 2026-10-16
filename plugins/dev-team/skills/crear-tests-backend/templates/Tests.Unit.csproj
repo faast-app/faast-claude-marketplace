@@ -1,0 +1,51 @@
+<!--
+  <PROYECTO>.Tests.Unit.csproj   y   <PROYECTO>.Tests.Caracterizacion.csproj
+  (el mismo archivo sirve para los dos: cambia el nombre y la carpeta)
+
+  Ubicación: <repo>/tests/<PROYECTO>.Tests.Unit/
+  Hereda TFM, xunit, Shouldly y coverlet de tests/Directory.Build.props.
+
+  REGLA DE ORO DE ESTE PROYECTO: corre SIN Docker, SIN red y SIN ambiente.
+  Si un test de acá necesita algo de eso, está mal clasificado (T-FLAKE-02).
+
+  Placeholders a reemplazar: <PROYECTO>, <RUTA_APP>
+-->
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <!-- Dobles. NSubstitute (BSD-3-Clause, verificado 2026-09-21).
+         Solo para fronteras (repositorio, servicio HTTP). Nunca para tipos del dominio. -->
+    <PackageReference Include="NSubstitute" Version="6.2.0" />
+
+    <!-- Snapshots (MIT). Para OpenAPI, golden-file de respuestas y SQL de EF.
+         Los .verified.* se commitean; los .received.* NO (T-SNAP-03). -->
+    <PackageReference Include="Verify.Xunit" Version="31.12.5" />
+
+    <!-- Opcional: datos falsos. Nunca datos reales de cliente (T-SEC-01). -->
+    <!-- <PackageReference Include="Bogus" Version="35.6.5" /> -->
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\<RUTA_APP>\<PROYECTO>.csproj" />
+    <!-- Si el núcleo puro vive en otro proyecto (p. ej. <PROYECTO>.Core), agregarlo:
+         ese suele ser el que da los primeros 40 tests en verde. -->
+  </ItemGroup>
+
+  <!--
+    T-CFG-01 / T-CFG-02: componentes que leen configuración o archivos desde el
+    directorio de trabajo necesitan que esos archivos existan en el output del test.
+
+    El appsettings.json de test lleva SOLO valores inventados. Jamás un secreto
+    real, jamás una cadena de conexión de un ambiente (T-SEC-01).
+  -->
+  <ItemGroup>
+    <None Update="appsettings.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Fixtures\**\*" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+    <Using Include="Shouldly" />
+  </ItemGroup>
+
+</Project>

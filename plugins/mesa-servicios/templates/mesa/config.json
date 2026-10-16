@@ -20,7 +20,7 @@
   "productos": ["factoring", "confirming", "leasing", "cobranza", "backoffice"],
   "brain": { "path": "{{ruta local a faast-brain}}", "remote": "" },
   "evidencia": { "repo": "faast-app/{{repo-con-rama-evidence}}" },
-  "ambientes": { "pruebas": { "url": "https://{{qa}}", "cuentasEnv": ["MESA_QA_ANALISTA"] }, "produccion": { "url": "", "requiereAutorizacion": true } },
+  "ambientes": { "pruebas": { "clase": "pruebas", "url": "https://{{qa}}", "cuentasEnv": ["MESA_QA_ANALISTA"] }, "produccion": { "clase": "productivo", "url": "", "requiereAutorizacion": true } },
   "fuentes": { "transcripcion": { "motor": "whisper", "modelo": "medium", "idioma": "es" }, "conectores": [] },
   "documentos": { "plantillas": "", "outputDir": "" },
   "sql": { "sandbox": "" },

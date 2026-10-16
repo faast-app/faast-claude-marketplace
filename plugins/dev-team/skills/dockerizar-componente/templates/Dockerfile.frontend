@@ -1,0 +1,79 @@
+# syntax=docker/dockerfile:1
+# Plantilla FaaST F1-F4 — SPA React servida por nginx
+#
+# NODE_VERSION: 20 (Vite / webpack 5) · 18 (CRA) · 16 o 20+flag legacy (webpack 4)
+# F3/F4 con Node >= 17 necesitan NODE_OPTIONS=--openssl-legacy-provider.
+
+ARG NODE_VERSION=20
+
+FROM node:${NODE_VERSION}-alpine AS build
+WORKDIR /app
+# Un solo gestor por repo: si hay dos lockfiles (npm + yarn/pnpm), elegir uno
+# y borrar el otro antes de dockerizar.
+COPY package*.json ./
+RUN npm ci
+COPY . .
+# ENV NODE_OPTIONS=--openssl-legacy-provider      # F3 / F4
+RUN npm run build
+
+FROM nginx:alpine AS prod
+
+# ---------------------------------------------------------------------------
+# REGLA DURA #2 — el UID/GID lo inyecta docker-compose.yml en runtime
+# (`user: "${RUN_UID:-1000}:${RUN_GID:-1000}"` = usuario de despliegue (p. ej. ec2-user) del servidor destino).
+# Aca NO se crea ningun usuario.
+#
+# PERO nginx NO se resuelve igual que .NET: mientras el runtime de .NET arranca
+# con cualquier UID y solo necesita LEER /app, nginx ESCRIBE en rutas que son de
+# root/nginx y ademas trae una directiva `user` que un master no-root no puede
+# aplicar. Por eso la imagen se PREPARA para UID arbitrario (patron "unprivileged"),
+# en tres pasos y sin un solo chown a un UID fijo:
+#
+#   1. se borra `user nginx;` de nginx.conf — un master no-root no puede hacer
+#      setuid, la directiva solo genera un warning y los workers heredan el UID
+#      del master, que es exactamente lo que queremos;
+#   2. el pid y TODOS los temp paths se mueven a /tmp, que es 1777 y escribible
+#      por cualquier UID. nginx crea esos directorios solo, al arrancar;
+#   3. los logs NO se tocan: la imagen oficial ya enlaza /var/log/nginx/*.log a
+#      /dev/stdout y /dev/stderr, escribibles por cualquier UID (y ademas la
+#      regla de logs a stdout lo exige).
+#
+# El cuarto punto del patron vive en el entrypoint y en nginx.conf: env.js y
+# health.json se generan en /tmp y se sirven con `alias`, porque
+# /usr/share/nginx/html es de solo lectura para el proceso — y asi debe quedar.
+# ---------------------------------------------------------------------------
+RUN sed -i -e '/^user[[:space:]]/d' \
+           -e 's#^pid[[:space:]].*#pid /tmp/nginx.pid;#' /etc/nginx/nginx.conf \
+    && printf '%s\n' \
+        'client_body_temp_path /tmp/nginx-client-body;' \
+        'proxy_temp_path       /tmp/nginx-proxy;' \
+        'fastcgi_temp_path     /tmp/nginx-fastcgi;' \
+        'uwsgi_temp_path       /tmp/nginx-uwsgi;' \
+        'scgi_temp_path        /tmp/nginx-scgi;' \
+        > /etc/nginx/conf.d/00-temp-paths.conf
+
+# Ajustar el origen según el bundler: dist/ (Vite) o build/ (webpack, CRA).
+COPY --from=build /app/dist /usr/share/nginx/html
+# version.txt: UNICA fuente de la version (paso 4.5). El entrypoint lo lee para
+# armar /tmp/health.json. Se copia aparte porque no todo bundler lo arrastra.
+COPY --from=build /app/version.txt /usr/share/nginx/html/version.txt
+COPY infra/nginx.conf /etc/nginx/conf.d/default.conf
+
+# El entrypoint genera env.js y health.json EN RUNTIME, en /tmp.
+# El contrato window.env no cambia; deja de estar horneado en la imagen.
+COPY infra/frontend-entrypoint.sh /docker-entrypoint.sh
+RUN chmod 0755 /docker-entrypoint.sh
+
+EXPOSE 8080
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+    CMD wget -qO- http://127.0.0.1:8080/ || exit 1
+ENTRYPOINT ["/docker-entrypoint.sh"]
+
+# Verificacion rapida tras el build (con el UID real del servidor destino):
+#   docker run --rm -u 1000:1000 -p 18080:8080 \
+#     -e AMBIENTE=local -e GW_FINTEC=http://x local/<repo>:test
+#   docker exec <contenedor> id          -> uid=1000, NUNCA uid=0
+#   curl -f http://localhost:18080/env.js
+#   curl -f http://localhost:18080/health
+# Si nginx muere con "Permission denied" en nginx.pid o *_temp: el bloque de
+# preparacion de arriba se perdio o se ejecuto sobre otra imagen base.

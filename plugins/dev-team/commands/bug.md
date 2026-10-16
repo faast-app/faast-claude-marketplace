@@ -40,7 +40,7 @@ estas reglas de lote:
    |---|---|---|---|---|---|
    | #12 | Registros repetidos al paginar | ✅ REPRODUCIDO | 2/2 | Alta | REP-…-1/ |
    | #15 | Total no cuadra en exportacion | ❌ NO REPRODUCIDO | — | — | REP-…-2/ (funciona: 01-export-ok.png) |
-   | #21 | Login lento | ⛔ BLOQUEADO | — | — | sin informe de conformidad de auth |
+   | #21 | Login lento | ⛔ BLOQUEADO | — | — | el ambiente de auth no responde |
    Resumen: 1 reproducido · 1 no reproducido · 1 bloqueado
    ```
 5. **Paso 4 solo para los REPRODUCIDOS**, en un solo pase del PO (registra/actualiza cada
@@ -60,11 +60,12 @@ estas reglas de lote:
    debe existir): preguntarlo AHORA, una sola vez, todo junto. No adivinar.
 4. Asignar ID temporal `REP-{fecha}-{n}` y crear `.coordination/evidence/REP-.../`.
 
-## Paso 1 — Regla de oro (QA no reproduce sin ambiente valido)
-Verificar el **informe de conformidad** del ambiente (que version esta desplegada, health
-OK) o, en desa, que el stack COMPLETO este levantado (no `npm run dev`). Si no se cumple:
-veredicto **BLOQUEADO** (motivo: sin informe / stack incompleto), `blocked` en el log,
-avisar al Lead y terminar. Nunca reproducir sobre un ambiente del que no se sabe que
+## Paso 1 — Ambiente y version identificados
+Identificar el ambiente (y su clase pruebas/productivo en `config.json` → `ambientes`) y la
+**version** que corre: del informe de conformidad si existe (OPCIONAL), o la que QA observa
+(pantalla de version, `/health`, `/version`) o indica el usuario, citando la fuente. Sin
+informe se reproduce igual. Solo es **BLOQUEADO** si el ambiente no responde o no hay forma de
+saber la version cuando el bug depende de ella. Nunca reproducir sobre un ambiente del que no se sabe que
 version corre: el veredicto seria invalido.
 
 ## Paso 2 — Reproduccion (agente qa; reparte a qa-frontend / qa-backend si aplica)
@@ -146,7 +147,7 @@ QA escribe `.coordination/evidence/REP-.../reproduccion.md` con UNO de estos ver
 Lote de reproduccion — 3 tickets — ambiente qa, version 2.4.1
 ✅ #12 Registros repetidos al paginar      REPRODUCIDO (siempre)   → registrado con evidencia, severidad Alta
 ❌ #15 Total no cuadra en exportacion       NO REPRODUCIDO          → comentado en el ticket; falta: archivo de ejemplo y filtro usado
-⛔ #21 Login lento                          BLOQUEADO               → sin informe de conformidad de auth; escalado a infra
+⛔ #21 Login lento                          BLOQUEADO               → el ambiente de auth no responde; escalado a infra
 Siguiente paso: el Lead te presenta el plan de correccion para #12.
 ```
 

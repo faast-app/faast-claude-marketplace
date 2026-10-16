@@ -74,9 +74,20 @@ Escribir `.coordination/config.json` — la fuente de verdad para todos los agen
     "github": { "org": "{org}", "project": "{nombre-project}" },
     "azure": { "organization": "https://dev.azure.com/{org}", "project": "{nombre}" }
   },
-  "urls": { "dev": "http://localhost:{puerto-frontend}" }
+  "urls": { "dev": "http://localhost:{puerto-frontend}" },
+  "ambientes": {
+    "desa":   { "clase": "pruebas",    "url": "http://localhost:{puerto}" },
+    "qa":     { "clase": "pruebas",    "url": "{url}" }
+  },
+  "qa": { "conformidad": "opcional" }
 }
 ```
+
+`ambientes`: cada ambiente que el equipo usa con su clase — `"pruebas"` (giros, pagos y
+aprobaciones son acciones de prueba normales) o `"productivo"` (cada accion sensible requiere
+autorizacion explicita). NO se presupone ninguna clase: se pregunta al usuario por cada ambiente
+la primera vez y se persiste. `qa.conformidad`: `"opcional"` (default; QA valida con la version
+observada si no hay informe) u `"obligatoria"`.
 
 **Topologia MULTI** — carpeta paraguas:
 ```
@@ -88,18 +99,20 @@ Escribir `.coordination/config.json` — la fuente de verdad para todos los agen
 └── {proyecto}-e2e/            ← repo de la suite Playwright de QA
 ```
 
-**Topologia MONO** — un solo repo:
+**Topologia MONO** — un solo repo, dentro de la carpeta del proyecto (la coordinacion NUNCA va
+dentro del repo):
 ```
-{directorio}/{proyecto}/       ← git init (unico)
-├── .coordination/  (igual que multi; dba-access.json y setup-status.json en .gitignore)
-├── src/
-│   ├── services/{servicio}/   ← scaffolding segun stack
-│   ├── gateway/
-│   └── frontend/
-├── e2e/                       ← suite Playwright de QA
-├── docs/
-├── docker-compose.dev.yml
-└── .github/workflows/         ← CI con paths-filter por carpeta
+{directorio}/{proyecto}/       ← carpeta del proyecto (NO es repo)
+├── .coordination/             ← igual que multi
+└── {proyecto}/                ← git init (unico repo)
+    ├── src/
+    │   ├── services/{servicio}/   ← scaffolding segun stack
+    │   ├── gateway/
+    │   └── frontend/
+    ├── e2e/                       ← suite Playwright de QA
+    ├── docs/
+    ├── docker-compose.dev.yml
+    └── .github/workflows/         ← CI con paths-filter por carpeta
 ```
 
 Por cada repo/carpeta: estructura segun stack (usar `templates/` del plugin),
@@ -108,7 +121,7 @@ commit inicial. La suite de QA (`e2e/` en mono, repo `{proyecto}-e2e` en multi) 
 crea SIEMPRE desde `templates/e2e-faast/` (reemplazar `{{ProjectName}}`; Playwright +
 axe + Schemathesis + workflow E2E; evidencia en `.coordination/evidence/`), y se
 registra en `config.json` como `"e2e": { "exists": true, "path": "..." }`. El
-`.gitignore` de cada repo debe incluir `.coordination/evidence/` (ya viene en los
+`.gitignore` de cada repo debe incluir `.coordination/` completo como red de seguridad (ya viene en los
 templates). Si hay remoto: `gh repo create` / `az repos create` + push.
 
 ## Paso 6: Backlog inicial (agente product-owner)

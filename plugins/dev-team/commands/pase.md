@@ -29,7 +29,7 @@ Pedido del usuario: $ARGUMENTS
      si falla, RECHAZA y devuelve al DBA con hallazgos; repetir hasta aprobar
    - Consolidacion de `Scripts.zip` (solo con auditoria aprobada)
    - Llenado de la solicitud desde la plantilla + conversion a PDF
-   - Carpeta final en `.coordination/pases/{fecha}-{ambiente}-{proyecto}/`
+   - Carpeta final en `{pase.outputDir o .coordination/pases/}/Release v{X.Y.Z} {DDmesAAAA} - {Nombre Proyecto}/` (formato del release-manager)
      con PDF + copia Word + Scripts.zip (si aplica)
 
 3. **Mostrar al usuario**: ruta de la carpeta de pase, contenido verificado y

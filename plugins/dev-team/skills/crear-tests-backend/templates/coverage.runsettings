@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  coverage.runsettings — va en <repo>/tests/
+
+  Uso:
+    dotnet test --collect:"XPlat Code Coverage" --settings tests/coverage.runsettings
+
+  POLÍTICA (reference/05-ci-cobertura-dod.md §2):
+  El gate NO es un porcentaje global. Es una lista de módulos con umbral, más dos
+  reglas globales: la suite pasa, y la cobertura no baja.
+
+  Lo que se excluye de la MEDICIÓN se excluye porque medirlo distorsiona el número
+  sin agregar señal: código sin comportamiento. No se excluye para que el número
+  suba: se excluye para que el número signifique algo.
+-->
+<RunSettings>
+
+  <RunConfiguration>
+    <!-- La suite tiene que terminar. Un test colgado en CI es un CI que nadie mira. -->
+    <TestSessionTimeout>900000</TestSessionTimeout>   <!-- 15 min -->
+    <ResultsDirectory>./TestResults</ResultsDirectory>
+  </RunConfiguration>
+
+  <DataCollectionRunSettings>
+    <DataCollectors>
+      <DataCollector friendlyName="XPlat code coverage">
+        <Configuration>
+          <Format>cobertura</Format>
+
+          <!-- Solo se mide el código de la app. Nunca el de los tests ni el de terceros. -->
+          <Include>[<PROYECTO>]*,[<PROYECTO>.Core]*</Include>
+
+          <Exclude>[*.Tests.*]*,[xunit.*]*,[Shouldly]*,[NSubstitute]*,[Verify.*]*,[Testcontainers*]*</Exclude>
+
+          <!--
+            Excluidos por carpeta/tipo. El porqué de cada uno:
+              Models.Dto / Entity / Contract → getters y setters: no tienen comportamiento
+              Migrations                     → generado
+              Program                        → se cubre entero con el test de arranque
+          -->
+          <ExcludeByFile>**/Models/Dto/**/*.cs,**/Models/Entity/**/*.cs,**/Models/Contract/**/*.cs,**/Migrations/**/*.cs,**/Program.cs</ExcludeByFile>
+
+          <ExcludeByAttribute>Obsolete,GeneratedCodeAttribute,CompilerGeneratedAttribute,ExcludeFromCodeCoverageAttribute</ExcludeByAttribute>
+
+          <SingleHit>false</SingleHit>
+          <UseSourceLink>true</UseSourceLink>
+          <IncludeTestAssembly>false</IncludeTestAssembly>
+          <SkipAutoProps>true</SkipAutoProps>
+          <DeterministicReport>true</DeterministicReport>
+        </Configuration>
+      </DataCollector>
+    </DataCollectors>
+  </DataCollectionRunSettings>
+
+  <!--
+    GATE POR RIESGO — se completa por componente y se revisa en el PR.
+    Esto NO lo aplica el runsettings: lo aplica el workflow leyendo el cobertura.xml.
+    Se declara acá para que viva junto a la configuración y no en la cabeza de nadie.
+
+      | Módulo                        | Umbral de línea |
+      |-------------------------------|-----------------|
+      | <PROYECTO>.Core (núcleo puro) | 80%             |
+      | Authorization/ (auth)         | 70%             |
+      | Cálculos de dinero            | por CASOS, no % |
+      | Controllers / Repositories    | sin umbral      |
+
+    Regla global: la cobertura total NO BAJA respecto de la rama base.
+  -->
+
+</RunSettings>

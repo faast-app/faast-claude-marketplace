@@ -1,0 +1,19 @@
+{
+  "id": "CMP-AAAA-NNN-slug",
+  "estado": "BRIEF",
+  "desde": "AAAA-MM-DDTHH:MM:SSZ",
+  "responsable": "director-marketing",
+  "producto": "",
+  "publico": "",
+  "partes": [],
+  "aprobaciones": { "mapa": null, "fichas": null },
+  "piezas": {
+    "video-keynote": { "estado": "pendiente", "version": 0, "preproduccion": null, "aprobado": null },
+    "video-clips": { "estado": "pendiente", "version": 0, "partes": [], "aprobado": null },
+    "deck": { "estado": "pendiente", "version": 0, "aprobado": null },
+    "one-pager": { "estado": "pendiente", "version": 0, "aprobado": null },
+    "panfletos": { "estado": "no-aplica", "partes": [] },
+    "redes": { "estado": "no-aplica" }
+  },
+  "estadosPosibles": ["BRIEF", "INVESTIGACION", "DESGLOSE", "MAPA APROBADO", "FICHAS", "FICHAS APROBADAS", "ESTRATEGIA Y COPY", "PRODUCCION", "REVISION", "ESPERANDO APROBACION", "ENTREGADA"]
+}

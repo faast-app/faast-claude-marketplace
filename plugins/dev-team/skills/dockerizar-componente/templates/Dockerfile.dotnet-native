@@ -1,0 +1,57 @@
+# syntax=docker/dockerfile:1
+# Plantilla FaaST D4 — .NET con Chromium y/o librerías gráficas nativas
+# (micro-factoring, micro-ordering, micro-api-cloud, xml-to-pdf-api, monitor-cesiones)
+#
+# Regla: Debian, NUNCA alpine. SkiaSharp/HarfBuzz/libgdiplus dependen de glibc.
+# Instalar SOLO los bloques que el componente usa de verdad: cada uno suma peso.
+
+ARG DOTNET_VERSION=8.0
+
+FROM mcr.microsoft.com/dotnet/sdk:${DOTNET_VERSION} AS build
+ARG SOLUTION_DIR=.
+ARG PROJECT
+WORKDIR /src
+COPY ${SOLUTION_DIR}/ ${SOLUTION_DIR}/
+RUN dotnet restore ${SOLUTION_DIR}/${PROJECT}
+RUN dotnet publish ${SOLUTION_DIR}/${PROJECT} -c Release -o /app/publish --no-restore
+
+FROM mcr.microsoft.com/dotnet/aspnet:${DOTNET_VERSION} AS prod
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      curl \
+      # --- Skia / QuestPDF / ImageSharp / ZXing: fuentes y fontconfig ---
+      fontconfig fonts-liberation fonts-dejavu-core \
+      libfontconfig1 libfreetype6 \
+      # --- System.Drawing (SOLO si el uso es real y el TF es <= net6) ---
+      # libgdiplus libc6-dev \
+      # --- PuppeteerSharp / Selenium ---
+      # chromium chromium-driver \
+    && rm -rf /var/lib/apt/lists/*
+
+# PuppeteerSharp descarga Chromium en RUNTIME si no se le fija el path: en
+# contenedor eso es una descarga a internet en el primer arranque.
+# ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
+# ENV CHROME_BIN=/usr/bin/chromium
+# Los flags --no-sandbox y --disable-dev-shm-usage van en el código o en config.
+
+# El usuario que corre el proceso NO se fija aca: lo define docker-compose.yml
+# en runtime con `user: "${RUN_UID:-1000}:${RUN_GID:-1000}"` (= usuario de despliegue (p. ej. ec2-user) del
+# servidor destino, regla dura #2 de la skill). Sin useradd, sin chown y sin
+# USER: las libs nativas se instalan como root en build y quedan en /usr, y el
+# publish queda root:root 644/755 — legible por cualquier UID, que es todo lo
+# que la app necesita.
+COPY --from=build /app/publish .
+
+# Un UID arbitrario NO tiene home escribible ($HOME queda en "/"): Chromium,
+# fontconfig y Skia escriben cache ahi y fallan. Se los manda a /tmp (1777).
+# Es el unico ajuste extra que pide esta familia frente a D1.
+ENV HOME=/tmp \
+    XDG_CACHE_HOME=/tmp \
+    FONTCONFIG_PATH=/etc/fonts \
+    ASPNETCORE_URLS=http://+:8080 \
+    DOTNET_BUNDLE_EXTRACT_BASE_DIR=/tmp
+EXPOSE 8080
+HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
+    CMD curl -f http://localhost:8080/health || exit 1
+ENTRYPOINT ["dotnet", "COMPLETAR.dll"]
