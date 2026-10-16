@@ -17,6 +17,8 @@ claude plugin install senior-backend-architect
 | Plugin | Descripcion |
 |--------|-------------|
 | **senior-backend-architect** | Analisis de arquitectura backend, code review, debugging, diseno de BD, documentacion tecnica. Soporta .NET, Python, Java, Node.js, C++, Go, Rust. Comando `/architect`. |
+| **mesa-servicios** | Mesa de Servicios con 10 agentes IA: recibe lo que llega del cliente desde cualquier fuente, repregunta en lenguaje de negocio, reproduce bugs con evidencia, documenta y registra el ticket. Empieza con `/mesa-servicios:start`. |
+| **po-team** | Equipo del Product Owner con 8 agentes IA: refina lo que deja la Mesa en HUs de negocio con Gherkin y puntos, planifica sprints con fechas de pase, tablero con avance por puntos y dashboard, validacion funcional rapida del PO (no reemplaza a QA), documentos y manuales. Empieza con `/po-team:start`. |
 | **dev-team** | Equipo completo de desarrollo con 11 agentes IA: PO (HUs en GitHub Projects o Azure DevOps), Arquitecto, Lead, Backend, Frontend, DBA, QA (Playwright), Infra, Ciberseguridad, Tech Writer y Setup. Mono-repo o multi-repo, proyectos nuevos o existentes. Empieza con `/dev-team:start`. |
 
 ## Agregar un nuevo plugin

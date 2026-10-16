@@ -22,6 +22,13 @@
       "homepage": "https://github.com/faast-app/faast-claude-marketplace"
     },
     {
+      "name": "po-team",
+      "description": "Equipo del Product Owner con 8 agentes IA: toma lo que llega de la Mesa de Servicios y lo acompaña hasta el VB del cliente - refina HUs y bugs 100% en lenguaje de negocio con criterios Gherkin y estimacion Fibonacci en GitHub Projects o Azure DevOps, planifica el sprint por capacidad con fechas de pase (Demo, Preprod, VB cliente) y riesgos, mantiene el tablero con avance por puntos, informe diario/semanal y dashboard HTML publicable como artifact, hace la validacion funcional rapida del PO con Playwright MCP (VB PO / Observado, modo lote; no reemplaza a QA), genera documentos de negocio (HU, especificacion, acta de aceptacion, informe de sprint) en PDF y Word y manuales de usuario en version QA y version general. Entrega el trabajo a desarrollo como tickets. Punto de entrada: /po-team:start.",
+      "category": "development",
+      "source": "./plugins/po-team",
+      "homepage": "https://github.com/faast-app/faast-claude-marketplace"
+    },
+    {
       "name": "dev-team",
       "description": "Equipo completo de desarrollo con 23 agentes IA: Product Owner (HUs en GitHub Projects o Azure DevOps), Arquitecto, equipo de Diseño (UX, UI, visual, motion, 3D, design engineer), Lead, Backend, Frontend, DBA, equipo QA (Playwright MCP incluido, evidencia visual), equipo de Ciberseguridad ofensiva (Cybersec Lead + pentester/appsec/cloudsec, pentest autorizado con RoE e informe PDF), Release Manager, Infra, Tech Writer y Setup. Soporta mono-repo y multi-repo, proyectos nuevos o existentes. Punto de entrada unico: /dev-team:start.",
       "category": "development",

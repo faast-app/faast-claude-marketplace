@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>{{FLUJO}} — Manual de usuario</title>
+<!--
+  MANUAL DE USUARIO (po-team / manualista) — version para cualquier persona.
+  Sale del MISMO recorrido real que el manual QA (recorrido.md + capturas/).
+  Convertir: soffice --headless --convert-to pdf --outdir {salida} manual-general.html
+             soffice --headless --convert-to "docx:MS Word 2007 XML" --outdir {salida} manual-general.html
+  Reglas al rellenar:
+   - Lenguaje simple, segunda persona, frases cortas. Prohibido: "ambiente", "QA", "variable",
+     "endpoint", siglas sin explicar. Test de lectura antes de exportar.
+   - Cada paso: una captura ANOTADA con marcadores numerados QUEMADOS en la imagen (se agregan
+     en la pagina con browser_evaluate antes de capturar; ver skill manual-dual) + 1 a 3 lineas
+     que remiten a esos numeros ("presiona el boton 2"). Asi el PDF y el DOCX los conservan.
+   - .marca (superposicion HTML) es SOLO un respaldo para la version HTML cuando no se pudo
+     anotar en la captura: LibreOffice no respeta position:absolute al convertir.
+   - Sin credenciales ni datos personales visibles.
+-->
+<style>
+  :root{ --tinta:#1f2937; --suave:#6b7280; --linea:#e5e7eb; --marca:#0f4c81; --acento:#e4572e; --ok:#15803d; --nota:#fff7ed; }
+  *{box-sizing:border-box}
+  body{margin:0;color:var(--tinta);background:#fff;font:15px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  .page{max-width:780px;margin:0 auto;padding:28px 36px}
+  h1,h2,h3{color:var(--marca);line-height:1.25;margin:1.2em 0 .45em}
+  h2{font-size:20px} h3{font-size:16px}
+  .cover{padding:64px 36px 28px;background:#f3f7fb;border-bottom:4px solid var(--marca)}
+  .cover h1{font-size:30px;margin:.1em 0}
+  .cover p{color:var(--suave);margin:.3em 0}
+  .paso{display:flex;gap:14px;align-items:flex-start;margin:22px 0 6px}
+  .paso .n{flex:0 0 34px;height:34px;border-radius:50%;background:var(--marca);color:#fff;font-weight:700;
+           display:flex;align-items:center;justify-content:center;font-size:16px}
+  .paso .t{flex:1}
+  .captura{position:relative;display:inline-block;max-width:100%;margin:8px 0 4px;page-break-inside:avoid}
+  .captura img{display:block;max-width:100%;border:1px solid var(--linea);border-radius:8px}
+  .marca{position:absolute;transform:translate(-50%,-50%);width:28px;height:28px;border-radius:50%;
+         background:var(--acento);color:#fff;font-weight:700;font-size:14px;line-height:28px;text-align:center;
+         border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.35)}
+  .pie{font-size:13px;color:var(--suave);margin-bottom:10px}
+  .nota{background:var(--nota);border-left:4px solid var(--acento);padding:10px 14px;border-radius:0 8px 8px 0;margin:12px 0}
+  .listo{background:#f0fdf4;border-left:4px solid var(--ok);padding:10px 14px;border-radius:0 8px 8px 0}
+  dl dt{font-weight:700;margin-top:10px} dl dd{margin:2px 0 0 0}
+  footer{margin-top:34px;padding-top:10px;border-top:1px solid var(--linea);font-size:11.5px;color:var(--suave)}
+  @media print{ .page{padding:0 12mm} h2{page-break-after:avoid} .paso{page-break-inside:avoid} }
+</style>
+</head>
+<body>
+
+<section class="cover">
+  <h1>{{FLUJO}}</h1>
+  <p>Manual de usuario · version {{VERSION}} · {{FECHA}}</p>
+  <p>{{EQUIPO}}</p>
+</section>
+
+<div class="page">
+
+  <h2>Para que sirve</h2>
+  <p>{{PARA_QUE_SIRVE}}</p>
+
+  <h2>Antes de empezar</h2>
+  <ul>{{ANTES_DE_EMPEZAR}}</ul>
+  <!-- ej.: <li>Tu usuario debe tener el perfil Jefe Comercial.</li> -->
+
+  <h2>Paso a paso</h2>
+
+  <!-- ===== repetir este bloque por paso ===== -->
+  <div class="paso">
+    <div class="n">{{N}}</div>
+    <div class="t">{{TEXTO_PASO}}
+      <!-- ej.: En el menu de la izquierda, presiona <b>Operaciones</b> (1) y luego <b>Pendientes</b> (2). -->
+    </div>
+  </div>
+  <div class="captura">
+    <img src="capturas/{{NN}}-{{PASO}}-anotada.png" alt="{{ALT}}">
+    <!-- respaldo SOLO HTML (no se conserva en PDF/DOCX):
+    <span class="marca" style="left:{{X1}}%;top:{{Y1}}%">1</span> -->
+  </div>
+  <div class="pie">{{PIE}}</div>
+  <!-- ===== fin bloque paso ===== -->
+
+  <div class="nota"><b>Consejo:</b> {{CONSEJO}}</div>
+
+  <h2>Listo</h2>
+  <div class="listo">{{COMO_SABES_QUE_SALIO_BIEN}}</div>
+
+  <h2>Si algo no sale</h2>
+  <dl>{{SI_ALGO_NO_SALE}}</dl>
+  <!-- <dt>No veo el boton Aprobar</dt><dd>Tu usuario no tiene el perfil necesario. Pidele a tu administrador que lo revise.</dd> -->
+
+  <h2>Preguntas frecuentes</h2>
+  <dl>{{PREGUNTAS_FRECUENTES}}</dl>
+
+  <footer>{{EQUIPO}} · Manual de usuario · {{FLUJO}} · v{{VERSION}} · {{FECHA}}. {{CAMBIOS_VERSION}}</footer>
+</div>
+</body>
+</html>
