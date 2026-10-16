@@ -112,8 +112,14 @@ los ultimos 60 snapshots.
 python3 "${CLAUDE_PLUGIN_ROOT}/templates/tablero/generar_tablero.py" \
   "{tablero.outputDir}/tablero-datos.json" "{tablero.outputDir}/tablero.html"
 ```
+Para la plantilla `organizacion`: salida `{tablero.outputDir}/organizacion-po.html` y tercer argumento
+`"${CLAUDE_PLUGIN_ROOT}/templates/tablero/organizacion-po.html"`.
 El script valida el JSON, quita la marca de ejemplo, escapa `</` y reemplaza el bloque de datos
-(script con `id="datos"`) de la plantilla `templates/tablero/tablero.html`. La plantilla renderiza
+(script con `id="datos"`) de la plantilla (`templates/tablero/tablero.html` por defecto).
+`organizacion-po.html` usa ademas, si vienen, estos campos opcionales: `titulo` (encabezado; por
+defecto "Organización PO"), `sprints[].etapaTexto` (texto de la pastilla del sprint),
+`sprints[].nota`, `hitos[]` (`{fecha, texto, detalle, estado: hecho|pendiente|riesgo}`, fechas
+sueltas ademas de las de pase) y `decisiones[]` (lo que el PO tiene que decidir). La plantilla renderiza
 todo sola, sin librerias externas, en modo claro y oscuro y en pantallas de telefono.
 `templates/tablero/datos-ejemplo.json` muestra un tablero completo de referencia.
 

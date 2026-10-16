@@ -79,6 +79,35 @@ ticket observado no detiene el lote: se pasa al siguiente. Al final, `lote-{fech
 Ademas deja `lote-{fecha}.json` (`[{numero, veredicto, criteriosOk, criteriosTotal, ambiente,
 fecha, carpeta}]`) que el seguimiento usa como insumo del dashboard (`veredictoPO` por ticket).
 
+## Informe como artifact (`/po-team:validar --artifact`)
+Plantilla `templates/validacion/validacion.html`: el informe de validaciones de un sprint en un
+ambiente. Muestra un resumen por estado, los bloqueos del ambiente, las decisiones del PO, una fila
+por ticket (descripcion de negocio, criterios, casos de prueba, evidencia y siguiente paso) y al
+final los bugs, separados entre los del alcance y los de fuera. Datos en
+`.po-team/validaciones/{sprint}-{ambiente}/validacion-datos.json`; `templates/validacion/datos-ejemplo.json`
+es un ejemplo completo.
+```json
+{ "titulo": "Validaciones Sprint 12", "producto": "…", "sprint": "Sprint 12", "ambiente": "Demo CO",
+  "fecha": "2026-10-16", "repoUrl": "https://github.com/{org}/{repo}/issues/",
+  "tituloDecisiones": "Decisiones del PO", "columnaTicket": "Ticket", "notaBugs": "(opcional)",
+  "grupos": [ { "id": "val", "nombre": "A validar en Demo CO", "descripcion": "…",
+    "items": [ { "numero": 123, "titulo": "…", "url": "(opcional; si falta, repoUrl + numero)",
+      "estado": "ok|warn|alert|block|pend|na|pr|wait", "etiqueta": "Cumple", "nota": "…", "siguiente": "…",
+      "descripcion": { "trata": "…", "validar": "…", "criterios": ["…"], "duda": "(opcional)" },
+      "casos": [ { "caso": "C1", "que": "…", "estado": "ok", "resultado": "…", "falta": "—",
+                   "fuente": { "tipo": "observado|inferido", "fuente": "…", "pasos": ["…"] } } ],
+      "evidencia": [ { "archivo": "img/123-c1.jpg", "original": "(opcional, version grande)", "leyenda": "C1 · …" } ],
+      "links": [ { "texto": "…", "url": "…" } ] } ] } ],
+  "bloqueos": [ { "titulo": "…", "detalle": "…" } ], "decisiones": ["…"],
+  "bugs": [ { "titulo": "…", "ticket": "#123 C2", "alcance": "en|fuera", "detalle": "…", "url": "(opcional)" } ] }
+```
+Estados: `ok` Cumple (= VB PO) · `alert` No cumple (= Observado) · `warn` A revisar · `block`
+Bloqueado · `pend` En validacion · `wait` Espera confirmacion · `pr` En PR · `na` No aplica.
+Reglas: lenguaje de negocio; un caso por criterio; los videos (`.webm`/`.mp4`) salen con
+reproductor; en `archivo` va la captura liviana (JPG de ~1400 px) y en `original` la PNG; sin datos
+personales ni secretos. Al publicar, cada archivo de `evidencia` va en `files` del Artifact con su
+misma ruta relativa.
+
 ## Publicar el resultado (solo con el plan aprobado)
 Con el OK del usuario: subir las capturas a la rama `evidence` (skill `evidencia-po`), comentar en
 el ticket con la tabla y las capturas embebidas, y poner la etiqueta `tracker.etiquetas.vbPO` u

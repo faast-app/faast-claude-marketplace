@@ -55,6 +55,9 @@ numeros. En serie, un navegador, un ticket a la vez; un observado no detiene el 
 Criterios · Evidencia + resumen de puntos VB/observados) y el `.json` gemelo que usa el
 seguimiento para el dashboard. Si el lote es grande (mas de ~8 tickets), avisar la duracion
 estimada antes de empezar.
+Con `--artifact` (o `validacion.artifact: true`) arma tambien
+`.po-team/validaciones/{sprint}-{ambiente}/validacion-datos.json` con su evidencia al lado (skill
+`validacion-funcional-po`, "Informe como artifact"); el comando genera y publica el HTML.
 
 ## Publicar (solo con plan aprobado)
 Si la invocacion indica que el plan de publicar esta aprobado: subir capturas a la rama

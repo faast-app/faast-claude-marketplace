@@ -1,6 +1,6 @@
 ---
-description: El validador-po hace la VALIDACION FUNCIONAL RAPIDA del PO (no reemplaza a QA) - recorre solo los criterios de aceptacion de la HU por el camino normal en Desa, Demo o Preprod con el Playwright MCP, una captura verificada por criterio, y da VB PO u Observado; a la primera falla reporta en lenguaje de negocio sin buscar causas. Acepta un ticket, una lista o un sprint completo en modo lote (tabla cumple/observado con evidencia por ticket). Con tu OK publica la evidencia embebida y la etiqueta en cada ticket. Uso - /po-team:validar {#n | #n #m ... | --lote sprint N} [--ambiente clave]
-argument-hint: '{#n | #n #m … | --lote sprint N} [--ambiente {clave del config}] [--publicar]'
+description: El validador-po hace la VALIDACION FUNCIONAL RAPIDA del PO (no reemplaza a QA) - recorre solo los criterios de aceptacion de la HU por el camino normal en Desa, Demo o Preprod con el Playwright MCP, una captura verificada por criterio, y da VB PO u Observado; a la primera falla reporta en lenguaje de negocio sin buscar causas. Acepta un ticket, una lista o un sprint completo en modo lote (tabla cumple/observado con evidencia por ticket). Con tu OK publica la evidencia embebida y la etiqueta en cada ticket. Con --artifact arma ademas el informe de validaciones (por ticket - casos, evidencia, bloqueos, decisiones y bugs) y lo publica como artifact. Uso - /po-team:validar {#n | #n #m ... | --lote sprint N} [--ambiente clave] [--artifact]
+argument-hint: '{#n | #n #m … | --lote sprint N} [--ambiente {clave del config}] [--publicar] [--artifact]'
 ---
 
 > **Ejecucion INLINE obligatoria:** este es un COMANDO, no un agente. Ejecuta su
@@ -41,6 +41,21 @@ Validacion PO — Demo CO — 16/10
 VB PO: 3 pts · Observados: 5 pts
 Nota: validacion funcional rapida del PO; no reemplaza la validacion de QA.
 ```
+
+## Paso 3b — Informe como artifact (`--artifact` o `validacion.artifact: true`)
+El `validador-po` deja `.po-team/validaciones/{sprint}-{ambiente}/validacion-datos.json` (formato en
+la skill `validacion-funcional-po`, seccion "Informe como artifact") con la evidencia copiada en la
+misma carpeta. Generar el HTML:
+```bash
+python3 "${CLAUDE_PLUGIN_ROOT}/templates/validacion/generar_validacion.py" \
+  .po-team/validaciones/{sprint}-{ambiente}/validacion-datos.json .po-team/validaciones/{sprint}-{ambiente}/index.html
+```
+Si la sesion tiene el tool `Artifact`: publicar `index.html` con sus capturas y videos en `files`
+(mismas rutas relativas que usa el JSON; mas de 255 archivos van en varias publicaciones a la misma
+URL). Una URL por sprint y ambiente, guardada en `validacion.artifactUrls["{sprint}-{ambiente}"]`;
+si ya existe, leerla y publicar encima. Sin el tool: entregar la ruta local. Publicar el artifact no
+escribe en el tracker y queda privado hasta que el PO lo comparta. Otra ronda de validacion
+actualiza el mismo JSON y la misma URL.
 
 ## Paso 4 — Publicar (plan + OK)
 Proponer: subir capturas a la rama `evidence`, comentar cada ticket con su tabla y capturas

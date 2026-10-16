@@ -63,6 +63,7 @@
   "evidencia": { "repo": "{{org}}/{{repo-con-rama-evidence}}", "rama": "evidence", "carpeta": "evidence/po" },
   "documentos": { "plantillas": "", "outputDir": ".po-team/documentos", "aprobadores": [] },
   "manuales": { "outputDir": ".po-team/manuales" },
-  "tablero": { "outputDir": ".po-team/tablero", "artifactUrl": "", "informe": "diario" },
+  "tablero": { "outputDir": ".po-team/tablero", "artifactUrl": "", "artifactUrls": {}, "informe": "diario", "plantilla": "generica", "ultimaOpcion": "" },
+  "validacion": { "artifact": false, "artifactUrls": {} },
   "team": { "models": {} }
 }

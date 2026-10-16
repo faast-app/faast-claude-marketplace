@@ -162,8 +162,8 @@ Con `/po-team:start` y una frase basta. Esta lista es para cuando ya sabes que q
 | `/po-team:refinar --observacion #n` | Devolver una observacion a desarrollo ([Caso 5](#caso-5--algo-quedo-observado)) |
 | `/po-team:refinar --vb-cliente #n` | Registrar el VB del cliente ([Caso 6](#caso-6--el-acta-para-el-cliente-y-su-vb)) |
 | `/po-team:sprint planificar {N}` | La propuesta del sprint con fechas y riesgos ([Caso 2](#caso-2--armar-el-proximo-sprint)) |
-| `/po-team:tablero [diario o semanal]` | El dashboard y el informe ([Caso 3](#caso-3--como-vamos-el-tablero-y-el-informe-del-dia)) |
-| `/po-team:validar {#n o --lote sprint N}` | La revision rapida con fotos ([Caso 4](#caso-4--dar-el-vb-po-a-lo-que-llego-a-demo)) |
+| `/po-team:tablero` | Te pregunta qué quieres ver: el tablero genérico, el de Organización PO, las validaciones del sprint, o crear un backlog nuevo en GitHub ([Caso 3](#caso-3--como-vamos-el-tablero-y-el-informe-del-dia)) |
+| `/po-team:validar {#n o --lote sprint N}` | La revision rapida con fotos ([Caso 4](#caso-4--dar-el-vb-po-a-lo-que-llego-a-demo)). Con `--artifact` queda una página con todas las validaciones del sprint |
 | `/po-team:documento {hu, especificacion, aceptacion, sprint} …` | Documentos en PDF y Word ([Caso 6](#caso-6--el-acta-para-el-cliente-y-su-vb), [Caso 8](#caso-8--el-informe-del-sprint-para-gerencia)) |
 | `/po-team:manual {flujo}` | Manual QA y manual de usuario ([Caso 7](#caso-7--un-manual-para-qa-y-otro-para-los-usuarios)) |
 | `/po-team:setup` | Revisar e instalar lo necesario, configurar el tablero |

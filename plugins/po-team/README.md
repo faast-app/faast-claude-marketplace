@@ -35,8 +35,8 @@ vez organizacion, repos, Projects, mapeo de estados a etapas, ambientes, cliente
 | `/po-team:start` | Punto de entrada unico: entiende lo que pides en tus palabras y te lleva al flujo |
 | `/po-team:refinar` | HUs y bugs en lenguaje de negocio, Gherkin, estimacion; observaciones; VB del cliente |
 | `/po-team:sprint` | Sprint por capacidad, que sacar, fechas de pase (Demo, Preprod, VB) y riesgos |
-| `/po-team:tablero` | Estado real del Project, avance por puntos, cambios, informe diario/semanal y dashboard HTML (artifact si se puede) |
-| `/po-team:validar` | Validacion funcional rapida del PO (VB PO / Observado), un ticket, lista o `--lote sprint N` |
+| `/po-team:tablero` | Te pregunta cual quieres: tablero generico, Organizacion PO, validaciones del sprint, o crear un backlog nuevo en GitHub. Estado real del Project, avance por puntos, cambios, informe diario/semanal y dashboard HTML (artifact si se puede) |
+| `/po-team:validar` | Validacion funcional rapida del PO (VB PO / Observado), un ticket, lista o `--lote sprint N`; `--artifact` publica el informe de validaciones |
 | `/po-team:documento` | `hu`, `especificacion`, `aceptacion` (acta) o `sprint` en PDF + DOCX |
 | `/po-team:manual` | Manual de un flujo en version QA y version para cualquier persona (HTML + PDF + DOCX) |
 | `/po-team:estado` | Vistazo rapido sin consultar el tracker |

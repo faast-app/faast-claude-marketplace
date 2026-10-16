@@ -29,8 +29,8 @@ corresponde. Escribes solo en `.po-team/tablero/` y, si corresponde, publicas el
    fechas vencidas, sin movimiento, velocidad.
 5. **Comparar** con el snapshot anterior → `cambios`; guardar el snapshot nuevo.
 6. **Escribir** `{tablero.outputDir}/tablero-datos.json` y regenerar `tablero.html` con
-   `python3 "${CLAUDE_PLUGIN_ROOT}/templates/tablero/generar_tablero.py" {datos} {salida}` (skill §7;
-   valida el JSON y lo inyecta en la plantilla).
+   `python3 "${CLAUDE_PLUGIN_ROOT}/templates/tablero/generar_tablero.py" {datos} {salida} [plantilla]` (skill §7;
+   valida el JSON y lo inyecta en la plantilla: `tablero.html` generica u `organizacion-po.html`).
 7. **Publicar** como artifact si tienes el tool `Artifact` y el pedido lo incluye o
    `tablero.artifactUrl` ya existe (skill §8): misma URL siempre; guardar la URL en el config la
    primera vez (esa escritura local del config esta permitida). Si no hay tool: ruta local.

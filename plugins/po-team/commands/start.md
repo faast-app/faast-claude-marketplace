@@ -46,6 +46,8 @@ Interpretar $ARGUMENTS:
 - "llego de la mesa / nuevo requerimiento / HU / historia / bug / redactar / estimar / refinar" → `/po-team:refinar …`
 - "sprint / planificar / capacidad / que entra / fechas de pase / replanificar" → `/po-team:sprint …`
 - "tablero / dashboard / como vamos / avance / informe diario / semanal / publicar" → `/po-team:tablero …`
+  (sin decir cual, el tablero pregunta: generico, Organizacion PO o validaciones)
+- "crear / armar un backlog o tablero nuevo en GitHub / no tengo Project" → `/po-team:tablero crear-backlog`
 - "validar / VB PO / probar rapido / revisar en demo / preprod / lote" → `/po-team:validar …`
 - "documento / pdf / word / acta / aceptacion / especificacion / informe de sprint" → `/po-team:documento …`
 - "manual / instructivo / paso a paso para usuarios / para QA" → `/po-team:manual …`
