@@ -16,6 +16,9 @@ const { chromium } = mod.default ?? mod;
 const browser = await chromium.launch();
 const page = await browser.newPage();
 await page.goto(pathToFileURL(entrada).href, { waitUntil: "networkidle" });
+await page.waitForFunction(() => window.__diagramasListos === true, null, { timeout: 60000 }).catch(() => {
+  console.error("aviso: los diagramas no terminaron de dibujarse");
+});
 await page.evaluate(() => document.fonts.ready);
 const escapar = (t) => t.replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
 await page.pdf({

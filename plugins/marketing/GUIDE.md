@@ -185,6 +185,36 @@ Ejemplos de lo que puedes escribir despues (o en la misma linea):
 | `/marketing:start ¿quienes compiten con nosotros en Peru?` | Investiga la competencia con fuente y fecha |
 | `/marketing:start ¿como vamos?` | Te resume las campanas: que espera tu aprobacion, que esta listo |
 
+**Asi avanza una campaña** (en negro, tus aprobaciones):
+
+```mermaid
+flowchart LR
+    subgraph E1["1 · Entender"]
+      direction TB
+      B(["Tu pedido"]) --> BR["<b>Director</b><br/>brief y plan"] --> INV["<b>Investigacion</b><br/>y <b>producto real</b>"]
+    end
+    subgraph E2["2 · Desglosar"]
+      direction TB
+      MAPA["Mapa del producto<br/>parte por parte"] --> A1{{"Apruebas el mapa"}} --> FI["Una ficha por parte"] --> A2{{"Apruebas las fichas"}}
+    end
+    subgraph E3["3 · Producir"]
+      direction TB
+      ES["<b>Mensajes y textos</b>"] --> VI["<b>Video</b> keynote<br/>+ clips por parte"] --> DK["<b>Deck</b>, one-pager<br/>y piezas"]
+    end
+    subgraph E4["4 · Revisar y entregar"]
+      direction TB
+      RV["<b>Director</b><br/>revisa cada pieza"] --> A3{{"Apruebas cada pieza"}} --> EN(["Entrega"])
+    end
+    E1 --> E2 --> E3 --> E4
+    classDef equipo fill:#f1f7e9,stroke:#71af26,stroke-width:2px,color:#151515
+    classDef tu fill:#151515,stroke:#151515,color:#ffffff
+    classDef opcional fill:#ffffff,stroke:#4a4f45,stroke-dasharray:4 3,color:#151515
+    classDef etapa fill:#fafbf8,stroke:#d5e8bd,color:#4a4f45
+    class BR,INV,MAPA,FI,ES,VI,DK,RV equipo
+    class B,A1,A2,A3,EN tu
+    class E1,E2,E3,E4 etapa
+```
+
 **Tres cosas que siempre van a pasar:**
 
 - **El producto se muestra desglosado, parte por parte.** Primero te presentan el mapa del
@@ -670,6 +700,32 @@ real de FaaST como protagonista, la conversacion empieza ganada.
 **Que escribes:**
 ```
 /marketing:video keynote --campana CMP-2026-001 --4k
+```
+
+**Las etapas del video** (en negro, lo que apruebas tu):
+
+```mermaid
+flowchart LR
+    subgraph PRE["1 · Preproduccion"]
+      direction TB
+      CO["Concepto y tratamiento"] --> GU["Guion por parte"] --> SB["Storyboard<br/>cuadro a cuadro"] --> AN["Animatic"] --> A1{{"Apruebas el animatic"}}
+    end
+    subgraph PROD["2 · Produccion"]
+      direction TB
+      CAP["Pantallas reales<br/>a tamaño completo"] --> HF["Animacion y montaje<br/>al ritmo de la musica"] --> POST["Color · texto en movimiento<br/>sonido · subtitulos"]
+    end
+    subgraph FIN["3 · Calidad y entrega"]
+      direction TB
+      QA["Control de calidad<br/>cuadro a cuadro"] --> A2{{"Apruebas la final"}} --> ENT(["Keynote 4K y 1080p · clips<br/>teaser · vertical y cuadrado<br/>version muda · portada"])
+    end
+    PRE --> PROD --> FIN
+    classDef equipo fill:#f1f7e9,stroke:#71af26,stroke-width:2px,color:#151515
+    classDef tu fill:#151515,stroke:#151515,color:#ffffff
+    classDef opcional fill:#ffffff,stroke:#4a4f45,stroke-dasharray:4 3,color:#151515
+    classDef etapa fill:#fafbf8,stroke:#d5e8bd,color:#4a4f45
+    class CO,GU,SB,AN,CAP,HF,POST,QA equipo
+    class A1,A2,ENT tu
+    class PRE,PROD,FIN etapa
 ```
 
 ### Que necesita antes de empezar

@@ -95,6 +95,9 @@ def construir(clave, tmp):
                             capture_output=True, text=True, check=True).stdout
     # el primer H1 del .md es el titulo: ya va en la portada
     cuerpo = re.sub(r"^\s*<h1[^>]*>.*?</h1>", "", cuerpo, count=1, flags=re.S)
+    cuerpo = re.sub(r'<pre class="mermaid"><code>(.*?)</code></pre>',
+                    lambda m: f'<div class="diagrama-mermaid"><pre class="mermaid">{m.group(1)}</pre></div>',
+                    cuerpo, flags=re.S)
     cuerpo = re.sub(r"<pre>(<code[^>]*>)(.*?)</code></pre>", diagrama, cuerpo, flags=re.S)
     hoy = datetime.date.today()
     fecha = f"{hoy.day} de {MESES[hoy.month - 1]} de {hoy.year}"
@@ -116,6 +119,29 @@ def construir(clave, tmp):
   <div class="meta"><span>{meta_izq}</span><span>{fecha}</span><span>faast.app</span></div>
 </section>
 <main class="contenido">{cuerpo}</main>
+<script type="module">
+  const bloques = document.querySelectorAll("pre.mermaid");
+  if (!bloques.length) {{ window.__diagramasListos = true; }}
+  else {{
+    try {{
+      const {{ default: mermaid }} = await import("https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs");
+      mermaid.initialize({{
+        startOnLoad: false, theme: "base", securityLevel: "strict",
+        flowchart: {{ curve: "basis", htmlLabels: true, nodeSpacing: 34, rankSpacing: 46, padding: 14 }},
+        themeVariables: {{
+          fontFamily: "Lato, Helvetica, Arial, sans-serif", fontSize: "16px",
+          primaryColor: "#f1f7e9", primaryBorderColor: "#71af26", primaryTextColor: "#151515",
+          secondaryColor: "#151515", secondaryTextColor: "#ffffff", secondaryBorderColor: "#151515",
+          tertiaryColor: "#ffffff", tertiaryBorderColor: "#dfe3da",
+          lineColor: "#4a4f45", textColor: "#151515", clusterBkg: "#fafbf8", clusterBorder: "#d5e8bd",
+          edgeLabelBackground: "#ffffff", noteBkgColor: "#f1f7e9", noteBorderColor: "#71af26"
+        }}
+      }});
+      await mermaid.run({{ nodes: bloques }});
+    }} catch (e) {{ console.error("mermaid", e); }}
+    window.__diagramasListos = true;
+  }}
+</script>
 </body></html>"""
     ruta_html = os.path.join(tmp, f"{clave}.html")
     open(ruta_html, "w", encoding="utf-8").write(html)

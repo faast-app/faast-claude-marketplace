@@ -679,6 +679,33 @@ Bloqueos: ninguno · Pendientes tuyos: confirmar la clase del ambiente "demo"
 /dev-team:refine los analistas necesitan filtrar las cobranzas por rango de fechas
 ```
 
+**Asi se ve el camino completo** (en negro, lo que decides tu). Si pruebas rechaza, vuelve a los programadores; si ajustas el plan, vuelve al dueño del producto:
+
+```mermaid
+flowchart LR
+    subgraph E1["1 · Definir"]
+      direction TB
+      P(["Tu pedido"]) --> PO["<b>Dueño del producto</b><br/>escribe la historia"] --> PL{{"<b>Plan</b><br/>¿lo apruebas?"}}
+    end
+    subgraph E2["2 · Construir y validar"]
+      direction TB
+      DV["<b>Programadores</b><br/>servicios y pantallas"] --> QA["<b>Pruebas</b><br/>cada criterio con video"] --> SEG["<b>Seguridad</b><br/>si toca accesos, pagos<br/>o datos personales"]
+    end
+    subgraph E3["3 · Integrar y publicar"]
+      direction TB
+      MG["<b>Jefe de equipo</b><br/>integra el cambio"] --> PS["<b>Publicaciones</b><br/>pase al ambiente"] --> OK(["Listo"])
+    end
+    E1 --> E2 --> E3
+    classDef equipo fill:#f1f7e9,stroke:#71af26,stroke-width:2px,color:#151515
+    classDef tu fill:#151515,stroke:#151515,color:#ffffff
+    classDef opcional fill:#ffffff,stroke:#4a4f45,stroke-dasharray:4 3,color:#151515
+    classDef etapa fill:#fafbf8,stroke:#d5e8bd,color:#4a4f45
+    class PO,DV,QA,MG,PS equipo
+    class P,PL,OK tu
+    class SEG opcional
+    class E1,E2,E3 etapa
+```
+
 **Que hace el equipo:**
 
 **0. Plan primero.** El jefe de equipo te presenta el plan y espera tu OK:
@@ -816,6 +843,33 @@ registros que ya vi en la pagina 1
 **La regla de este comando:** nada se registra ni se corrige hasta que pruebas haya
 **reproducido el problema y lo confirme con evidencia**. "Me paso una vez" no es un
 error registrado: es un reporte pendiente de reproduccion.
+
+```mermaid
+flowchart LR
+    subgraph E1["1 · Reproducir"]
+      direction TB
+      R(["Tu reporte"]) --> Q["<b>Pruebas</b> repite los pasos<br/>grabando video"] --> V{{"<b>Veredicto</b><br/>reproducido · no reproducido<br/>· bloqueado"}}
+    end
+    subgraph E2["2 · Registrar y corregir"]
+      direction TB
+      PO["<b>Dueño del producto</b><br/>registra con la evidencia"] --> D["<b>Programador</b><br/>corrige"]
+    end
+    subgraph E3["3 · Revalidar y cerrar"]
+      direction TB
+      RV["<b>Pruebas</b> revalida<br/>video antes / despues"] --> C(["Tu confirmas el cierre"])
+    end
+    E1 -- "reproducido" --> E2 --> E3
+    classDef equipo fill:#f1f7e9,stroke:#71af26,stroke-width:2px,color:#151515
+    classDef tu fill:#151515,stroke:#151515,color:#ffffff
+    classDef opcional fill:#ffffff,stroke:#4a4f45,stroke-dasharray:4 3,color:#151515
+    classDef etapa fill:#fafbf8,stroke:#d5e8bd,color:#4a4f45
+    class Q,PO,D,RV equipo
+    class R,C,V tu
+    class E1,E2,E3 etapa
+```
+
+Si no se reproduce, se te pide lo que falta (usuario, dato, hora); si algo impide probar, se avisa
+que bloquea. Si la revalidacion sigue fallando, vuelve al programador.
 
 **Que hace el equipo (reproducir → confirmar → registrar → corregir → volver a probar → cerrar):**
 1. **Se ordena tu reporte** en pasos como usuario, que esperabas y que paso. Si falta un

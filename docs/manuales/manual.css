@@ -105,3 +105,11 @@ th code { background: #2b2d29; border-color: #3a3d37; color: #fff; }
 .contenido h2#indice + ul, .contenido h2#índice + ul { columns: 2; column-gap: 8mm; font-size: 9.6pt; }
 
 img { max-width: 100%; }
+
+/* Diagramas reales (Mermaid) */
+.diagrama-mermaid {
+  margin: 5mm 0 6mm 0; padding: 5mm 4mm; background: #fff; border: 1px solid var(--borde);
+  border-radius: 8px; text-align: center; page-break-inside: avoid; break-inside: avoid;
+}
+.diagrama-mermaid pre.mermaid { background: none; border: 0; padding: 0; margin: 0; white-space: normal; }
+.diagrama-mermaid svg { width: 100% !important; max-width: 100% !important; height: auto; max-height: 175mm; }

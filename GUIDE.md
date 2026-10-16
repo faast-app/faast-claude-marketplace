@@ -83,28 +83,23 @@ plan, esperan tu "adelante" y hacen el trabajo, dejando todo documentado y con e
 El flujo real de la empresa va de izquierda a derecha. Cada equipo recoge el trabajo exactamente
 donde lo dejo el anterior.
 
-```
-   CLIENTE
-     │  correo · reunion grabada · audio · chat · documento
-     ▼
-┌─────────────────────────┐   requerimiento cerrado,      ┌─────────────────────────┐
-│   MESA DE SERVICIOS     │   documentado y registrado    │        DEV TEAM         │
-│ recibe · pregunta ·     │ ────────────────────────────▶ │ diseña · construye ·    │
-│ reproduce · maqueta ·   │   en el tablero (backlog)     │ prueba · asegura ·      │
-│ documenta · cotiza      │                               │ publica (pase)          │
-└─────────────────────────┘                               └────────────┬────────────┘
-                                                                       │ producto real:
-                                                                       │ pantallas, memoria,
-                                                                       │ diseño, backlog
-                                                                       ▼
-                                                          ┌─────────────────────────┐
-                                                          │       MARKETING         │
-                                                          │ desglose parte por      │
-                                                          │ parte · deck · video    │
-                                                          │ de lanzamiento · piezas │
-                                                          └─────────────────────────┘
-
-   ARQUITECTO SENIOR BACKEND: consultor puntual, en cualquier momento, sobre cualquier repositorio.
+```mermaid
+flowchart TB
+    C(["👤 <b>Cliente</b><br/>correo · reunión · audio<br/>chat · documento"])
+    M["<b>Mesa de Servicios</b><br/>recibe · pregunta · reproduce<br/>maqueta · documenta · cotiza"]
+    D["<b>Dev Team</b><br/>diseña · construye · prueba<br/>asegura · publica"]
+    K["<b>Marketing</b><br/>desglose parte por parte<br/>deck · video de lanzamiento · piezas"]
+    A["<b>Arquitecto Senior Backend</b><br/>consultor puntual"]
+    C --> M
+    M -- "requerimiento cerrado<br/>en el tablero" --> D
+    D -- "producto real: pantallas,<br/>memoria, diseño" --> K
+    A -. "consulta técnica<br/>en cualquier momento" .-> D
+    classDef equipo fill:#f1f7e9,stroke:#71af26,stroke-width:2px,color:#151515
+    classDef cliente fill:#151515,stroke:#151515,color:#ffffff
+    classDef consultor fill:#ffffff,stroke:#4a4f45,stroke-dasharray:4 3,color:#151515
+    class M,D,K equipo
+    class C cliente
+    class A consultor
 ```
 
 | Etapa | Equipo | Recibe | Entrega a |

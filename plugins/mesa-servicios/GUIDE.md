@@ -258,6 +258,40 @@ Ejemplos de lo que puedes escribir despues (o en la misma linea):
 
 ---
 
+
+**El recorrido de una solicitud** (en negro, lo que haces o decides tu):
+
+```mermaid
+flowchart LR
+    subgraph E1["1 · Recibir y entender"]
+      direction TB
+      E(["Llega algo del cliente"]) --> RC["<b>Recepcion</b><br/>lo guarda y lo ordena"] --> AN["<b>Analista</b><br/>prepara las preguntas"] --> TU{{"Llevas las preguntas<br/>y traes respuestas"}}
+    end
+    subgraph E2["2 · Resolver segun el tipo"]
+      direction TB
+      QN["<b>BUG</b> · QA de negocio<br/>lo reproduce grabando"]
+      PR["<b>PRY / CTZ</b> · Prototipador<br/>maqueta las pantallas"]
+      DB["<b>Datos</b> · DBA de mesa<br/>arma scripts, no los ejecuta"]
+      QN ~~~ PR ~~~ DB
+    end
+    subgraph E3["3 · Documentar y registrar"]
+      direction TB
+      RD["<b>Redactor</b><br/>documento PDF + Word"] --> RG["<b>Registrador</b><br/>ticket con evidencia"] --> DT(["Lo toma el Dev Team<br/>(cotizacion: tras aprobacion)"])
+    end
+    E1 --> E2 --> E3
+    classDef equipo fill:#f1f7e9,stroke:#71af26,stroke-width:2px,color:#151515
+    classDef tu fill:#151515,stroke:#151515,color:#ffffff
+    classDef opcional fill:#ffffff,stroke:#4a4f45,stroke-dasharray:4 3,color:#151515
+    classDef etapa fill:#fafbf8,stroke:#d5e8bd,color:#4a4f45
+    class RC,AN,QN,PR,DB,RD,RG equipo
+    class E,TU,DT tu
+    class E1,E2,E3 etapa
+```
+
+Si falta algo, el analista prepara otra ronda (maximo 3). Al cerrar, el curador guarda lo aprendido
+en la memoria del negocio.
+
+
 ## 2. Conoce al equipo
 
 Piensa en una mesa de atencion al cliente con su propio analista, su probador, su encargado de
