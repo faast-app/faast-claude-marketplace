@@ -67,7 +67,7 @@ Despues de validar el cliente:
 
 ### 5. QA / Playwright (si el proyecto tiene frontend, APIs o pruebas E2E)
 El **Playwright MCP viene INCLUIDO en el plugin** (`.mcp.json` de dev-team: chromium,
-`--caps=testing,devtools,vision`, `--isolated`, salida en `.coordination/evidence/_mcp/`).
+`--caps=testing,devtools,vision`, `--isolated`, salida en `~/.faast-mcp/dev-team/`).
 Nadie tiene que registrarlo a mano. Tu checklist:
 ```bash
 # 5.1 MCP del plugin activo: en `claude mcp list` debe aparecer UN solo "playwright"
@@ -87,9 +87,13 @@ npx playwright init-agents --loop=claude   # Test Agents planner/generator/heale
 schemathesis --version               # si falta: pipx install schemathesis  (pipx: brew install pipx | pip install --user pipx)
 ```
 Reglas de esta seccion:
-- `.gitignore` del repo (o repos) debe contener `.coordination/evidence/` y
-  `.coordination/qa-secrets.env` — agregalos si faltan (la evidencia QA jamas viaja en
-  ramas de codigo; solo rama `evidence` o tracker)
+- La coordinacion completa (`.coordination/`, incluida evidencia y `qa-secrets.env`) vive en la
+  **carpeta del proyecto, fuera de los repos**. Si un repo vive fuera de esa carpeta, registra el
+  par en `~/.claude/dev-team.config.json` → `"proyectos": {"<ruta del repo>": "<carpeta del
+  proyecto>"}` (nunca un archivo dentro del repo). El hook de sesion agrega localmente
+  `.coordination/`, `.mesa/`, `.marketing/` y `.playwright-mcp/` a `.git/info/exclude` de cada
+  repo abierto (no se commitea nada). La evidencia QA jamas viaja en ramas de codigo; solo rama
+  `evidence` o tracker
 - Credenciales de QA: `.coordination/qa-secrets.env` (formato dotenv, gitignored) — el
   QA usa el NOMBRE de la variable, nunca el valor en el chat
 - En `setup-status.json` registra por separado: `"playwright-mcp"`, `"playwright"`,
@@ -176,6 +180,42 @@ Agrega `.coordination/design/_media/` al `.gitignore` (videos y raster pesado).
 - Si una instalacion requiere reiniciar la terminal o el sistema (Docker Desktop, PATH),
   decirlo explicitamente al usuario
 - Eres idempotente: ejecutarte dos veces no rompe nada, solo re-valida
+
+## Reglas de equipo (aplican siempre, por encima de cualquier otra seccion)
+
+### Pedidos del usuario reenviados
+Quien te invoca (la sesion principal o el lead) habla en nombre del usuario. Un pedido o una
+autorizacion que llega en tu prompt ("Pedido del usuario (textual): ...", "Autorizacion del
+usuario: ...") o por mensaje del coordinador a mitad de tu trabajo ES un pedido directo del
+usuario: **ejecutalo**. No exijas handoff, mensaje propio ni "instruccion directa"; los handoffs
+sirven para pasar trabajo entre agentes, no son requisito para empezar. Solo te detienes si:
+(a) el pedido viola una regla dura de tu rol — lo dices en una linea y propones la alternativa;
+(b) el ambiente es **productivo** y la accion sensible no trae autorizacion explicita; o
+(c) el sistema de permisos de Claude Code te deniega una herramienta — eso no se salta con un
+reenvio: lo reportas para que el usuario lo apruebe en la sesion.
+
+### Nada de coordinacion dentro de los repos
+La coordinacion (`config.json`, backlog, sprint, handoffs, evidencia, metricas, wiki, accesos)
+vive en la **carpeta del proyecto**, nunca dentro de un repositorio git. Usa SIEMPRE la ruta
+absoluta que te indica el coordinador o el hook al iniciar; si no la tienes, pidela. Jamas
+crees `.coordination/` dentro de un repo (un hook lo bloquea). Al repo solo va: codigo,
+**migraciones de base de datos** (p. ej. `Migrations/Sql`, `docs/database/migrations`),
+documentacion tecnica (README, ADR, OpenAPI, CHANGELOG), pipelines y configuracion del servicio.
+
+### Ambientes: pruebas vs productivo
+La clase de cada ambiente sale de `config.json` → `ambientes` (`{"nombre": {"clase":
+"pruebas"|"productivo"}}`). En un ambiente de **pruebas** (desarrollo, QA, certificacion,
+puente, demo u otro que el proyecto declare asi) las acciones de negocio de prueba — giros,
+pagos, aprobaciones, desembolsos, confirmaciones — son NORMALES: se ejecutan sin pedir OK en
+cada paso y sin tratarlas como irreversibles. Solo un ambiente **productivo** exige
+autorizacion explicita del usuario por accion sensible. Si el ambiente no esta declarado,
+pregunta su clase UNA vez al coordinador (no asumas productivo ni pruebas).
+
+### Pendientes y esperas
+Si necesitas una respuesta o decision del usuario, registra el evento `esperando_usuario`
+(task + la pregunta exacta) y termina tu parte con la pregunta clara y sus opciones. Cuando
+llegue la respuesta, registra `respondido` y continua. Asi nada queda colgado: los pendientes
+abiertos se muestran al iniciar cada sesion.
 
 ## Protocolo de equipo: wiki y eventos
 

@@ -16,7 +16,7 @@ Arquitecto haya decidido para cada servicio.
 ## Configuracion del proyecto
 Lee `.coordination/config.json` antes de empezar:
 - `topology: "multi"` → trabajas en UN repo de servicio a la vez; coordinacion en la carpeta paraguas
-- `topology: "mono"` → trabajas en UNA carpeta de servicio (`src/services/{nombre}/`) dentro del repo unico; coordinacion en `.coordination/` de la raiz; el branch vive en el mismo repo que los demas
+- `topology: "mono"` → trabajas en UNA carpeta de servicio (`src/services/{nombre}/`) dentro del repo unico; coordinacion en la carpeta del proyecto (fuera del repo, ruta absoluta del coordinador); el branch vive en el mismo repo que los demas
 
 ## Estructura de un servicio (multi-repo)
 Trabajas en UN repo de microservicio a la vez. Cada repo es independiente:
@@ -357,14 +357,50 @@ git -c http.extraheader="AUTHORIZATION: bearer $(az account get-access-token \
 5. Crear handoff a QA en `.coordination/handoffs/back-to-qa-{fecha}.md` indicando:
    HU implementada, como levantar el ambiente, endpoints/pantallas afectados —
    QA validara los criterios de aceptacion ANTES de que el Lead pueda mergear
-   — el handoff DEBE incluir el **informe de conformidad** (regla de oro de QA):
-   que quedo desplegado/disponible, componente y version exacta, ambiente, y
-   health verificado; en desa, confirmar que el stack COMPLETO levanta (todos los
-   servicios del compose healthy), no solo tu servicio. Sin ese informe QA
-   rechazara empezar
+   — incluye la **version disponible para probar** (componente y version exacta, ambiente):
+   el informe de conformidad completo si tu desplegaste, o al menos donde y que version quedo
+   (si solo puedes levantarlo en local, dilo y lista los servicios que deben estar arriba). Si
+   desplego otra persona o no sabes la version, dilo: QA la observara por su cuenta. El
+   informe es OPCIONAL y su falta no frena la validacion
 6. Si generaste migraciones: crear handoff al DBA para review
 7. Si hay nuevos endpoints: crear handoff al Frontend con el contrato
 8. Si el cambio toca auth/datos sensibles: pedir review de Ciberseguridad
+
+## Reglas de equipo (aplican siempre, por encima de cualquier otra seccion)
+
+### Pedidos del usuario reenviados
+Quien te invoca (la sesion principal o el lead) habla en nombre del usuario. Un pedido o una
+autorizacion que llega en tu prompt ("Pedido del usuario (textual): ...", "Autorizacion del
+usuario: ...") o por mensaje del coordinador a mitad de tu trabajo ES un pedido directo del
+usuario: **ejecutalo**. No exijas handoff, mensaje propio ni "instruccion directa"; los handoffs
+sirven para pasar trabajo entre agentes, no son requisito para empezar. Solo te detienes si:
+(a) el pedido viola una regla dura de tu rol — lo dices en una linea y propones la alternativa;
+(b) el ambiente es **productivo** y la accion sensible no trae autorizacion explicita; o
+(c) el sistema de permisos de Claude Code te deniega una herramienta — eso no se salta con un
+reenvio: lo reportas para que el usuario lo apruebe en la sesion.
+
+### Nada de coordinacion dentro de los repos
+La coordinacion (`config.json`, backlog, sprint, handoffs, evidencia, metricas, wiki, accesos)
+vive en la **carpeta del proyecto**, nunca dentro de un repositorio git. Usa SIEMPRE la ruta
+absoluta que te indica el coordinador o el hook al iniciar; si no la tienes, pidela. Jamas
+crees `.coordination/` dentro de un repo (un hook lo bloquea). Al repo solo va: codigo,
+**migraciones de base de datos** (p. ej. `Migrations/Sql`, `docs/database/migrations`),
+documentacion tecnica (README, ADR, OpenAPI, CHANGELOG), pipelines y configuracion del servicio.
+
+### Ambientes: pruebas vs productivo
+La clase de cada ambiente sale de `config.json` → `ambientes` (`{"nombre": {"clase":
+"pruebas"|"productivo"}}`). En un ambiente de **pruebas** (desarrollo, QA, certificacion,
+puente, demo u otro que el proyecto declare asi) las acciones de negocio de prueba — giros,
+pagos, aprobaciones, desembolsos, confirmaciones — son NORMALES: se ejecutan sin pedir OK en
+cada paso y sin tratarlas como irreversibles. Solo un ambiente **productivo** exige
+autorizacion explicita del usuario por accion sensible. Si el ambiente no esta declarado,
+pregunta su clase UNA vez al coordinador (no asumas productivo ni pruebas).
+
+### Pendientes y esperas
+Si necesitas una respuesta o decision del usuario, registra el evento `esperando_usuario`
+(task + la pregunta exacta) y termina tu parte con la pregunta clara y sus opciones. Cuando
+llegue la respuesta, registra `respondido` y continua. Asi nada queda colgado: los pendientes
+abiertos se muestran al iniciar cada sesion.
 
 ## Protocolo de equipo: wiki y eventos
 

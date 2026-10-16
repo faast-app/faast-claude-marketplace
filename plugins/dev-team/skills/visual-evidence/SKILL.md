@@ -155,8 +155,8 @@ salen de las capturas numeradas ya tomadas o de cuadros de la grabacion.
 - Si una carpeta tiene mas de un archivo, un `INDEX.md` corto (2-4 lineas por archivo) que DESCRIBE
   y ANALIZA que muestra cada uno y donde esta el punto clave — es el "analisis" escrito que
   acompaña al material, para que no haya que reconstruirlo mirando todo.
-- La evidencia vive en `.coordination/evidence/{ID}/` (gitignored); el MCP escribe en `_mcp/`
-  (staging) y se mueve a la carpeta del criterio al cerrarlo. Al tracker sube EMBEBIDA. Secretos y
+- La evidencia vive en `.coordination/evidence/{ID}/` (gitignored); el MCP escribe en `~/.faast-mcp/dev-team/`
+  (staging fuera de los repos) y se mueve a la carpeta del criterio al cerrarlo. Al tracker sube EMBEBIDA. Secretos y
   PII siempre redactados, tambien en las imagenes.
 
 ## Checklist de una pieza de evidencia bien hecha

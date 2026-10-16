@@ -82,7 +82,7 @@ pantalla chica en una esquina, el resto gris y el texto borroso. Secuencia oblig
 ├── INDEX.md                          2-4 lineas por archivo: que muestra y donde esta el punto clave
 └── reproduccion.md                   el informe con el veredicto
 ```
-El MCP escribe en `.mesa/evidencia/_mcp/` (staging); al cerrar se mueve a la carpeta de la
+El MCP escribe en `~/.faast-mcp/mesa-servicios/` (staging fuera de los repos); al cerrar se mueve a la carpeta de la
 solicitud con su numeracion. Nada queda en temporales. Carpeta `evidencia/` en `.gitignore`.
 
 ## El informe (`reproduccion.md`) — en lenguaje de negocio

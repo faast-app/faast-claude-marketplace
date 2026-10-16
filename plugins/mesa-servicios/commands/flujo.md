@@ -47,8 +47,9 @@ grabara; en produccion, pedir y REGISTRAR la autorizacion (quien, cuando, para q
 `00-ANTES.md`. Con el OK:
 1. Fase 1 — `dba-mesa` verifica precondiciones (`SELECT`); si algo no cumple, DETENIDO.
 2. Fase 2 — `qa-negocio` ejecuta los pasos del runbook en la UI, grabando (traza, video con
-   capitulos, capturas resaltadas, consola/red). Antes de CADA paso que escribe: parada y OK
-   escrito del usuario de mesa en el momento. Un intento por paso; a la primera falla, detener
+   capitulos, capturas resaltadas, consola/red). En **produccion**, antes de CADA paso que
+   escribe: parada y OK escrito del usuario de mesa en el momento. En un ambiente de **pruebas**
+   (`.mesa/config.json` → `ambientes`) las acciones se ejecutan sin parada. Un intento por paso; a la primera falla, detener
    y reportar (sin reintentos: en produccion cada reintento puede crear datos reales).
 3. Fase 3 — verificar resultado (`SELECT` §2 + UI).
 4. Fase 4 — `informe-flujo.md` (resultado por paso, verificaciones, veredicto COMPLETADO /

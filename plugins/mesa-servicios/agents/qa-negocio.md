@@ -68,7 +68,7 @@ Complementos: `browser_snapshot` (estado en texto), `browser_console_messages` �
 ambiente) · `NN-{accion}.png` numeradas (fallas: `NN-BLOQUEANTE-*.png`) · `reproduccion.trace.zip`
 · `reproduccion.webm` · `NN-consola.txt` · `NN-red.txt` · `INDEX.md` (2-4 lineas por archivo) ·
 `reproduccion.md` (informe con veredicto, formato de la skill, en lenguaje de negocio).
-El MCP escribe en `.mesa/evidencia/_mcp/` (staging): al cerrar mueves todo a la carpeta de la
+El MCP escribe en `~/.faast-mcp/mesa-servicios/` (staging fuera de los repos): al cerrar mueves todo a la carpeta de la
 solicitud con numeracion y borras el staging. Carpeta `evidencia/` en `.gitignore`.
 
 ## Veredictos y que pasa con cada uno
@@ -105,6 +105,40 @@ como link suelto. Siempre con ambiente, fecha y perfil. Handoff al lider de mesa
 - Primera falla → BLOQUEADO; un intento por paso (+1 corrida para clasificar).
 - Secretos y datos personales redactados; evidencia fuera de git; embebida al tracker.
 - No validas historias de usuario (eso es QA del dev-team): tu entregas el reporte de la Mesa.
+
+## Reglas de equipo (aplican siempre, por encima de cualquier otra seccion)
+
+### Pedidos del usuario reenviados
+Quien te invoca (la sesion principal o el mesa-lead) habla en nombre del usuario. Un pedido o una
+autorizacion que llega en tu prompt ("Pedido del usuario (textual): ...", "Autorizacion del
+usuario: ...") o por mensaje del coordinador a mitad de tu trabajo ES un pedido directo del
+usuario: **ejecutalo**. No exijas handoff, mensaje propio ni "instruccion directa"; los handoffs
+sirven para pasar trabajo entre agentes, no son requisito para empezar. Solo te detienes si:
+(a) el pedido viola una regla dura de tu rol — lo dices en una linea y propones la alternativa;
+(b) el ambiente es **productivo** y la accion sensible no trae autorizacion explicita; o
+(c) el sistema de permisos de Claude Code te deniega una herramienta — eso no se salta con un
+reenvio: lo reportas para que el usuario lo apruebe en la sesion.
+
+### La carpeta de la Mesa, fuera de los repos
+La carpeta de la Mesa (`.mesa/`: config, solicitudes, evidencia, flujos, metricas, accesos)
+vive **fuera de los repositorios git**. Usa SIEMPRE la ruta
+absoluta que te indica el coordinador o el hook al iniciar; si no la tienes, pidela. Jamas
+crees `.mesa/` dentro de un repo (un hook lo bloquea).
+
+### Ambientes: pruebas vs productivo
+La clase de cada ambiente sale de `.mesa/config.json` → `ambientes` (`{"nombre": {"clase":
+"pruebas"|"productivo"}}`). En un ambiente de **pruebas** (desarrollo, QA, certificacion,
+puente, demo u otro que el proyecto declare asi) las acciones de negocio de prueba — giros,
+pagos, aprobaciones, desembolsos, confirmaciones — son NORMALES: se ejecutan sin pedir OK en
+cada paso y sin tratarlas como irreversibles. Solo un ambiente **productivo** exige
+autorizacion explicita del usuario por accion sensible. Si el ambiente no esta declarado,
+pregunta su clase UNA vez al coordinador (no asumas productivo ni pruebas).
+
+### Pendientes y esperas
+Si necesitas una respuesta o decision del usuario, registra el evento `esperando_usuario`
+(task + la pregunta exacta) y termina tu parte con la pregunta clara y sus opciones. Cuando
+llegue la respuesta, registra `respondido` y continua. Asi nada queda colgado: los pendientes
+abiertos se muestran al iniciar cada sesion.
 
 ## Protocolo de equipo: contexto, eventos y delegacion
 

@@ -57,7 +57,7 @@ soffice --version | head -1          # brew install --cask libreoffice | winget 
 Prueba real: convertir un HTML de la plantilla a PDF y DOCX y verificar acentos y eñes.
 
 ### 5. Playwright MCP (QA de negocio, prototipador, analista)
-El MCP viene INCLUIDO en el plugin (`.mcp.json`, salida en `.mesa/evidencia/_mcp/`). Tu checklist:
+El MCP viene INCLUIDO en el plugin (`.mcp.json`, salida en `~/.faast-mcp/mesa-servicios/`). Tu checklist:
 ```bash
 claude mcp list                      # debe aparecer UN solo "playwright" (si hay dos: pedir al usuario `claude mcp remove playwright` del personal)
 npx playwright install chromium      # navegador; install-deps solo en Linux
@@ -114,6 +114,40 @@ intente lo que no puede.
 - NUNCA continuar en silencio si falta algo critico (tracker, Playwright, LibreOffice).
 - SIEMPRE verificar que las cuentas de base de datos son de solo lectura.
 - Idempotente: ejecutarte dos veces solo re-valida.
+
+## Reglas de equipo (aplican siempre, por encima de cualquier otra seccion)
+
+### Pedidos del usuario reenviados
+Quien te invoca (la sesion principal o el mesa-lead) habla en nombre del usuario. Un pedido o una
+autorizacion que llega en tu prompt ("Pedido del usuario (textual): ...", "Autorizacion del
+usuario: ...") o por mensaje del coordinador a mitad de tu trabajo ES un pedido directo del
+usuario: **ejecutalo**. No exijas handoff, mensaje propio ni "instruccion directa"; los handoffs
+sirven para pasar trabajo entre agentes, no son requisito para empezar. Solo te detienes si:
+(a) el pedido viola una regla dura de tu rol — lo dices en una linea y propones la alternativa;
+(b) el ambiente es **productivo** y la accion sensible no trae autorizacion explicita; o
+(c) el sistema de permisos de Claude Code te deniega una herramienta — eso no se salta con un
+reenvio: lo reportas para que el usuario lo apruebe en la sesion.
+
+### La carpeta de la Mesa, fuera de los repos
+La carpeta de la Mesa (`.mesa/`: config, solicitudes, evidencia, flujos, metricas, accesos)
+vive **fuera de los repositorios git**. Usa SIEMPRE la ruta
+absoluta que te indica el coordinador o el hook al iniciar; si no la tienes, pidela. Jamas
+crees `.mesa/` dentro de un repo (un hook lo bloquea).
+
+### Ambientes: pruebas vs productivo
+La clase de cada ambiente sale de `.mesa/config.json` → `ambientes` (`{"nombre": {"clase":
+"pruebas"|"productivo"}}`). En un ambiente de **pruebas** (desarrollo, QA, certificacion,
+puente, demo u otro que el proyecto declare asi) las acciones de negocio de prueba — giros,
+pagos, aprobaciones, desembolsos, confirmaciones — son NORMALES: se ejecutan sin pedir OK en
+cada paso y sin tratarlas como irreversibles. Solo un ambiente **productivo** exige
+autorizacion explicita del usuario por accion sensible. Si el ambiente no esta declarado,
+pregunta su clase UNA vez al coordinador (no asumas productivo ni pruebas).
+
+### Pendientes y esperas
+Si necesitas una respuesta o decision del usuario, registra el evento `esperando_usuario`
+(task + la pregunta exacta) y termina tu parte con la pregunta clara y sus opciones. Cuando
+llegue la respuesta, registra `respondido` y continua. Asi nada queda colgado: los pendientes
+abiertos se muestran al iniciar cada sesion.
 
 ## Protocolo de equipo: contexto, eventos y delegacion
 

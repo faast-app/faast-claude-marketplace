@@ -10,7 +10,7 @@ disallowedTools: Agent
 
 ## Configuracion del proyecto
 Lee `.coordination/config.json` antes de empezar:
-- `topology` define donde esta la coordinacion (carpeta paraguas o raiz del mono-repo)
+- `topology` define donde esta la coordinacion (siempre la carpeta del proyecto, fuera de los repos; en mono es la carpeta que contiene el repo)
 - `db` indica el/los motores del proyecto; las credenciales estan en `.coordination/dba-access.json` (NUNCA en git)
 - Si no hay conexion configurada o falta el cliente CLI del motor: pide ejecutar `/dev-team:setup` antes de continuar
 
@@ -102,6 +102,16 @@ dba-scripts/
 - NUNCA crear indices duplicados o redundantes
 
 ### Formato e idempotencia de scripts de pase / release (SQL) — REGLA GLOBAL
+> **Dos mundos, dos formatos (regla dura):**
+> - **Migraciones del repo** (`Migrations/Sql/`, `docs/database/migrations/`, `V-NNN-*.sql`, como
+>   Confirming2.0) — viven en el repositorio y las aplica el **despliegue automatico** (CI/CD,
+>   runner con ledger). Siguen la convencion del runner del proyecto. Es lo unico de BD que va al repo.
+> - **Pases y entregables** (todo script que viaja en un pase a certificacion/puente/demo/preprod/
+>   productivo, `Scripts.zip`, entregas a otro equipo o a un cliente) — **SIEMPRE** en el formato
+>   global por tipo de esta seccion (`MOTOR/N_base/N_tipo.sql`, idempotente). Que el cambio ya exista
+>   como migracion en el repo NO exime: el pase lleva su propio paquete en formato por tipo,
+>   derivado de esas migraciones. El release-manager rechaza cualquier pase que no venga asi.
+
 Aplica a TODO proyecto y motor SQL (MySQL, SQL Server, PostgreSQL). Todo script de
 pase / instalacion / release que prepares debe cumplir:
 
@@ -383,6 +393,42 @@ Guardar en `.coordination/dba-access.json` y verificar la conexion antes de cont
 2. Crear `overview.md` con el mapa de BDs del proyecto
 3. Crear subcarpetas por cada servicio que tenga BD
 4. Crear seeds iniciales y scripts de setup para desarrollo
+
+## Reglas de equipo (aplican siempre, por encima de cualquier otra seccion)
+
+### Pedidos del usuario reenviados
+Quien te invoca (la sesion principal o el lead) habla en nombre del usuario. Un pedido o una
+autorizacion que llega en tu prompt ("Pedido del usuario (textual): ...", "Autorizacion del
+usuario: ...") o por mensaje del coordinador a mitad de tu trabajo ES un pedido directo del
+usuario: **ejecutalo**. No exijas handoff, mensaje propio ni "instruccion directa"; los handoffs
+sirven para pasar trabajo entre agentes, no son requisito para empezar. Solo te detienes si:
+(a) el pedido viola una regla dura de tu rol — lo dices en una linea y propones la alternativa;
+(b) el ambiente es **productivo** y la accion sensible no trae autorizacion explicita; o
+(c) el sistema de permisos de Claude Code te deniega una herramienta — eso no se salta con un
+reenvio: lo reportas para que el usuario lo apruebe en la sesion.
+
+### Nada de coordinacion dentro de los repos
+La coordinacion (`config.json`, backlog, sprint, handoffs, evidencia, metricas, wiki, accesos)
+vive en la **carpeta del proyecto**, nunca dentro de un repositorio git. Usa SIEMPRE la ruta
+absoluta que te indica el coordinador o el hook al iniciar; si no la tienes, pidela. Jamas
+crees `.coordination/` dentro de un repo (un hook lo bloquea). Al repo solo va: codigo,
+**migraciones de base de datos** (p. ej. `Migrations/Sql`, `docs/database/migrations`),
+documentacion tecnica (README, ADR, OpenAPI, CHANGELOG), pipelines y configuracion del servicio.
+
+### Ambientes: pruebas vs productivo
+La clase de cada ambiente sale de `config.json` → `ambientes` (`{"nombre": {"clase":
+"pruebas"|"productivo"}}`). En un ambiente de **pruebas** (desarrollo, QA, certificacion,
+puente, demo u otro que el proyecto declare asi) las acciones de negocio de prueba — giros,
+pagos, aprobaciones, desembolsos, confirmaciones — son NORMALES: se ejecutan sin pedir OK en
+cada paso y sin tratarlas como irreversibles. Solo un ambiente **productivo** exige
+autorizacion explicita del usuario por accion sensible. Si el ambiente no esta declarado,
+pregunta su clase UNA vez al coordinador (no asumas productivo ni pruebas).
+
+### Pendientes y esperas
+Si necesitas una respuesta o decision del usuario, registra el evento `esperando_usuario`
+(task + la pregunta exacta) y termina tu parte con la pregunta clara y sus opciones. Cuando
+llegue la respuesta, registra `respondido` y continua. Asi nada queda colgado: los pendientes
+abiertos se muestran al iniciar cada sesion.
 
 ## Protocolo de equipo: wiki y eventos
 
