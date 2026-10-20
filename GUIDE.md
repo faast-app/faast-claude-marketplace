@@ -7,11 +7,12 @@ una herramienta tecnica. No necesitas saber programar.
 | Equipo (plugin) | Version | Integrantes | Comandos | Primer paso |
 |---|---|---|---|---|
 | **Mesa de Servicios** (`mesa-servicios`) | 1.1.0 | 10 | 12 | `/mesa-servicios:start` |
+| **Equipo del Product Owner** (`po-team`) | 1.0.0 | 8 | 9 | `/po-team:start` |
 | **Dev Team** (`dev-team`) | 2.18.0 | 23 | 33 | `/dev-team:start` |
 | **Marketing, Ventas y Publicidad** (`marketing`) | 1.0.0 | 8 | 10 | `/marketing:start` |
 | **Arquitecto Senior Backend** (`senior-backend-architect`) | sin numero de version declarado | 1 | 1 | `/architect` |
 
-FaaST tiene **cuatro equipos de asistentes de inteligencia artificial**, cada uno con sus
+FaaST tiene **cinco equipos de asistentes de inteligencia artificial**, cada uno con sus
 integrantes, sus reglas y su propio manual. Este es el **manual general**: explica que hace cada
 equipo, como se pasan el trabajo entre ellos en el flujo real de la empresa, como se instalan
 desde cero y que reglas comparten. El detalle de cada equipo esta en su propio manual (ver
@@ -58,7 +59,7 @@ instalacion) esta al final, separada, en el **Anexo tecnico**.
 
 ## 1. Que es y para que sirve
 
-Piensa en los equipos de agentes como **cuatro areas de trabajo que se pueden contratar por
+Piensa en los equipos de agentes como **cinco areas de trabajo que se pueden contratar por
 horas**, cada una con especialistas que siguen el metodo de un profesional experimentado de su
 oficio. Tu les hablas en lenguaje normal, como le hablarias a un colega; ellos te presentan un
 plan, esperan tu "adelante" y hacen el trabajo, dejando todo documentado y con evidencia.
@@ -66,12 +67,14 @@ plan, esperan tu "adelante" y hacen el trabajo, dejando todo documentado y con e
 | Equipo | En una frase | Lo que entrega |
 |---|---|---|
 | **Mesa de Servicios** | Recibe todo lo que pide un cliente y lo deja como un requerimiento cerrado | Preguntas para el cliente, reproduccion de errores con video, maquetas, documento ejecutivo (BUG / PRY / CTZ) en PDF y Word, propuesta para el cliente y el ticket en el tablero |
+| **Equipo del Product Owner** | Deja listo para desarrollo lo que cerro la Mesa y acompaña cada ticket hasta el VB del cliente | Historias y bugs en lenguaje de negocio con criterios y puntos, sprint con fechas de pase, tablero con avance e informe, revision rapida del PO en Demo con fotos, actas, informes y manuales de uso |
 | **Dev Team** | Diseña, construye, prueba, asegura y publica el software | Historias de usuario, propuestas de diseño, codigo integrado, pruebas con fotos y video, revisiones de seguridad, solicitudes de pase a ambientes, documentacion |
 | **Marketing** | Vende lo que se construyo, desglosado parte por parte | Mapa del producto con fichas, video keynote con un capitulo por parte, clips, deck de propuesta comercial, one-pager, panfletos y piezas para redes |
 | **Arquitecto Senior Backend** | Un consultor tecnico experto para una consulta puntual | Diagnostico, revision de codigo, diseño de base de datos o de arquitectura, con recomendaciones concretas y, si lo pides, la implementacion |
 
 **Lo que ganas:**
 - Lo que pide un cliente llega a desarrollo **sin vacios**: nadie vuelve a preguntarle lo mismo.
+- Cada ticket **se sigue hasta el visto bueno del cliente**, con fechas de pase y avance a la vista.
 - Lo que se construye **se prueba con evidencia** (fotos y video) antes de llegar al cliente.
 - Lo que se vende **es real**: se muestra el producto de verdad, con cifras que tienen fuente.
 - Todo queda **registrado y trazable**: quien pidio que, que se decidio, que se entrego.
@@ -80,38 +83,48 @@ plan, esperan tu "adelante" y hacen el trabajo, dejando todo documentado y con e
 
 ## 2. Como se encadenan los equipos
 
-El flujo real de la empresa va de izquierda a derecha. Cada equipo recoge el trabajo exactamente
+El flujo real de la empresa va de arriba hacia abajo. Cada equipo recoge el trabajo exactamente
 donde lo dejo el anterior.
 
 ```mermaid
 flowchart TB
     C(["👤 <b>Cliente</b><br/>correo · reunión · audio<br/>chat · documento"])
     M["<b>Mesa de Servicios</b><br/>recibe · pregunta · reproduce<br/>maqueta · documenta · cotiza"]
+    P["<b>Equipo del Product Owner</b><br/>refina · planifica el sprint · sigue el tablero<br/>valida en Demo · consigue el VB del cliente"]
     D["<b>Dev Team</b><br/>diseña · construye · prueba<br/>asegura · publica"]
     K["<b>Marketing</b><br/>desglose parte por parte<br/>deck · video de lanzamiento · piezas"]
     A["<b>Arquitecto Senior Backend</b><br/>consultor puntual"]
     C --> M
-    M -- "requerimiento cerrado<br/>en el tablero" --> D
+    M -- "requerimiento cerrado<br/>en el tablero" --> P
+    P -- "ticket listo:<br/>historia, sprint y fechas" --> D
+    D -- "publicado en Demo:<br/>VB PO y VB cliente" --> P
     D -- "producto real: pantallas,<br/>memoria, diseño" --> K
     A -. "consulta técnica<br/>en cualquier momento" .-> D
     classDef equipo fill:#f1f7e9,stroke:#71af26,stroke-width:2px,color:#151515
     classDef cliente fill:#151515,stroke:#151515,color:#ffffff
     classDef consultor fill:#ffffff,stroke:#4a4f45,stroke-dasharray:4 3,color:#151515
-    class M,D,K equipo
+    class M,P,D,K equipo
     class C cliente
     class A consultor
 ```
 
 | Etapa | Equipo | Recibe | Entrega a |
 |---|---|---|---|
-| 1. Entender al cliente | Mesa de Servicios | Lo que llego del cliente, por cualquier canal | Un ticket cerrado en el tablero, con documento y evidencia adentro → **Dev Team** |
-| 2. Construir | Dev Team | El ticket de la Mesa (no se re-entrevista al cliente) | Funcionalidad probada, integrada y publicada en un ambiente |
-| 3. Vender | Marketing | Lo que el Dev Team y la Mesa ya tienen (memoria, diseño, maquetas, ambiente demo). **Solo lo lee** | Piezas comerciales aprobadas por ti |
+| 1. Entender al cliente | Mesa de Servicios | Lo que llego del cliente, por cualquier canal | Un ticket cerrado en el tablero, con documento y evidencia adentro → **Equipo del PO** |
+| 2. Dejar listo y planificar | Equipo del Product Owner | El ticket cerrado de la Mesa (no se re-entrevista al cliente; si falta algo, se le pregunta a la Mesa) | Historias y bugs listos para construir, con criterios, puntos, sprint y fechas de pase → **Dev Team**, siempre como ticket en el tablero |
+| 3. Construir | Dev Team | El ticket ya refinado | Funcionalidad probada, integrada y publicada en un ambiente |
+| 4. Validar y cerrar con el cliente | Equipo del Product Owner | Lo publicado en Demo o en el Preprod del cliente | VB PO u Observado con fotos, acta de aceptacion y el VB del cliente registrado |
+| 5. Vender | Marketing | Lo que el Dev Team y la Mesa ya tienen (memoria, diseño, maquetas, ambiente demo). **Solo lo lee** | Piezas comerciales aprobadas por ti |
 | En paralelo | Arquitecto Senior Backend | Una pregunta tecnica concreta | Diagnostico y recomendacion |
+
+> **Si no usas el Equipo del PO**, el flujo sigue funcionando: el dueño del producto del Dev Team
+> toma directamente el ticket cerrado de la Mesa y lo convierte en historias (`/dev-team:refine`).
+> El Equipo del PO agrega el seguimiento por sprint con fechas de pase, la revision rapida en Demo
+> y el cierre con el cliente.
 
 > **Las cotizaciones esperan.** Si lo que pidio el cliente hay que cotizarlo, la Mesa deja el
 > ticket **en espera de aprobacion comercial**. Recien cuando comercial aprueba (y queda registrado
-> quien y cuando), pasa a ser trabajo para el Dev Team.
+> quien y cuando), pasa a ser trabajo para el Equipo del PO y el Dev Team.
 
 ---
 
@@ -126,6 +139,19 @@ el probador reproduce los errores grabando todo (**solo prueba, nunca busca la c
 los datos mira y arma scripts (**nunca ejecuta nada**); el maquetador dibuja bocetos navegables;
 el redactor escribe el documento ejecutivo; el registrador sube el ticket; el curador guarda lo
 aprendido; y setup prepara la computadora.
+
+### Equipo del Product Owner — "el que deja listo y acompaña hasta el VB"
+8 integrantes. **Tu decides que entra y cuando; el equipo prepara.** El coordinador reparte el
+trabajo y te muestra el plan antes de tocar el tablero; el refinador convierte lo que dejo la
+Mesa en historias de negocio (entre 3 y 8 criterios con los casos limite, pendientes a la vista,
+definicion de hecho y puntos) y registra los bugs **solo si se reprodujeron**; el planificador
+arma el sprint por capacidad, con un orden que puedes ver, deja afuera lo que no esta listo y
+fija las fechas de Demo, Preprod y VB cliente, y al final hace la revision y la retrospectiva; el
+de seguimiento lee el tablero y arma el panel y el informe (**solo mira**); el revisor rapido
+valida en Demo o Preprod con una foto por criterio, reproduce los errores reportados y vuelve a
+probar los arreglos (**no reemplaza a QA**); el documentador prepara actas, especificaciones e
+informes; el manualista escribe un manual para QA y otro para cualquier persona; y setup prepara
+la computadora y el tablero. Entrega el trabajo al equipo de desarrollo **solo como tickets**.
 
 ### Dev Team — "la empresa de software en miniatura"
 23 integrantes. Un dueño del producto que escribe las historias en lenguaje de negocio, un
@@ -223,6 +249,7 @@ claude
 | Equipo | Donde abrirlo |
 |---|---|
 | Mesa de Servicios | En la **carpeta de la mesa** (la primera vez te ayuda a crearla) |
+| Equipo del Product Owner | En la **carpeta del proyecto** o en tu **carpeta de PO**, nunca dentro de un repositorio (la primera vez te ayuda a elegirla) |
 | Dev Team | En la **carpeta del proyecto**, la que contiene todos sus repositorios |
 | Marketing | En la **carpeta del proyecto** que se va a vender |
 | Arquitecto Senior Backend | En el **repositorio** que quieres revisar |
@@ -235,7 +262,7 @@ carpeta. Si es tu carpeta de trabajo, responde que si.
 
 ### Paso 4 — Agregar el marketplace de FaaST (una sola vez)
 
-El **marketplace** es la "tienda" interna de FaaST donde estan publicados los cuatro equipos. Se
+El **marketplace** es la "tienda" interna de FaaST donde estan publicados los cinco equipos. Se
 agrega una sola vez por computadora. En la terminal (fuera de Claude Code):
 
 ```bash
@@ -254,6 +281,7 @@ Instala solo los que necesitas (ver [seccion 5](#5-que-equipo-uso)). Uno por lin
 
 ```bash
 claude plugin install mesa-servicios@faast-marketplace
+claude plugin install po-team@faast-marketplace
 claude plugin install dev-team@faast-marketplace
 claude plugin install marketing@faast-marketplace
 claude plugin install senior-backend-architect@faast-marketplace
@@ -274,7 +302,7 @@ claude plugin list
 `faast-marketplace`.
 
 Dentro de la conversacion, escribe `/` y empieza a tipear el nombre del equipo (`/dev-team`,
-`/mesa-servicios`, `/marketing`, `/architect`): aparecen sus comandos sugeridos.
+`/mesa-servicios`, `/po-team`, `/marketing`, `/architect`): aparecen sus comandos sugeridos.
 
 ### Paso 7 — El primer paso en cada equipo
 
@@ -292,6 +320,21 @@ Luego te ofrece crear la memoria del negocio (`/mesa-servicios:brain init`) y te
 recibir la primera solicitud.
 **Las veces siguientes:** un resumen corto (solicitudes en curso, esperando cliente, pendientes de
 aprobacion comercial) y la siguiente accion sugerida.
+
+**Equipo del Product Owner**
+```
+/po-team:start
+```
+**Que ves la primera vez:** el integrante setup revisa la computadora e instala lo que falte **con
+tu confirmacion**, te propone donde guardar la carpeta del equipo (en la carpeta del proyecto o
+tu carpeta de PO, nunca dentro de un repositorio) y te pregunta en una sola ronda el tablero
+(GitHub o Azure DevOps), que estado corresponde a cada etapa del ciclo de pase, los ambientes con
+su clase (de pruebas o productivo), los clientes y la capacidad del sprint. Si todavia no tienes
+tablero, te ofrece crearlo (`/po-team:tablero crear-backlog`). Las claves de las cuentas de
+prueba las escribes tu en un archivo, nunca en la conversacion (ver su manual).
+**Las veces siguientes:** el sprint en curso por etapa, el proximo hito, tus pendientes y que
+conviene hacer ahora. Puedes escribir la necesidad en la misma linea:
+`/po-team:start la mesa dejo el #131, hay que pasarlo a HU`.
 
 **Dev Team**
 ```
@@ -330,11 +373,12 @@ Cuando se publiquen novedades, en la terminal:
 claude plugin marketplace update faast-marketplace
 claude plugin update dev-team@faast-marketplace
 claude plugin update mesa-servicios@faast-marketplace
+claude plugin update po-team@faast-marketplace
 claude plugin update marketing@faast-marketplace
 claude plugin update senior-backend-architect@faast-marketplace
 ```
-Y reinicia Claude Code. El Dev Team ademas **te avisa solo**: al abrir una sesion compara tu
-version con la publicada y te pregunta si quieres actualizar.
+Y reinicia Claude Code. El Dev Team y el Equipo del PO ademas **te avisan solos**: al abrir una
+sesion comparan tu version con la publicada y te preguntan si quieres actualizar.
 
 ---
 
@@ -343,10 +387,16 @@ version con la publicada y te pregunta si quieres actualizar.
 | Situacion | Equipo | Escribes |
 |---|---|---|
 | Llego un correo, una reunion grabada o un chat de un cliente con un pedido | Mesa de Servicios | `/mesa-servicios:recibir {archivo o texto} --cliente ACME` |
-| El cliente dice que algo falla | Mesa de Servicios (reproduce y documenta) → Dev Team (corrige) | `/mesa-servicios:reproducir {ID}` |
+| El cliente dice que algo falla | Mesa de Servicios (reproduce y documenta) → Equipo del PO (lo deja listo y lo sigue) → Dev Team (corrige) | `/mesa-servicios:reproducir {ID}` |
 | Hay que cotizar algo para un cliente | Mesa de Servicios | `/mesa-servicios:start necesito cotizar ...` |
 | Hay que corregir o revertir datos | Mesa de Servicios (arma los scripts, no los ejecuta) | `/mesa-servicios:sql script {ID}` |
-| Un requerimiento ya cerrado hay que construirlo | Dev Team | `/dev-team:refine {pedido o ticket}` |
+| La Mesa dejo un requerimiento cerrado y hay que pasarlo a historias | Equipo del PO | `/po-team:refinar #{ticket}` |
+| Armar el sprint con sus fechas de Demo, Preprod y VB del cliente | Equipo del PO | `/po-team:sprint planificar {N}` |
+| Saber como va el sprint (tablero e informe del dia) | Equipo del PO | `/po-team:tablero diario` |
+| Revisar en Demo lo que llego y dar el VB PO | Equipo del PO | `/po-team:validar --lote sprint {N} --ambiente {demo}` |
+| Me reportaron un error y quiero confirmarlo antes de registrarlo | Equipo del PO | `/po-team:validar --reproducir "{lo que reportaron}"` |
+| El acta para el cliente o registrar su VB | Equipo del PO | `/po-team:documento aceptacion #{n}` · `/po-team:refinar --vb-cliente #{n}` |
+| Un requerimiento ya cerrado hay que construirlo, sin usar el Equipo del PO | Dev Team | `/dev-team:refine {pedido o ticket}` |
 | Tengo una idea o un documento y quiero un proyecto nuevo | Dev Team | `/dev-team:new-project {idea o documento}` |
 | Tengo una propuesta por fases y quiero el tablero completo armado | Dev Team | `/dev-team:project crear {documento}` |
 | Quiero ver como se vera una pantalla antes de construirla | Dev Team (estudio de diseño) | `/dev-team:design {lo que necesitas}` |
@@ -360,10 +410,11 @@ version con la publicada y te pregunta si quieres actualizar.
 | Un one-pager, panfleto o piezas para redes | Marketing | `/marketing:pieza {tipo}` |
 | Datos de mercado o competencia con fuente | Marketing | `/marketing:investigar {tema}` |
 | Una duda tecnica o una revision de codigo puntual, fuera de un proyecto del Dev Team | Arquitecto Senior Backend | `/architect {pregunta}` |
-| No se por donde empezar | El equipo mas cercano a tu pedido | `/mesa-servicios:start` · `/dev-team:start` · `/marketing:start` |
+| No se por donde empezar | El equipo mas cercano a tu pedido | `/mesa-servicios:start` · `/po-team:start` · `/dev-team:start` · `/marketing:start` |
 
 > **Regla practica:** si viene **del cliente** y todavia no esta claro, empieza en la **Mesa**. Si
-> ya esta claro y hay que **construirlo**, es **Dev Team**. Si ya existe y hay que **venderlo**, es
+> ya esta claro y hay que **dejarlo listo, planificarlo y seguirlo hasta el VB del cliente**, es el
+> **Equipo del PO**. Si hay que **construirlo**, es **Dev Team**. Si ya existe y hay que **venderlo**, es
 > **Marketing**. Si es una **pregunta tecnica suelta**, es el **Arquitecto**.
 
 ---
@@ -402,7 +453,8 @@ como las aplica su equipo.
      equipo las hace sin pedirte OK una por una.
    - En un ambiente **productivo**, cada accion delicada necesita tu autorizacion; en la Mesa, cada
      corrida lleva su autorizacion registrada (quien, cuando, para que caso) y el equipo se detiene
-     antes de cada paso que cambie algo.
+     antes de cada paso que cambie algo. El revisor rapido del Equipo del PO, sin autorizacion
+     para esa accion, solo mira.
    - **Cambiar parametros o datos de una base de datos siempre lleva tu OK**, en cualquier
      ambiente. Y la Mesa nunca ejecuta scripts: los arma para quien esta autorizado.
    - Marketing captura el producto **solo en ambientes de pruebas o demo, con datos ficticios**.
@@ -416,7 +468,9 @@ como las aplica su equipo.
    **MP4** (abre en Windows, Mac, Teams y el navegador), mas fotos de cada paso con lo importante
    resaltado. En el ticket aparece una **portada** que abre el video completo; la evidencia se ve
    **dentro** del ticket, no como un enlace aparte, y nunca se mezcla con el codigo. Si un video
-   salio chico o borroso, se vuelve a grabar: un video que no se lee no cuenta como evidencia.
+   salio chico o borroso, se vuelve a grabar: un video que no se lee no cuenta como evidencia. El
+   revisor rapido del Equipo del PO deja una foto verificada por criterio y graba video cuando
+   reproduce un error o vuelve a probar un arreglo.
 
 8. **Confidencialidad.** Sin contraseñas, claves ni datos personales en documentos, tickets,
    memorias ni piezas. Se habla de empresas y roles, no de personas. Los accesos viven en archivos
@@ -427,7 +481,8 @@ como las aplica su equipo.
 
 9. **Cada integrante usa el "cerebro" (modelo de IA) del tamaño justo.** Por defecto, casi todos
    usan uno intermedio (`sonnet`); en el Dev Team, el que prepara la oficina y el documentador usan
-   el economico (`haiku`) y no se pueden cambiar. Si un trabajo lo amerita, se puede subir un
+   el economico (`haiku`) y no se pueden cambiar, y en el Equipo del PO, el que prepara la oficina
+   tambien usa `haiku` fijo. Si un trabajo lo amerita, se puede subir un
    integrante a uno mas potente (`opus`) por proyecto o para todos tus proyectos (ver
    [Anexo D](#d-modelos-de-ia-por-integrante)). Mas potente piensa mejor, pero cuesta mas.
 
@@ -435,7 +490,14 @@ como las aplica su equipo.
     envia correos solo: te deja las preguntas, el correo o la propuesta listos y **tu los envias**.
 
 11. **Solo el lider de cada equipo reparte trabajo entre los integrantes.** Los demas hacen su
-    trabajo directo. Esto mantiene el orden y evita que el costo se dispare.
+    trabajo directo. Esto mantiene el orden y evita que el costo se dispare. La Mesa y el
+    Equipo del PO le pasan el trabajo al Dev Team **como ticket en el tablero**, nunca invocando a
+    sus integrantes.
+
+12. **Un error se confirma antes de registrarlo.** La Mesa, el Equipo del PO y el Dev Team
+    reproducen el error con evidencia (**REPRODUCIDO**, **NO REPRODUCIDO** o **BLOQUEADO**) antes
+    de registrarlo o de hablar de la correccion. Un arreglo se vuelve a probar con el mismo
+    recorrido y fotos **antes / despues**, y nadie cierra un ticket sin tu confirmacion.
 
 ---
 
@@ -446,11 +508,12 @@ Todos estan en el repositorio del marketplace
 
 | Manual | Archivo | Version para imprimir o compartir |
 |---|---|---|
-| Este manual general | [`GUIDE.md`](GUIDE.md) | — |
+| Este manual general | [`GUIDE.md`](GUIDE.md) | [`GUIDE.pdf`](GUIDE.pdf) |
 | Mesa de Servicios — Manual de Usuario | [`plugins/mesa-servicios/GUIDE.md`](plugins/mesa-servicios/GUIDE.md) | [`plugins/mesa-servicios/GUIDE.pdf`](plugins/mesa-servicios/GUIDE.pdf) |
 | Mesa de Servicios en Claude web (version simplificada, sin instalar nada) | [`plugins/mesa-servicios/claudeweb/INSTRUCCIONES.md`](plugins/mesa-servicios/claudeweb/INSTRUCCIONES.md) | [`plugins/mesa-servicios/claudeweb/INSTRUCCIONES.pdf`](plugins/mesa-servicios/claudeweb/INSTRUCCIONES.pdf) |
+| Equipo del Product Owner — Manual de Usuario | [`plugins/po-team/GUIDE.md`](plugins/po-team/GUIDE.md) | [`plugins/po-team/GUIDE.pdf`](plugins/po-team/GUIDE.pdf) |
 | Dev Team — Manual de Usuario | [`plugins/dev-team/GUIDE.md`](plugins/dev-team/GUIDE.md) | [`plugins/dev-team/GUIDE.pdf`](plugins/dev-team/GUIDE.pdf) |
-| Marketing — Manual de Usuario | [`plugins/marketing/GUIDE.md`](plugins/marketing/GUIDE.md) | — |
+| Marketing — Manual de Usuario | [`plugins/marketing/GUIDE.md`](plugins/marketing/GUIDE.md) | [`plugins/marketing/GUIDE.pdf`](plugins/marketing/GUIDE.pdf) |
 | Marketing — resumen | [`plugins/marketing/README.md`](plugins/marketing/README.md) | — |
 | Arquitecto Senior Backend | [`plugins/senior-backend-architect/README.md`](plugins/senior-backend-architect/README.md) | — |
 
@@ -476,9 +539,14 @@ con situaciones reales paso a paso, Parte 3 con preguntas frecuentes y un Anexo 
 | **Evidencia** | Fotos, video y registros que demuestran lo que se probo |
 | **Maqueta / prototipo** | En la Mesa, un boceto navegable para validar la idea. En el Dev Team, un prototipo de alta fidelidad que se recorre como el producto real |
 | **Pase** | Publicar una version en un ambiente formal (certificacion, puente, demo, preprod, produccion de clientes). Lleva una solicitud formal |
+| **Ciclo de pase** | El camino de cada ticket en el Equipo del PO: Desarrollo → Validacion QA → Pase a Demo → Validacion Demo / Preprod → VB cliente. Si algo queda Observado, vuelve a Desarrollo |
+| **Definition of Ready (lista para el sprint)** | Lo que una historia debe cumplir para entrar a un sprint: criterios claros, pendientes resueltos, tamaño razonable, entrega definida y quien da el VB. Lo que no la cumple se propone sacar |
+| **VB PO** | El visto bueno del PO despues de su revision rapida en Demo o Preprod, con una foto por criterio. No reemplaza la prueba de QA |
+| **Observado** | Lo que no cumple un criterio en la revision del PO. Vuelve a desarrollo con la explicacion y la foto dentro del ticket |
+| **VB cliente** | El visto bueno del cliente (quien, cuando y por que medio: correo, acta firmada, reunion). Cierra el ciclo; cerrar el ticket es decision tuya |
 | **Ambiente de pruebas / productivo** | Cada copia del sistema esta declarada como de pruebas (las acciones son pruebas normales) o productiva (dinero y datos reales; todo cambio con autorizacion) |
 | **Desglose / mapa del producto** | En Marketing, el producto separado en sus partes, con una ficha por parte. Es la base de toda pieza |
-| **Memoria** | Lo que cada equipo aprende y guarda: `faast-brain` en la Mesa (el negocio), la wiki en el Dev Team (el proyecto) |
+| **Memoria** | Lo que cada equipo aprende y guarda: `faast-brain` en la Mesa (el negocio, que el Equipo del PO tambien lee), la wiki en el Dev Team (el proyecto) |
 | **Carpeta de trabajo** | Donde cada equipo guarda lo suyo, fuera de los repositorios (ver [Anexo B](#b-las-carpetas-de-cada-equipo)) |
 | **Repositorio** | La carpeta donde vive el codigo de un componente, con su historial de cambios |
 | **Pendiente** | Algo que espera tu respuesta o tu decision. Se te recuerda al abrir cada sesion |
@@ -537,45 +605,74 @@ venderlo.
    → el ticket pasa a la columna de trabajo. Lo aprendido se guarda con
    `/mesa-servicios:brain ingest CTZ-2026-007`.
 
-**Etapa 2 — El Dev Team lo construye**
+**Etapa 2 — El Equipo del PO lo deja listo y lo planifica**
 
-7. Traer el ticket y convertirlo en historias:
+7. Convertir el ticket de la Mesa en historias:
+   ```
+   /po-team:refinar #212
+   ```
+   (`#212` es el ticket que registro la Mesa para `CTZ-2026-007`). → el refinador parte del
+   documento de la Mesa (**no se re-entrevista al cliente**; si falta algo, deja la pregunta a la
+   Mesa) y te muestra el plan. Con tu OK quedan, por ejemplo, `#58 Conciliar los pagos del banco
+   automaticamente` y `#59 Ver las diferencias de la conciliacion`, con 3 a 8 criterios "Dado…
+   cuando… entonces…", pendientes, definicion de hecho y puntos.
+8. Armar el sprint:
+   ```
+   /po-team:sprint planificar 14
+   ```
+   → que entra, que queda afuera y por que, y las fechas de Demo, Preprod de ACME y VB cliente. Con
+   tu OK, el sprint y las fechas quedan en el tablero: **el Dev Team recibe el trabajo como ticket**.
+
+**Etapa 3 — El Dev Team lo construye**
+
+9. Traer las historias ya refinadas:
    ```
    /dev-team:sync pull
-   /dev-team:refine ticket de la Mesa CTZ-2026-007: conciliacion automatica con el banco de ACME
    ```
-   → el dueño del producto parte del documento de la Mesa (**no se re-entrevista al cliente**) y
-   solo completa lo que falta para construir. Recibes, por ejemplo, `HU-58 Conciliar los pagos del
-   banco automaticamente`, con criterios "Dado… cuando… entonces…".
-8. Si hay pantallas nuevas, el estudio de diseño te muestra caminos reales antes de programar:
-   ```
-   /dev-team:design pantalla HU-58
-   ```
-9. Plan y construccion:
-   ```
-   /dev-team:assign-task
-   ```
-   → el jefe de equipo te presenta el plan (que, quien, riesgos) y espera tu OK. Los programadores
-   trabajan en paralelo.
-10. Pruebas, con video y fotos por criterio:
+   → el Dev Team trabaja sobre esas mismas historias (en sus ejemplos, la `#58` aparece como
+   `HU-58`). Sin Equipo del PO, aqui el dueño del producto del Dev Team las escribe con
+   `/dev-team:refine ticket de la Mesa CTZ-2026-007 ...`.
+10. Si hay pantallas nuevas, el estudio de diseño te muestra caminos reales antes de programar:
+    ```
+    /dev-team:design pantalla HU-58
+    ```
+11. Plan y construccion:
+    ```
+    /dev-team:assign-task
+    ```
+    → el jefe de equipo te presenta el plan (que, quien, riesgos) y espera tu OK. Los programadores
+    trabajan en paralelo.
+12. Pruebas, con video y fotos por criterio:
     ```
     /dev-team:e2e HU-58
     ```
     → veredicto **APROBADA** o **RECHAZADA**, con la evidencia dentro del ticket. Como toca pagos,
     pasa tambien por seguridad (`/dev-team:security-audit`). Recien entonces el jefe de equipo integra.
-11. Publicar en el ambiente del cliente:
+13. Publicar en el ambiente del cliente:
     ```
     /dev-team:pase certificacion — Conciliacion bancaria v1.0.0
     ```
     → la carpeta del pase (solicitud en PDF y Word, scripts revisados, correo listo). **Tu lo envias.**
-12. El acta de entrega para el cliente:
-    ```
-    /dev-team:doc aceptacion HU-58
-    ```
 
-**Etapa 3 — Marketing lo vende** (si la funcionalidad le sirve a otros clientes)
+**Etapa 4 — El Equipo del PO lo valida y consigue el VB del cliente**
 
-13. ```
+14. Revision rapida del PO en Demo y en el Preprod de ACME:
+    ```
+    /po-team:validar --lote sprint 14 --ambiente preprod-acme
+    ```
+    → **VB PO** u **Observado** por ticket, con una foto por criterio (lo observado vuelve a
+    desarrollo, bien explicado).
+15. El acta para el cliente y su VB:
+    ```
+    /po-team:documento aceptacion #58
+    /po-team:refinar --vb-cliente #58
+    ```
+    → el acta en PDF y Word; cuando ACME da su conformidad, queda registrado quien, cuando y por
+    que medio. (Sin Equipo del PO, el acta la prepara el Dev Team con `/dev-team:doc aceptacion HU-58`.)
+
+**Etapa 5 — Marketing lo vende** (si la funcionalidad le sirve a otros clientes)
+
+16. ```
     /marketing:propuesta-comercial "conciliacion bancaria automatica para gerentes de finanzas de la cartera" --pais CL
     ```
     → Marketing lee lo que ya tienen el Dev Team y la Mesa (sin escribir en sus carpetas), arma el
@@ -583,8 +680,9 @@ venderlo.
     aprobados produce el **video keynote** (un capitulo por parte), los **clips por parte**, el
     **deck** y el **one-pager**. Cada pieza pasa por tu aprobacion.
 
-**Recibes:** un pedido de cliente convertido en cotizacion aprobada, funcionalidad construida y
-probada con video, publicada con su pase, documentada con acta de entrega y lista para venderse.
+**Recibes:** un pedido de cliente convertido en cotizacion aprobada, historias listas y
+planificadas, funcionalidad construida y probada con video, publicada con su pase, con el VB del
+cliente registrado en su acta y lista para venderse.
 
 ---
 
@@ -607,21 +705,34 @@ probada con video, publicada con su pase, documentada con acta de entrega y list
    /mesa-servicios:ticket BUG-2026-003
    ```
    → el ticket queda en el tablero con el video y las fotos dentro.
-4. **El Dev Team lo toma:**
+4. **El Equipo del PO lo deja listo para desarrollo:**
+   ```
+   /po-team:refinar #240
+   ```
+   → como la Mesa ya lo reprodujo, el refinador registra el bug en lenguaje de negocio (pasos como
+   usuario, esperado contra obtenido, ambiente, severidad sugerida y la evidencia de la Mesa
+   dentro) y, con tu OK, lo pone en el sprint (`/po-team:sprint replanificar` si es urgente).
+5. **El Dev Team lo toma:**
    ```
    /dev-team:bug #240
    ```
    → aunque el ticket ya trae la reproduccion de la Mesa, la regla del Dev Team es **reproducir
    antes de corregir**, en su ambiente y anotando la version instalada. Con el veredicto
    REPRODUCIDO, el jefe de equipo te presenta el plan de correccion y espera tu OK.
-5. **Correccion y revalidacion:** el programador corrige; pruebas escribe una prueba automatica para
+6. **Correccion y revalidacion:** el programador corrige; pruebas escribe una prueba automatica para
    que el error no vuelva y **revalida** el mismo recorrido con la correccion instalada, con un par
    de evidencia **antes / despues**.
-6. **Cierre:** el dueño del producto comenta en el mismo ticket (que se corrigio, veredicto, fotos
-   nuevas) y **te pregunta si lo cierra**; nunca lo cierra solo. Si va a un ambiente del cliente,
-   sale con su pase (`/dev-team:pase ...`).
-7. **De vuelta al cliente:** la persona de mesa le informa a ACME, y lo aprendido se guarda con
+7. **Cierre:** cuando el arreglo llega a Demo, el Equipo del PO repite la prueba original
+   (`/po-team:validar --revalidar #240`), comenta en el mismo ticket (que se corrigio, veredicto,
+   fotos antes / despues) y **te pregunta si lo cierra**; nunca lo cierra solo. Sin Equipo del PO,
+   ese comentario lo hace el dueño del producto del Dev Team. Si va a un ambiente del cliente, sale
+   con su pase (`/dev-team:pase ...`).
+8. **De vuelta al cliente:** la persona de mesa le informa a ACME, y lo aprendido se guarda con
    `/mesa-servicios:brain ingest BUG-2026-003`.
+
+> **Si el error te lo cuentan a ti** (en una reunion, por correo) y nadie lo reprodujo, el Equipo
+> del PO lo confirma primero: `/po-team:validar --reproducir "{lo que reportaron}"`. Solo con
+> **REPRODUCIDO** se registra el bug; si viene de un cliente, puede convenir devolverlo a la Mesa.
 
 **Recibes:** la certeza de que el error existe, la correccion con evidencia antes/despues, una
 prueba automatica que impide que vuelva y el caso guardado en la memoria del negocio.
@@ -698,8 +809,10 @@ y comercial lo aprobo. Hay que armarlo desde cero.
    ```
 3. **Diseño antes de programar:** `/dev-team:design portal de proveedores ...` → dos o tres caminos
    visuales reales, eliges uno, y recien ahi se construye exactamente eso.
-4. **Construccion por sprints** (ver el Caso 14 del manual del Dev Team) y, al tener el producto
-   en un ambiente demo, **Marketing** prepara su lanzamiento (Caso 6).
+4. **Construccion por sprints** (ver el Caso 14 del manual del Dev Team). Si usas el Equipo del PO,
+   este sigue cada sprint con sus fechas de pase, valida en Demo y consigue el VB del cliente
+   (`/po-team:sprint planificar 1`, `/po-team:tablero`). Al tener el producto en un ambiente demo,
+   **Marketing** prepara su lanzamiento (Caso 6).
 
 ---
 
@@ -756,13 +869,15 @@ dos o tres con sus pros y contras. Si se lo pides, implementa.
 
 ## Preguntas frecuentes
 
-**¿Tengo que instalar los cuatro equipos?**
-No. Instala solo los que usas. La Mesa sirve sola; el Dev Team sirve solo; Marketing rinde mas si
-existen las carpetas del Dev Team o de la Mesa, porque de ahi saca el producto real.
+**¿Tengo que instalar los cinco equipos?**
+No. Instala solo los que usas. La Mesa sirve sola; el Dev Team sirve solo; el Equipo del PO sirve
+solo (si hay Mesa, lee sus tickets; si no, parte de tu pedido o de un documento); Marketing rinde
+mas si existen las carpetas del Dev Team o de la Mesa, porque de ahi saca el producto real.
 
 **¿Pueden convivir varios equipos en la misma computadora y el mismo proyecto?**
-Si. Cada uno usa su propia carpeta de trabajo (`.mesa/`, `.coordination/`, `.marketing/`) y ninguno
-escribe en la carpeta de otro. Marketing solo lee las de los demas.
+Si. Cada uno usa su propia carpeta de trabajo (`.mesa/`, `.po-team/`, `.coordination/`,
+`.marketing/`) y ninguno escribe en la carpeta de otro. Marketing solo lee las de los demas, y el
+Equipo del PO solo lee la memoria del negocio de la Mesa.
 
 **¿Tengo que saber que integrante hace cada cosa?**
 No. Usa el comando `start` del equipo y describe lo que necesitas. El equipo se organiza.
@@ -771,8 +886,8 @@ No. Usa el comando `start` del equipo y describe lo que necesitas. El equipo se 
 Nunca. Te deja las preguntas, la propuesta o el correo listos; tu los envias.
 
 **¿Funcionan con Azure DevOps ademas de GitHub?**
-La Mesa y el Dev Team si; se elige al configurar. El Dev Team tambien puede trabajar "solo local".
-Marketing no usa tablero.
+La Mesa, el Equipo del PO y el Dev Team si; se elige al configurar. El Dev Team tambien puede
+trabajar "solo local". Marketing no usa tablero.
 
 **¿Puedo usar la Mesa sin instalar nada?**
 Hay una version simplificada para Claude web (claude.ai) que se habilita para toda la organizacion
@@ -800,7 +915,7 @@ Lo que mas ahorra: sesiones cortas por tarea, mantener al dia la memoria de cada
 preguntas simples directo, sin el comando `start`.
 
 **¿Como me entero de que hay una version nueva?**
-El Dev Team te avisa al abrir una sesion. Para todos, la actualizacion es la del
+El Dev Team y el Equipo del PO te avisan al abrir una sesion. Para todos, la actualizacion es la del
 [Paso 8](#paso-8--mantenerlos-al-dia).
 
 ## Si algo no anda
@@ -816,7 +931,9 @@ El Dev Team te avisa al abrir una sesion. Para todos, la actualizacion es la del
   [Anexo B](#b-las-carpetas-de-cada-equipo)).
 - **"Claude Code me pide aprobar un permiso"** → es normal y lo apruebas tu en pantalla.
 - **"El probador no puede abrir el navegador"** → reinicia la sesion; si persiste, pide
-  `/dev-team:setup playwright` o `/mesa-servicios:setup playwright`.
+  `/dev-team:setup playwright`, `/mesa-servicios:setup playwright` o `/po-team:setup playwright`.
+- **"El revisor del PO no puede entrar al sistema"** → completa la cuenta en su archivo de accesos
+  y reconecta el navegador (`/mcp`) o reinicia la sesion (ver el manual del Equipo del PO).
 - **"El video se ve chico o borroso"** → pide que lo regraben; no cuenta como evidencia.
 - **"El equipo no encuentra mi proyecto"** → abriste Claude Code en otra carpeta. Abrelo en la
   carpeta de trabajo (ver [Paso 3](#paso-3--abrir-la-carpeta-de-trabajo)) o registra la carpeta (ver
@@ -836,6 +953,7 @@ claude plugin marketplace add faast-app/faast-claude-marketplace
 
 # 2. Instalar los plugins
 claude plugin install mesa-servicios@faast-marketplace
+claude plugin install po-team@faast-marketplace
 claude plugin install dev-team@faast-marketplace
 claude plugin install marketing@faast-marketplace
 claude plugin install senior-backend-architect@faast-marketplace
@@ -852,12 +970,14 @@ claude plugin update <plugin>@faast-marketplace
 Dentro de una sesion, las formas equivalentes son `/plugin marketplace add ...`, `/plugin install
 ...` y el menu `/plugin`.
 
-**Requisitos base:** Claude Code con sesion iniciada, `git`, `python3` (los hooks de los tres
-equipos estan escritos en Python) y Node.js. Cada equipo valida e instala el resto con su agente
+**Requisitos base:** Claude Code con sesion iniciada, `git`, `python3` (los hooks de los equipos
+estan escritos en Python) y Node.js. Cada equipo valida e instala el resto con su agente
 `setup` y una confirmacion: Dev Team (Docker, `gh`/`az`, clientes de BD, Playwright, `pipx`), Mesa
 (`gh`/`az`, `ffmpeg` + Whisper, `pandoc`, LibreOffice, clientes de BD de solo lectura, Playwright),
-Marketing (Node ≥ 22, FFmpeg, HyperFrames, LibreOffice, Playwright). El servidor MCP de Playwright
-viene incluido en los plugins dev-team, mesa-servicios y marketing; si tenias uno `playwright`
+Equipo del PO (`gh` con permisos `project` y `read:project` o `az` con Boards, LibreOffice,
+Playwright, `ffmpeg` opcional), Marketing (Node ≥ 22, FFmpeg, HyperFrames, LibreOffice,
+Playwright). El servidor MCP de Playwright viene incluido en los plugins dev-team, mesa-servicios,
+po-team y marketing; si tenias uno `playwright`
 registrado a mano, quitalo con `claude mcp remove playwright` para no duplicar herramientas.
 
 ## B. Las carpetas de cada equipo
@@ -869,6 +989,7 @@ mesa), **nunca dentro de un repositorio git**. Antes de crearla se verifica con
 ```
 ~/Documents/Trabajo/Faast/Proyectos/Backoffice/     ← carpeta del proyecto (NO es un repo)
 ├── .coordination/          Dev Team
+├── .po-team/               Equipo del Product Owner (tambien puede ir en una carpeta propia del PO)
 ├── .marketing/             Marketing
 ├── micro-backoffice/       repo git (solo codigo, migraciones, documentacion tecnica)
 └── front-backoffice/       repo git
@@ -881,16 +1002,18 @@ mesa), **nunca dentro de un repositorio git**. Antes de crearla se verifica con
 |---|---|---|
 | `.coordination/` | Dev Team | `config.json` (fuente de verdad: topologia, tablero, ambientes, pase, deploy), `handoffs/`, `wiki/`, `evidence/`, `design/`, `pases/`, `flows/`, `docs-negocio/`, `retros/`, `metrics/`, `backlog.md` |
 | `.mesa/` | Mesa de Servicios | `config.json`, `correlativos.json`, `backlog.md`, `solicitudes/{ID}/`, `flujos/`, `flujos-sql/`, `evidencia/`, `handoffs/`, `metrics/` |
+| `.po-team/` | Equipo del Product Owner | `config.json` (tablero, ciclo de pase, ambientes con su clase, clientes, capacidad), `accesos.env`, `backlog.md`, `sprints/`, `retros/`, `tickets/{n}/`, `validaciones/`, `tablero/` (paneles, `snapshots/`, `informes/`), `documentos/`, `manuales/`, `project-state/`, `handoffs/`, `metrics/` |
 | `.marketing/` | Marketing | `config.json`, `correlativos.json`, `campanas/{ID}/`, `tendencias/`, `marca/`, `handoffs/`, `metrics/` |
 
 **Secretos que nunca entran a git:** `.coordination/dba-access.json`, `.coordination/qa-secrets.env`,
-`.mesa/accesos.env`, `.mesa/db-access.json`, los `setup-status.json` y las carpetas de evidencia.
+`.mesa/accesos.env`, `.mesa/db-access.json`, `.po-team/accesos.env`, los `setup-status.json` y las
+carpetas de evidencia.
 Como las carpetas viven fuera de los repos, ninguno llega a un repo.
 
 **Protecciones automaticas:** un hook de cada equipo bloquea escribir en su carpeta si esta dentro
 de un repo, y al iniciar sesion cada plugin agrega localmente `.coordination/`, `.mesa/`,
 `.marketing/` y `.playwright-mcp/` (entre otros) a `.git/info/exclude` del repo abierto, para que
-nada se commitee por error. Si una carpeta antigua quedo dentro de un repo, la sesion propone
+nada se commitee por error. El Equipo del PO hace lo mismo con `.po-team/`. Si una carpeta antigua quedo dentro de un repo, la sesion propone
 moverla con `mv` y registrarla (Anexo C); sacarla del historial del repo es un PR aparte, solo con OK.
 
 **Evidencia en el tablero:** en GitHub se publica en la rama huerfana `evidence` del repositorio
@@ -907,6 +1030,7 @@ de trabajo. Eso se registra **por usuario, sin tocar el repo**, en un archivo pe
 |---|---|---|
 | Dev Team | `~/.claude/dev-team.config.json` | La carpeta que contiene `.coordination/` |
 | Mesa de Servicios | `~/.claude/mesa-servicios.config.json` | La carpeta que contiene `.mesa/` |
+| Equipo del Product Owner | `~/.claude/po-team.config.json` | La carpeta que contiene `.po-team/` |
 | Marketing | `~/.claude/marketing.config.json` | La carpeta que contiene `.marketing/` |
 
 ```json
@@ -921,7 +1045,7 @@ de trabajo. Eso se registra **por usuario, sin tocar el repo**, en un archivo pe
 
 La clave es la ruta de un repo o carpeta; el valor, la carpeta del proyecto. **Gana el prefijo mas
 largo.** El orden de busqueda es: (1) este registro → `proyectos`; (2) el puntero legado
-(`.coordination-root` / `.mesa-root`); (3) subir directorios buscando la carpeta con `config.json`,
+(`.coordination-root` / `.mesa-root` / `.po-team-root`); (3) subir directorios buscando la carpeta con `config.json`,
 prefiriendo la que esta fuera de repos. `/dev-team:onboard` y `/marketing:start` completan el
 registro cuando corresponde, y la sesion lo propone al detectar una carpeta dentro de un repo.
 
@@ -931,11 +1055,12 @@ registro cuando corresponde, y la sesion lo propone al detectar una carpeta dent
 |---|---|---|
 | Dev Team | `haiku` para setup y tech-writer (fijos); `sonnet` para el resto | Si, salvo setup y tech-writer. Lo habitual: `architect` a `opus` en proyectos complejos |
 | Mesa de Servicios | `sonnet` para los 10 | Si, por integrante (p. ej. `analista` a `opus`) |
+| Equipo del Product Owner | `haiku` para setup (fijo); `sonnet` para el resto | Si, salvo setup (p. ej. `refinador` a `opus`) |
 | Marketing | `sonnet` para los 8 | Si, por integrante |
 | Arquitecto Senior Backend | `sonnet` | Definido en el agente del plugin |
 
 El cambio se hace con `team.models.{integrante}` en la configuracion del proyecto
-(`.coordination/config.json`, `.mesa/config.json` o `.marketing/config.json`) o en el archivo
+(`.coordination/config.json`, `.mesa/config.json`, `.po-team/config.json` o `.marketing/config.json`) o en el archivo
 personal del Anexo C; **si hay de los dos, gana el del proyecto**. Valores: `haiku` (economico),
 `sonnet` (intermedio), `opus` (potente). Requiere una sesion nueva para aplicarse.
 
@@ -946,13 +1071,14 @@ personal del Anexo C; **si hay de los dos, gana el del proyecto**. Valores: `hai
 | `Failed to update plugin: Plugin ... not found` | Falta el nombre del marketplace | `claude plugin update <plugin>@faast-marketplace` |
 | Actualice pero los agentes siguen igual | Agentes, hooks y MCP cargan al inicio de sesion | Reiniciar; verificar con `claude plugin list` |
 | No aparecen las herramientas `browser_*` o hay dos `playwright` | Sesion vieja o MCP personal duplicado | Reiniciar; `claude mcp list` debe mostrar uno por plugin; quitar el personal con `claude mcp remove playwright` |
-| Un hook bloquea escribir en `.coordination/`, `.mesa/` o `.marketing/` | Esa carpeta esta dentro de un repo git | Moverla con `mv` fuera del repo, registrarla en `~/.claude/<plugin>.config.json` → `proyectos` y reiniciar |
+| Un hook bloquea escribir en `.coordination/`, `.mesa/`, `.po-team/` o `.marketing/` | Esa carpeta esta dentro de un repo git | Moverla con `mv` fuera del repo, registrarla en `~/.claude/<plugin>.config.json` → `proyectos` y reiniciar |
 | El equipo usa una carpeta equivocada | Hay una carpeta huerfana (sin `config.json`) mas cerca que la canonica | Registrar el repo en `proyectos` (Anexo C); la sesion propone fusionar la huerfana con OK |
 | `gh` no tiene acceso al Project | Falta el permiso `project` | `gh auth refresh -s project,read:project` |
 | Los hooks no registran actividad | Falta `python3` | Instalar Python 3 y reiniciar |
 | Un integrante no uso el modelo configurado | Clave mal escrita o sesion vieja | Verificar `team.models.{integrante}` exacto y abrir una sesion nueva |
-| El video de evidencia sale chico en una esquina | La traza se encendio antes que el video | Seguir "Video a tamaño real" en la skill `visual-evidence` (Dev Team) o `evidencia-reproduccion` (Mesa) y regrabar |
+| El video de evidencia sale chico en una esquina | La traza se encendio antes que el video | Seguir "Video a tamaño real" en la skill `visual-evidence` (Dev Team), `evidencia-reproduccion` (Mesa) o `evidencia-po` (Equipo del PO) y regrabar |
 
 Para el detalle tecnico de cada equipo (configuracion completa, estructura de carpetas, consumo),
 ver el Anexo tecnico de su manual: [Dev Team](plugins/dev-team/GUIDE.md),
-[Mesa de Servicios](plugins/mesa-servicios/GUIDE.md), [Marketing](plugins/marketing/GUIDE.md).
+[Mesa de Servicios](plugins/mesa-servicios/GUIDE.md),
+[Equipo del Product Owner](plugins/po-team/GUIDE.md), [Marketing](plugins/marketing/GUIDE.md).

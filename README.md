@@ -28,6 +28,7 @@ Escritos en lenguaje de negocio, paso a paso desde la instalacion, para cualquie
 | General (todos los equipos y como se encadenan) | [GUIDE.md](GUIDE.md) | [GUIDE.pdf](GUIDE.pdf) |
 | Dev Team | [plugins/dev-team/GUIDE.md](plugins/dev-team/GUIDE.md) | [GUIDE.pdf](plugins/dev-team/GUIDE.pdf) |
 | Mesa de Servicios | [plugins/mesa-servicios/GUIDE.md](plugins/mesa-servicios/GUIDE.md) | [GUIDE.pdf](plugins/mesa-servicios/GUIDE.pdf) |
+| Equipo del Product Owner | [plugins/po-team/GUIDE.md](plugins/po-team/GUIDE.md) | [GUIDE.pdf](plugins/po-team/GUIDE.pdf) |
 | Marketing, Ventas y Publicidad | [plugins/marketing/GUIDE.md](plugins/marketing/GUIDE.md) | [GUIDE.pdf](plugins/marketing/GUIDE.pdf) |
 
 Los PDF se regeneran con el estilo de marca FaaST: `python3 docs/manuales/build_manuales.py`.
