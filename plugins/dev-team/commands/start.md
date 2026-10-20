@@ -21,14 +21,15 @@ Detecta el contexto y guia al usuario al flujo correcto.
 
 Resolver la coordinacion del proyecto en este orden, subiendo desde el directorio
 actual (hasta ~8 niveles):
-1. **`.coordination-root`** (archivo puntero en la raiz de un repo): leer su unica
-   linea (ruta relativa o absoluta a la carpeta paraguas) → la coordinacion es
-   `{esa-ruta}/.coordination` → proyecto activo → Paso 3
+1. **Registro del usuario** `~/.claude/dev-team.config.json` → `proyectos` (ruta del repo →
+   carpeta del proyecto) o, en proyectos viejos, el puntero `.coordination-root`: la
+   coordinacion es `{carpeta}/.coordination` → proyecto activo → Paso 3. (El hook de sesion ya
+   indica la ruta canonica absoluta; usala.)
 2. **`.coordination/` CON `config.json`** → es la canonica → proyecto activo → Paso 3
 3. **`.coordination/` SIN `config.json`** → es un DESVIO (huerfana): NO la uses
    como coordinacion. Pregunta al usuario donde esta la canonica (carpeta
-   paraguas); con su OK crea el puntero `.coordination-root` en la raiz del repo
-   (+ entrada en .gitignore), fusiona lo util del desvio en la canonica y
+   paraguas); con su OK registrala en `~/.claude/dev-team.config.json` → `proyectos`
+   (nada dentro del repo), fusiona lo util del desvio en la canonica y
    eliminalo. Luego continua al Paso 3 con la canonica.
 4. **Nada de lo anterior** → no hay proyecto configurado → Paso 2
 

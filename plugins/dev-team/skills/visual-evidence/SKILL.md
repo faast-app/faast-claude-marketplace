@@ -1,6 +1,6 @@
 ---
 name: visual-evidence
-description: Captura, ANALISIS y ENTREGA de evidencia visual de alta fidelidad para dev-team (QA, bugs, flujos, pentest) con las mejores herramientas del Playwright MCP - la traza navegable de Playwright como herramienta de analisis (snapshots de DOM por accion, red, consola, timeline), el video con acciones superpuestas y capitulos por paso, capturas resaltadas y anotadas, snapshot de accesibilidad como evidencia inspeccionable, sidecars de consola y red, verificacion explicita como ancla, evidencia de correccion con par antes/despues al revalidar un fix, entrega concluyente (INDEX de analisis, embebido en el tracker, fotogramas clave, version citada, secretos redactados), y como analizar el material cruzando video + traza + red + consola. Cargala al reproducir un bug, validar una HU, verificar que algo se corrigio, ejecutar un flujo, documentar una prueba de seguridad o entregar evidencia.
+description: Captura, ANALISIS y ENTREGA de evidencia visual de alta fidelidad para dev-team (QA, bugs, flujos, pentest) con las mejores herramientas del Playwright MCP - la traza navegable de Playwright como herramienta de analisis (snapshots de DOM por accion, red, consola, timeline), el video con acciones superpuestas y capitulos por paso grabado a TAMAÑO REAL (navegador limpio, video con size igual al viewport y traza despues del video; verificacion con normalizar_video.py que detecta el relleno gris, repara y entrega MP4 + portada), capturas resaltadas y anotadas, snapshot de accesibilidad como evidencia inspeccionable, sidecars de consola y red, verificacion explicita como ancla, evidencia de correccion con par antes/despues al revalidar un fix, entrega concluyente (INDEX de analisis, embebido en el tracker, fotogramas clave, version citada, secretos redactados), y como analizar el material cruzando video + traza + red + consola. Cargala al reproducir un bug, validar una HU, verificar que algo se corrigio, ejecutar un flujo, documentar una prueba de seguridad o entregar evidencia.
 ---
 
 # Evidencia visual: captura y analisis de alta fidelidad (dev-team)
@@ -17,16 +17,60 @@ analizar.
    herramienta de ANALISIS por excelencia. Guarda, por cada accion, el snapshot del DOM
    (antes/despues), la red, la consola, el codigo y una linea de tiempo. Se abre con
    `npx playwright show-trace archivo.zip` y permite inspeccionar el estado exacto en el que algo
-   fallo — mucho mas que mirar pixeles. Enciendela al INICIO de toda reproduccion/validacion.
+   fallo — mucho mas que mirar pixeles. Se enciende al inicio, **inmediatamente DESPUES del video**
+   (ver "Video a tamaño real").
 2. **Video con acciones y capitulos** (`browser_start_video`, `browser_video_show_actions`,
    `browser_video_chapter`, `browser_stop_video`): el video se mira completo (asi se entiende el
    flujo), pero se hace analizable — las acciones (clic, tipeo) se SUPERPONEN en la imagen y cada
    paso queda marcado como capitulo. Analizas viendo QUE hizo el usuario en cada momento, no
    adivinando. `browser_video_hide_actions` si se necesita una toma limpia para el usuario final.
+   Se graba SIEMPRE a tamaño real con la secuencia de la seccion siguiente.
 3. **Capturas ancladas a una afirmacion**: cada captura clave se toma DESPUES de resaltar el
    elemento bajo prueba (`browser_highlight`) y, si hace falta explicar, anotarlo
    (`browser_annotate`), y va acompañada de la verificacion explicita que cierra el criterio
    (`browser_verify_*`). Una captura prueba algo solo si señala QUE mirar y afirma el resultado.
+
+## Video a tamaño real (regla dura, verificada)
+**El problema.** Playwright usa UNA sola captura de pantalla por pagina, compartida por la traza y
+el video, y el tamaño lo fija quien la enciende primero. La traza la enciende sin tamaño, asi que
+queda reducida a 800 px (800x500 para un viewport de 1440x900). Si la traza arranco antes que el
+video, o si hubo cualquier traza antes en la misma sesion del navegador (aunque ya se haya
+detenido), el video sale con la pantalla chica en la esquina superior izquierda y el resto gris:
+el archivo "mide" 1440x900 pero no se lee. Pasarle `size` al video NO lo arregla en ese caso.
+
+**La secuencia obligatoria** (probada: con ella el video ocupa el cuadro completo):
+1. **Navegador limpio.** Si en esta sesion ya se uso `browser_start_tracing` o `browser_start_video`,
+   `browser_close` antes de empezar (y volver a entrar al ambiente). Ante la duda, cerrar.
+2. `browser_resize` al viewport declarado (1280x720 escritorio; 375x812 movil).
+3. `browser_start_video` con `size` **igual al viewport exacto** (`{"width":1280,"height":720}`).
+   Nunca sin `size` (saldria a 800 px) ni con un tamaño distinto.
+4. `browser_video_show_actions`.
+5. `browser_start_tracing` — **siempre despues del video**, nunca antes.
+6. Los pasos, con `browser_video_chapter` por paso. No cambiar el viewport a mitad de grabacion:
+   la toma movil es otro video, en otro navegador limpio.
+7. Al terminar: `browser_stop_tracing` y luego `browser_stop_video`.
+8. **Un video por sesion de navegador.** Para otra toma, preferir capitulos dentro del mismo video;
+   si hace falta un segundo archivo, volver al paso 1.
+
+**Verificacion y entrega (cada video, antes de darlo por bueno):**
+```bash
+python3 <carpeta-de-esta-skill>/scripts/normalizar_video.py .coordination/evidence/{ID}/video.webm
+```
+- `OK` → deja junto al original `video.mp4` (H.264: se abre en QuickTime, Teams, el navegador y
+  GitHub; el `.webm` no se abre en QuickTime) y `video-portada.png` (cuadro central).
+- `REPARADO` → la grabacion salio con relleno gris. El `.mp4` recorta la pantalla real y la escala
+  al cuadro completo, pero la nitidez perdida NO se recupera: la captura tuvo un tercio de los
+  pixeles y el texto chico se ve borroso. Se anota en `INDEX.md` ("video reparado, escalado desde
+  800x500") y, si el video es la prueba principal de un bug o de un fix, se **regraba** con la
+  secuencia correcta. Codigo de salida 2 = hubo relleno.
+- **Calidad esperada** (medida): grabado con la secuencia correcta, cada cuadro quieto es
+  practicamente identico a una captura de pantalla (texto de 13 px legible, tambien al desplazar).
+  Subir la densidad de pixeles (`deviceScaleFactor` 2) NO mejora el video: Playwright lo entrega
+  siempre en pixeles CSS del viewport. Para un detalle mas fino se usa una captura
+  (`browser_take_screenshot`) del momento, no un video mas grande.
+- `--verificar` solo revisa, sin escribir archivos. Acepta una carpeta para revisar todos los `.webm`.
+- El `.webm` original no se toca (evidencia cruda inmutable). Al tracker va la **portada embebida
+  con link al `.mp4`**; en documentos, la portada o los fotogramas clave con el link al video.
 
 ## Captura de pantalla de alta fidelidad (al reproducir, probar o dar evidencia)
 - **Resaltar antes de capturar**: `browser_highlight` sobre el elemento del criterio (el registro,
@@ -111,13 +155,14 @@ salen de las capturas numeradas ya tomadas o de cuadros de la grabacion.
 - Si una carpeta tiene mas de un archivo, un `INDEX.md` corto (2-4 lineas por archivo) que DESCRIBE
   y ANALIZA que muestra cada uno y donde esta el punto clave — es el "analisis" escrito que
   acompaña al material, para que no haya que reconstruirlo mirando todo.
-- La evidencia vive en `.coordination/evidence/{ID}/` (gitignored); el MCP escribe en `_mcp/`
-  (staging) y se mueve a la carpeta del criterio al cerrarlo. Al tracker sube EMBEBIDA. Secretos y
+- La evidencia vive en `.coordination/evidence/{ID}/` (gitignored); el MCP escribe en `~/.faast-mcp/dev-team/`
+  (staging fuera de los repos) y se mueve a la carpeta del criterio al cerrarlo. Al tracker sube EMBEBIDA. Secretos y
   PII siempre redactados, tambien en las imagenes.
 
 ## Checklist de una pieza de evidencia bien hecha
-- [ ] Traza encendida desde el inicio del flujo/reproduccion
+- [ ] Navegador limpio, `browser_resize` al viewport, video con `size` = viewport, traza DESPUES del video
 - [ ] Video con acciones superpuestas y un capitulo por paso
+- [ ] `normalizar_video.py` en OK (o REPARADO anotado / regrabado) → `.mp4` + portada para entregar
 - [ ] Cada criterio: triple de capturas resaltadas + `browser_verify_*` que lo afirma
 - [ ] Snapshot de accesibilidad del estado clave (texto inspeccionable)
 - [ ] Consola y red guardadas y correlacionadas con la accion

@@ -1,0 +1,70 @@
+<!--
+  <PROYECTO>.Tests.Integracion.csproj
+  Ubicación: <repo>/tests/<PROYECTO>.Tests.Integracion/
+
+  Levanta la app con WebApplicationFactory y, si hace falta, motores reales con
+  Testcontainers. Requiere Docker para la parte de base de datos.
+
+  DOS REGLAS QUE ROMPEN EL BUILD SI SE IGNORAN (03-stack §4):
+   1. Microsoft.AspNetCore.Mvc.Testing va en la MAJOR DEL TFM de la app.
+      net8.0 → 8.0.31 · net10.0 → 10.0.12
+   2. Los paquetes de EF van en la major de EF CORE de la app, no del TFM.
+      En esta flota EF Core queda en 9.x bajo net10 (techo de Pomelo, ADR-017).
+
+  Placeholders: <PROYECTO>, <RUTA_APP>
+-->
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Mvc.Testing condicionado al TFM. Con un solo TFM activo solo aplica uno;
+       el otro queda listo para el commit de la migración, sin editar nada. -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.31"
+                      Condition="'$(TargetFramework)' == 'net8.0'" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.12"
+                      Condition="'$(TargetFramework)' == 'net10.0'" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Contenedores (MIT). Un contenedor POR SUITE, nunca por test (T-TC-02). -->
+    <PackageReference Include="Testcontainers" Version="4.15.0" />
+    <PackageReference Include="Testcontainers.MySql" Version="4.15.0" />
+    <PackageReference Include="Testcontainers.MsSql" Version="4.15.0" />
+
+    <!-- Limpieza entre tests cuando se comparte base (T-DB-05). -->
+    <PackageReference Include="Respawn" Version="7.0.0" />
+
+    <!-- Dobles y snapshots, igual que en la suite unitaria. -->
+    <PackageReference Include="NSubstitute" Version="6.2.0" />
+    <PackageReference Include="Verify.Xunit" Version="31.12.5" />
+
+    <!-- Solo si el HttpClient del componente es interceptable
+         (hay IHttpClientFactory o URL base configurable). Si el código hace
+         new HttpClient() con la URL adentro, esto no sirve: no se instala. -->
+    <!-- <PackageReference Include="WireMock.Net" Version="2.17.0" /> -->
+
+    <!-- SQLite: alternativa sin Docker para lógica de consulta LINQ.
+         NO sirve para SQL crudo ni tipos del motor (T-DB-03).
+         La versión sigue a EF CORE de la app. -->
+    <!-- <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.20" /> -->
+
+    <!-- Microsoft.EntityFrameworkCore.InMemory: NO SE USA EN ESTA FLOTA.
+         Ver reference/02-estrategia-y-prioridad.md §4.3. -->
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\<RUTA_APP>\<PROYECTO>.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Dump de estructura para sembrar los contenedores, si el dba lo entregó.
+         SIN DATOS y SIN credenciales (T-DB-04 / T-SEC-01). -->
+    <None Update="Esquema\**\*.sql" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="appsettings.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+    <Using Include="Shouldly" />
+  </ItemGroup>
+
+</Project>

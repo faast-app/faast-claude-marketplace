@@ -30,7 +30,7 @@ La evidencia de cada corrida NO va aqui: va a `.mesa/evidencia/FLUJO-{dominio}-{
 | Clase | Ejemplos | Quien ejecuta los pasos | Paradas |
 |---|---|---|---|
 | **Consulta** (solo mira) | buscar operaciones, verificar estado, exportar un listado, revisar una bandeja | `qa-negocio` en UI (grabando) · `dba-mesa` en SELECT | ninguna obligatoria; se registra ambiente y perfil |
-| **Accion** (algo cambia por la pantalla) | aprobar, reasignar, cerrar un caso, cargar un documento | `qa-negocio` en UI, con OK del usuario de mesa ANTES de cada paso que escribe | obligatorias antes de cada escritura; en produccion ademas autorizacion registrada |
+| **Accion** (algo cambia por la pantalla) | aprobar, reasignar, cerrar un caso, cargar un documento | `qa-negocio` en UI | en ambiente de **pruebas** (`.mesa/config.json` → `ambientes`): sin paradas, es una accion de prueba normal; en **produccion**: autorizacion registrada por corrida y parada antes de cada paso que escribe |
 El DBA de mesa **nunca** escribe por SQL dentro de un flujo: solo verifica con `SELECT` antes y
 despues. Si un flujo necesita un cambio en datos, eso es un paquete de scripts (`/mesa-servicios:sql`)
 para que lo ejecute el autorizado, no un paso del flujo.

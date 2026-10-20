@@ -18,8 +18,9 @@ Invoca al agente `qa` (QA Lead). Toda evidencia (validacion, reproduccion, reval
 fix, entrega) se produce con la skill `visual-evidence`: traza navegable + video con acciones y
 capitulos + capturas ancladas a `browser_verify_*` + snapshot de accesibilidad + sidecars de
 consola/red, con `INDEX.md` de analisis; al revalidar un fix, tanda `-revalidacion` con par
-antes/despues. Antes de cualquier subcomando que valide: **REGLA DE ORO** — sin informe de
-conformidad (o stack COMPLETO en desa) no se valida; `blocked`.
+antes/despues. Antes de cualquier subcomando que valide: identificar la **version** que se prueba — del
+informe de conformidad si existe (OPCIONAL) o la observada por QA / indicada por el usuario,
+citando la fuente. La falta del informe no bloquea (salvo `qa.conformidad: "obligatoria"`).
 Si no existe suite (`e2e/` o repo `{proyecto}-e2e` con `playwright.config.ts`): crearla
 desde `templates/e2e-faast/` del plugin (reemplazar `{{ProjectName}}`, `npm install`,
 `npx playwright install chromium`, copiar `.env.example` → `.env` con los NOMBRES de
@@ -33,8 +34,8 @@ variables; los valores los pone el usuario) y registrarla en `config.json` (`e2e
 3. **Validacion interactiva** con el Playwright MCP del plugin (`browser_navigate`,
    `browser_snapshot`, `browser_click`, `browser_fill_form`...): recorrer cada criterio
    y CERRARLO con `browser_verify_*` + captura resaltada (`browser_highlight` →
-   `browser_take_screenshot`); trace/clip con `browser_start_tracing` /
-   `browser_start_video` en bugs. Todo queda en `.coordination/evidence/{HU}/` con su
+   `browser_take_screenshot`); clip/trace en bugs con `browser_start_video` (size = viewport,
+   navegador limpio) y DESPUES `browser_start_tracing`, segun la skill `visual-evidence`. Todo queda en `.coordination/evidence/{HU}/` con su
    bloque en `informe-qa.md`. El reparto UI/API entre qa-frontend y qa-backend lo hace
    el QA Lead por handoff; el paralelismo lo orquesta el Lead
 4. **Automatizar**: `tests/hu-{nnn}-{slug}.spec.ts` con un test por criterio (convencion

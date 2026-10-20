@@ -1,0 +1,9 @@
+{
+  "name": "marketing",
+  "description": "Equipo profesional de Marketing, Ventas y Publicidad con 8 agentes IA para VENDER un proyecto nuevo, una propuesta o una mejora: nunca una presentacion generica, sino el producto DESGLOSADO PARTE POR PARTE. Primero el mapa del producto (modulos, capacidades, mejoras) con una ficha por parte - que es y para quien, que problema resuelve y cuanto cuesta, como funciona con pantallas reales, que gana el cliente en numeros con fuente, antes/despues y benchmark contra la competencia - y solo con mapa y fichas aprobados se producen las piezas: deck de propuesta comercial con estetica de lanzamiento (una seccion por parte), video cinematografico tipo keynote con un capitulo por parte mas clips sueltos (HyperFrames), one-pager, panfletos y piezas para redes sobre la marca FAAST. Investiga mercado, competencia y tendencias siempre con fuente y fecha, y mantiene una base de tendencias vigente. Nada se inventa, el producto se muestra real y ninguna pieza sale sin aprobacion. Punto de entrada: /marketing:start.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Carlos Fuentes",
+    "email": "carlos.fuentes@faast.cl"
+  }
+}

@@ -34,11 +34,13 @@ a los agentes (qa-frontend la UI con Playwright MCP, qa-backend/dba el SQL) y co
 ## `grabar {dominio}/{flujo}` — recorrer el flujo y capturar los pasos
 Ejecucion asistida para DOCUMENTAR (no es una corrida de produccion, pero igual puede escribir
 datos reales — aplican las mismas paradas). Con el usuario presente:
-1. Leer FLUJO.md. Confirmar ambiente (preferente NO productivo) y datos de prueba.
+1. Leer FLUJO.md. Confirmar ambiente y su clase (`config.json` → `ambientes`: pruebas | productivo) y datos de prueba.
 2. Recorrer el flujo por la UI con el Playwright MCP (`browser_navigate`, acciones), y en cada
    paso: `browser_take_screenshot`, `browser_generate_locator` (para el `steps.yaml`),
-   `browser_network_requests` (endpoint + codigo del resultado esperado). En cada ESCRITURA
-   sensible, PARADA: pedir OK del usuario en el momento.
+   `browser_network_requests` (endpoint + codigo del resultado esperado). En ambiente
+   **productivo**, cada ESCRITURA sensible es PARADA: pedir OK del usuario en el momento. En
+   ambiente de **pruebas** las acciones de negocio (grabar, aprobar, giro, pago, desembolso) se
+   ejecutan sin parada.
 3. Volcar lo capturado al `runbook.md` (pasos numerados con rol, acciones y resultado esperado
    real) y, opcionalmente, al `steps.yaml` (selectores/acciones/asserts). Las verificaciones SQL
    observadas van a `referencias/verificacion.md` con su `-- Esperado:`.
@@ -67,8 +69,11 @@ rollback) y esperar el OK del usuario. Luego seguir las fases del coordinador (s
 4. **Fase 3** — ejecutar los pasos del runbook: la UI la hace **qa-frontend** (un browser
    compartido, captura por paso), el SQL de solo lectura **qa-backend/dba**. A la PRIMERA falla:
    capturar, marcar bloqueante, detener. Sin reintentos (cada reintento crea datos reales).
-5. **Fase 4** — puntos de parada obligatorios: antes de cada escritura sensible (grabar, aprobar,
-   confirmar giro/desembolso, elegir banco, cualquier write) se pide OK del usuario EN EL MOMENTO.
+5. **Fase 4** — puntos de parada segun la clase del ambiente: en **productivo**, antes de cada
+   escritura sensible (grabar, aprobar, confirmar giro/desembolso, elegir banco, cualquier write) se
+   pide OK del usuario EN EL MOMENTO. En **pruebas** esas acciones son normales y se ejecutan sin
+   parada (el usuario ya pidio correr el flujo); las paradas que se mantienen siempre son los cambios
+   de parametros o de BD (Fase 2) y el cierre.
 6. **Fase 5** — verificar el resultado (SQL de solo lectura §3 + UI) contra lo esperado; 0
    errores de consola y 0 4xx/5xx inesperados.
 7. **Fase 6** — cierre: escribir `informe-flujo.md` (resultado por paso + veredicto global) y
@@ -76,11 +81,11 @@ rollback) y esperar el OK del usuario. Luego seguir las fases del coordinador (s
 Evidencia de toda la corrida en `.coordination/evidence/FLOW-{dominio}-{flujo}-{fecha}/`.
 
 ## Reglas
-- El flujo se VERSIONA (`.coordination/flows/`); la evidencia de las corridas NO (gitignored).
-- Antes de cualquier escritura sensible o cambio de parametro: OK del usuario en el momento.
+- El flujo se guarda en la coordinacion del proyecto (`.coordination/flows/`, fuera de los repos), igual que la evidencia de las corridas.
+- Cambio de parametro o de BD: siempre OK del usuario en el momento. Escritura de negocio por la UI: OK en el momento solo en ambiente productivo.
 - Cambios de parametros/BD: los ejecuta el dba con el patron guardado, nunca el flujo por su cuenta;
   se registran los valores iniciales y se restauran al cierre.
 - A la primera falla se detiene y se reporta; nada de reintentos ciegos (crean datos reales).
 - Secretos: se leen de los archivos de acceso por NOMBRE de variable; jamas en el flujo/evidencia/chat.
-- Ambiente preferente NO productivo; tocar uno sensible es decision explicita del usuario.
+- Ambiente preferente de pruebas. En pruebas, giros, pagos y aprobaciones son acciones de prueba normales; tocar un ambiente productivo es decision explicita del usuario.
 - Un flujo con criterios de aceptacion formales es una HU: eso lo maneja el PO/QA, no este comando.

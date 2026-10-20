@@ -1,0 +1,47 @@
+# .dockerignore estándar FaaST — copiar como `.dockerignore` en la raíz del repo.
+# Motivo: hay repos legado con `.git` de 2.5 GB, `bin/` versionado con
+# appsettings reales, y llaves en el árbol de trabajo.
+
+# Control de versiones e historia
+.git
+.github
+.gitignore
+**/.git
+
+# Artefactos de build
+bin/
+obj/
+**/bin/
+**/obj/
+node_modules/
+**/node_modules/
+dist/
+build/
+publish/
+*.user
+*.suo
+.vs/
+
+# Configuración real y secretos — NUNCA entran a la imagen
+.env
+.env.*
+**/appsettings.Development.json
+**/appsettings.Production.json
+**/appsettings.Stage.json
+**/appsettings.Demo.json
+**/appsettings.PreProd.json
+*.pem
+*.key
+*.pfx
+*.p12
+**/cert/
+**/.aws/
+NuGet.config.local
+
+# Ruido operativo
+Logs/
+*.log
+**/Release/
+*.zip
+*.tar.gz
+.DS_Store

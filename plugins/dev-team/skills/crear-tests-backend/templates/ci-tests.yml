@@ -1,0 +1,197 @@
+# .github/workflows/tests.yml
+#
+# Suite de tests del componente. NO construye imagen, NO despliega, NO usa NINGÚN
+# secreto. Si algún día necesita uno, dejó de ser el workflow de tests.
+#
+# Corre: Unit + Caracterización (bloqueantes) y, si el runner tiene Docker,
+# Integración. La suite de Contrato (familia d) NO corre acá: depende de un
+# ambiente ajeno y volvería el CI intermitente (regla dura 3 de la skill).
+#
+# PARÁMETRO: dotnet_version sale de templates/parametros-tests.env / parametros.env.
+# Nunca se escribe la versión a mano en 40 workflows (misma política que ADR-017 D2).
+
+name: Tests
+
+on:
+  pull_request:
+    branches: [ 'develop**', 'release/faast/**' ]
+  push:
+    branches: [ 'develop**' ]
+  workflow_dispatch:
+    inputs:
+      dotnet_version:
+        description: 'SDK a usar (major.minor)'
+        type: string
+        default: '8.0'
+
+env:
+  DOTNET_VERSION: ${{ inputs.dotnet_version || '8.0' }}
+  DOTNET_NOLOGO: 'true'
+  DOTNET_CLI_TELEMETRY_OPTOUT: 'true'
+  # Determinismo: el runner declara su zona horaria en vez de heredarla (T-TIME-01).
+  TZ: 'America/Santiago'
+
+jobs:
+
+  tests:
+    name: Unit + Caracterización
+    runs-on: ubuntu-latest
+    permissions: { contents: read }
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }   # hace falta para el diff contra la rama base
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      # ── Guardarraíl 1: el TFM del test tiene que ser el de la app (E-CS-03) ──
+      - name: El TFM de los tests coincide con el de la app
+        run: |
+          app=$(grep -rhoE '<TargetFrameworks?>[^<]+' --include='*.csproj' \
+                --exclude-dir=tests . | sed -E 's/.*>//' | tr ';' '\n' | sort -u)
+          tst=$(grep -rhoE '<TargetFrameworks?>[^<]+' tests/ 2>/dev/null \
+                | sed -E 's/.*>//' | tr ';' '\n' | sort -u)
+          echo "app: $app"; echo "tests: $tst"
+          if [ -n "$tst" ] && [ "$app" != "$tst" ]; then
+            echo "::error::El proyecto de test está en otro TFM que la app (E-CS-03)."
+            echo "::error::Durante una migración suben en el MISMO commit."
+            exit 1
+          fi
+
+      # ── Guardarraíl 2: nada de licencias comerciales que entren por la puerta
+      #    de atrás en un .csproj de test (03-stack §2.1, E-LIC-02) ─────────────
+      - name: Licencias de los paquetes de test
+        run: |
+          malo=0
+          if grep -rhoE 'Include="FluentAssertions" *Version="([89]|1[0-9])\.' tests/ 2>/dev/null; then
+            echo "::error::FluentAssertions >= 8 es licencia COMERCIAL (Xceed). Fijar en 7.2.0 o usar Shouldly."
+            malo=1
+          fi
+          if grep -rhoE 'Include="Moq" *Version="4\.20\.[01]"' tests/ 2>/dev/null; then
+            echo "::error::Moq 4.20.0/4.20.1 incluyen SponsorLink. Subir a >= 4.20.2."
+            malo=1
+          fi
+          exit $malo
+
+      # ── Guardarraíl 3: sin secretos en los tests (T-SEC-01) ─────────────────
+      - name: No hay secretos en tests/
+        run: |
+          patrones='(Password=|Pwd=|Server=.*;.*User Id=|BEGIN (RSA|PRIVATE) KEY|xox[baprs]-|AKIA[0-9A-Z]{16})'
+          if grep -rInE "$patrones" tests/ 2>/dev/null; then
+            echo "::error::Posible secreto o cadena de conexión real dentro de tests/ (T-SEC-01)."
+            exit 1
+          fi
+          echo "OK"
+
+      # ── Guardarraíl 4: no se regeneran snapshots en un PR que toca el csproj ─
+      #    Es la regla dura 2: durante una migración los tests NO se editan.
+      - name: No se tocaron snapshots junto con el csproj (T-SNAP-01)
+        if: github.event_name == 'pull_request'
+        run: |
+          base="${{ github.event.pull_request.base.sha }}"
+          cambios=$(git diff --name-only "$base"...HEAD)
+          toca_csproj=$(echo "$cambios" | grep -cE '\.csproj$|\.props$' || true)
+          toca_snap=$(echo "$cambios"  | grep -cE '\.verified\.' || true)
+          if [ "$toca_csproj" -gt 0 ] && [ "$toca_snap" -gt 0 ]; then
+            echo "::error::Este PR cambia el .csproj Y un snapshot .verified.*."
+            echo "::error::Si es una migración, los snapshots NO se regeneran: el rojo es el resultado."
+            echo "$cambios" | grep -E '\.verified\.'
+            exit 1
+          fi
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build -c Release --no-restore
+
+      # ── La suite. Sin Docker, sin red, sin ambiente ──────────────────────────
+      - name: Tests (unit + caracterización)
+        run: |
+          dotnet test -c Release --no-build \
+            --filter "categoria!=integracion&categoria!=contrato" \
+            --logger "trx;LogFileName=tests.trx" \
+            --logger "console;verbosity=normal" \
+            --collect:"XPlat Code Coverage" \
+            --settings tests/coverage.runsettings \
+            --results-directory ./TestResults
+
+      # ── EL GATE MÁS IMPORTANTE (T-CI-01) ────────────────────────────────────
+      # `dotnet test` sobre una solución sin proyectos de test PASA EN VERDE.
+      # Sin este paso, todo lo anterior es decorado. Precedente real: el CI de
+      # micro-api-back hacía exactamente eso.
+      - name: Fallar si se ejecutaron 0 tests
+        run: |
+          total=$(grep -ohE 'total="[0-9]+"' TestResults/*.trx 2>/dev/null \
+                  | head -1 | grep -oE '[0-9]+' || echo 0)
+          echo "Tests ejecutados: $total"
+          echo "**Tests ejecutados: $total**" >> "$GITHUB_STEP_SUMMARY"
+          if [ "${total:-0}" -eq 0 ]; then
+            echo "::error::Se ejecutaron 0 tests. Un pipeline verde sin tests es confianza falsa (T-CI-01)."
+            exit 1
+          fi
+
+      - name: Resumen de cobertura
+        if: always()
+        run: |
+          cob=$(find TestResults -name 'coverage.cobertura.xml' | head -1)
+          [ -n "$cob" ] || { echo "Sin reporte de cobertura (T-COV-01)"; exit 0; }
+          tasa=$(grep -m1 -oE 'line-rate="[0-9.]+"' "$cob" | grep -oE '[0-9.]+')
+          pct=$(awk "BEGIN{printf \"%.1f\", $tasa*100}")
+          echo "### Cobertura de línea: ${pct}%" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "> El gate real es por riesgo, no por este número:" >> "$GITHUB_STEP_SUMMARY"
+          echo "> ver \`reference/05-ci-cobertura-dod.md\` §2." >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Publicar resultados
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: resultados-tests
+          path: |
+            TestResults/**/*.trx
+            TestResults/**/coverage.cobertura.xml
+            tests/**/*.received.*      # si algún snapshot difiere, acá está el diff
+          retention-days: 30
+
+  integracion:
+    name: Integración (Testcontainers)
+    runs-on: ubuntu-latest
+    needs: [tests]
+    # Solo si hay algo que correr. Si el runner no tuviera Docker, este job se
+    # declara como GAP en el informe: no se borra ni se silencia (T-TC-01).
+    if: ${{ hashFiles('tests/**/*Integracion*.csproj') != '' }}
+    permissions: { contents: read }
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Docker disponible
+        run: docker info >/dev/null 2>&1 || { echo "::warning::Sin Docker: integración no corre"; exit 1; }
+
+      - name: Tests de integración
+        run: |
+          dotnet test -c Release \
+            --filter "categoria=integracion" \
+            --logger "trx;LogFileName=integracion.trx" \
+            --results-directory ./TestResults
+
+      - name: Publicar resultados
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: resultados-integracion
+          path: TestResults/**/*.trx
+          retention-days: 30
+
+# ── Lo que este workflow NO hace, a propósito ────────────────────────────────
+#
+#  · No corre la suite de CONTRATO: depende de un ambiente ajeno (regla dura 3).
+#  · No usa secrets.*: si hiciera falta uno, no es el workflow de tests.
+#  · No construye ni publica imagen: eso es build-push.yml (dockerizar-componente).
+#  · No falla por un umbral global de cobertura: el gate es por riesgo
+#    (reference/05-ci-cobertura-dod.md §2).

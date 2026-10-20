@@ -1,0 +1,72 @@
+<!--
+  Directory.Build.props — plantilla FaaST para migración de runtime.
+
+  Va en la RAÍZ del repo (o en la carpeta que contiene el .sln). Centraliza el TFM
+  para que subir de versión sea editar un archivo y no N .csproj.
+
+  PARÁMETROS (de templates/parametros.env):
+    TargetFramework  ← ${TFM_DESTINO}
+    LangVersion      ← ${LANG_VERSION}
+
+  CUIDADO: un .csproj que declare su propio <TargetFramework> GANA sobre esto.
+  Verificado en la flota: `micro-agents-antropic` tiene este archivo en net10.0
+  y sus 6 .csproj en net8.0 — el props no tiene efecto y nadie sabe cuál es el
+  destino. Al adoptar esta plantilla hay que BORRAR el <TargetFramework> de los
+  .csproj, no dejar los dos.
+-->
+<Project>
+
+  <PropertyGroup>
+    <!-- ÚNICO lugar donde vive el TFM del repo. -->
+    <TargetFramework>net10.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+
+    <!--
+      Deliberadamente APAGADOS durante una migración de runtime.
+      Encenderlos cambia la semántica del código (regla 5 de la skill: una
+      migración de runtime no moderniza). Se evalúan después, en su propio PR.
+    -->
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+
+    <!--
+      Warnings: se LEEN, no se silencian (regla 7).
+      Arrancar en false. Encender al final del último escalón, una vez, para ver
+      qué aparece; anotarlo; recién ahí decidir si queda encendido.
+      Encenderlo al principio convierte cada escalón en una cacería de warnings
+      preexistentes que no tienen relación con el salto.
+    -->
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+
+    <!--
+      Si el repo ya venía con nullable como error, NO quitarlo: sería una regresión.
+      (Caso verificado: micro-versions-manager.)
+    -->
+    <!-- <WarningsAsErrors>nullable</WarningsAsErrors> -->
+
+    <!--
+      Analizadores: encenderlos al FINAL del escalón para que SYSLIB*/CS0618
+      salgan a la luz sin tapar los errores del salto.
+    -->
+    <AnalysisMode>Recommended</AnalysisMode>
+    <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
+
+    <!-- Avisa si el SDK que resuelve está fuera de soporte. Útil en esta migración. -->
+    <CheckSdkVulnerabilities>true</CheckSdkVulnerabilities>
+
+    <!-- Build reproducible: parte de la respuesta a E-NU-03. -->
+    <Deterministic>true</Deterministic>
+    <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
+
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);1591</NoWarn>
+  </PropertyGroup>
+
+  <!--
+    PROHIBIDO agregar acá un <NoWarn> con SYSLIB*, CS0618, NU1605 o NU1608
+    durante una migración. Cada uno de esos es la plataforma avisando algo que
+    va a romper en runtime. Silenciarlos es diferir el incidente, no evitarlo.
+    Ver 04-catalogo-errores E-NU-01 y E-CS-01.
+  -->
+
+</Project>

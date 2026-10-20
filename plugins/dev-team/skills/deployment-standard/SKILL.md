@@ -11,6 +11,13 @@ Este es el estandar que sigue el equipo para contenerizar y desplegar un compone
 (`config.json` → `deploy` y el archivo de inventario de servidores), NUNCA hardcodeados aqui.
 Las REGLAS si son fijas. Un componente que rompe una regla dura no se despliega.
 
+**Alcance frente a la skill `dockerizar-componente`:** esta skill es la NORMA (reglas,
+convenciones y operacion segura de servidores). `dockerizar-componente` es el PROCEDIMIENTO
+con plantillas para producir los artefactos de UN componente (Dockerfile por familia,
+`.dockerignore`, compose, workflow, mapeo de appsettings, health con version, verificacion
+local, plan de cutover y checklist). Usa las dos: las reglas salen de aqui, los archivos de
+alla. Si encuentras una diferencia real entre ambas, no elijas en silencio: reportala al Lead.
+
 ## 0. Regla de oro de operacion — no romper nada
 Antes de tocar un servidor, un contenedor o un pipeline: **descubre en solo lectura, y cambia
 solo con plan y confirmacion**. Nunca borres, nunca `docker compose down` de algo compartido,
@@ -112,7 +119,11 @@ esperar health → anexar linea a `deploy-history.log`. Nunca borres la carpeta 
 ## 8. Cutover de PM2 a Docker (puente de vhost)
 1. El contenedor llega a `healthy` en el mismo puerto. 2. Smoke test por el vhost real.
 3. Cambiar el `ProxyPass` del loopback a la nueva IP/puerto y **`reload`** Apache (nunca `restart`;
-antes `httpd -t` y backup `.bak-<timestamp>` del vhost). 4. `pm2 stop` SIN borrar la carpeta vieja.
+antes `httpd -t` y backup `.bak-<timestamp>` del vhost). 4. `pm2 stop` SIN borrar la carpeta vieja,
+y en el mismo paso `pm2 save` (con respaldo previo del dump): sin `pm2 save`, el `pm2 resurrect` del
+proximo arranque del servidor vuelve a levantar el proceso viejo, choca con el puerto del contenedor
+(`EADDRINUSE`) y entra en un bucle de reinicios que satura la CPU (incidente real; detalle y
+verificacion del dump en `dockerizar-componente` Paso 6).
 5. Probar el rollback en ese mismo momento. QA valida con capturas. Si algo falla, se revierte el ProxyPass.
 
 ## 9. Prueba en local

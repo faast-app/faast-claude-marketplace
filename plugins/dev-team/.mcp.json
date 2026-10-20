@@ -7,7 +7,7 @@
       "--browser=chromium",
       "--caps=testing,devtools,vision",
       "--isolated",
-      "--output-dir=${CLAUDE_PROJECT_DIR}/.coordination/evidence/_mcp",
+      "--output-dir=${HOME}/.faast-mcp/dev-team",
       "--test-id-attribute=data-testid",
       "--timeout-action=8000",
       "--timeout-navigation=45000",

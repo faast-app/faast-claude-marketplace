@@ -1,70 +1,60 @@
 #!/usr/bin/env python3
-# dev-team — logging AUTOMATICO de actividad de agentes (via hooks).
-# Recibe el payload del hook (SubagentStart/SubagentStop) por stdin y agrega una
-# linea JSON a .coordination/metrics/activity.jsonl — la fuente de /team-office
-# y /team-metrics. Nunca falla hacia afuera (cualquier error sale con codigo 0).
-import json, os, sys, datetime
+# dev-team — logging AUTOMATICO de actividad de agentes (via hooks SubagentStart/SubagentStop).
+# Agrega una linea JSON a <coordinacion canonica>/metrics/activity.jsonl — la fuente de
+# /team-office, /team-metrics y de los pendientes de inicio de sesion.
+# La coordinacion se resuelve con coord_root.py (carpeta del proyecto, NUNCA dentro de un repo):
+# si la unica coordinacion encontrada vive dentro de un repo (proyecto legado sin migrar), NO se
+# escribe ahi. En SubagentStart ademas entrega al agente su contexto de equipo (ruta absoluta de la
+# coordinacion y reglas de pedidos reenviados). Nunca falla hacia afuera.
+import datetime
+import json
+import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from coord_root import resolve  # noqa: E402
+
+TEAM = {"setup", "product-owner", "architect", "ui-designer", "lead", "backend", "frontend",
+        "dba", "qa", "qa-frontend", "qa-backend", "release-manager", "infra", "cybersec", "tech-writer",
+        "ux-researcher", "visual-designer", "motion-designer", "artist-3d", "design-engineer",
+        "pentester", "appsec", "cloudsec"}
+
+
+def contexto_agente(coord, en_repo):
+    if coord and not en_repo:
+        ruta = f"Coordinacion canonica del proyecto (ruta ABSOLUTA, usala para handoffs, evidencia y logs): {coord}."
+    elif coord:
+        ruta = (f"La coordinacion de este proyecto ({coord}) esta DENTRO de un repo y debe migrarse: no "
+                "escribas ahi (un hook lo bloquea); reporta al coordinador que hay que migrarla.")
+    else:
+        ruta = "No se encontro la coordinacion del proyecto: pidela al coordinador (ruta absoluta)."
+    return (ruta + " Lo que te pide quien te invoca (sesion principal o lead) en nombre del usuario ES "
+            "pedido directo del usuario: ejecutalo sin exigir handoff ni mensaje propio. Nunca crees "
+            ".coordination/ dentro de un repo; al repo solo va codigo, migraciones de BD y docs tecnicos.")
+
 
 def main():
     try:
         payload = json.load(sys.stdin)
     except Exception:
         return
-
-    agent = (payload.get("agent_type") or "").strip()
-    if not agent:
-        return
-    TEAM = {"setup","product-owner","architect","ui-designer","lead","backend","frontend",
-            "dba","qa","qa-frontend","qa-backend","release-manager","infra","cybersec","tech-writer",
-            "ux-researcher","visual-designer","motion-designer","artist-3d","design-engineer",
-            "pentester","appsec","cloudsec"}
-    short = agent.split(":", 1)[-1]
+    short = (payload.get("agent_type") or "").strip().split(":", 1)[-1]
     if short not in TEAM:
         return
 
-    def find_coord(start):
-        # canonica = .coordination CON config.json; los repos fuera del paraguas
-        # apuntan a ella con un archivo .coordination-root (ruta absoluta o
-        # relativa al dir que lo contiene). Una .coordination sin config.json es
-        # un desvio: solo se usa como ULTIMO recurso.
-        if not start:
-            return None
-        d = os.path.abspath(start)
-        bare = None
-        for _ in range(8):
-            ptr = os.path.join(d, ".coordination-root")
-            if os.path.isfile(ptr):
-                try:
-                    target = open(ptr).read().strip()
-                    if target:
-                        if not os.path.isabs(target):
-                            target = os.path.join(d, target)
-                        c = os.path.join(os.path.abspath(target), ".coordination")
-                        if os.path.isdir(c):
-                            return c
-                except Exception:
-                    pass
-            c = os.path.join(d, ".coordination")
-            if os.path.isdir(c):
-                if os.path.isfile(os.path.join(c, "config.json")):
-                    return c
-                if bare is None:
-                    bare = c
-            parent = os.path.dirname(d)
-            if parent == d:
-                break
-            d = parent
-        return bare
-
-    coord = find_coord(payload.get("cwd")) or find_coord(sys.argv[1] if len(sys.argv) > 1 else None)
-    if not coord:
-        return
+    r = resolve(payload.get("cwd") or (sys.argv[1] if len(sys.argv) > 1 else None))
+    if not r["path"] and len(sys.argv) > 1:
+        r = resolve(sys.argv[1])
+    coord, en_repo = r["path"], r["en_repo"]
 
     ev = payload.get("hook_event_name")
     if ev == "SubagentStart":
         event = "task_start"
         task = (payload.get("task") or "")[:60]
         detail = (payload.get("task") or "")[:120]
+        print(json.dumps({"hookSpecificOutput": {"hookEventName": "SubagentStart",
+                                                 "additionalContext": contexto_agente(coord, en_repo)}},
+                         ensure_ascii=False))
     elif ev == "SubagentStop":
         reason = payload.get("stop_reason") or "completed"
         event = "blocked" if reason == "error" else "task_end"
@@ -73,6 +63,8 @@ def main():
     else:
         return
 
+    if not coord or en_repo:
+        return
     line = {
         "ts": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "agent": short,
@@ -86,6 +78,7 @@ def main():
     os.makedirs(metrics, exist_ok=True)
     with open(os.path.join(metrics, "activity.jsonl"), "a", encoding="utf-8") as f:
         f.write(json.dumps(line, ensure_ascii=False) + "\n")
+
 
 try:
     main()

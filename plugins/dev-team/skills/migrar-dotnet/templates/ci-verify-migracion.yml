@@ -1,0 +1,149 @@
+# .github/workflows/verify-migracion.yml
+#
+# Corre en la rama `pase/*_migracion-dotnet_*`. NO construye imagen y NO despliega:
+# la imagen es de `build-push.yml` (skill dockerizar-componente), y migración y
+# dockerización van en PR separados (regla 3 de la skill migrar-dotnet).
+#
+# Su trabajo es que el PR de migración llegue a revisión con evidencia objetiva:
+# build limpio, vulnerabilidades listadas, tests, y contrato OpenAPI comparado.
+#
+# PARÁMETROS: dotnet_version <- ${DOTNET_TAG} de templates/parametros.env.
+# Nunca escribir la versión a mano: se cambia en un archivo, no en 60 workflows.
+
+name: Verify migración .NET
+
+on:
+  pull_request:
+    branches: [ 'release/faast/**' ]
+  push:
+    branches: [ 'pase/**migracion-dotnet**' ]
+  workflow_dispatch:
+    inputs:
+      dotnet_version:
+        description: 'TFM destino (major.minor), de parametros.env'
+        type: string
+        default: '10.0'
+
+env:
+  DOTNET_VERSION: ${{ inputs.dotnet_version || '10.0' }}
+  DOTNET_NOLOGO: 'true'
+  DOTNET_CLI_TELEMETRY_OPTOUT: 'true'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions: { contents: read }
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      # ── El TFM del csproj debe coincidir con el SDK del workflow ────────────
+      # Atrapa E-DOCK-01 y el caso micro-agents-antropic (props net10 / csproj net8)
+      # ANTES de que el error aparezca como algo sin relación.
+      - name: Verificar que el TFM coincide con el destino
+        run: |
+          esperado="net${DOTNET_VERSION}"
+          echo "TFM esperado: $esperado"
+          encontrados=$(grep -rhoE '<TargetFrameworks?>[^<]+' --include='*.csproj' --include='*.props' . \
+                        | sed -E 's/.*>//' | tr ';' '\n' | sort -u)
+          echo "TFM encontrados:"; echo "$encontrados" | sed 's/^/  /'
+          if echo "$encontrados" | grep -qv "^${esperado}$"; then
+            echo "::error::Hay TFM distintos de $esperado. Todos los proyectos de la"
+            echo "::error::solución (incluidos los de test) van en el mismo escalón — E-NU-01/E-CS-03."
+            exit 1
+          fi
+
+      - name: Verificar que no quedan versiones flotantes
+        run: |
+          # E-NU-03: un comodín hace el build no reproducible y vuelve imposible
+          # bisecar la migración.
+          if grep -rhoE 'Include="[^"]+" *Version="[^"]*\*[^"]*"' --include='*.csproj' . ; then
+            echo "::error::Versiones flotantes (*) detectadas. Fijar antes de migrar — E-NU-03."
+            exit 1
+          fi
+          echo "OK: sin versiones flotantes"
+
+      - name: Restore
+        run: dotnet restore 2>&1 | tee restore.log
+
+      - name: Fallar si hay NU1605 / NU1608 sin resolver
+        run: |
+          if grep -qE 'NU1605|NU1608' restore.log; then
+            echo "::error::Downgrade o conflicto de versión sin resolver — E-NU-01 / E-NU-02."
+            echo "::error::NO agregar NoWarn: el ensamblado cargado no sería el compilado (E-RT-01)."
+            grep -E 'NU1605|NU1608' restore.log
+            exit 1
+          fi
+
+      - name: Build
+        run: dotnet build -c Release --no-restore 2>&1 | tee build.log
+
+      # Informativo, no bloquea: los warnings se LEEN y se anotan en el informe
+      # (regla 7). Que bloqueen es lo que empuja a silenciarlos.
+      - name: Warnings de obsolescencia (informativo)
+        run: |
+          echo "### Warnings SYSLIB/CS0618" >> "$GITHUB_STEP_SUMMARY"
+          grep -oE '(SYSLIB[0-9]+|CS0618)' build.log | sort | uniq -c \
+            | tee -a "$GITHUB_STEP_SUMMARY" || echo "  (ninguno)" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Verificar que no se agregó NoWarn durante la migración
+        run: |
+          # Regla 7. Compara contra la rama base del PR.
+          base="${{ github.event.pull_request.base.sha }}"
+          [ -n "$base" ] || exit 0
+          if git diff "$base" -- '*.csproj' '*.props' | grep -E '^\+.*NoWarn.*(SYSLIB|CS0618|NU1605|NU1608)'; then
+            echo "::error::Se agregó NoWarn sobre un warning que la migración debe resolver."
+            exit 1
+          fi
+
+      - name: Paquetes vulnerables
+        run: |
+          dotnet list package --vulnerable --include-transitive 2>&1 | tee vuln.log
+          { echo "### Vulnerables"; echo '```'; cat vuln.log; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+          grep -q 'High\|Critical' vuln.log && echo "::warning::Vulnerabilidades altas — necesitan ticket" || true
+
+      - name: Paquetes deprecados
+        run: dotnet list package --deprecated 2>&1 | tee -a "$GITHUB_STEP_SUMMARY" || true
+
+      # E-LIC-02: que nadie haya arrastrado AutoMapper/MediatR a versiones
+      # con licencia comercial durante la migración.
+      - name: Verificar licencias de AutoMapper y MediatR
+        run: |
+          malo=0
+          grep -rhoE 'Include="(AutoMapper|MediatR)" *Version="[^"]+"' --include='*.csproj' . | while read -r l; do
+            pkg=$(echo "$l" | sed -E 's/Include="([^"]+)".*/\1/')
+            ver=$(echo "$l" | sed -E 's/.*Version="([^"]+)".*/\1/')
+            major=${ver%%.*}
+            case "$pkg" in
+              AutoMapper) [ "$major" -ge 15 ] && { echo "::error::AutoMapper $ver es licencia comercial — E-LIC-02"; exit 1; } ;;
+              MediatR)    [ "$major" -ge 13 ] && { echo "::error::MediatR $ver es licencia comercial — E-LIC-02"; exit 1; } ;;
+            esac
+          done
+          exit $malo
+
+      - name: Tests
+        run: |
+          if ls **/*[Tt]ests*.csproj >/dev/null 2>&1 || ls tests/**/*.csproj >/dev/null 2>&1; then
+            dotnet test -c Release --no-build --logger "trx;LogFileName=tests.trx"
+          else
+            echo "::warning::Este repo NO tiene tests (44 de 61 backend están así)."
+            echo "::warning::La única red de seguridad es el snapshot de contrato y el diff"
+            echo "::warning::de respuestas — 03-plan-de-pruebas §3 y §4. Son OBLIGATORIOS."
+          fi
+
+      - name: Publish
+        run: dotnet publish -c Release --no-build -o ./out
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: migracion-evidencia
+          path: |
+            restore.log
+            build.log
+            vuln.log
+            **/*.trx
+          retention-days: 30

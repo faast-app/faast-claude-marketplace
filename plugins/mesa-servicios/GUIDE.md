@@ -1,6 +1,13 @@
 # Mesa de Servicios — Manual de Usuario
 
-**Version del plugin:** 1.0.x · **Integrantes del equipo:** 10 · **Comandos:** 12
+**Version del plugin:** 1.1.x · **Integrantes del equipo:** 10 · **Comandos:** 12
+
+> **Manual general de todos los equipos.** Existe un manual que explica juntos a todos los
+> equipos de FAAST y como se pasan el trabajo: [`GUIDE.md` en la raiz del
+> repositorio](../../GUIDE.md), tambien en PDF (`GUIDE.pdf`). La Mesa de Servicios es el
+> **primer paso** del flujo: el siguiente es el **Dev Team** (toma el ticket que deja la mesa y
+> lo construye; [su manual](../dev-team/GUIDE.md)) y luego **Marketing** (lo comunica y lo
+> vende; [su manual](../marketing/GUIDE.md)).
 
 La Mesa de Servicios es un **equipo de asistentes de inteligencia artificial que recibe todo lo
 que llega de un cliente** — un ticket, un reporte de que algo falla, una cotizacion, un proyecto,
@@ -11,14 +18,17 @@ desarrollo lo tome sin volver a preguntarle nada al cliente.
 
 Tu hablas con el cliente; el equipo prepara las preguntas, las maquetas, los documentos y los
 tickets. No necesitas saber programar. Este manual esta escrito para quien atiende la mesa, para
-quien dirige un area y para quien nunca abrio una herramienta tecnica. La parte tecnica (instalar
-y configurar) esta al final, separada, en el **Anexo tecnico**.
+quien dirige un area y para quien nunca abrio una herramienta tecnica. La instalacion se explica
+**paso a paso, desde cero**, al comienzo de la Parte 1
+([Antes de empezar](#antes-de-empezar-instalacion-paso-a-paso)). La parte tecnica de configuracion
+(para quien administra) esta al final, separada, en el **Anexo tecnico**.
 
 ---
 
 ## Indice
 
 **Parte 1 — Para todas las personas**
+- [Antes de empezar: instalacion paso a paso](#antes-de-empezar-instalacion-paso-a-paso)
 1. [En dos minutos: como se usa](#1-en-dos-minutos-como-se-usa)
 2. [Conoce al equipo](#2-conoce-al-equipo)
 3. [Las palabras que vas a escuchar](#3-las-palabras-que-vas-a-escuchar)
@@ -53,10 +63,167 @@ y configurar) esta al final, separada, en el **Anexo tecnico**.
 
 # Parte 1 — Para todas las personas
 
+## Antes de empezar: instalacion paso a paso
+
+Esta seccion es para quien nunca ha instalado nada parecido. Se hace **una sola vez por
+computador** y toma unos 15 minutos. Si alguien de tu area ya lo dejo instalado, salta al
+**Paso 8**.
+
+**Que es Claude Code y donde se usa.** Claude Code es el programa de Anthropic en el que
+trabaja este equipo. Es una conversacion: tu escribes en lenguaje normal y Claude responde y
+hace el trabajo sobre las carpetas de tu computador. La Mesa de Servicios es un **plugin**: un
+"paquete" que se le agrega a Claude Code y que trae a los 10 integrantes y sus comandos.
+Claude Code se puede usar en tres lugares:
+
+| Donde | Como se ve | Para quien |
+|---|---|---|
+| **La terminal** | Una ventana de texto con un cursor que parpadea. En Mac es la aplicacion "Terminal"; en Windows, "PowerShell" | La forma recomendada; es donde se hace la instalacion |
+| **VS Code** | Un panel de conversacion dentro del editor VS Code (extension "Claude Code") | Quien ya trabaja en VS Code |
+| **La aplicacion de escritorio de Claude** | La aplicacion Claude para Mac o Windows, en su seccion de Claude Code | Quien prefiere ventanas y botones |
+
+Los pasos de instalacion se hacen en la terminal. Despues, la mesa se usa igual desde
+cualquiera de los tres lugares. Si en VS Code o en la aplicacion no te aparecen los comandos
+`/mesa-servicios:...`, usa la terminal.
+
+**Paso 1 — Lo que necesitas tener.** Un computador Mac, Windows o Linux con internet, y una
+**cuenta de Claude con acceso a Claude Code** (normalmente la entrega tu empresa). No
+necesitas cuenta de GitHub para instalar: el catalogo de FAAST es publico. (Para **subir
+tickets** al tablero si hara falta acceso; lo configura el integrante setup mas adelante.)
+
+**Paso 2 — Abrir la terminal.**
+- **Mac:** presiona `Cmd + Espacio`, escribe `Terminal` y presiona Enter.
+- **Windows:** presiona la tecla Windows, escribe `PowerShell` y presiona Enter.
+
+*Que ves:* una ventana con una linea que termina en `%`, `$` o `>` y un cursor parpadeando.
+Ahi se pega cada instruccion de este manual y se presiona **Enter**.
+
+**Paso 3 — Instalar Claude Code.** Copia la linea que corresponde a tu computador, pegala en
+la terminal y presiona Enter:
+
+```bash
+# Mac o Linux
+curl -fsSL https://claude.ai/install.sh | bash
+```
+```powershell
+# Windows (PowerShell)
+irm https://claude.ai/install.ps1 | iex
+```
+
+*Que ves:* unas lineas de avance y, al final, un mensaje de que quedo instalado. Si tu
+empresa usa otro metodo, sigue la guia oficial de Anthropic (code.claude.com/docs). Cierra la
+terminal, abrela de nuevo y comprueba:
+
+```bash
+claude --version
+```
+*Que ves:* un numero de version, por ejemplo `2.1.301 (Claude Code)`. Si dice "command not
+found" o "no se reconoce", cierra y abre la terminal otra vez.
+
+**Paso 4 — Iniciar sesion.** Escribe:
+
+```bash
+claude
+```
+*Que ves la primera vez:* te pide elegir los colores de la pantalla, luego como iniciar
+sesion (elige tu cuenta de Claude); se abre tu navegador para que autorices el acceso y vuelves
+a la terminal. Queda la pantalla de bienvenida de Claude Code con un recuadro para escribir.
+Para salir de Claude Code escribe `/exit` y presiona Enter.
+
+**Paso 5 — Agregar el catalogo de FAAST (el "marketplace").** Es la tienda interna de donde
+salen los equipos de FAAST. Con Claude Code cerrado (en la terminal normal), pega:
+
+```bash
+claude plugin marketplace add faast-app/faast-claude-marketplace
+```
+*Que ves:* un mensaje de confirmacion de que el catalogo `faast-marketplace` quedo agregado.
+Se hace una sola vez por computador (si ya instalaste otro equipo de FAAST, este paso ya esta
+hecho).
+
+**Paso 6 — Instalar la Mesa de Servicios.**
+
+```bash
+claude plugin install mesa-servicios@faast-marketplace
+```
+*Que ves:* un mensaje de que el plugin `mesa-servicios` quedo instalado. Queda disponible en
+todas tus carpetas.
+
+> **Si prefieres hacerlo desde dentro de Claude Code** (con la conversacion abierta), los
+> pasos 5 y 6 se escriben asi: `/plugin marketplace add faast-app/faast-claude-marketplace`
+> y `/plugin install mesa-servicios@faast-marketplace`. El resultado es el mismo.
+
+**Paso 7 — Reiniciar y comprobar.** Si tenias Claude Code abierto, cierralo (`/exit`) y
+vuelvelo a abrir: el equipo se carga al iniciar la sesion. En VS Code, cierra y abre el panel
+de Claude Code. Para comprobar que quedo instalado:
+
+```bash
+claude plugin list
+```
+*Que ves:* la lista de plugins instalados. Debe aparecer algo asi:
+```
+❯ mesa-servicios@faast-marketplace
+  Version: 1.1.0
+  Scope: user
+  Status: ✔ enabled
+```
+"enabled" significa que esta activo.
+
+**Paso 8 — Abrir la carpeta de la mesa.** Claude Code trabaja sobre la carpeta en la que lo
+abres. La mesa necesita **una carpeta propia, fuera de cualquier repositorio de codigo** (por
+ejemplo `Mesa/mesa-faast` en tus documentos). Si aun no existe, crea una carpeta vacia; la
+primera vez el equipo te ayuda a prepararla.
+
+```bash
+cd ruta/de/la/carpeta/de/la/mesa
+claude
+```
+Para no escribir la ruta: escribe `cd ` (con un espacio), **arrastra la carpeta** desde el
+Finder o el Explorador de archivos a la terminal y presiona Enter. En VS Code: *Archivo →
+Abrir carpeta* y luego abre el panel de Claude Code.
+
+*Que ves:* la primera vez que abres una carpeta, Claude Code te pregunta si confias en sus
+archivos. Responde que si para que el equipo pueda trabajar en ella.
+
+**Paso 9 — Tu primer pedido.** En el recuadro para escribir, pon:
+
+```
+/mesa-servicios:start
+```
+Al escribir `/mesa-servicios:` aparece una lista con todos los comandos de la mesa; puedes
+elegir de ahi. *Que ves:* como la mesa aun no esta configurada, te ofrece configurarla. El
+integrante que prepara la oficina (**setup**) revisa que la computadora tenga lo necesario
+(transcribir audios, generar PDF y Word, el navegador de pruebas, el acceso al tablero) y te
+pide **una sola confirmacion** para instalar lo que falte; luego te pregunta los datos de la
+mesa (tablero, clientes, productos, ambientes). Durante el trabajo, Claude Code puede mostrarte
+en pantalla un aviso para **aprobar un permiso** (por ejemplo, ejecutar una instruccion): leelo
+y apruebalo si corresponde a lo que pediste.
+
+**Como actualizar cuando hay novedades.** Cuando se anuncie una version nueva de la mesa,
+escribe en la terminal (con Claude Code cerrado):
+
+```bash
+claude plugin marketplace update faast-marketplace
+claude plugin update mesa-servicios@faast-marketplace
+```
+Despues **cierra y vuelve a abrir Claude Code**: lo nuevo se carga al iniciar. Con `claude
+plugin list` confirmas que la version cambio.
+
+**Si algo falla durante la instalacion**
+- *"command not found" / "no se reconoce" al escribir `claude`:* cierra y abre la terminal; si
+  sigue, repite el Paso 3.
+- *No aparecen los comandos `/mesa-servicios:...`:* cierra y abre Claude Code (Paso 7) y revisa
+  con `claude plugin list` que diga "enabled".
+- *Error al instalar el plugin diciendo que no lo encuentra:* usa el nombre completo,
+  `mesa-servicios@faast-marketplace`, y verifica que hiciste el Paso 5.
+- Para lo demas, la seccion [Si algo no anda](#si-algo-no-anda) y el
+  [Anexo E](#e-solucion-de-problemas-tecnicos).
+
+---
+
 ## 1. En dos minutos: como se usa
 
-1. Alguien de tu area instala el plugin una vez (ver [Anexo A](#a-instalacion-y-actualizacion)).
-2. Abres Claude Code **en la carpeta de la mesa** (la primera vez te ayuda a crearla).
+1. Instalas el plugin una sola vez (ver [Antes de empezar](#antes-de-empezar-instalacion-paso-a-paso)).
+2. Abres Claude Code **en la carpeta de la mesa** (la primera vez te ayuda a crearla), como en
+   el Paso 8 de la instalacion.
 3. Escribes esto y cuentas lo que llego, como se lo contarias a un colega:
 
 ```
@@ -82,10 +249,48 @@ Ejemplos de lo que puedes escribir despues (o en la misma linea):
 - **Te presentan el plan antes de hacer nada** que cambie algo: antes de mandar preguntas,
   de maquetar, de armar scripts o de subir un ticket. Tu dices "adelante".
 
+> **Lo que espera tu respuesta no se pierde.** Si el equipo te dejo una pregunta o una
+> decision pendiente, queda anotada y te la recuerda al abrir la siguiente sesion, en una
+> lista corta, para que decidas como seguir.
+
 > Si solo quieres saber algo del negocio ("¿que productos usa ACME?"), pregunta directo con
 > `/mesa-servicios:brain query`. Es rapido y no mueve nada.
 
 ---
+
+
+**El recorrido de una solicitud** (en negro, lo que haces o decides tu):
+
+```mermaid
+flowchart LR
+    subgraph E1["1 · Recibir y entender"]
+      direction TB
+      E(["Llega algo del cliente"]) --> RC["<b>Recepcion</b><br/>lo guarda y lo ordena"] --> AN["<b>Analista</b><br/>prepara las preguntas"] --> TU{{"Llevas las preguntas<br/>y traes respuestas"}}
+    end
+    subgraph E2["2 · Resolver segun el tipo"]
+      direction TB
+      QN["<b>BUG</b> · QA de negocio<br/>lo reproduce grabando"]
+      PR["<b>PRY / CTZ</b> · Prototipador<br/>maqueta las pantallas"]
+      DB["<b>Datos</b> · DBA de mesa<br/>arma scripts, no los ejecuta"]
+      QN ~~~ PR ~~~ DB
+    end
+    subgraph E3["3 · Documentar y registrar"]
+      direction TB
+      RD["<b>Redactor</b><br/>documento PDF + Word"] --> RG["<b>Registrador</b><br/>ticket con evidencia"] --> DT(["Lo toma el Dev Team<br/>(cotizacion: tras aprobacion)"])
+    end
+    E1 --> E2 --> E3
+    classDef equipo fill:#f1f7e9,stroke:#71af26,stroke-width:2px,color:#151515
+    classDef tu fill:#151515,stroke:#151515,color:#ffffff
+    classDef opcional fill:#ffffff,stroke:#4a4f45,stroke-dasharray:4 3,color:#151515
+    classDef etapa fill:#fafbf8,stroke:#d5e8bd,color:#4a4f45
+    class RC,AN,QN,PR,DB,RD,RG equipo
+    class E,TU,DT tu
+    class E1,E2,E3 etapa
+```
+
+Si falta algo, el analista prepara otra ronda (maximo 3). Al cerrar, el curador guarda lo aprendido
+en la memoria del negocio.
+
 
 ## 2. Conoce al equipo
 
@@ -105,6 +310,11 @@ datos, su maquetador y su redactor. Estos son sus 10 integrantes.
 | 📚 **curador** (el bibliotecario) | Guarda lo que se aprendio de cada pedido en la memoria del negocio, para que el proximo se cierre con menos preguntas | Al cerrar cada pedido |
 | 🧰 **setup** (el que prepara la oficina) | Revisa que la computadora tenga todo e instala lo que falte, con tu permiso | Al empezar o cuando algo no esta instalado |
 
+> **Profesionales de su oficio:** cada integrante trabaja con el estandar de un profesional
+> experimentado de su area: sigue un metodo paso a paso, entrega en un formato fijo, revisa
+> su propio trabajo con una lista de control antes de entregarlo y evita los errores tipicos
+> de su oficio.
+
 > **Sobre el costo:** todos los integrantes usan el mismo "cerebro" intermedio por defecto. Si
 > algun pedido es especialmente complejo, se puede subir a uno mas potente para un integrante
 > (ver [Anexo B](#b-configuracion-de-la-mesa)).
@@ -115,6 +325,11 @@ datos, su maquetador y su redactor. Estos son sus 10 integrantes.
 
 | Palabra | Que significa |
 |---|---|
+| **Claude Code** | El programa donde conversas con el equipo. Se usa en la terminal, en VS Code o en la aplicacion de escritorio de Claude |
+| **Plugin** | Un paquete que se le agrega a Claude Code. La Mesa de Servicios es un plugin: trae a los integrantes y sus comandos |
+| **Comando** | Una instruccion que empieza con `/`, como `/mesa-servicios:start`. Le dice al equipo que tipo de trabajo quieres; despues del comando escribes tu pedido en palabras normales |
+| **Sesion** | Cada vez que abres Claude Code. "Reiniciar la sesion" es cerrarlo (`/exit`) y volver a abrirlo |
+| **ID** | El codigo con que se sigue una solicitud mientras se trabaja (`SOL-2026-03-11-1`). Al documentarla recibe su correlativo definitivo (`PRY-2026-014`) |
 | **Solicitud** | Cualquier cosa que llega de un cliente y que la mesa va a trabajar: un pedido, un reporte, una cotizacion |
 | **Fuente** | De donde salio la solicitud: un correo, un documento, la grabacion de una reunion, un chat. Se guarda tal cual, siempre |
 | **Ronda de preguntas** | Un grupo corto de preguntas (como mucho siete) que el analista prepara y tu llevas al cliente. Normalmente bastan una o dos rondas; nunca mas de tres |
@@ -128,7 +343,12 @@ datos, su maquetador y su redactor. Estos son sus 10 integrantes.
 | **Documento** | El escrito ejecutivo estandar que cierra la solicitud. Sale en PDF y en Word |
 | **Propuesta** | El documento para el cliente cuando hay que cotizar: que se hara, que no, plazos y condiciones. La valorizacion la pone comercial |
 | **Ticket** | La tarjeta en el tablero (GitHub o Azure DevOps) con todo adentro: resumen, decisiones, pendientes, documento y fotos |
-| **Scripts** | Instrucciones preparadas para corregir o revertir datos. La mesa los arma; **los ejecuta quien esta autorizado** |
+| **Base de datos** | Donde el sistema guarda su informacion (operaciones, clientes, estados) |
+| **Scripts** | Instrucciones preparadas para corregir o revertir datos en una base de datos. La mesa los arma; **los ejecuta quien esta autorizado** |
+| **Ambiente de pruebas / productivo** | Cada ambiente del sistema esta declarado como **de pruebas** (donde aprobar, girar o pagar son pruebas normales) o **productivo** (el que usan los clientes de verdad, donde todo cambio necesita autorizacion) |
+| **Pendiente** | Algo que quedo esperando tu respuesta o una decision tuya. Queda registrado y el equipo te lo recuerda al abrir cada sesion |
+| **Repositorio** | La carpeta donde vive el codigo de un sistema, con su historial de cambios. La mesa no trabaja dentro de ellos |
+| **Carpeta de la mesa** | Donde el equipo guarda su trabajo (solicitudes, fotos, documentos, flujos). Esta fuera de los repositorios de codigo, nunca adentro |
 | **Flujo propio** | Una operacion que la mesa repite (buscar operaciones de un cliente, revisar una bandeja) registrada paso a paso para hacerla siempre igual y con evidencia |
 | **faast-brain** | La memoria del negocio: que productos hay, como opera cada cliente, que reglas rigen, que palabras usa cada uno. La mesa la lee antes de preguntar |
 | **Plan primero** | La regla de que nadie manda preguntas, maqueta, arma scripts ni sube tickets sin mostrarte antes el plan y esperar tu "adelante" |
@@ -158,13 +378,26 @@ Estan siempre activas. No hay que pedirlas.
 9. **Una cotizacion no es trabajo** hasta que comercial la aprueba y queda registrado quien y cuando.
 10. **Numero y alcance en todo.** Cada solicitud lleva su correlativo y dice si es de un
     cliente o transversal.
-11. **Produccion, con permiso escrito.** Si un flujo propio o una reproduccion toca el ambiente
-    productivo, se registra quien lo autorizo y para que, y el equipo se detiene antes de cada
-    paso que cambie algo.
+11. **En pruebas no se frena; en produccion, con permiso escrito.** En un ambiente de pruebas,
+    aprobar, girar o pagar son acciones de prueba normales y el equipo las hace sin pedirte OK
+    una por una. Si un flujo propio o una reproduccion toca el ambiente productivo, se registra
+    quien lo autorizo, cuando y para que caso (en cada corrida), y el equipo se detiene antes
+    de cada paso que cambie algo. Cada ambiente esta declarado como de pruebas o productivo; si
+    aparece uno sin declarar, te preguntan una vez.
 12. **Lo que se aprende se guarda.** Al cerrar cada solicitud, la memoria del negocio crece y
     la siguiente se cierra con menos preguntas.
 13. **Sin secretos ni datos personales** en documentos, tickets ni memoria. Se habla de
     empresas y roles, no de personas.
+14. **Nada de la mesa se guarda dentro de los repositorios.** Solicitudes, fotos, documentos,
+    flujos y accesos viven en la carpeta de la mesa, fuera de cualquier repositorio de codigo.
+    Un control impide guardarla dentro de uno; si una mesa antigua la tiene adentro, el equipo
+    te avisa y te propone moverla.
+15. **Tus pedidos valen aunque los pases por la sesion o por el jefe de mesa.** Si escribes
+    "dile al de los datos que revise la operacion 10432", el integrante lo hace: no exige que
+    le escribas a el directamente. La unica excepcion: cuando Claude Code te pide aprobar un
+    permiso en pantalla, eso lo apruebas tu.
+16. **Los pendientes no se pierden.** Lo que espera tu respuesta queda registrado y aparece al
+    iniciar cada sesion hasta que lo resuelvas.
 
 ---
 
@@ -229,6 +462,10 @@ por rango de fechas y, de paso, el reporte semanal esta saliendo con totales rar
 ```
 /mesa-servicios:recibir correo-acme.eml --cliente ACME
 ```
+El archivo `.eml` es el correo guardado desde tu programa de correo (en Outlook: arrastra el
+correo a la carpeta de la mesa, o *Archivo → Guardar como*). Si no sabes guardarlo, copia el
+texto del correo y pegalo despues del comando. `--cliente ACME` le dice a la mesa de que
+cliente es (con el codigo corto del cliente).
 
 **Que hace el equipo:**
 1. El que recibe guarda el correo tal cual (nunca se modifica) y lo lee completo, incluido
@@ -272,7 +509,15 @@ Teams, o solo la grabacion.
 - Separa lo que se pidio de lo que se descarto en la misma reunion.
 
 **Recibes:** el registro de la solicitud con lo decidido, lo abierto y los ejemplos, listo para
-la ronda de preguntas.
+la ronda de preguntas. Por ejemplo:
+```
+SOL-2026-03-11-3 — Aceptar facturas sin orden de compra — ACME — tipo preliminar: proyecto
+  Decidido en la reunion: aplica solo a proveedores nacionales (lo confirmo la jefa de compras, min 12)
+  Ejemplo del cliente: "cuando el proveedor manda la factura sin orden de compra, hoy la rechazamos a mano"
+  Descartado en la misma reunion: el aviso por SMS
+  Abierto: ¿quien aprueba esas facturas? · tramo inaudible en el min 31 (monto tope) → pregunta para el cliente
+Siguiente: /mesa-servicios:analizar SOL-2026-03-11-3
+```
 
 > Si hay un tramo inaudible en algo importante, no se rellena: queda como pregunta para el cliente.
 
@@ -339,7 +584,8 @@ Siguiente: /mesa-servicios:prototipo SOL-2026-03-11-1
    mesa lo autorizan, y queda registrado.
 2. Hace **exactamente** los pasos del cliente, una vez, como un usuario. Graba todo: un video
    con las acciones marcadas y un capitulo por paso, una foto de cada paso con lo importante
-   resaltado, y los registros internos.
+   resaltado, y los registros internos. En el ambiente de pruebas, si los pasos del cliente
+   incluyen aprobar, confirmar o girar, los hace con normalidad: son parte de la prueba.
 3. Si se reproduce, lo repite una segunda vez para saber si pasa **siempre** o **a veces**.
 4. Si algo lo frena antes de llegar al punto (no entra, el ambiente no responde), **se
    detiene y lo reporta**; no insiste ni busca atajos.
@@ -351,6 +597,13 @@ Veredicto: REPRODUCIDO (siempre) en pruebas · perfil analista
 Pasos: 2 · Evidencia: 3 fotos, video 18 s, registros · Observacion: 1 llamada interna con respuesta inesperada
 Siguiente: /mesa-servicios:documento SOL-2026-03-11-2
 ```
+
+**Videos que se ven bien.** El video se graba **a tamaño real**: ocupa toda la pantalla y el
+texto se lee nitido, sin una imagen chica en una esquina. Lleva un **capitulo por paso** con un
+titulo que se entiende, y se entrega en **MP4**, que abre en cualquier equipo (Windows, Mac,
+Teams, el navegador). En el ticket aparece una **portada** del video que, al hacer clic, abre el
+video completo. El probador revisa cada video antes de entregarlo: **si salio chico o borroso,
+se vuelve a grabar**; un video que no se lee no cuenta como evidencia.
 
 **Importante:** el probador **nunca dice por que falla**. Solo demuestra que falla, con
 evidencia. La causa es del equipo de desarrollo. Si **no** se reproduce, no se inventa el bug:
@@ -385,6 +638,15 @@ documento, conviene que ACME **vea** la idea.
 ```
 Lo validado cierra preguntas y va al documento. Si cambia, se guarda una version nueva.
 
+**Recibes:**
+```
+Maqueta SOL-2026-03-11-1 — Filtro por fechas — v1
+Pantallas: 1) Operaciones con el filtro  2) Elegir el rango  3) Resultado con total de la seleccion
+Abrir: maqueta.html (en el navegador, se recorre haciendo clic) · 3 fotos listas para el documento
+Preguntas de validacion: 9 (3 por pantalla)
+Siguiente: mostrarla al cliente y registrar lo que decida con --validar
+```
+
 > La maqueta aplica a pedidos nuevos que cambian pantallas, proyectos y cotizaciones. **No** se
 > hace para errores (esos se documentan con evidencia) ni para pedidos sin cambio en pantalla.
 > Tampoco es el diseño final: eso lo hace el estudio de diseño del equipo de desarrollo cuando
@@ -396,6 +658,12 @@ Lo validado cierra preguntas y va al documento. Si cambia, se guarda una version
 
 **Situacion:** ACME quiere integrar el sistema con su banco y necesita saber "cuanto y cuando".
 
+**Que escribes:** lo mismo que para cualquier pedido, empezando por lo que mando el cliente:
+```
+/mesa-servicios:recibir correo-acme-banco.eml --cliente ACME
+```
+y luego los pasos que la mesa te va sugiriendo al final de cada respuesta ("Siguiente: ...").
+
 **Que pasa de distinto:** una cotizacion es un proyecto que **todavia no esta aprobado**. Por eso:
 1. Se cierra igual que un proyecto (Caso 3) y ademas se preguntan **entregables, supuestos,
    exclusiones, plazo esperado y quien decide**.
@@ -405,6 +673,14 @@ Lo validado cierra preguntas y va al documento. Si cambia, se guarda una version
    condiciones y proximos pasos). La **valorizacion queda en blanco** para que la complete
    comercial; la mesa no pone precios ni esfuerzos.
 4. El ticket se sube al tablero **en espera de aprobacion comercial**. No es trabajo todavia.
+
+**Recibes:**
+```
+CTZ-2026-007 — Integracion con el banco para pagos automaticos · Cliente ACME
+Documentos: CTZ-2026-007 requerimiento (PDF + Word) · Propuesta para el cliente (PDF + Word, valorizacion en blanco)
+Ticket #245 · columna "Pendiente aprobacion comercial" · maqueta de 4 pantallas adentro
+Siguiente: comercial completa la valorizacion y, si aprueba, /mesa-servicios:ticket aprobar CTZ-2026-007
+```
 
 **Cuando comercial aprueba:**
 ```
@@ -429,13 +705,21 @@ Si se descarta, queda cerrada con el motivo (y lo aprendido se guarda igual).
    que, quien autoriza), **mira los datos**: confirma que la operacion existe, en que estado
    esta de verdad y que depende de ella. **Solo mira**; nunca cambia nada.
 2. Te muestra el plan: que se tocaria, cuantos registros, riesgos y quien lo ejecutara. Espera tu OK.
-3. **Arma el paquete de scripts** con el formato que exige la casa (ordenado por motor, base y
-   tipo de operacion), de forma que se pueda ejecutar dos veces sin daño, con su verificacion
-   antes y despues y su reversa. Y un README en lenguaje claro: que hace, sobre que, riesgos y
-   **quien debe ejecutarlo**.
+3. **Arma el paquete de scripts** con el formato que exige la casa (ordenado por tipo de base de
+   datos, por base y por tipo de cambio), de forma que se pueda ejecutar dos veces sin daño, con
+   su verificacion antes y despues y su reversa (las instrucciones para deshacerlo). Y una nota
+   explicativa (README) en lenguaje claro: que hace, sobre que, riesgos y **quien debe
+   ejecutarlo**.
 
-**Recibes:** la carpeta del paquete y la indicacion de quien lo ejecuta. Si va a un ambiente
-formal, entra al pase del equipo de desarrollo, que lo revisa como cualquier otro.
+**Recibes:** la carpeta del paquete y la indicacion de quien lo ejecuta. Por ejemplo:
+```
+Paquete SOL-2026-03-12-4 — Revertir el giro de la operacion 10432 (no ejecutado)
+Estado hoy: Girada · Estado final esperado: Aprobada · Registros que cambian: 3
+Incluye: verificacion antes · cambio · verificacion despues · reversa · README
+Lo ejecuta: el equipo autorizado, por el pase del ambiente productivo
+```
+Si va a un ambiente formal, entra al pase del equipo de desarrollo, que lo revisa como
+cualquier otro.
 
 **Lo que nunca pasa:** la mesa **no ejecuta** scripts contra ninguna base de datos. Ni en
 pruebas, ni "solo para validar". Arma, verifica y entrega; ejecuta quien esta autorizado.
@@ -469,14 +753,23 @@ pantalla, que boton, que se ve) y deja el instructivo escrito.
 ```
 Te muestra el plan y, si es produccion, **registra quien lo autoriza y para que**. Luego
 verifica que esten dadas las condiciones (solo mirando), ejecuta los pasos grabando todo, y te
-entrega el resultado con la evidencia.
+entrega el resultado con la evidencia. Por ejemplo:
+```
+Flujo factoring/buscar-operaciones-cliente — ACME — produccion (consulta: solo mira)
+Autorizado por: jefe de mesa, 16/10/2026, revision semanal
+Resultado: 7 operaciones vencidas (2 con mas de 30 dias) · exportado a Excel
+Evidencia: video con capitulos por paso y 5 fotos · nada se modifico
+```
 
 **Dos clases de flujo:**
 - **Consulta** (solo mira: buscar, verificar, exportar): sin paradas, con evidencia de que
   solo se miro.
-- **Accion** (algo cambia por la pantalla: aprobar, reasignar): el equipo **se detiene antes de
-  cada paso que cambie algo** y espera tu OK en ese momento. En produccion, ademas, con la
-  autorizacion registrada.
+- **Accion** (algo cambia por la pantalla: aprobar, reasignar):
+  - **En un ambiente de pruebas**, las acciones se hacen sin frenar: ya pediste correr el flujo y
+    son pruebas normales.
+  - **En produccion**, cada corrida necesita su autorizacion registrada (quien, cuando, para que
+    caso; no vale "ya autorizado para todo"), y el equipo **se detiene antes de cada paso que
+    cambie algo** y espera tu OK en ese momento.
 
 > Dentro de un flujo, el de los datos solo **mira** (verifica antes y despues). Si el flujo
 > necesita cambiar datos, eso es un paquete de scripts (Caso 7) para quien esta autorizado.
@@ -502,7 +795,7 @@ tambien la Propuesta.
 ```
 El registrador te muestra titulo, etiquetas y columna, y con tu OK sube la tarjeta al tablero:
 titulo limpio, resumen, decisiones tomadas, pendientes, **fotos y video dentro** (no como
-enlace), el documento adjunto, y etiquetas completas (tipo, cliente o transversal, producto,
+enlace; el video aparece con su portada y abre en MP4), el documento adjunto, y etiquetas completas (tipo, cliente o transversal, producto,
 prioridad sugerida, de donde vino). Si ya existia un ticket parecido, no duplica: te avisa.
 
 **Recibes:**
@@ -513,7 +806,7 @@ Siguiente: el lider de producto lo prioriza; /mesa-servicios:brain ingest PRY-20
 ```
 
 Desde aqui lo toma el equipo de desarrollo (plugin **dev-team**): lider de producto, historias de
-usuario, construccion, pruebas y publicacion.
+usuario, construccion, pruebas y publicacion (ver el [manual del Dev Team](../dev-team/GUIDE.md)).
 
 ---
 
@@ -543,6 +836,13 @@ pregunta que mas costo responder" (para hacerla antes la proxima vez).
 /mesa-servicios:brain query ¿que productos usa ACME y como aprueban las operaciones?
 ```
 Responde solo con lo que esta guardado, diciendo de donde salio. Si no lo sabe, lo dice; no inventa.
+Por ejemplo:
+```
+ACME usa Factoring y Confirming (fuente: clientes/acme).
+Las operaciones sobre el monto tope las aprueba el comite de ACME; las demas, el supervisor
+(fuente: reglas/aprobaciones-acme, aprendido en PRY-2026-009).
+No hay registro de como aprueban en Confirming: conviene preguntarlo en la proxima ronda.
+```
 
 **Lo que nunca entra:** contraseñas, claves, ni datos personales de personas. Se habla de
 empresas y de roles. Si tienes la aplicacion gratuita **Obsidian**, puedes abrir la carpeta de la
@@ -558,7 +858,14 @@ memoria y ver el mapa de como se conecta todo.
 Te muestra, en 20 segundos: cuantas solicitudes hay en cada estado, **que esta esperando al
 cliente y hace cuanto** (para recordarle), que esta trabado y por que, que cotizaciones esperan
 aprobacion, y que esta listo para el siguiente paso (documentar, subir ticket, guardar en la
-memoria). No cambia nada; solo mira y sugiere.
+memoria). No cambia nada; solo mira y sugiere. Por ejemplo:
+```
+Mesa — 12 solicitudes abiertas
+Esperando al cliente: 4 (la mas antigua, SOL-2026-03-11-3 de ACME, hace 6 dias → recordarle)
+Trabadas: 1 (SOL-2026-03-14-2: el ambiente de pruebas no responde)
+Cotizaciones esperando aprobacion comercial: 2
+Listas para el siguiente paso: 3 para documentar · 1 para subir ticket · 1 para guardar en la memoria
+```
 
 ```
 /mesa-servicios:estado --esperando          # solo lo que espera respuesta del cliente
@@ -604,6 +911,22 @@ y nunca se reutiliza. Ademas, cada solicitud dice si es de un cliente o transver
 **¿La mesa se puede usar junto con el equipo de desarrollo?** Si. Usan carpetas distintas y la
 mesa deja el ticket justo donde el equipo de desarrollo empieza.
 
+**¿Puedo pedirle algo a un integrante a traves de la sesion?** Si. "Dile al probador que
+reproduzca la SOL-2026-03-11-2" funciona: la sesion le pasa tu pedido tal cual y el integrante
+lo toma como si se lo hubieras dicho a el. Lo unico que no se pasa asi es la aprobacion de un
+permiso que te pide Claude Code en pantalla: esa la das tu.
+
+**¿Por que en pruebas el equipo aprueba o gira sin preguntarme?** Porque en un ambiente de
+pruebas son acciones de prueba normales. En produccion es al reves: cada corrida lleva su
+autorizacion registrada y el equipo se detiene antes de cada paso que cambie algo.
+
+**Deje una pregunta del equipo sin responder. ¿Se pierde?** No. Queda como pendiente y aparece
+en la lista que el equipo te muestra al abrir la siguiente sesion.
+
+**¿Por que la carpeta de la mesa no esta en el repositorio?** Porque ahi no va. Solicitudes,
+fotos, documentos y accesos son trabajo de la mesa, no codigo. Viven fuera de los repositorios
+para que nada interno se publique por error.
+
 ## Si algo no anda
 
 - **"No puedo registrar tickets"** → falta acceso al tablero: `/mesa-servicios:setup tracker`.
@@ -613,6 +936,11 @@ mesa deja el ticket justo donde el equipo de desarrollo empieza.
   prueba: `/mesa-servicios:setup playwright`.
 - **"El de los datos no se conecta"** → revisa la conexion de solo lectura: `/mesa-servicios:setup db`.
 - **"Preguntas que el negocio ya sabia"** → la memoria esta desactualizada: `/mesa-servicios:brain ingest --pendientes`.
+- **"Un integrante dice que no puede guardar en esa carpeta"** → la carpeta de la mesa quedo
+  dentro de un repositorio; acepta la propuesta de moverla (ver [Anexo C](#c-la-carpeta-de-la-mesa)).
+- **"Claude Code me pide aprobar un permiso"** → es normal y lo apruebas tu en pantalla.
+- **"El video de la reproduccion se ve chico o borroso"** → pide que lo regraben; no cuenta
+  como evidencia.
 
 ---
 
@@ -620,18 +948,11 @@ mesa deja el ticket justo donde el equipo de desarrollo empieza.
 
 ## A. Instalacion y actualizacion
 
-```bash
-# 1. Agregar el marketplace (una sola vez)
-/plugin marketplace add faast-app/faast-claude-marketplace
-
-# 2. Instalar el plugin
-/plugin install mesa-servicios@faast-marketplace
-
-# 3. Actualizar cuando haya cambios publicados
-claude plugin marketplace update faast-marketplace
-claude plugin update mesa-servicios@faast-marketplace
-# → reiniciar la sesion de Claude Code despues de actualizar
-```
+Los comandos de instalacion, verificacion y actualizacion (marketplace `faast-marketplace`,
+plugin `mesa-servicios@faast-marketplace`, con su forma de terminal `claude plugin ...` y su
+forma dentro de la sesion `/plugin ...`) estan explicados paso a paso en
+[Antes de empezar: instalacion paso a paso](#antes-de-empezar-instalacion-paso-a-paso). Aqui
+solo va lo que necesita quien administra el entorno.
 
 **Requisitos** (el agente `setup` los valida e instala con una confirmacion): git · Node.js ≥ 18
 (navegador de pruebas; el servidor MCP de Playwright viene incluido) · `gh` (GitHub) o `az` (Azure
@@ -648,7 +969,8 @@ grandes, bases en red privada).
 
 ## B. Configuracion de la mesa
 
-Todo vive en `.mesa/config.json` (lo crea `setup` la primera vez):
+Todo vive en `.mesa/config.json`, en la carpeta de la mesa **fuera de cualquier repo git** (lo
+crea `setup` la primera vez):
 
 ```json
 {
@@ -663,8 +985,9 @@ Todo vive en `.mesa/config.json` (lo crea `setup` la primera vez):
   "productos": ["factoring", "confirming", "leasing", "cobranza", "backoffice"],
   "brain": { "path": "~/Repositorios/faast-brain", "remote": "faast-app/faast-brain" },
   "evidencia": { "repo": "faast-app/{repo-con-rama-evidence}" },
-  "ambientes": { "pruebas": { "url": "https://qa...", "cuentasEnv": ["MESA_QA_ANALISTA"] },
-                 "produccion": { "url": "https://...", "requiereAutorizacion": true } },
+  "ambientes": { "qa":         { "clase": "pruebas",    "url": "https://qa...", "cuentasEnv": ["MESA_QA_ANALISTA"] },
+                 "puente":     { "clase": "pruebas",    "url": "https://puente..." },
+                 "produccion": { "clase": "productivo", "url": "https://...", "requiereAutorizacion": true } },
   "fuentes": { "transcripcion": { "motor": "whisper", "modelo": "medium", "idioma": "es" }, "conectores": [] },
   "team": { "models": { "analista": "opus" } }
 }
@@ -678,18 +1001,43 @@ Todo vive en `.mesa/config.json` (lo crea `setup` la primera vez):
 | `productos[]` | Catalogo de productos (etiquetas y memoria) |
 | `brain.path` / `brain.remote` | Donde vive la memoria del negocio (`faast-brain`) |
 | `evidencia.repo` | Repo donde se publican fotos y documentos para verlos dentro del ticket (rama `evidence`) |
-| `ambientes.*` | URLs y nombres de las variables con las cuentas de prueba; produccion exige autorizacion |
+| `ambientes.{nombre}` | `clase` (`pruebas` / `productivo`), URL y nombres de las variables con las cuentas de prueba. En `pruebas` las acciones de negocio de prueba (aprobar, girar, pagar) son normales y no frenan; en `productivo` un flujo exige autorizacion registrada por corrida (`00-ANTES.md`) y parada antes de cada paso que escribe. La clase no se asume por el nombre: si falta, se pregunta UNA vez y se persiste; sin clase declarada el equipo no opera ahi |
 | `fuentes.transcripcion` | Motor y modelo de transcripcion local |
 | `team.models.{agente}` | Subir un integrante a un modelo mas potente solo en esta mesa (default `sonnet`) |
 
 **Secretos que nunca entran a git**: `.mesa/accesos.env` (cuentas de prueba), `.mesa/db-access.json`
 (conexiones de solo lectura), `.mesa/setup-status.json`, toda la carpeta `.mesa/evidencia/`, las
-carpetas `evidencia/` de cada solicitud y los archivos de audio/video de las fuentes.
+carpetas `evidencia/` de cada solicitud y los archivos de audio/video de las fuentes. Como `.mesa/`
+vive fuera de los repos, ninguno llega a un repo.
+
+**Registro personal de carpetas** (`~/.claude/mesa-servicios.config.json` → `proyectos`). Le dice
+al plugin, por usuario y sin tocar el repo, donde esta la carpeta de la mesa cuando abres la sesion
+dentro de un repo. La clave es la ruta de un repo o carpeta; el valor, la carpeta que contiene
+`.mesa/`. Gana el prefijo mas largo:
+
+```json
+{
+  "team": { "models": { "analista": "opus" } },
+  "proyectos": {
+    "~/Repositorios/faast-backlog":   "~/Mesa/mesa-faast",
+    "~/Repositorios/front-backoffice": "~/Mesa/mesa-faast"
+  }
+}
+```
 
 ## C. La carpeta de la mesa
 
 `.mesa/` es la memoria operativa de la mesa. Es independiente de `.coordination/` del plugin
-dev-team: pueden convivir.
+dev-team: pueden convivir. Vive en la carpeta de la mesa, **nunca dentro de un repositorio git**
+(el `setup` lo verifica con `git -C "<carpeta>" rev-parse --is-inside-work-tree`, que debe fallar).
+
+**Como se resuelve:** (1) el registro `~/.claude/mesa-servicios.config.json` → `proyectos` (ver
+Anexo B); (2) el puntero `.mesa-root`; (3) subir directorios buscando `.mesa/` con `config.json`,
+prefiriendo la que esta fuera de repos. **Protecciones:** un hook bloquea escribir en una `.mesa/`
+que este dentro de un repo, y al iniciar sesion el plugin agrega localmente `.mesa/`, `.mesa-root`,
+`.coordination/` y `.playwright-mcp/` a `.git/info/exclude` del repo abierto (nada se commitea). Si
+una mesa antigua quedo dentro de un repo, la sesion propone moverla (`mv`) y registrarla en
+`proyectos`; sacarla del historial del repo es un PR aparte, solo con OK.
 
 ```
 .mesa/
@@ -702,7 +1050,7 @@ dev-team: pueden convivir.
 ├── flujos-sql/{dominio}/{flujo}/  flujos de scripts reutilizables (regla global de formato)
 ├── evidencia/            corridas de flujos y staging del navegador — gitignored
 ├── handoffs/             notas entre integrantes
-├── metrics/              activity.jsonl (actividad automatica)
+├── metrics/              activity.jsonl (actividad automatica + esperando_usuario/respondido: los pendientes de cada sesion)
 ├── accesos.env           cuentas de prueba — NUNCA en git
 ├── db-access.json        conexiones de solo lectura — NUNCA en git
 └── setup-status.json     estado del entorno — NUNCA en git
@@ -736,3 +1084,6 @@ quedan fuera y la reversa en `reversa/` con el mismo formato. La mesa nunca ejec
 | El PDF sale sin acentos | Conversion con fuente incorrecta | `/mesa-servicios:setup documentos` (prueba real de conversion) |
 | La cuenta de base de datos puede escribir | Cuenta mal creada | Pedir una de solo lectura; el setup lo reporta como riesgo y no la usa para escribir |
 | Dos solicitudes con el mismo numero | Edicion manual de `correlativos.json` | No editar a mano; el redactor lo lleva de forma atomica |
+| Un hook bloquea escribir en `.mesa/` | La carpeta de la mesa esta dentro de un repo git | Moverla con `mv` a una carpeta fuera de repos, registrar `"proyectos": {"<ruta del repo>": "<carpeta que contiene .mesa>"}` en `~/.claude/mesa-servicios.config.json` y reiniciar la sesion. Sacarla del historial del repo es un PR aparte, solo con OK |
+| El equipo pregunta la clase de un ambiente | Falta `clase` en `ambientes.{nombre}` | Responder una vez (`pruebas` / `productivo`); queda guardada en `.mesa/config.json` |
+| El video sale chico en una esquina o con relleno gris | La traza se encendio antes que el video en esa sesion del navegador | Seguir la secuencia de la skill `evidencia-reproduccion` ("Video a tamaño real"); `normalizar_video.py` deja `.mp4` + portada; si responde `REPARADO` y es la prueba del bug, regrabar |

@@ -29,6 +29,13 @@
       "homepage": "https://github.com/faast-app/faast-claude-marketplace"
     },
     {
+      "name": "marketing",
+      "description": "Equipo de Marketing, Ventas y Publicidad con 8 agentes IA para vender un proyecto, una propuesta o una mejora: nunca una presentacion generica, sino el producto DESGLOSADO PARTE POR PARTE. Primero el mapa del producto con una ficha por parte (que es, problema y su costo, como funciona con pantallas reales, que gana el cliente con fuente, antes/despues, benchmark) aprobado por el usuario; luego las piezas: video keynote cinematografico con un capitulo por parte y clips por parte (HyperFrames), deck de propuesta comercial con estetica de lanzamiento, one-pager, panfletos y redes sobre la marca FAAST. Investiga mercado, competencia y tendencias con fuente y fecha. Nada inventado, producto real, aprobacion por pieza. Punto de entrada: /marketing:start.",
+      "category": "development",
+      "source": "./plugins/marketing",
+      "homepage": "https://github.com/faast-app/faast-claude-marketplace"
+    },
+    {
       "name": "dev-team",
       "description": "Equipo completo de desarrollo con 23 agentes IA: Product Owner (HUs en GitHub Projects o Azure DevOps), Arquitecto, equipo de Diseño (UX, UI, visual, motion, 3D, design engineer), Lead, Backend, Frontend, DBA, equipo QA (Playwright MCP incluido, evidencia visual), equipo de Ciberseguridad ofensiva (Cybersec Lead + pentester/appsec/cloudsec, pentest autorizado con RoE e informe PDF), Release Manager, Infra, Tech Writer y Setup. Soporta mono-repo y multi-repo, proyectos nuevos o existentes. Punto de entrada unico: /dev-team:start.",
       "category": "development",
