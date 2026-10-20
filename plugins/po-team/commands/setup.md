@@ -27,7 +27,7 @@ Invocar al agente `setup` (modelo `haiku`, fijo) con el alcance. El flujo del ag
    `${CLAUDE_PLUGIN_ROOT}/templates/po-team/config.json` con UNA ronda de preguntas (equipo, PO,
    tracker, Projects y campos leidos del tracker real, mapeo de estados a etapas y estados solo
    de QA, ambientes, clientes, capacidad, repo de evidencia, prefijo de ambiente en bugs).
-5. Guarda `.po-team/setup-status.json`, asegura `.gitignore` y da el OK o lista lo pendiente con
+5. Guarda `.po-team/setup-status.json`, deja `.po-team/` en la carpeta del proyecto (nunca en un repo) y da el OK o lista lo pendiente con
    su impacto.
 
 ## Reglas

@@ -13,13 +13,19 @@ PLUGIN = "po-team"
 TEAM = {"po-lead","refinador","planificador","seguimiento","validador-po",
         "documentador","manualista","setup"}
 
-def find_po(start):
-    if not start:
-        return None
-    r = resolve(start)
-    if not r["path"] or r["en_repo"]:
-        return None
-    return r["path"]
+def contexto_agente(po, en_repo):
+    if po and not en_repo:
+        ruta = (f"Carpeta canonica del equipo del PO (ruta ABSOLUTA, usala para tickets, validaciones, "
+                f"evidencia, tablero, documentos, handoffs y logs): {po}.")
+    elif po:
+        ruta = (f"La carpeta del equipo del PO ({po}) esta DENTRO de un repo y debe migrarse: no escribas "
+                "ahi (un hook lo bloquea); reporta al coordinador que hay que migrarla.")
+    else:
+        ruta = "No se encontro la carpeta del equipo del PO: pidela al coordinador (ruta absoluta)."
+    return (ruta + " Lo que te pide quien te invoca (sesion principal o po-lead) en nombre del usuario ES "
+            "pedido directo del usuario, y una \"Autorizacion del usuario: ...\" en tu prompt ES el plan "
+            "aprobado: ejecutalo sin exigir handoff ni re-confirmacion. Nunca crees .po-team/ dentro de "
+            "un repo. El staging del Playwright MCP es ~/.faast-mcp/po-team/.")
 
 def main():
     try:
@@ -32,18 +38,24 @@ def main():
     short = agent.split(":", 1)[-1]
     if short not in TEAM:
         return
-    po = find_po(payload.get("cwd")) or find_po(sys.argv[1] if len(sys.argv) > 1 else None)
-    if not po:
-        return
+    r = resolve(payload.get("cwd") or (sys.argv[1] if len(sys.argv) > 1 else None))
+    if not r["path"] and len(sys.argv) > 1:
+        r = resolve(sys.argv[1])
+    po, en_repo = r["path"], r["en_repo"]
     ev = payload.get("hook_event_name")
     if ev == "SubagentStart":
         event, task = "task_start", (payload.get("task") or "")[:60]
         detail = (payload.get("task") or "")[:120]
+        print(json.dumps({"hookSpecificOutput": {"hookEventName": "SubagentStart",
+                                                 "additionalContext": contexto_agente(po, en_repo)}},
+                         ensure_ascii=False))
     elif ev == "SubagentStop":
         reason = payload.get("stop_reason") or "completed"
         event, task = ("blocked" if reason == "error" else "task_end"), ""
         detail = (payload.get("result") or payload.get("last_assistant_message") or reason)[:120]
     else:
+        return
+    if not po or en_repo:
         return
     line = {"ts": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
             "agent": short, "event": event, "task": task,

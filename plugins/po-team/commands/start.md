@@ -17,7 +17,10 @@ flujo correcto. **Nunca responde "no entendi"**: si el pedido es ambiguo, ofrece
 mas probables con una linea cada una y, si no elige, recomienda la mas util.
 
 ## Paso 1 — Detectar contexto
-Buscar `.po-team/config.json` subiendo desde el directorio actual (hasta 8 niveles):
+Resolver la carpeta canonica con `python3 "${CLAUDE_PLUGIN_ROOT}/hooks/coord_root.py" "$PWD"`
+(registro `~/.claude/po-team.config.json`, puntero `.po-team-root` y subida de directorios,
+prefiriendo una `.po-team/` fuera de cualquier repo). Si el hook de sesion ya imprimio la ruta
+absoluta, usar esa:
 - **No existe** → po-team no esta configurado → Paso 2.
 - **Existe** → leerlo junto con el ultimo `.po-team/tablero/tablero-datos.json` (si existe) y el
   `.po-team/sprints/*.json` mas reciente → Paso 3.

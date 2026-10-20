@@ -47,13 +47,13 @@
     "diasAlertaSinMovimiento": 5
   },
   "ambientes": {
-    "desa":    { "nombre": "{{como lo llama el equipo, ej. Desa}}", "url": "", "cuentasEnv": [] },
-    "qa":      { "nombre": "{{ej. QA}}", "url": "", "cuentasEnv": [] },
+    "desa":    { "nombre": "{{como lo llama el equipo, ej. Desa}}", "clase": "pruebas", "url": "", "cuentasEnv": [] },
+    "qa":      { "nombre": "{{ej. QA}}", "clase": "pruebas", "url": "", "cuentasEnv": [] },
     "demo": [
-      { "clave": "demo-xx", "nombre": "{{Demo CO | Demo CL | Demo PE}}", "url": "", "cuentasEnv": [], "paseEnLote": false }
+      { "clave": "demo-xx", "nombre": "{{Demo CO | Demo CL | Demo PE}}", "clase": "pruebas", "url": "", "cuentasEnv": [], "paseEnLote": false }
     ],
     "preprod": [
-      { "clave": "preprod-{{cliente}}", "nombre": "{{Preprod Cliente}}", "cliente": "{{codigo cliente}}", "url": "", "cuentasEnv": [] }
+      { "clave": "preprod-{{cliente}}", "nombre": "{{Preprod Cliente}}", "cliente": "{{codigo cliente}}", "clase": "{{pruebas | productivo — se pregunta, nunca se presume}}", "url": "", "cuentasEnv": [] }
     ]
   },
   "clientes": [ { "codigo": "{{CODIGO}}", "nombre": "{{Nombre del cliente}}", "ambientes": ["{{demo-xx}}", "{{preprod-xx}}"] } ],
@@ -65,5 +65,6 @@
   "manuales": { "outputDir": ".po-team/manuales" },
   "tablero": { "outputDir": ".po-team/tablero", "artifactUrl": "", "artifactUrls": {}, "informe": "diario", "plantilla": "generica", "ultimaOpcion": "" },
   "validacion": { "artifact": false, "artifactUrls": {} },
+  "brain": { "path": "", "nota": "opcional: ruta local del repo faast-brain de la Mesa; solo LECTURA (glosario, productos, clientes, reglas) antes de preguntar" },
   "team": { "models": {} }
 }

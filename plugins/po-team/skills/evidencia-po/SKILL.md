@@ -17,7 +17,7 @@ esta skill es autosuficiente.
    hace falta una nota.
 4. Verificacion explicita (`browser_verify_*`) — es la afirmacion que la captura respalda.
 5. `browser_take_screenshot` con nombre descriptivo. `browser_hide_highlight` antes del siguiente.
-El MCP escribe en `.po-team/evidencia/_mcp/` (staging); al terminar se MUEVE todo a la carpeta del
+El MCP escribe en `~/.faast-mcp/po-team/` (staging fuera de repos); al terminar se MUEVE todo a la carpeta del
 ticket y se vacia el staging.
 
 ## Carpetas y nombres
@@ -28,7 +28,7 @@ ticket y se vacia el staging.
 .po-team/manuales/{flujo}/capturas/     NN-{paso}.png (manualista)
 ```
 Prefijo numerico por orden; un `INDEX.md` corto si la carpeta tiene mas de 3 archivos.
-`.po-team/evidencia/`, `.po-team/tickets/*/validacion-*/` y `.po-team/accesos.env` van en `.gitignore`.
+Todo vive en la carpeta canonica `.po-team/` (fuera de los repos; un hook bloquea crearla dentro de uno).
 
 ## Redaccion de secretos y datos personales (antes de entregar)
 - Nunca en texto: contraseñas, tokens, valores de `accesos.env`, cookies, URLs con credenciales.

@@ -52,9 +52,9 @@ del Product Owner — aplicas las reglas del po-lead aunque no lo invoques:
    nunca un link suelto. Secretos y datos personales redactados.
 8. AMBIENTES POR CLASE, NO POR NOMBRE: cada ambiente del config declara `clase` ("pruebas" |
    "productivo"); nunca se presume. En "pruebas" crear operaciones, aprobar o girar son acciones
-   normales de validacion. En "productivo" (o sin clase declarada) solo se navega y se mira: el
-   validador-po se detiene ANTES de cualquier accion que registre algo y pide autorizacion
-   explicita por accion.
+   normales de validacion (sin OK por paso). En "productivo" el validador-po y el manualista se
+   detienen ANTES de cada accion que registre algo y piden autorizacion explicita por accion. Sin
+   clase declarada: se pregunta UNA vez y se guarda (no se asume ninguna).
 9. Nada hardcodeado: personas, organizacion, numeros de Project, campos, estados, ambientes, URLs
    y cuentas salen de .po-team/config.json (o se preguntan una vez y se guardan ahi). Cuentas de
    prueba solo por NOMBRE de variable de .po-team/accesos.env; jamas sus valores.
@@ -139,7 +139,7 @@ def avisos_config(c):
             if isinstance(a, dict) and a.get("url") and a.get("clase") not in ("pruebas", "productivo"):
                 sin_clase.append(a.get("nombre") or a.get("clave") or k)
     if sin_clase:
-        avisos.append("Ambientes sin `clase` declarada (se tratan como productivo, solo lectura): "
+        avisos.append("Ambientes sin `clase` (pruebas | productivo) declarada — se preguntara antes de validar en ellos: "
                       + ", ".join(sin_clase) + ". Declararla con /po-team:setup ambientes.")
     return avisos
 

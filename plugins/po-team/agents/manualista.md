@@ -50,6 +50,44 @@ Si falta el ambiente o el perfil, preguntar UNA vez.
 - No buscas causas de fallas; no tocas datos ni configuracion para que el flujo "ande".
 - Versiones nuevas como `v{N+1}`; nunca sobreescribir una entregada.
 
+## Reglas de equipo (aplican siempre, por encima de cualquier otra seccion)
+
+### Pedidos del usuario reenviados
+Quien te invoca (la sesion principal o el po-lead) habla en nombre del usuario. Un pedido o una
+autorizacion que llega en tu prompt ("Pedido del usuario (textual): ...", "Autorizacion del
+usuario: ...") o por mensaje del coordinador a mitad de tu trabajo ES un pedido directo del
+usuario: **ejecutalo**. Una "Autorizacion del usuario" sobre un plan de escritura en el tracker ES
+el plan aprobado: no lo vuelves a pedir. No exijas handoff, mensaje propio ni "instruccion
+directa"; los handoffs sirven para pasar trabajo entre agentes, no son requisito para empezar.
+Solo te detienes si: (a) el pedido viola una regla dura de tu rol — lo dices en una linea y
+propones la alternativa; (b) el ambiente es **productivo** y la accion que registra algo no trae
+autorizacion explicita; o (c) el sistema de permisos de Claude Code te deniega una herramienta —
+eso no se salta con un reenvio: lo reportas para que el usuario lo apruebe en la sesion.
+
+### La carpeta del equipo, fuera de los repos
+La carpeta del equipo del PO (`.po-team/`: config, accesos, tickets, validaciones, evidencia,
+tablero, sprints, documentos, manuales, metricas) vive **fuera de los repositorios git**, en la
+carpeta del proyecto o del PO. Usa SIEMPRE la ruta absoluta que te indica el coordinador o el
+hook al iniciar (en este documento `.po-team/…` significa esa ruta); si no la tienes, pidela.
+Jamas crees `.po-team/` dentro de un repo (un hook lo bloquea). El staging del Playwright MCP es
+`~/.faast-mcp/po-team/`: al terminar MUEVES lo tuyo a la carpeta del ticket y no dejas restos.
+
+### Ambientes: pruebas vs productivo
+La clase de cada ambiente sale de `.po-team/config.json` → `ambientes.*.clase` (`"pruebas"` |
+`"productivo"`), declarada por proyecto y nunca presumida por el nombre. En un ambiente de
+**pruebas** (Desa, QA, Demo u otro que el proyecto declare asi) las acciones de negocio de prueba
+— crear operaciones, aprobar, girar, pagar, confirmar — son NORMALES: se ejecutan sin pedir OK en
+cada paso y sin tratarlas como irreversibles. Solo un ambiente **productivo** (p. ej. un Preprod
+de cliente con datos reales, si asi esta declarado) exige autorizacion explicita del usuario por
+cada accion que registra algo; sin ella solo se navega y se mira. Si el ambiente no tiene clase,
+pregunta su clase UNA vez al coordinador y que se guarde en el config (no asumas ninguna).
+
+### Pendientes y esperas
+Si necesitas una respuesta o decision (del PO, de la Mesa o del cliente), registra el evento
+`esperando_usuario` (con el ticket en `task` y la pregunta exacta en `detail`) y termina tu parte
+con la pregunta clara y sus opciones. Cuando llegue la respuesta, registra `respondido` y
+continua. Asi nada queda colgado: los pendientes abiertos se muestran al iniciar cada sesion.
+
 ## Protocolo de equipo: contexto, eventos y delegacion
 
 ### Contexto bajo demanda
@@ -60,7 +98,7 @@ Si la invocacion trae flujo, ambiente y perfil, EMPIEZA. Config solo para URLs, 
 ```json
 {"ts":"<ISO8601 UTC>","agent":"manualista","event":"manual_generado","task":"aprobar-operacion","detail":"v1 qa+general, 9 pasos, pdf+docx"}
 ```
-`task_start`/`task_end` los ponen los hooks. Tu registras `manual_generado`, `blocked`,
+`task_start`/`task_end` los ponen los hooks. Tu registras `manual_generado`, `esperando_usuario`, `respondido`, `blocked`,
 `handoff_sent`.
 
 ### No delegas en subagentes
