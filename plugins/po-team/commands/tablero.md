@@ -1,6 +1,6 @@
 ---
-description: Si no le dices cual, te pregunta que quieres - tablero generico, tablero Organizacion PO, informe de validaciones del sprint, o crear un backlog nuevo en GitHub. Para los tableros, el seguimiento lee los estados reales del GitHub Project (o Azure DevOps), ubica cada ticket en su etapa del ciclo de pase FaaST, calcula el avance por puntos por sprint, lista los cambios desde la revision anterior y los riesgos, redacta el informe diario o semanal en lenguaje de negocio y regenera el dashboard HTML; si la sesion tiene la herramienta Artifact lo publica o actualiza como artifact. Los tableros son solo lectura sobre el tracker; crear el backlog (GitHub Project con el ciclo FaaST, puntos, sprint y fechas de pase) escribe en GitHub y va con plan y OK. Uso - /po-team:tablero [generica|organizacion|validaciones|crear-backlog] [diario|semanal] [--sprint N] [--publicar] [--sin-html]
-argument-hint: '[generica | organizacion | validaciones | crear-backlog] [diario | semanal] [--sprint N] [--publicar] [--sin-html]'
+description: Si no le dices cual, te pregunta que quieres - tablero generico, tablero Organizacion PO, informe de validaciones del sprint, o crear un backlog nuevo en GitHub. Para los tableros, el seguimiento lee los estados reales del GitHub Project (o Azure DevOps), ubica cada ticket en su etapa del ciclo de pase FaaST, calcula el avance por puntos por sprint, lista los cambios desde la revision anterior y los riesgos, redacta el informe diario o semanal en lenguaje de negocio y regenera el dashboard HTML; si la sesion tiene la herramienta Artifact lo publica o actualiza como artifact. Los tableros son solo lectura sobre el tracker; crear el backlog (GitHub Project con el ciclo FaaST, puntos, sprint y fechas de pase, skill backlog-github - crear, agregar, verificar, espejo) escribe en GitHub y va con plan y OK. Uso - /po-team:tablero [generica|organizacion|validaciones|crear-backlog [agregar|verificar [--corregir]|espejo]] [diario|semanal] [--sprint N] [--publicar] [--sin-html]
+argument-hint: '[generica | organizacion | validaciones | crear-backlog [agregar | verificar [--corregir] | espejo]] [diario | semanal] [--sprint N] [--publicar] [--sin-html]'
 ---
 
 > **Ejecucion INLINE obligatoria:** este es un COMANDO, no un agente. Ejecuta su
@@ -26,7 +26,7 @@ numerada), marcando como recomendada la ultima elegida (`tablero.ultimaOpcion`) 
 | 1 | **Tablero generico** | KPIs, stepper por sprint, chips por etapa, fechas, cambios y riesgos | Paso 1 |
 | 2 | **Organizacion PO** | KPIs, cambios desde la revision anterior, tarjeta por sprint con anillo de avance y chips con el estado del tablero, fechas comprometidas y lo que pide atencion | Paso 1 |
 | 3 | **Validaciones del sprint** | Pagina con cada ticket validado: casos, evidencia, bloqueos, decisiones y bugs | Paso V |
-| 4 | **Crear un backlog en GitHub** | Un GitHub Project nuevo con el ciclo FaaST, puntos, sprint y fechas de pase, listo para usar | Paso B |
+| 4 | **Crear un backlog en GitHub** | Un GitHub Project con el ciclo FaaST, puntos, sprint y fechas de pase, listo para usar (o completar / verificar uno existente: `crear-backlog agregar`, `crear-backlog verificar`) | Paso B |
 
 Si el config todavia no tiene ningun Project (`tracker.github.projects` vacio o con numero 0), decir
 que las opciones 1-3 necesitan un tablero y recomendar la 4. Guardar la eleccion en
@@ -77,46 +77,69 @@ Si hay algo accionable, sugerir el comando exacto, sin ejecutarlo:
    cuentas del ambiente; avisar la duracion, ~10-20 min por ticket) y, con el OK, seguir ese comando.
 
 ## Paso B — Crear un backlog en GitHub (opcion 4) — escribe en GitHub: plan + OK
-Requiere `gh` con el scope `project` (si falta: `gh auth refresh -s project`, o `/po-team:setup tracker`).
-Con Azure DevOps esta opcion no aplica: decir que el backlog se crea en Boards y ofrecer
-`/po-team:setup tracker` para conectarlo.
+Cargar la skill `backlog-github` (reglas duras, spec, limites de la API). Todo lo hace su script
+idempotente; nunca se arman campos ni opciones con comandos `gh` sueltos (reemplazar las opciones
+del Status sin sus ids borra el estado de todos los items):
 
-1. **Preguntar UNA vez** lo que no este en el config: organizacion (`tracker.github.org`), nombre del
-   backlog (sugerir "Backlog {equipo}"), repos que se vinculan (`tracker.github.repos`), duracion
-   del sprint (por defecto 2 semanas; la iteracion de GitHub se mide en dias corridos, asi que 10 dias
-   habiles de `capacidad.duracionSprintDias` = 14) y fecha de inicio del primer sprint (un lunes), y si se agregan los issues abiertos de esos repos.
-2. **Plan** (mostrar y esperar el OK; nada se crea antes):
-   - Project nuevo `{nombre}` en `{org}`: `gh project create --owner {org} --title "{nombre}" --format json`.
-   - Campo **Status** con las opciones del ciclo, en orden: los estados de `ciclo.etapas[].estados`,
-     `ciclo.estadosObservado` y `ciclo.estadosBloqueado` del config; si el config aun tiene los
-     valores de ejemplo, proponer: No iniciado · En desarrollo · Desarrollo terminado · En QA ·
-     Validado por QA · Pase a Demo · En validacion · Observado · Bloqueado · VB cliente. Se cambian
-     las opciones del Status que trae el Project con `gh api graphql` (mutacion
-     `updateProjectV2Field` con `singleSelectOptions`, cada opcion con nombre, color y una
-     descripcion corta de negocio).
-   - Campo **Puntos** (numero): `gh project field-create {n} --owner {org} --name Puntos --data-type NUMBER`.
-   - Campo **Sprint** (iteracion de `{duracion}` dias corridos desde `{inicio}`): `gh api graphql`
-     mutacion `createProjectV2Field` con `dataType: ITERATION` e `iterationConfiguration {startDate, duration}`; si la cuenta no lo permite, campo de seleccion
-     "Sprint" con Sprint 1..4 y avisarlo.
-   - Campos de fecha **Fecha Demo**, **Fecha Preprod**, **Fecha VB cliente**
-     (`--data-type DATE`).
-   - Vincular los repos: `gh project link {n} --owner {org} --repo {org}/{repo}`.
-   - Opcional, si lo pidio: agregar los issues abiertos con `gh project item-add` (decir cuantos son
-     antes; mas de ~200 pedir confirmacion aparte). Sus estados quedan en el primero del ciclo
-     hasta que alguien los mueva.
-3. **Ejecutar** en ese orden; si un paso falla, detenerse, decir que quedo creado y que no, sin
-   reintentar a ciegas.
-4. **Guardar en el config** (escritura local): el Project en `tracker.github.projects` (alias,
-   numero, titulo, campos `estado: Status`, `puntos: Puntos`, `sprint: Sprint`, `fechaDemo`,
-   `fechaPreprod`, `fechaVB`), `projectDefault`, `sprintVia: iteration` y el mapeo
-   `ciclo.etapas[].estados` con los nombres reales de las opciones creadas.
-5. **Entregar**: enlace al Project y lo que falta a mano (GitHub no permite crear vistas por API):
-   crear la vista **Tablero** agrupada por Status y, si se quiere, una vista **Sprint actual**
-   filtrada por la iteracion en curso. Sugerir `/po-team:refinar` para cargar las primeras HUs y
-   luego `/po-team:tablero` (opcion 1 o 2).
+```bash
+S="${CLAUDE_PLUGIN_ROOT}/skills/backlog-github/scripts/project_backlog.py"
+```
 
-Nunca se borra ni renombra un Project existente; si ya hay uno con el mismo nombre en la org,
-avisar y preguntar si se usa ese (solo se registra en el config) o se crea otro con otro nombre.
+Formas de uso:
+- `crear-backlog` — Project nuevo (o reutilizar uno existente si el usuario lo decide).
+- `crear-backlog agregar` — completar un Project que ya existe: ciclo, campos, vistas, epicas o HUs que falten.
+- `crear-backlog verificar [--corregir]` — revisar la salud del Project (y arreglar lo corregible).
+- `crear-backlog espejo` — regenerar `.po-team/backlog.md` (local, sin OK: no toca GitHub).
+
+Con Azure DevOps (`tracker.provider: "azure"`) esta opcion no aplica: decir que el backlog se crea en
+Boards y ofrecer `/po-team:setup tracker`. Requiere `gh` con el scope `project` (`gh auth status`; si
+falta, el usuario corre `gh auth refresh -s project` o `/po-team:setup tracker`; no se hace auth desde
+el agente). Si falta `gh`, se puede igual mostrar el plan con `--dry-run --offline`.
+
+1. **Preguntar UNA vez, todo junto,** solo lo que no este en el config: organizacion
+   (`tracker.github.org`), nombre exacto del backlog (sugerir "Backlog {equipo}"), repo donde viven
+   las HUs (`repoDefault`) y repos que se vinculan (`repos`), fecha de inicio del primer sprint (un
+   lunes), duracion (por defecto 14 dias corridos = 10 habiles de `capacidad.duracionSprintDias`),
+   cuantos sprints crear (por defecto 4) y si se agregan los issues abiertos de esos repos. En
+   `agregar`, partir del spec guardado (`.po-team/project-state/<nombre>.spec.json` o la clave `spec`
+   del estado) y sumar solo lo nuevo.
+2. **Generar el spec** (formato en la skill; ejemplo en
+   `${CLAUDE_PLUGIN_ROOT}/skills/backlog-github/assets/spec-ejemplo.json`) y guardarlo fuera de todo
+   repo en `.po-team/project-state/<nombre>.spec.json`. El Status sale de `ciclo.etapas[].estados` +
+   `estadosObservado` + `estadosBloqueado`; si el config aun tiene `{{...}}`, el ciclo FaaST por
+   defecto (No iniciado · En desarrollo · Desarrollo terminado · En QA · Validado por QA · Pase a Demo ·
+   En validacion · Observado · Bloqueado · VB cliente). HUs o epicas en el spec solo si el usuario las
+   trae ya redactadas en lenguaje de negocio (si no, despues con `/po-team:refinar`).
+3. **Plan en modo prueba**: `python3 "$S" crear SPEC --dry-run` (`agregar SPEC --dry-run` en
+   `agregar`; `--offline` si aun no hay acceso a GitHub). Mostrar al usuario: Project a crear o
+   reutilizar, repos a vincular, opciones del Status (renombres conservando id, opciones nuevas,
+   opciones que se conservan), campos Puntos / Sprint / Prioridad / fechas, sprints con sus fechas,
+   vistas, items y advertencias. Si avisa jerga tecnica o HUs sin Dado / Cuando / Entonces, corregir el
+   spec y volver a mostrar el plan.
+   - **Si el plan dice `[REUTILIZAR] Project` en `crear`**: ya existe uno con ese nombre. Preguntar si
+     se usa ese (se ejecuta con `--reutilizar`; solo se completa, nada se borra) o se elige otro nombre.
+     Nunca se borra ni se renombra un Project existente.
+4. **Esperar el OK explicito** ("¿Lo creo en GitHub?"). Sin un si claro, no se escribe nada. Si el plan
+   muestra mas de 200 issues abiertos por agregar, pedir una confirmacion aparte (`--masivo`).
+5. **Ejecutar**: `python3 "$S" crear SPEC` (o `--reutilizar` / `agregar SPEC`). Si se corta (rate limit,
+   red), re-ejecutar el mismo comando: reanuda sin duplicar. Si la API rechaza el campo de iteracion,
+   el script crea Sprint como seleccion simple y lo avisa.
+6. **Registro** (lo hace el script, escritura atomica local que conserva el resto del config):
+   `tracker.github.projects[]` (alias, numero, titulo, campos `estado`, `puntos`, `sprint`, `prioridad`,
+   `fechaDemo`, `fechaPreprod`, `fechaVB`), `projectDefault`, `sprintVia` (`iteration` / `select` /
+   `milestone`), `ciclo.etapas[].estados` con los nombres reales de las opciones y el espejo
+   `.po-team/backlog.md`. Confirmarlo leyendo el config.
+7. **Entregar**: enlace al Project, que se creo y que se reutilizo, `sprintVia`, avisos del script y lo
+   que queda a mano: la API crea las vistas **Tablero**, **Sprint actual** (filtro `sprint:@current`) y
+   **Backlog** (filtro `no:sprint`), pero el agrupamiento y el orden de cada vista se fijan en la
+   interfaz (confirmar que el Tablero usa Status como columnas); con Sprint de seleccion, el filtro del
+   sprint en curso tambien es manual; los workflows del Project se configuran en la interfaz. Sugerir
+   `/po-team:refinar` para cargar las primeras HUs y luego `/po-team:tablero` (opcion 1 o 2).
+
+`verificar`: `python3 "$S" verificar SPEC` (solo lectura) y mostrar los hallazgos; con el OK del usuario,
+`python3 "$S" verificar SPEC --corregir` (agrega opciones o campos faltantes, convierte borradores en
+issues, llena Status vacios, enlaza sub-issues; nunca borra ni pisa valores). Sin spec guardado, armar
+uno minimo con `project` (org y repo salen del config).
 
 ## Reglas
 - Datos reales; lo que falta se muestra como faltante, nunca se estima a ojo.
