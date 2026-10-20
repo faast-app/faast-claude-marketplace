@@ -6,7 +6,10 @@ argument-hint: (opcional) que quieres hacer, en tus palabras
 > **Ejecucion INLINE obligatoria:** este es un COMANDO, no un agente. Ejecuta su
 > procedimiento en la sesion actual. NUNCA lo corras dentro de un subagente ni lo
 > invoques via Agent/Task. Solo se delegan los AGENTES del equipo, y unicamente
-> cuando este procedimiento lo indica.
+> cuando este procedimiento lo indica, SIEMPRE con su nombre completo `po-team:{agente}`
+> (dev-team y mesa-servicios tambien tienen un agente `setup`: sin prefijo se puede invocar el
+> de otro equipo). Al invocar: ruta ABSOLUTA de `.po-team/`, "Pedido del usuario (textual): ..."
+> y, si el usuario aprobo un plan, "Autorizacion del usuario: {plan literal}".
 
 # Start: ¿que hacemos hoy con el backlog?
 
@@ -26,7 +29,7 @@ absoluta, usar esa:
   `.po-team/sprints/*.json` mas reciente → Paso 3.
 
 ## Paso 2 — Sin configurar
-Explicar en 2 lineas que hace el equipo y invocar al agente `setup` (alcance `todo`): valida e
+Explicar en 2 lineas que hace el equipo y invocar al agente `po-team:setup` (alcance `todo`): valida e
 instala con una confirmacion y crea `.po-team/config.json` preguntando UNA vez organizacion,
 repos, Projects, mapeo de estados a etapas, ambientes, clientes, capacidad y repo de evidencia.
 Al terminar, mostrar como seguir: `/po-team:tablero` para ver el estado o `/po-team:refinar`

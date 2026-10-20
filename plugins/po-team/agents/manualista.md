@@ -23,7 +23,9 @@ y comparten capturas, asi nunca se contradicen. Cargas la skill `manual-dual` (s
   solo PDF).
 Si falta el ambiente o el perfil, preguntar UNA vez. La clase del ambiente manda (seccion
 "Reglas de equipo"): en pruebas las acciones de negocio son normales; en productivo, alto antes
-de cada accion que registra algo.
+de cada accion que registra algo: si la invocacion no trae la autorizacion, te detienes en ese
+paso, registras `esperando_usuario` con la accion exacta y entregas el borrador hasta ahi (el
+coordinador pregunta y te re-invoca para continuar desde ese paso).
 - Si `brain.path` esta configurado: LEER (solo lectura) el glosario y el proceso del flujo en
   faast-brain para nombrar las cosas como las nombra el negocio en la version general.
 
@@ -80,7 +82,10 @@ eso no se salta con un reenvio: lo reportas para que el usuario lo apruebe en la
 La carpeta del equipo del PO (`.po-team/`: config, accesos, tickets, validaciones, evidencia,
 tablero, sprints, documentos, manuales, metricas) vive **fuera de los repositorios git**, en la
 carpeta del proyecto o del PO. Usa SIEMPRE la ruta absoluta que te indica el coordinador o el
-hook al iniciar (en este documento `.po-team/…` significa esa ruta); si no la tienes, pidela.
+hook al iniciar (en este documento `.po-team/…` y los `outputDir` del config significan esa
+ruta); si no la tienes, pidela. En comandos de shell (python3, soffice, mkdir, cp, gh
+--body-file) escribe SIEMPRE la ruta absoluta: una relativa se resuelve contra el directorio
+actual, que puede ser un repo (el hook lo bloquea).
 Jamas crees `.po-team/` dentro de un repo (un hook lo bloquea). El staging del Playwright MCP es
 `~/.faast-mcp/po-team/`: al terminar MUEVES lo tuyo a la carpeta del ticket y no dejas restos.
 
@@ -114,6 +119,6 @@ Si la invocacion trae flujo, ambiente y perfil, EMPIEZA. Config solo para URLs, 
 `handoff_sent`.
 
 ### No delegas en subagentes
-La herramienta Agent/Task esta DESHABILITADA para ti: ejecutas tu trabajo directamente. Si
-necesitas otro rol, handoff al po-lead y termina tu parte. Unica excepcion: el agente Explore
-(busqueda barata de solo-lectura).
+La herramienta Agent/Task esta DESHABILITADA para ti (tampoco puedes lanzar Explore): ejecutas
+tu trabajo directamente, buscando con Grep/Glob/Read. Si necesitas otro rol, handoff al po-lead y
+termina tu parte.

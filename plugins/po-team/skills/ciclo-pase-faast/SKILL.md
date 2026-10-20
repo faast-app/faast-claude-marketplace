@@ -31,6 +31,7 @@ valor concreto.
   asigna. El VB PO es otra cosa y se registra con su etiqueta (`tracker.etiquetas.vbPO`) y un
   comentario con evidencia.
 - **Cerrar issues**: solo si `tracker.reglas.cerrarIssues` es `true` y el usuario lo confirma.
+  Mover a un estado de `tracker.reglas.estadosFinales` (Done, Cerrado) cuenta como cerrar.
   Por defecto, nunca se cierra: el VB cliente se registra con etiqueta/estado y comentario.
 - **Observado** (en cualquier etapa): el ticket vuelve a Desarrollo. Si la observacion esta
   dentro del alcance de la HU → comentario en el MISMO ticket con evidencia y el estado
@@ -50,7 +51,7 @@ ambientes.
 ## Fechas comprometidas (por sprint)
 El planificador fija, por sprint: fecha de pase a Demo (por pais si difiere), fecha de Preprod
 por cliente (si aplica) y fecha objetivo de VB cliente. Viven en
-`.po-team/sprints/{sprint}.json` → `fechas` y, si el Project tiene campos de fecha
+`.po-team/sprints/sprint-{N}.json` → `fechas` y, si el Project tiene campos de fecha
 (`projects[].campos.fechaDemo|fechaPreprod|fechaVB`), tambien ahi. Una fecha pasada con tickets
 que no llegaron a esa etapa = **fecha vencida** (riesgo alto en el tablero).
 
@@ -58,8 +59,12 @@ que no llegaron a esa etapa = **fecha vencida** (riesgo alto en el tablero).
 Cada etapa del config tiene `estados` (opciones del campo Status del Project) y/o `etiquetas`.
 Para ubicar un ticket en una etapa:
 1. Si tiene una etiqueta de alguna etapa, gana la etapa MAS AVANZADA cuyas etiquetas tenga.
+   Por eso las etiquetas del PO son excluyentes y se mantienen limpias: publicar un Observado
+   QUITA `vbPO`; publicar un VB PO quita `observadoPO`; `vbPO` solo se pone por validacion en
+   Demo/Preprod (nunca por una adelantada en Desa/QA).
 2. Si no, la etapa cuyo listado `estados` contiene su Status.
-3. Si su Status esta en `ciclo.estadosObservado` → marca Observado (etapa = donde estaba).
+3. Si su Status esta en `ciclo.estadosObservado` **o** tiene la etiqueta
+   `tracker.etiquetas.observadoPO` → marca Observado (etapa = donde estaba).
 4. Si esta en `ciclo.estadosBloqueado` → marca Bloqueado.
 5. Si no calza en nada → "Sin etapa" (se reporta para corregir el mapeo, no se adivina).
 El stepper del dashboard (skill `dashboard-po`) muestra las cinco etapas con los puntos que ya

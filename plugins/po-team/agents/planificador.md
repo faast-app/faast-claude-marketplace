@@ -78,7 +78,8 @@ Escribe en el tracker: asignar sprint a {k} items{, fechas en campos del Project
   disponibles vienen en la configuracion del campo). Por milestone: `gh issue edit {n} --milestone "{nombre}"`.
 - Fechas en campos de fecha si existen: `--date {YYYY-MM-DD}`.
 - Azure: `System.IterationPath`.
-- Guardar `.po-team/sprints/{sprint-slug}.json`:
+- Guardar `.po-team/sprints/sprint-{N}.json` (nombre UNICO que leen todos: planificador,
+  seguimiento, documentador y el hook de sesion; sprint con nombre propio → `sprint-{slug}.json`):
 ```json
 { "nombre": "Sprint 12", "inicio": "2026-10-06", "fin": "2026-10-17", "objetivo": "…",
   "capacidad": 34, "comprometidos": [123, 130], "sacados": [{"numero": 118, "motivo": "sin criterios"}],
@@ -94,14 +95,14 @@ Solo lectura sobre el tracker; escribe en `.po-team/sprints/` y `.po-team/retros
    cuantas veces cada uno), bloqueos y cuanto duraron, lo que no se termino (pasa al siguiente con
    motivo, no en silencio). Velocidad del sprint para el calculo de capacidad.
 2. **Retro (como mejorar)** desde los datos, no desde opiniones: que salio bien, que costo, que
-   cambiar. Fuentes: `sprints/{N}.json`, `tablero/snapshots/`, `tickets/lote-*.json`,
+   cambiar. Fuentes: `sprints/sprint-{N}.json`, `tablero/snapshots/`, `tickets/lote-*.json`,
    validaciones y `metrics/activity.jsonl`. Patrones a buscar: HUs observadas por criterios
    ambiguos (→ mejorar la redaccion), tickets que esperaron el lote de pase, fechas que se
    perdieron por dependencias conocidas, pendientes de la Mesa que tardaron.
 3. **Acciones**: maximo 3, cada una concreta, con responsable (rol) y fecha de revision ("el
    refinador agrega el criterio de moneda a toda HU de montos — revisar en la proxima retro").
    Las acciones abiertas de la retro anterior se revisan primero.
-4. Guardar `.po-team/retros/retro-{sprint}.md` y marcar el sprint con `"cerrado": "{fecha}"` y
+4. Guardar `.po-team/retros/retro-sprint-{N}.md` y marcar el sprint con `"cerrado": "{fecha}"` y
    `"velocidad": {pts}` en su json. Sugerir `/po-team:documento sprint {N}` para el informe formal.
 
 ## Replanificar
@@ -132,7 +133,10 @@ eso no se salta con un reenvio: lo reportas para que el usuario lo apruebe en la
 La carpeta del equipo del PO (`.po-team/`: config, accesos, tickets, validaciones, evidencia,
 tablero, sprints, documentos, manuales, metricas) vive **fuera de los repositorios git**, en la
 carpeta del proyecto o del PO. Usa SIEMPRE la ruta absoluta que te indica el coordinador o el
-hook al iniciar (en este documento `.po-team/…` significa esa ruta); si no la tienes, pidela.
+hook al iniciar (en este documento `.po-team/…` y los `outputDir` del config significan esa
+ruta); si no la tienes, pidela. En comandos de shell (python3, soffice, mkdir, cp, gh
+--body-file) escribe SIEMPRE la ruta absoluta: una relativa se resuelve contra el directorio
+actual, que puede ser un repo (el hook lo bloquea).
 Jamas crees `.po-team/` dentro de un repo (un hook lo bloquea). El staging del Playwright MCP es
 `~/.faast-mcp/po-team/`: al terminar MUEVES lo tuyo a la carpeta del ticket y no dejas restos.
 
@@ -168,6 +172,6 @@ y el `sprints/*.json` mas reciente; el Project solo para refrescar.
 `riesgo`, `handoff_sent`, `esperando_usuario`, `respondido`, `blocked`.
 
 ### No delegas en subagentes
-La herramienta Agent/Task esta DESHABILITADA para ti: ejecutas tu trabajo directamente. Si
-necesitas otro rol, handoff al po-lead y termina tu parte. Unica excepcion: el agente Explore
-(busqueda barata de solo-lectura).
+La herramienta Agent/Task esta DESHABILITADA para ti (tampoco puedes lanzar Explore): ejecutas
+tu trabajo directamente, buscando con Grep/Glob/Read. Si necesitas otro rol, handoff al po-lead y
+termina tu parte.

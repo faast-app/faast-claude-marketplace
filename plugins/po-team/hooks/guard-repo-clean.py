@@ -5,8 +5,10 @@ Bloquea escribir `.po-team/` (tickets, validaciones, evidencia, tableros, docume
 metricas, accesos.env) dentro de un repo git: contamina el repo, llena el historial con binarios
 (PNG, PDF, DOCX, videos) y puede filtrar datos de clientes o nombres de variables de cuentas. La
 carpeta vive en la carpeta del proyecto o del PO (ver coord_root.py). Aplica a
-Write/Edit/MultiEdit/NotebookEdit y a comandos Bash que escriben (>, >>, tee, touch, mkdir) o que
-hacen `git add` de esa carpeta. Mover la carpeta FUERA del repo (mv/cp/rsync) se permite: es la
+Write/Edit/MultiEdit/NotebookEdit y a todo comando Bash que mencione una `.po-team` que caiga
+dentro de un repo (python3, soffice, mkdir, tee, >, git add...), siguiendo los `cd` del propio
+comando. Solo se eximen las lecturas puras (cat, ls, grep... sin redireccion) y mover/copiar la
+carpeta hacia FUERA del repo (mv/cp/rsync cuyo destino no es una .po-team dentro de un repo): es la
 migracion.
 
 Excepcion: las plantillas de los plugins (rutas con /templates/). Nunca falla hacia afuera: ante
@@ -20,8 +22,10 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from coord_root import CARPETA, repo_de, resolve  # noqa: E402
 
-ESCRIBE = re.compile(r"(>>?|\btee\b|\btouch\b|\bmkdir\b|\bgit\s+add\b)")
-REF = re.compile(r"(?:(?<=\s)|(?<=^)|(?<=[\"'=(]))((?:[~\w./-]*/)?" + re.escape(CARPETA) + r")(?=/|\s|$|[\"')])")
+LECTURA = re.compile(r"^\s*(cat|ls|head|tail|grep|rg|egrep|wc|less|more|stat|file|du|test|\[|diff|jq|realpath|readlink)\b")
+COPIA = re.compile(r"^\s*(mv|cp|rsync)\b")
+CD = re.compile(r"^\s*cd\s+(\"[^\"]*\"|'[^']*'|[^\s;&|]+)\s*$")
+REF = re.compile(r"(?:(?<=\s)|(?<=^)|(?<=[\"'=(>:]))((?:[~\w./-]*/)?" + re.escape(CARPETA) + r")(?=/|\s|$|[\"')>])")
 
 
 def exento(path):
@@ -83,23 +87,41 @@ def main():
 
     if tool == "Bash":
         cmd = ti.get("command") or ""
-        if CARPETA not in cmd or not ESCRIBE.search(cmd):
+        if CARPETA not in cmd:
             return
-        for segmento in re.split(r"&&|\|\||;|\n", cmd):
-            if CARPETA not in segmento or not ESCRIBE.search(segmento):
+        actual = cwd
+        for segmento in re.split(r"&&|\|\||;|\n|\|", cmd):
+            m = CD.match(segmento)
+            if m:
+                destino = os.path.expanduser(m.group(1).strip("\"'"))
+                actual = destino if os.path.isabs(destino) else os.path.normpath(os.path.join(actual, destino))
                 continue
-            # mover/copiar la carpeta FUERA del repo es la migracion: permitido
-            if re.match(r"\s*(mv|cp|rsync)\b", segmento) and not re.search(r">", segmento):
+            if CARPETA not in segmento:
                 continue
-            for m in REF.finditer(segmento):
-                ref = m.group(1)
-                path = os.path.expanduser(ref)
-                if not os.path.isabs(path):
-                    path = os.path.join(cwd, path)
+            if LECTURA.match(segmento) and ">" not in segmento and "tee" not in segmento:
+                continue
+            refs = []
+            for r in REF.finditer(segmento):
+                path = os.path.expanduser(r.group(1))
+                refs.append(path if os.path.isabs(path) else os.path.join(actual, path))
+            if COPIA.match(segmento) and ">" not in segmento:
+                # migracion: permitido salvo que el DESTINO (ultimo argumento) sea una .po-team en un repo
+                args = [a for a in segmento.split()[1:] if not a.startswith("-")]
+                if args:
+                    dest = os.path.expanduser(args[-1].strip("\"'"))
+                    dest = dest if os.path.isabs(dest) else os.path.join(actual, dest)
+                    if CARPETA in dest.split(os.sep):
+                        repo = en_repo_coord(dest)
+                    else:
+                        repo = en_repo_coord(os.path.join(dest, CARPETA)) if any(
+                            os.path.basename(x.rstrip("/")) == CARPETA for x in args[:-1]) else None
+                    if repo:
+                        deny(mensaje(repo, actual))
+                continue
+            for path in refs:
                 repo = en_repo_coord(path)
                 if repo:
-                    deny(mensaje(repo, cwd))
-
+                    deny(mensaje(repo, actual))
 
 try:
     main()

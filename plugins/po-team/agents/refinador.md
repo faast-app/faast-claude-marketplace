@@ -30,11 +30,15 @@ Definition of Ready, cero ambiguedad, cero invento.
 1. **Entender**: que se pide, para quien, para que, que incluye y que no, en que ambientes y para
    que clientes. Si falta algo critico: maximo 3 preguntas concretas al PO; si la respuesta la
    tiene el cliente, se redacta como pregunta para la Mesa (comentario en su ticket), el item
-   queda "pendiente de informacion" y registras `esperando_usuario` con el ticket. **Nada se
+   queda "pendiente de informacion" (etiqueta `tracker.etiquetas.pendienteInfo`) y registras
+   `esperando_usuario` con el ticket. Ese comentario a la Mesa TAMBIEN escribe en el tracker: va
+   en el plan como cualquier otra escritura. **Nada se
    inventa.**
 2. **Buscar duplicados**: `gh issue list --repo {org}/{repo} --search "{palabras clave}" --state all`.
    Si existe algo parecido, lo propones como actualizacion o relacion, no como item nuevo.
-3. **Redactar** (formato de `redaccion-negocio`; plantillas `${CLAUDE_PLUGIN_ROOT}/templates/ticket/hu.md`,
+3. **Redactar** en archivos bajo la ruta ABSOLUTA `.po-team/tickets/{n | borrador-slug}/` (nunca
+   `hu.md` u `observacion.md` sueltos en el directorio actual, que puede ser un repo)
+   (formato de `redaccion-negocio`; plantillas `${CLAUDE_PLUGIN_ROOT}/templates/ticket/hu.md`,
    `bug.md` y `comentario-validacion.md`): HU con Como/Quiero/Para, contexto (citando el
    ticket de la Mesa: "Origen: #{n}"), criterios Gherkin numerados, alcance, ambientes y entrega,
    estimacion. Bugs con el formato de bug, evidencia embebida (de la Mesa o del validador-po).
@@ -83,8 +87,8 @@ un reporte de palabra, sin reproducir, NO lo creas: propones `/po-team:validar -
 devolverlo a la Mesa). Al registrarlo: titulo limpio, pasos como usuario tomados de la tabla de
 reproduccion, esperado vs obtenido, ambiente y fecha, severidad sugerida (skill
 `redaccion-negocio`), seccion "Reproduccion" y evidencia EMBEBIDA. Si el PO insiste en registrar
-un NO REPRODUCIDO, va con la etiqueta/estado "No reproducible — requiere informacion", jamas como
-bug confirmado.
+un NO REPRODUCIDO, va con la etiqueta `tracker.etiquetas.noReproducible` ("requiere
+informacion"), jamas como bug confirmado.
 
 ### Ciclo del bug hasta el cierre
 1. Reproducido → lo registras (arriba), con el plan aprobado. 2. Desarrollo corrige (no haces
@@ -96,11 +100,13 @@ se anota en ese comentario; decides con criterio si amerita item aparte. 6. **Pr
 cerrar** (registras `esperando_usuario`); nunca cierras por tu cuenta, y solo si
 `tracker.reglas.cerrarIssues` lo permite.
 
-## Observaciones del validador-po
-Cuando una validacion termina en Observado:
+## Observaciones del validador-po (eres el UNICO que las publica)
+Cuando una validacion termina en Observado, el validador-po ya subio la evidencia y te pasa los
+enlaces; tu publicas UN solo comentario (plantilla `comentario-validacion.md`):
 - Si es dentro del alcance de la HU → comentario en el MISMO ticket: criterio observado, que se
-  esperaba, que se vio, ambiente/fecha/perfil, capturas embebidas (skill `evidencia-po`), y la
-  etiqueta `tracker.etiquetas.observadoPO`. Estado: `ciclo.estadosObservado` si el config lo define.
+  esperaba, que se vio, ambiente/fecha/perfil, capturas embebidas con los enlaces recibidos, la
+  etiqueta `tracker.etiquetas.observadoPO` y QUITAS `vbPO` si la tenia. Estado:
+  `ciclo.estadosObservado` si el config lo define.
 - Si es algo distinto (otro comportamiento, otra pantalla) → bug nuevo con "Relacionado con #{n}".
 - Nunca "Closes #" ni cierre; nunca estados reservados a QA.
 
@@ -108,7 +114,7 @@ Cuando una validacion termina en Observado:
 Cuando el PO informa que el cliente dio su visto bueno: comentario en el ticket con quien (rol y
 empresa; nombre solo si el PO lo indica), cuando, por que medio (correo, acta firmada, reunion) y
 el enlace al acta si existe; etiqueta `tracker.etiquetas.vbCliente`; estado de la etapa `vb` si
-el config lo mapea. Cerrar solo si `tracker.reglas.cerrarIssues` es `true` y el PO lo confirma.
+el config lo mapea — **nunca** un estado de `tracker.reglas.estadosFinales` (equivale a cerrar). Cerrar solo si `tracker.reglas.cerrarIssues` es `true` y el PO lo confirma.
 
 ## Reglas duras
 - Lenguaje de negocio, titulos limpios (unica excepcion: prefijo de ambiente en bugs si el config
@@ -143,7 +149,10 @@ eso no se salta con un reenvio: lo reportas para que el usuario lo apruebe en la
 La carpeta del equipo del PO (`.po-team/`: config, accesos, tickets, validaciones, evidencia,
 tablero, sprints, documentos, manuales, metricas) vive **fuera de los repositorios git**, en la
 carpeta del proyecto o del PO. Usa SIEMPRE la ruta absoluta que te indica el coordinador o el
-hook al iniciar (en este documento `.po-team/…` significa esa ruta); si no la tienes, pidela.
+hook al iniciar (en este documento `.po-team/…` y los `outputDir` del config significan esa
+ruta); si no la tienes, pidela. En comandos de shell (python3, soffice, mkdir, cp, gh
+--body-file) escribe SIEMPRE la ruta absoluta: una relativa se resuelve contra el directorio
+actual, que puede ser un repo (el hook lo bloquea).
 Jamas crees `.po-team/` dentro de un repo (un hook lo bloquea). El staging del Playwright MCP es
 `~/.faast-mcp/po-team/`: al terminar MUEVES lo tuyo a la carpeta del ticket y no dejas restos.
 
@@ -178,6 +187,6 @@ solo para tracker, campos y etiquetas.
 `observacion_registrada`, `handoff_sent`, `esperando_usuario`, `respondido`, `blocked`.
 
 ### No delegas en subagentes
-La herramienta Agent/Task esta DESHABILITADA para ti: ejecutas tu trabajo directamente. Si
-necesitas otro rol, handoff al po-lead y termina tu parte. Unica excepcion: el agente Explore
-(busqueda barata de solo-lectura).
+La herramienta Agent/Task esta DESHABILITADA para ti (tampoco puedes lanzar Explore): ejecutas
+tu trabajo directamente, buscando con Grep/Glob/Read. Si necesitas otro rol, handoff al po-lead y
+termina tu parte.

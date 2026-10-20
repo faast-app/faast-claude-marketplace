@@ -6,13 +6,16 @@ argument-hint: '[planificar {N} | replanificar | fechas | riesgos | cierre {N}] 
 > **Ejecucion INLINE obligatoria:** este es un COMANDO, no un agente. Ejecuta su
 > procedimiento en la sesion actual. NUNCA lo corras dentro de un subagente ni lo
 > invoques via Agent/Task. Solo se delegan los AGENTES del equipo, y unicamente
-> cuando este procedimiento lo indica.
+> cuando este procedimiento lo indica, SIEMPRE con su nombre completo `po-team:{agente}`
+> (dev-team y mesa-servicios tambien tienen un agente `setup`: sin prefijo se puede invocar el
+> de otro equipo). Al invocar: ruta ABSOLUTA de `.po-team/`, "Pedido del usuario (textual): ..."
+> y, si el usuario aprobo un plan, "Autorizacion del usuario: {plan literal}".
 
 # Sprint: compromiso realista con fechas de pase
 
 Pedido: $ARGUMENTS (por defecto `planificar` del proximo sprint)
 
-## Paso 1 — Propuesta (agente `planificador`)
+## Paso 1 — Propuesta (agente `po-team:planificador`)
 - **planificar {N}**: capacidad (config o velocidad, la menor), candidatos por prioridad + lo que
   viene del sprint anterior, filtro de preparacion (sin HU, sin entrega, muy grande, sin estimar,
   bloqueado), objetivo del sprint, fechas del ciclo y riesgos.
@@ -22,7 +25,7 @@ Pedido: $ARGUMENTS (por defecto `planificar` del proximo sprint)
 - **cierre {N}**: review (comprometido vs logrado por etapa, objetivo, fechas comprometidas vs
   reales, observados, bloqueos, velocidad) + retro desde los datos con maximo 3 acciones con
   responsable; revisa primero las acciones de la retro anterior. Solo lectura sobre el tracker:
-  escribe `.po-team/retros/retro-{N}.md` y marca el sprint cerrado (no requiere el OK de
+  escribe `.po-team/retros/retro-sprint-{N}.md` y marca el sprint cerrado (no requiere el OK de
   escritura en el tracker; si se muestra antes de guardar).
 `--capacidad` fuerza la capacidad para esta vez (se anota en el json del sprint).
 
@@ -32,7 +35,7 @@ Si el PO cambia algo, se ajusta y se vuelve a mostrar.
 
 ## Paso 3 — Escribir
 Con el OK: asignar sprint/iteracion (y fechas si hay campos), guardar
-`.po-team/sprints/{sprint}.json`. Si hubo items "sin HU", ofrecer `/po-team:refinar` para ellos.
+`.po-team/sprints/sprint-{N}.json`. Si hubo items "sin HU", ofrecer `/po-team:refinar` para ellos.
 
 ## Paso 4 — Entrega
 Resumen de 4 lineas + sugerencia: `/po-team:tablero` para ver el sprint en el dashboard.

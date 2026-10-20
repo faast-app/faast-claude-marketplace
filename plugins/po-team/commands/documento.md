@@ -6,7 +6,10 @@ argument-hint: 'hu #n | especificacion {#epica | #n #m …} | aceptacion {#n | s
 > **Ejecucion INLINE obligatoria:** este es un COMANDO, no un agente. Ejecuta su
 > procedimiento en la sesion actual. NUNCA lo corras dentro de un subagente ni lo
 > invoques via Agent/Task. Solo se delegan los AGENTES del equipo, y unicamente
-> cuando este procedimiento lo indica.
+> cuando este procedimiento lo indica, SIEMPRE con su nombre completo `po-team:{agente}`
+> (dev-team y mesa-servicios tambien tienen un agente `setup`: sin prefijo se puede invocar el
+> de otro equipo). Al invocar: ruta ABSOLUTA de `.po-team/`, "Pedido del usuario (textual): ..."
+> y, si el usuario aprobo un plan, "Autorizacion del usuario: {plan literal}".
 
 # Documento: el entregable de negocio
 
@@ -18,10 +21,10 @@ Pedido: $ARGUMENTS
   los cuatro con una linea cada uno.
 - Para `aceptacion`: idealmente existe VB PO (`validacion.md` o lote) y el veredicto de QA en el
   ticket; si no, se avisa que el acta saldra con criterios "pendientes de validacion".
-- Para `sprint`: existe `.po-team/sprints/{N}.json`; se recomienda `/po-team:tablero` reciente.
+- Para `sprint`: existe `.po-team/sprints/sprint-{N}.json`; se recomienda `/po-team:tablero` reciente.
 
-## Paso 1 — Documento (agente `documentador`)
-Invocar al `documentador` con tipo y referencia. Reune datos reales, redacta en negocio
+## Paso 1 — Documento (agente `po-team:documentador`)
+Invocar al agente `po-team:documentador` con tipo y referencia. Reune datos reales, redacta en negocio
 (criterios Gherkin, capturas clave con pie), rellena
 `${CLAUDE_PLUGIN_ROOT}/templates/documento/documento-po.html` (o la plantilla del config),
 convierte a PDF y DOCX, verifica acentos e imagenes y guarda en `documentos.outputDir`.

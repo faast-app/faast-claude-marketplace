@@ -43,8 +43,10 @@ Si la org es de usuario, `user(login:)` en vez de `organization(login:)`. Requie
 - **Etapa**: regla de la skill `ciclo-pase-faast` (etiquetas > Status; observado; bloqueado;
   "Sin etapa" si no calza — se reporta, no se adivina).
 - **Puntos**: campo `campos.puntos`; vacio → 0 y se lista en "sin estimar".
-- **veredictoPO**: del ultimo `lote-*.json` o `validacion.md` del ticket (`vb` | `observado` | null).
-- **Fechas del sprint**: `.po-team/sprints/{sprint}.json` → `fechas` (y campos de fecha del Project
+- **veredictoPO**: del ultimo `tickets/lote-*.json` o `validacion.md` del ticket (`vb` | `observado` | null;
+  un `veredicto: "bloqueado"` del lote se muestra como `"observado"` con `bloqueado: true`). Formato
+  del lote: skill `validacion-funcional-po`, "Modo lote".
+- **Fechas del sprint**: `.po-team/sprints/sprint-{N}.json` → `fechas` (y campos de fecha del Project
   si existen).
 
 ## 3. Estructura `tablero-datos.json`

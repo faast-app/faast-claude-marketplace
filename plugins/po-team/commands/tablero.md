@@ -6,7 +6,10 @@ argument-hint: '[generica | organizacion | validaciones | crear-backlog [agregar
 > **Ejecucion INLINE obligatoria:** este es un COMANDO, no un agente. Ejecuta su
 > procedimiento en la sesion actual. NUNCA lo corras dentro de un subagente ni lo
 > invoques via Agent/Task. Solo se delegan los AGENTES del equipo, y unicamente
-> cuando este procedimiento lo indica.
+> cuando este procedimiento lo indica, SIEMPRE con su nombre completo `po-team:{agente}`
+> (dev-team y mesa-servicios tambien tienen un agente `setup`: sin prefijo se puede invocar el
+> de otro equipo). Al invocar: ruta ABSOLUTA de `.po-team/`, "Pedido del usuario (textual): ..."
+> y, si el usuario aprobo un plan, "Autorizacion del usuario: {plan literal}".
 
 # Tablero: como va cada sprint, en 20 segundos
 
@@ -34,8 +37,8 @@ que las opciones 1-3 necesitan un tablero y recomendar la 4. Guardar la eleccion
 
 Las opciones 1 y 2 son SOLO LECTURA sobre el tracker y escriben unicamente en `.po-team/tablero/`.
 
-## Paso 1 — Datos (agente `seguimiento`)
-Invocar al `seguimiento` con el alcance. Sigue la skill `dashboard-po`: lee cada Project del
+## Paso 1 — Datos (agente `po-team:seguimiento`)
+Invocar al agente `po-team:seguimiento` con el alcance. Sigue la skill `dashboard-po`: lee cada Project del
 config, ubica tickets por sprint y etapa, incorpora veredictos del validador-po y fechas de
 `.po-team/sprints/`, calcula avance, compara con el snapshot anterior y guarda el nuevo.
 

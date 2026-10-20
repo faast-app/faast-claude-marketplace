@@ -27,10 +27,11 @@
       "sprintVia": "iteration"
     },
     "azure": { "organization": "https://dev.azure.com/{{org}}", "project": "{{proyecto}}", "areaPath": "", "iterationPath": "", "campoPuntos": "Microsoft.VSTS.Scheduling.StoryPoints" },
-    "etiquetas": { "hu": "historia-usuario", "bug": "bug", "vbPO": "vb-po", "observadoPO": "observado-po", "vbCliente": "vb-cliente", "prefijoCliente": "cliente:", "prefijoAmbiente": "ambiente:" },
+    "etiquetas": { "hu": "historia-usuario", "bug": "bug", "vbPO": "vb-po", "observadoPO": "observado-po", "vbCliente": "vb-cliente", "pendienteInfo": "pendiente-informacion", "noReproducible": "no-reproducible", "prefijoCliente": "cliente:", "prefijoAmbiente": "ambiente:" },
     "reglas": {
       "estadosSoloQA": ["{{estado que solo mueve QA humana, ej. Validado por QA}}"],
       "cerrarIssues": false,
+      "estadosFinales": ["{{Done | Cerrado — estados que equivalen a cerrar; solo con cerrarIssues y confirmacion}}"],
       "estadoAlResolver": "{{estado que se usa cuando desarrollo termina, ej. Desarrollo Completado}}"
     }
   },
@@ -39,18 +40,18 @@
       { "clave": "desarrollo", "nombre": "Desarrollo", "estados": ["{{Todo}}", "{{In Progress}}", "{{Desarrollo Completado}}"], "etiquetas": [] },
       { "clave": "qa", "nombre": "Validacion QA", "estados": ["{{En QA}}", "{{Validado por QA}}"], "etiquetas": [] },
       { "clave": "demo", "nombre": "Pase a Demo", "estados": ["{{Pase a Demo}}"], "etiquetas": ["ambiente:demo"] },
-      { "clave": "validacion", "nombre": "Validacion Demo / Preprod", "estados": ["{{En validacion}}"], "etiquetas": ["vb-po"] },
-      { "clave": "vb", "nombre": "VB cliente", "estados": ["{{VB Cliente}}", "{{Done}}"], "etiquetas": ["vb-cliente"] }
+      { "clave": "validacion", "nombre": "Validacion Demo / Preprod", "estados": ["{{En validacion}}"], "etiquetas": ["vb-po"], "nota": "vb-po solo se pone con validacion en Demo/Preprod; un Observado lo quita" },
+      { "clave": "vb", "nombre": "VB cliente", "estados": ["{{VB Cliente}}"], "etiquetas": ["vb-cliente"] }
     ],
     "estadosObservado": ["{{Observado}}"],
     "estadosBloqueado": ["{{Bloqueado}}"],
     "diasAlertaSinMovimiento": 5
   },
   "ambientes": {
-    "desa":    { "nombre": "{{como lo llama el equipo, ej. Desa}}", "clase": "pruebas", "url": "", "cuentasEnv": [] },
-    "qa":      { "nombre": "{{ej. QA}}", "clase": "pruebas", "url": "", "cuentasEnv": [] },
+    "desa":    { "nombre": "{{como lo llama el equipo, ej. Desa}}", "clase": "{{pruebas | productivo — la declara el PO, nunca se presume}}", "url": "", "cuentasEnv": [] },
+    "qa":      { "nombre": "{{ej. QA}}", "clase": "{{pruebas | productivo}}", "url": "", "cuentasEnv": [] },
     "demo": [
-      { "clave": "demo-xx", "nombre": "{{Demo CO | Demo CL | Demo PE}}", "clase": "pruebas", "url": "", "cuentasEnv": [], "paseEnLote": false }
+      { "clave": "demo-xx", "nombre": "{{Demo CO | Demo CL | Demo PE}}", "clase": "{{pruebas | productivo}}", "url": "", "cuentasEnv": [], "paseEnLote": false }
     ],
     "preprod": [
       { "clave": "preprod-{{cliente}}", "nombre": "{{Preprod Cliente}}", "cliente": "{{codigo cliente}}", "clase": "{{pruebas | productivo — se pregunta, nunca se presume}}", "url": "", "cuentasEnv": [] }

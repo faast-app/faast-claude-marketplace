@@ -6,7 +6,10 @@ argument-hint: '{flujo en tus palabras} [--version qa|general|ambas] [--ambiente
 > **Ejecucion INLINE obligatoria:** este es un COMANDO, no un agente. Ejecuta su
 > procedimiento en la sesion actual. NUNCA lo corras dentro de un subagente ni lo
 > invoques via Agent/Task. Solo se delegan los AGENTES del equipo, y unicamente
-> cuando este procedimiento lo indica.
+> cuando este procedimiento lo indica, SIEMPRE con su nombre completo `po-team:{agente}`
+> (dev-team y mesa-servicios tambien tienen un agente `setup`: sin prefijo se puede invocar el
+> de otro equipo). Al invocar: ruta ABSOLUTA de `.po-team/`, "Pedido del usuario (textual): ..."
+> y, si el usuario aprobo un plan, "Autorizacion del usuario: {plan literal}".
 
 # Manual: el mismo flujo para QA y para cualquier persona
 
@@ -28,8 +31,8 @@ en uno **productivo** el manualista se detiene antes de cada una y pide autoriza
 Si ya existe una version anterior con `steps.yaml`, se propone **repetir ese recorrido** (mismos
 pasos, ver que cambio en pantalla) y generar `v{N+1}` con "Cambios respecto a v{N}".
 
-## Paso 2 — Manual (agente `manualista`)
-Invocar al `manualista`: un recorrido real con capturas y `recorrido.md`; redaccion de la(s)
+## Paso 2 — Manual (agente `po-team:manualista`)
+Invocar al agente `po-team:manualista`: un recorrido real con capturas y `recorrido.md`; redaccion de la(s)
 version(es) desde `templates/manual/manual-qa.html` y `templates/manual/manual-general.html`;
 conversion a PDF (+ DOCX salvo `--solo-pdf`); guardado en `manuales.outputDir/{flujo}/`.
 Si el flujo falla a mitad: se informa en lenguaje de negocio y el manual queda en borrador.

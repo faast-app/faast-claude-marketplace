@@ -6,7 +6,10 @@ argument-hint: '{#n | #n #m … | --lote sprint N | --reproducir "reporte" | --r
 > **Ejecucion INLINE obligatoria:** este es un COMANDO, no un agente. Ejecuta su
 > procedimiento en la sesion actual. NUNCA lo corras dentro de un subagente ni lo
 > invoques via Agent/Task. Solo se delegan los AGENTES del equipo, y unicamente
-> cuando este procedimiento lo indica.
+> cuando este procedimiento lo indica, SIEMPRE con su nombre completo `po-team:{agente}`
+> (dev-team y mesa-servicios tambien tienen un agente `setup`: sin prefijo se puede invocar el
+> de otro equipo). Al invocar: ruta ABSOLUTA de `.po-team/`, "Pedido del usuario (textual): ..."
+> y, si el usuario aprobo un plan, "Autorizacion del usuario: {plan literal}".
 
 # Validar: VB PO rapido (no es la prueba de QA)
 
@@ -35,8 +38,8 @@ Mostrar: tickets, criterios a recorrer por ticket, ambiente, perfil, duracion es
 por ticket). Si el lote supera ~8 tickets, confirmar antes de empezar. Validar es solo lectura
 sobre el tracker: no requiere el OK de escritura para empezar.
 
-## Paso 2 — Validacion (agente `validador-po`)
-Invocar al `validador-po` (un solo navegador, en serie). Por ticket: plan, criterios con captura
+## Paso 2 — Validacion (agente `po-team:validador-po`)
+Invocar al agente `po-team:validador-po` (un solo navegador, en serie). Por ticket: plan, criterios con captura
 resaltada y verificada, veredicto **VB PO** u **Observado**; primera falla → se detiene ese ticket
 y sigue con el siguiente. Resultado local en `.po-team/tickets/{n}/validacion-…/` y, en lote,
 `lote-*.md` + `.json`.
@@ -76,10 +79,11 @@ actualiza el mismo JSON y la misma URL.
   cerrar.
 
 ## Paso 4 — Publicar (plan + OK)
-Proponer: subir capturas a la rama `evidence`, comentar cada ticket con su tabla y capturas
-embebidas, etiqueta `vbPO` / `observadoPO`; para observados, que el `refinador` redacte la
-observacion (mismo ticket o bug relacionado). Con el OK (o `--publicar` ya confirmado en este
-pedido), ejecutar. Luego sugerir `/po-team:tablero` para reflejar los veredictos.
+Mostrar SIEMPRE el plan concreto (que tickets, que comentario, que etiquetas se ponen y quitan,
+que archivos se suben): VB PO → el `validador-po` sube la evidencia, comenta y pone `vbPO` (solo
+si la validacion fue en Demo/Preprod); Observado → el validador sube la evidencia y el agente
+`po-team:refinador` publica la observacion (mismo ticket o bug relacionado). `--publicar` solo
+evita preguntar *si* se quiere publicar; el plan se muestra igual y se espera el OK. Luego sugerir `/po-team:tablero` para reflejar los veredictos.
 
 ## Reglas
 - Solo criterios de aceptacion, camino normal; jamas causas ni debug.

@@ -20,7 +20,7 @@ inventa: todo sale de las HUs, validaciones, sprints y evidencia reales. Cargas 
 | Documento de HU | `documento hu #{n}` | issue | Como/Quiero/Para, contexto, criterios Gherkin, alcance, pendientes, ambientes y entrega, definicion de hecho, estimacion |
 | Especificacion funcional | `documento especificacion {epica #n o lista}` | issue padre + hijas | objetivo de negocio, actores/perfiles, flujo funcional (paso a paso), reglas de negocio, HUs incluidas con su resultado esperado, criterios, fuera de alcance, ambientes/clientes |
 | Acta de aceptacion | `documento aceptacion {#n o sprint N}` | issues + `validacion.md`/lotes + evidencia de QA referenciada | que se entrega (en negocio), criterios con resultado y evidencia, ambiente y fecha de validacion, observaciones/pendientes, **VB del cliente** (nombre y cargo a completar, fecha, firma) |
-| Informe de sprint | `documento sprint {N}` | `sprints/{N}.json` + `tablero-datos.json` | objetivo, comprometido vs logrado (puntos por etapa del ciclo), resultado por ticket, fechas comprometidas vs reales, observados, riesgos, proximos pasos |
+| Informe de sprint | `documento sprint {N}` | `sprints/sprint-{N}.json` + `tablero-datos.json` | objetivo, comprometido vs logrado (puntos por etapa del ciclo), resultado por ticket, fechas comprometidas vs reales, observados, riesgos, proximos pasos |
 
 ## Flujo
 1. **Reunir datos reales**: `gh issue view {n} --comments --json title,body,labels,url`, el
@@ -32,7 +32,8 @@ inventa: todo sale de las HUs, validaciones, sprints y evidencia reales. Cargas 
    **Diagramas funcionales** (especificacion, y HU con flujo de varios pasos o perfiles): Mermaid
    `flowchart LR` en lenguaje de negocio (pasos del usuario, decisiones, perfiles; nunca
    servicios ni tablas). LibreOffice no dibuja Mermaid: se renderiza a PNG antes de convertir
-   (`npx -y @mermaid-js/mermaid-cli -i flujo.mmd -o flujo.png -b white`, o con el Playwright MCP
+   (en la carpeta ABSOLUTA del documento dentro de `.po-team/documentos/`, nunca en el directorio
+   actual: `npx -y @mermaid-js/mermaid-cli -i {ruta}/flujo.mmd -o {ruta}/flujo.png -b white`, o con el Playwright MCP
    abriendo un HTML con mermaid y `browser_take_screenshot` del SVG) y se inserta como imagen.
    Si no se puede renderizar, se describe el flujo como lista numerada (nunca un bloque de codigo
    en el documento).
@@ -78,7 +79,10 @@ eso no se salta con un reenvio: lo reportas para que el usuario lo apruebe en la
 La carpeta del equipo del PO (`.po-team/`: config, accesos, tickets, validaciones, evidencia,
 tablero, sprints, documentos, manuales, metricas) vive **fuera de los repositorios git**, en la
 carpeta del proyecto o del PO. Usa SIEMPRE la ruta absoluta que te indica el coordinador o el
-hook al iniciar (en este documento `.po-team/…` significa esa ruta); si no la tienes, pidela.
+hook al iniciar (en este documento `.po-team/…` y los `outputDir` del config significan esa
+ruta); si no la tienes, pidela. En comandos de shell (python3, soffice, mkdir, cp, gh
+--body-file) escribe SIEMPRE la ruta absoluta: una relativa se resuelve contra el directorio
+actual, que puede ser un repo (el hook lo bloquea).
 Jamas crees `.po-team/` dentro de un repo (un hook lo bloquea). El staging del Playwright MCP es
 `~/.faast-mcp/po-team/`: al terminar MUEVES lo tuyo a la carpeta del ticket y no dejas restos.
 
@@ -113,6 +117,6 @@ y aprobadores.
 `esperando_usuario`, `respondido`, `blocked`.
 
 ### No delegas en subagentes
-La herramienta Agent/Task esta DESHABILITADA para ti: ejecutas tu trabajo directamente. Si
-necesitas otro rol, handoff al po-lead y termina tu parte. Unica excepcion: el agente Explore
-(busqueda barata de solo-lectura).
+La herramienta Agent/Task esta DESHABILITADA para ti (tampoco puedes lanzar Explore): ejecutas
+tu trabajo directamente, buscando con Grep/Glob/Read. Si necesitas otro rol, handoff al po-lead y
+termina tu parte.

@@ -85,7 +85,8 @@ NO REPRODUCIDO muestra lo que SI se vio; nunca se fuerza el fallo con otros dato
 ## Modo lote
 Entrada: `--lote sprint {N}` (todos los tickets del sprint en la etapa validable) o una lista de
 numeros. Se recorren **en serie** (un solo navegador), cada uno con su carpeta e informe. Un
-ticket observado no detiene el lote: se pasa al siguiente. Al final, `lote-{fecha}.md`:
+ticket observado no detiene el lote: se pasa al siguiente. Al final,
+`.po-team/tickets/lote-{ambiente}-{YYYYMMDD-HHmm}.md` (ruta y nombre UNICOS; los lee el seguimiento):
 ```markdown
 # Validacion PO en lote — {sprint o lista} — {ambiente} — {fecha}
 | Ticket | Titulo | Puntos | Veredicto | Criterios | Evidencia |
@@ -94,8 +95,13 @@ ticket observado no detiene el lote: se pasa al siguiente. Al final, `lote-{fech
 | #130 | Total con IVA en el resumen | 5 | ⚠️ Observado | 1/3 | tickets/130/validacion-…/ |
 **Resumen:** {n} VB PO ({puntos}) · {n} observados ({puntos}) · {n} bloqueados
 ```
-Ademas deja `lote-{fecha}.json` (`[{numero, veredicto, criteriosOk, criteriosTotal, ambiente,
-fecha, carpeta}]`) que el seguimiento usa como insumo del dashboard (`veredictoPO` por ticket).
+Ademas deja el gemelo `lote-{ambiente}-{YYYYMMDD-HHmm}.json`:
+`[{"numero": 130, "veredicto": "observado", "bloqueado": false, "criteriosOk": 1, "criteriosTotal": 3,
+"ambiente": "demo-co", "fecha": "2026-10-16", "carpeta": "tickets/130/validacion-demo-co-20261016"}]`.
+`veredicto` SOLO toma `"vb"` (VB PO) | `"observado"` | `"bloqueado"` (Observado — bloqueado por
+ambiente); el seguimiento lo copia a `veredictoPO` del dashboard (`bloqueado` → `"observado"` con
+`bloqueado: true`), y un ticket validado fuera de lote se toma de su `validacion.md` con los mismos
+valores.
 
 ## Informe como artifact (`/po-team:validar --artifact`)
 Plantilla `templates/validacion/validacion.html`: el informe de validaciones de un sprint en un

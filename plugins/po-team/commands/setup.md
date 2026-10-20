@@ -6,13 +6,16 @@ argument-hint: '[todo | tracker | playwright | documentos | ambientes]'
 > **Ejecucion INLINE obligatoria:** este es un COMANDO, no un agente. Ejecuta su
 > procedimiento en la sesion actual. NUNCA lo corras dentro de un subagente ni lo
 > invoques via Agent/Task. Solo se delegan los AGENTES del equipo, y unicamente
-> cuando este procedimiento lo indica.
+> cuando este procedimiento lo indica, SIEMPRE con su nombre completo `po-team:{agente}`
+> (dev-team y mesa-servicios tambien tienen un agente `setup`: sin prefijo se puede invocar el
+> de otro equipo). Al invocar: ruta ABSOLUTA de `.po-team/`, "Pedido del usuario (textual): ..."
+> y, si el usuario aprobo un plan, "Autorizacion del usuario: {plan literal}".
 
 # Setup: que nada falle por herramientas o configuracion
 
 Alcance: $ARGUMENTS (por defecto `todo`)
 
-Invocar al agente `setup` (modelo `haiku`, fijo) con el alcance. El flujo del agente:
+Invocar al agente `po-team:setup` (modelo `haiku`, fijo) con el alcance. El flujo del agente:
 1. Detecta el sistema operativo.
 2. Checklist del alcance y tabla (herramienta · estado · accion):
    - **tracker**: `gh auth status` + scopes `project`/`read:project` + acceso a repos y Projects
@@ -20,9 +23,13 @@ Invocar al agente `setup` (modelo `haiku`, fijo) con el alcance. El flujo del ag
    - **playwright**: MCP del plugin visible (`claude mcp list`), `npx playwright install chromium`,
      `.po-team/accesos.env` con los NOMBRES de variables de cuentas por ambiente.
    - **documentos**: `soffice` + prueba real de conversion con acentos.
-   - **ambientes**: URLs y variables de Desa, QA, Demo por pais y Preprod por cliente; cuales
+   - **ambientes**: URLs, variables de cuentas y **clase** (`pruebas` | `productivo`, la declara el
+     PO; nunca se deduce del nombre) de Desa, QA, Demo por pais y Preprod por cliente; cuales
      reciben pases en lote.
-3. Pregunta UNA sola vez "¿Instalo lo que falta?" con la lista exacta; instala; re-verifica.
+3. "¿Instalo lo que falta?" con la lista exacta, UNA sola vez. Como el setup corre como subagente
+   y no puede esperar: devuelve la lista con `esperando_usuario`; ESTA sesion pregunta al usuario
+   y lo re-invoca con "Autorizacion del usuario: instalar {lista}" (o con lo que el usuario
+   excluya); instala, re-verifica y sigue.
 4. Si no existe `.po-team/config.json`, lo crea desde
    `${CLAUDE_PLUGIN_ROOT}/templates/po-team/config.json` con UNA ronda de preguntas (equipo, PO,
    tracker, Projects y campos leidos del tracker real, mapeo de estados a etapas y estados solo

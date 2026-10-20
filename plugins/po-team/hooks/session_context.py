@@ -91,6 +91,12 @@ def excluir_en_git(start):
         pass
 
 
+# cada tipo de pendiente se cierra SOLO con su par (un plan aprobado no responde una pregunta abierta)
+ABRE = {"esperando_usuario": "pregunta", "blocked": "bloqueo", "approval_requested": "aprobacion"}
+CIERRA = {"pregunta": ("respondido", "cerrado"), "bloqueo": ("unblocked", "resuelto", "cerrado"),
+          "aprobacion": ("approved", "plan_aprobado", "rechazado", "cerrado")}
+
+
 def pendientes(po):
     ruta = os.path.join(po, "metrics", "activity.jsonl")
     if not os.path.exists(ruta):
@@ -103,14 +109,15 @@ def pendientes(po):
                 e = json.loads(linea)
             except Exception:
                 continue
-            task = (e.get("task") or "").strip()
+            task = (e.get("task") or "").strip().lstrip("#").lower()
             if not task:
                 continue
-            if e.get("event") in ("esperando_usuario", "blocked", "approval_requested"):
-                abiertos[task] = e
-            elif e.get("event") in ("respondido", "unblocked", "resuelto", "cerrado", "approved",
-                                    "plan_aprobado"):
-                abiertos.pop(task, None)
+            ev = e.get("event")
+            if ev in ABRE:
+                abiertos[(ABRE[ev], task)] = e
+            for tipo, cierres in CIERRA.items():
+                if ev in cierres:
+                    abiertos.pop((tipo, task), None)
     except Exception:
         return []
     salida = []

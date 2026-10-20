@@ -1,4 +1,7 @@
-<!-- Comentario de validacion PO en el ticket (po-team / validador-po + refinador). Solo con plan aprobado. -->
+<!-- Comentario de validacion PO en el ticket. Solo con plan aprobado. UN dueño por veredicto:
+     VB PO → lo publica el validador-po (etiqueta vbPO, quita observadoPO; solo validaciones en Demo/Preprod).
+     Observado → lo publica el refinador con los enlaces que subio el validador (etiqueta observadoPO, quita vbPO).
+     Evidencia: destino {{numero}}-{{slug}}/{{validacion-…}} subido con subir_evidencia.sh. -->
 ### Validacion funcional del PO — {{✅ VB PO | ⚠️ Observado}}
 **Ambiente:** {{nombre}} · **Fecha:** {{fecha y hora}} · **Perfil:** {{rol}}
 
