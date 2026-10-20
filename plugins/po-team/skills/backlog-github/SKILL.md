@@ -99,7 +99,9 @@ Que hace `crear` / `agregar`, en orden (cada paso reutiliza lo existente):
 6. Issues abiertos de los repos (si `agregar_abiertos`), con Status vacio → primer estado.
 7. Vistas: Tablero (BOARD), Sprint actual (TABLE, filtro `sprint:@current`), Backlog (TABLE,
    filtro `no:sprint`). La vista por defecto "View 1" se renombra a Tablero.
-8. Verificacion final con correccion y conteos por Status / Sprint / Tipo / puntos.
+8. Verificacion final y conteos por Status / Sprint / Tipo / puntos. Solo completa lo que el plan
+   mostro (campos del ciclo, issues del spec, sus valores y sub-issues); lo ajeno al spec
+   (borradores, items que no estan en el spec) solo se REPORTA para `verificar` (abajo).
 9. Espejo `.po-team/backlog.md` y registro en `.po-team/config.json`.
 
 ## Que es idempotente
@@ -127,10 +129,13 @@ Seccion en `.po-team/backlog.md` entre `<!-- backlog-github:inicio <etiqueta> --
 al Project, conteo por estado (items y puntos) y la lista por sprint con estado y puntos.
 
 ## Verificacion
-Reporta (y con `--corregir` arregla sin borrar ni pisar): opciones del ciclo o campos faltantes,
+`verificar` sin `--corregir` es solo lectura y sirve de plan: se muestra al usuario, y con su OK
+se corre `verificar --corregir`. Reporta (y con `--corregir` arregla sin borrar ni pisar): opciones del ciclo o campos faltantes,
 borradores (se convierten en issues), issues con la etiqueta del backlog fuera del Project, items
 sin Status (del spec o, si estan abiertos, el primer estado), valores vacios que el spec trae,
-sub-issues faltantes. Solo informa: items con un Status fuera del ciclo ("sin etapa") y cerrados
+sub-issues faltantes. Antes de declarar un issue "fuera del Project" lo busca desde el propio
+issue: el listado de items del Project se indexa con minutos de retraso y un item recien agregado
+puede no aparecer ahi (probado contra GitHub real). Solo informa: items con un Status fuera del ciclo ("sin etapa") y cerrados
 sin Status (los define el PO).
 
 ## Limites de la API y lo que queda manual
