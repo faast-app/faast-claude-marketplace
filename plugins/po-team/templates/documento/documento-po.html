@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>{{TITULO}}</title>
+<!--
+  Plantilla de DOCUMENTO DE NEGOCIO del equipo del Product Owner (po-team).
+  Tipos (uno por documento): DOCUMENTO DE HISTORIA · ESPECIFICACION FUNCIONAL ·
+                             ACTA DE ACEPTACION · INFORME DE SPRINT
+  Convertir con LibreOffice:
+    soffice --headless --convert-to pdf  --outdir {salida} documento.html
+    soffice --headless --convert-to "docx:MS Word 2007 XML" --outdir {salida} documento.html
+  Reglas al rellenar:
+   - Reemplaza {{PLACEHOLDERS}}. Conserva SOLO las secciones del tipo; borra el resto (bloques marcados).
+   - Cuerpo 100% en lenguaje de negocio: SIN endpoints, tablas, codigo ni jerga. Lo tecnico va al Anexo.
+   - Criterios de aceptacion SIEMPRE en Gherkin (Dado / cuando / entonces).
+   - Equipo, autor, fecha y aprobadores del config o del PO en el momento; nunca escritos de memoria.
+   - Nada inventado: lo que falta va como "Pendiente". Sin secretos ni datos personales.
+   - Imagenes con ruta relativa junto al HTML (capturas/...), con pie de foto.
+-->
+<style>
+  :root{ --tinta:#1a2332; --suave:#5b6472; --linea:#e3e8ef; --marca:#123a5e; --acento:#0e7490;
+         --ok:#15803d; --alerta:#b45309; --error:#b91c1c; --fondo-suave:#f5f8fb; }
+  *{box-sizing:border-box}
+  body{margin:0;color:var(--tinta);background:#fff;
+    font:14px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  .page{max-width:800px;margin:0 auto;padding:28px 40px}
+  h1,h2,h3{color:var(--marca);line-height:1.25;margin:1.3em 0 .5em}
+  h1{font-size:25px} h2{font-size:18px;border-bottom:2px solid var(--linea);padding-bottom:.25em}
+  h3{font-size:15px;color:var(--acento)}
+  .cover{padding:70px 40px 32px;border-bottom:4px solid var(--marca)}
+  .kicker{letter-spacing:.16em;text-transform:uppercase;font-size:12px;color:var(--acento);font-weight:700}
+  .cover h1{font-size:32px;margin:.15em 0}
+  .meta{display:grid;grid-template-columns:160px 1fr;gap:5px 16px;margin:18px 0}
+  .meta div:nth-child(odd){color:var(--suave);font-weight:600}
+  .badge{display:inline-block;padding:2px 10px;border-radius:999px;font-size:12px;font-weight:700;background:#eef2f6;color:var(--marca)}
+  table{border-collapse:collapse;width:100%;margin:.7em 0;font-size:13px}
+  th,td{border:1px solid var(--linea);padding:7px 9px;text-align:left;vertical-align:top}
+  th{background:var(--fondo-suave);color:var(--marca);font-weight:600}
+  .gherkin{background:#f7faf9;border-left:4px solid var(--ok);padding:10px 14px;border-radius:0 6px 6px 0;margin:.6em 0}
+  .gherkin b{color:var(--ok)}
+  .pendiente{background:#fffbeb;border-left:4px solid var(--alerta);padding:10px 14px;border-radius:0 6px 6px 0;margin:.6em 0}
+  .ok{color:var(--ok);font-weight:700} .obs{color:var(--error);font-weight:700}
+  figure{margin:12px 0;page-break-inside:avoid} figure img{max-width:100%;border:1px solid var(--linea);border-radius:6px}
+  figcaption{font-size:12px;color:var(--suave);margin-top:4px}
+  .etapas{display:flex;gap:6px;margin:.6em 0;flex-wrap:wrap}
+  .etapa{flex:1 1 110px;border:1px solid var(--linea);border-radius:8px;padding:8px;text-align:center;font-size:12px}
+  .etapa b{display:block;font-size:18px;color:var(--marca)}
+  .firmas{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:28px}
+  .firma{border-top:1px solid var(--tinta);padding-top:6px;font-size:12px;color:var(--suave);min-height:70px}
+  ul,ol{margin:.4em 0 .8em 1.2em}
+  .muted{color:var(--suave)}
+  .anexo{margin-top:32px;padding-top:14px;border-top:1px dashed var(--linea);font-size:13px;color:var(--suave)}
+  footer{margin-top:36px;padding-top:12px;border-top:1px solid var(--linea);font-size:11px;color:var(--suave)}
+  @media print{ .page{padding:0 12mm} h2{page-break-after:avoid} }
+</style>
+</head>
+<body>
+
+<section class="cover">
+  <div class="kicker">{{TIPO_DOCUMENTO}}</div>
+  <h1>{{TITULO}}</h1>
+  <p class="muted">{{SUBTITULO_NEGOCIO}}</p>
+  <div class="meta">
+    <div>Equipo / producto</div><div>{{EQUIPO}}</div>
+    <div>Cliente / alcance</div><div>{{ALCANCE}}</div>
+    <div>Version</div><div>v{{VERSION}}</div>
+    <div>Fecha</div><div>{{FECHA}}</div>
+    <div>Elaborado por</div><div>{{AUTOR}} (Product Owner)</div>
+    <div>Estado</div><div>{{ESTADO}}</div>
+  </div>
+</section>
+
+<div class="page">
+
+  <h2>Resumen</h2>
+  <p>{{RESUMEN}}</p>
+
+  <!-- ===================== DOCUMENTO DE HISTORIA (borrar si es otro tipo) ===================== -->
+  <h2>Historia</h2>
+  <p><b>Como</b> {{ROL}}<br><b>Quiero</b> {{ACCION}}<br><b>Para</b> {{BENEFICIO}}</p>
+  <h2>Contexto</h2>
+  <p>{{CONTEXTO}}</p>
+  <h2>Alcance</h2>
+  <p><b>Incluye:</b> {{INCLUYE}}<br><b>No incluye:</b> {{NO_INCLUYE}}</p>
+  <h2>Ambientes y entrega</h2>
+  <p>{{AMBIENTES_ENTREGA}}</p>
+  <h2>Estimacion</h2>
+  <p>{{PUNTOS}} puntos — {{JUSTIFICACION_PUNTOS}}</p>
+  <!-- =================== FIN DOCUMENTO DE HISTORIA =================== -->
+
+  <!-- ===================== ESPECIFICACION FUNCIONAL (borrar si es otro tipo) ===================== -->
+  <h2>Objetivo de negocio</h2>
+  <p>{{OBJETIVO}}</p>
+  <h2>Perfiles que participan</h2>
+  <table><thead><tr><th>Perfil</th><th>Que hace en este flujo</th></tr></thead>
+    <tbody>{{FILAS_PERFILES}}</tbody></table>
+  <h2>Flujo funcional</h2>
+  <ol>{{PASOS_FLUJO}}</ol>
+  <!-- Diagrama opcional del flujo del usuario (nunca tecnico), como imagen ya renderizada:
+       <figure><img src="capturas/flujo.png" alt="Flujo del usuario"><figcaption>{{PIE}}</figcaption></figure> -->
+  <h2>Reglas de negocio</h2>
+  <ul>{{REGLAS}}</ul>
+  <h2>Historias incluidas</h2>
+  <table><thead><tr><th>Historia</th><th>Resultado esperado (negocio)</th><th>Puntos</th></tr></thead>
+    <tbody>{{FILAS_HUS}}</tbody></table>
+  <h2>Fuera de alcance</h2>
+  <ul>{{FUERA_ALCANCE}}</ul>
+  <!-- =================== FIN ESPECIFICACION FUNCIONAL =================== -->
+
+  <!-- ==== CRITERIOS DE ACEPTACION (historia / especificacion) — repetir .gherkin por criterio ==== -->
+  <h2>Criterios de aceptacion</h2>
+  <div class="gherkin">{{N}}. <b>Dado</b> {{PRECONDICION}} <b>cuando</b> {{ACCION_USUARIO}}
+    <b>entonces</b> {{RESULTADO_VISIBLE}}</div>
+
+  <!-- ===================== ACTA DE ACEPTACION (borrar si es otro tipo) ===================== -->
+  <h2>Que se entrega</h2>
+  <p>{{ENTREGADO}}</p>
+  <table><thead><tr><th>Ticket</th><th>Funcionalidad (negocio)</th><th>Ambiente</th></tr></thead>
+    <tbody>{{FILAS_ENTREGA}}</tbody></table>
+  <h2>Criterios cumplidos y evidencia</h2>
+  <table><thead><tr><th>Criterio</th><th>Resultado</th><th>Validado en</th><th>Evidencia</th></tr></thead>
+    <tbody>{{FILAS_ACEPTACION}}</tbody></table>
+  <!-- ej. fila: <tr><td>1. Dado… cuando… entonces…</td><td class="ok">Cumple</td><td>Demo CO · 14/10</td><td>Figura 1</td></tr> -->
+  <figure><img src="{{CAPTURA}}" alt="{{ALT}}"><figcaption>Figura {{N}} — {{PIE}}</figcaption></figure>
+  <h2>Observaciones y pendientes</h2>
+  <div class="pendiente">{{OBSERVACIONES}}</div>
+  <h2>Visto bueno del cliente</h2>
+  <p>Con la firma de este documento, el cliente declara haber revisado la funcionalidad descrita en
+     el ambiente indicado y que cumple los criterios de aceptacion acordados{{SALVO_OBSERVACIONES}}.</p>
+  <div class="firmas">
+    <div class="firma">Por el cliente<br>Nombre: ______________________<br>Cargo: ______________________<br>Fecha: ____/____/______</div>
+    <div class="firma">Por {{EQUIPO}}<br>{{AUTOR}} — Product Owner<br>Fecha: ____/____/______</div>
+  </div>
+  <p class="muted">Validacion funcional del PO realizada por el camino normal de uso sobre los criterios de aceptacion; no reemplaza la validacion de QA.</p>
+  <!-- =================== FIN ACTA DE ACEPTACION =================== -->
+
+  <!-- ===================== INFORME DE SPRINT (borrar si es otro tipo) ===================== -->
+  <h2>Objetivo del sprint</h2>
+  <p>{{SPRINT_OBJETIVO}} <span class="badge">{{SPRINT_NOMBRE}} · {{SPRINT_INICIO}} – {{SPRINT_FIN}}</span></p>
+  <h2>Avance por etapa del ciclo de pase</h2>
+  <div class="etapas">
+    <div class="etapa">Desarrollo<b>{{PTS_DESARROLLO}}</b>pts</div>
+    <div class="etapa">Validacion QA<b>{{PTS_QA}}</b>pts</div>
+    <div class="etapa">Pase a Demo<b>{{PTS_DEMO}}</b>pts</div>
+    <div class="etapa">Validacion Demo / Preprod<b>{{PTS_VALIDACION}}</b>pts</div>
+    <div class="etapa">VB cliente<b>{{PTS_VB}}</b>pts</div>
+  </div>
+  <p>Comprometido: <b>{{PTS_COMPROMETIDOS}} pts</b> · Con VB cliente: <b>{{PTS_VB}} pts ({{PCT_VB}}%)</b> ·
+     Avance ponderado: <b>{{PCT_PONDERADO}}%</b></p>
+  <h2>Resultado por ticket</h2>
+  <table><thead><tr><th>Ticket</th><th>Funcionalidad</th><th>Pts</th><th>Etapa alcanzada</th><th>Nota de negocio</th></tr></thead>
+    <tbody>{{FILAS_SPRINT}}</tbody></table>
+  <h2>Fechas comprometidas</h2>
+  <table><thead><tr><th>Hito</th><th>Comprometida</th><th>Real / estado</th></tr></thead>
+    <tbody>{{FILAS_FECHAS}}</tbody></table>
+  <h2>Riesgos y observaciones</h2>
+  <ul>{{RIESGOS}}</ul>
+  <h2>Proximos pasos</h2>
+  <ul>{{PROXIMOS_PASOS}}</ul>
+  <!-- =================== FIN INFORME DE SPRINT =================== -->
+
+  <div class="anexo">
+    <b>Anexo</b> (referencia, no forma parte del contenido de negocio):
+    tickets en el tracker {{IDS_TRACKER}} · {{ANEXO}}
+  </div>
+
+  <footer>
+    {{EQUIPO}} · {{TIPO_DOCUMENTO}} · v{{VERSION}} · {{FECHA}} · Documento de negocio del equipo del
+    Product Owner. Complementa los tickets del tracker, no los reemplaza.
+  </footer>
+</div>
+</body>
+</html>

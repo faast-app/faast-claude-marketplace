@@ -22,6 +22,13 @@
       "homepage": "https://github.com/faast-app/faast-claude-marketplace"
     },
     {
+      "name": "po-team",
+      "description": "Equipo del Product Owner con 8 agentes IA: toma lo que llega de la Mesa de Servicios y lo acompaña hasta el VB del cliente - refina HUs y bugs 100% en lenguaje de negocio con criterios Gherkin y estimacion Fibonacci en GitHub Projects o Azure DevOps, planifica el sprint por capacidad con fechas de pase (Demo, Preprod, VB cliente) y riesgos, mantiene el tablero con avance por puntos, informe diario/semanal y dashboard HTML publicable como artifact, hace la validacion funcional rapida del PO con Playwright MCP (VB PO / Observado, modo lote; no reemplaza a QA), genera documentos de negocio (HU, especificacion, acta de aceptacion, informe de sprint) en PDF y Word y manuales de usuario en version QA y version general. Entrega el trabajo a desarrollo como tickets. Punto de entrada: /po-team:start.",
+      "category": "development",
+      "source": "./plugins/po-team",
+      "homepage": "https://github.com/faast-app/faast-claude-marketplace"
+    },
+    {
       "name": "marketing",
       "description": "Equipo de Marketing, Ventas y Publicidad con 8 agentes IA para vender un proyecto, una propuesta o una mejora: nunca una presentacion generica, sino el producto DESGLOSADO PARTE POR PARTE. Primero el mapa del producto con una ficha por parte (que es, problema y su costo, como funciona con pantallas reales, que gana el cliente con fuente, antes/despues, benchmark) aprobado por el usuario; luego las piezas: video keynote cinematografico con un capitulo por parte y clips por parte (HyperFrames), deck de propuesta comercial con estetica de lanzamiento, one-pager, panfletos y redes sobre la marca FAAST. Investiga mercado, competencia y tendencias con fuente y fecha. Nada inventado, producto real, aprobacion por pieza. Punto de entrada: /marketing:start.",
       "category": "development",

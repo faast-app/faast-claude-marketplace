@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Validaciones</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* po-team · informe de validaciones: tablero de control; cada ticket es una fila con su estado en el ambiente,
+   agrupada por situacion, con casos, evidencia, bloqueos, decisiones y bugs. Se llena sola con el JSON del
+   bloque id="datos" (formato en skills/validacion-funcional-po, seccion "Informe como artifact"). */
+:root{
+  --bg:#f3f5f6; --surface:#ffffff; --fg:#17212b; --muted:#5a6772; --line:#d9dfe3; --accent:#1d5c7a;
+  --ok-bg:#e3f4e9; --ok-fg:#14633a; --warn-bg:#fdf1d6; --warn-fg:#7a5205; --bad-bg:#fbe3e1; --bad-fg:#9c2a1f;
+  --pend-bg:#e6eef7; --pend-fg:#1f4f80; --na-bg:#eceff1; --na-fg:#56626b; --pr-bg:#ece7f8; --pr-fg:#4f3a8c; --attn:#c98a12;
+  --f-body:"Public Sans",ui-sans-serif,system-ui,sans-serif; --f-mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#11171c; --surface:#182129; --fg:#e3e9ee; --muted:#98a6b1; --line:#2a3640; --accent:#7cb9d6;
+  --ok-bg:#163525; --ok-fg:#8fdcae; --warn-bg:#3a2d10; --warn-fg:#f2cd7c; --bad-bg:#3f1b18; --bad-fg:#f3a59c;
+  --pend-bg:#172c43; --pend-fg:#9cc3ec; --na-bg:#232d35; --na-fg:#a6b2bb; --pr-bg:#2a2343; --pr-fg:#c6b6f2; --attn:#e3a93a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#11171c; --surface:#182129; --fg:#e3e9ee; --muted:#98a6b1; --line:#2a3640; --accent:#7cb9d6;
+  --ok-bg:#163525; --ok-fg:#8fdcae; --warn-bg:#3a2d10; --warn-fg:#f2cd7c; --bad-bg:#3f1b18; --bad-fg:#f3a59c;
+  --pend-bg:#172c43; --pend-fg:#9cc3ec; --na-bg:#232d35; --na-fg:#a6b2bb; --pr-bg:#2a2343; --pr-fg:#c6b6f2; --attn:#e3a93a; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:15px;line-height:1.55;margin:0}
+.wrap{max-width:1180px;margin:0 auto;padding-inline:16px;padding-block:28px 64px;display:grid;gap:26px}
+@media (min-width:700px){.wrap{padding-inline:20px}}
+a{color:var(--accent)} a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.top{display:grid;gap:8px}.eyebrow{font-family:var(--f-mono);font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin:0}
+h1{font-size:2rem;line-height:1.15;margin:0;text-wrap:balance}.top p{margin:0;max-width:72ch;color:var(--muted)}
+.summary{display:flex;flex-wrap:wrap;gap:10px 22px;align-items:center;padding:14px 16px;background:var(--surface);border:1px solid var(--line);border-radius:10px}
+.big{font-family:var(--f-mono);font-size:1.6rem;font-weight:600}.lbl{font-size:.82rem;color:var(--muted)}
+.tiles{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px 16px}.tiles li{display:flex;gap:6px;align-items:center}.tiles b{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.group{display:grid;gap:8px}.ghead{display:grid;grid-template-columns:auto auto 1fr;gap:4px 10px;align-items:baseline;padding-bottom:4px;border-bottom:2px solid var(--fg)}
+.ghead h2{margin:0;font-size:1.15rem}.count{font-family:var(--f-mono);font-size:.8rem;color:var(--muted)}.ghead p{grid-column:1/-1;margin:0;color:var(--muted);font-size:.88rem}
+.cols,.row{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr) minmax(0,1fr);gap:16px}
+.cols{padding:4px 14px;font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:600}
+.row{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px;border-left:4px solid var(--line);scroll-margin-top:12px}.row.attn{border-left-color:var(--attn)}
+.issue{display:grid;gap:2px;min-width:0}.num{font-family:var(--f-mono);font-weight:600;font-size:.92rem;text-decoration:none}.issue h3{margin:0;font-size:.95rem;font-weight:600;line-height:1.35}
+.po{margin:6px 0 0;display:grid;gap:2px;font-size:.84rem}.po dt{font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600;margin-top:4px}.po dd{margin:0;max-width:62ch}
+.crit{font-size:.84rem;margin-top:4px}.crit summary{cursor:pointer;color:var(--accent);font-weight:600}.crit ul{margin:6px 0 0;padding-left:18px;display:grid;gap:3px}.duda summary{color:var(--warn-fg)}.duda p{margin:6px 0 0;padding:6px 8px;border-radius:5px;background:var(--warn-bg);color:var(--warn-fg);max-width:70ch}
+.env,.next{display:grid;gap:6px;align-content:start;min-width:0}.envname{display:none;font-size:.7rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:600}
+.note,.next p{margin:0;font-size:.86rem;color:var(--muted)}.next p:first-of-type{color:var(--fg)}.links{display:flex;gap:10px;flex-wrap:wrap}
+.chip{justify-self:start;font-size:.76rem;font-weight:600;padding:2px 9px;border-radius:5px;white-space:nowrap}
+.s-ok{background:var(--ok-bg);color:var(--ok-fg)}.s-warn{background:var(--warn-bg);color:var(--warn-fg)}.s-alert,.s-block{background:var(--bad-bg);color:var(--bad-fg)}
+.s-pend{background:var(--pend-bg);color:var(--pend-fg)}.s-na,.s-wait{background:var(--na-bg);color:var(--na-fg)}.s-pr{background:var(--pr-bg);color:var(--pr-fg)}
+.evid{grid-column:1/-1;margin-top:4px;padding-top:12px;border-top:1px dashed var(--line)}.evid summary{cursor:pointer;font-size:.86rem;font-weight:600}
+.evid .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:14px;margin-top:10px}.evid figure{margin:0;min-width:0}
+.evid img{width:100%;height:auto;border:1px solid var(--line);border-radius:6px;display:block}.evid figcaption{font-size:.82rem;color:var(--muted);margin-top:4px}
+.evid video{width:100%;border:1px solid var(--line);border-radius:6px;display:block;background:#000}.evid .vid{grid-column:1/-1}
+.avisos{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:12px}.aviso{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--line);border-radius:8px;padding:12px 14px;min-width:0}.aviso h2{margin:0 0 6px;font-size:1rem}.aviso ul{margin:0;padding-left:18px;display:grid;gap:6px;font-size:.88rem}.aviso.bloq{border-left-color:var(--bad-fg)}.aviso.dec{border-left-color:var(--accent)}
+.idx{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center;margin:4px 0 12px;font-size:.84rem}.idx>span{color:var(--muted);font-weight:600}.idx a{display:inline-flex;gap:6px;align-items:center;padding:3px 8px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--fg);text-decoration:none}.idx a:hover{border-color:var(--accent)}.idx .chip{font-size:.7rem;padding:1px 6px}
+.casos .tw{overflow-x:auto;margin-top:10px}.casos table{width:100%;border-collapse:collapse;font-size:.85rem;min-width:560px}.casos th,.casos td{text-align:left;vertical-align:top;padding:6px 8px;border-bottom:1px solid var(--line)}.casos th{font-size:.74rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.bugs .muted{color:var(--muted);font-size:.8rem}
+.src{margin-top:6px;font-size:.8rem}.src summary{cursor:pointer;color:var(--accent);font-weight:600}.src p{margin:4px 0 0;font-family:var(--f-mono);font-size:.76rem;word-break:break-word}.src ol{margin:4px 0 0;padding-left:18px;display:grid;gap:2px}
+.ejemplo{background:var(--warn-bg);color:var(--warn-fg);border-radius:8px;padding:8px 14px;font-size:.85rem;font-weight:600;margin:0}
+/* los hijos de grid no deben estirarse por las tablas anchas: el scroll queda dentro de .tw */
+.wrap>*,.group>*,.row>*,.evid,.casos{min-width:0}
+@media (max-width:860px){.cols{display:none}.row{grid-template-columns:minmax(0,1fr)}.envname{display:block}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="ejemplo" id="ejemplo" hidden>Datos de ejemplo: corre /po-team:validar --lote sprint N --artifact para llenarlo con una validación real.</p>
+  <header class="top"><p class="eyebrow" id="eyb"></p><h1 id="titulo">Validaciones</h1><p id="intro"></p></header>
+  <div class="summary"><div><div class="big" id="total">0</div><div class="lbl">requerimientos</div></div><ul class="tiles" id="tiles" aria-label="Estados"></ul></div>
+  <section class="avisos" id="avisos" hidden></section>
+  <div id="grupos"></div>
+</div>
+<script id="datos" type="application/json">
+{}
+</script>
+<script>
+(() => {
+  let D = {};
+  try { D = JSON.parse(document.getElementById("datos").textContent || "{}"); } catch (e) { D = {}; }
+  const $ = id => document.getElementById(id);
+  const el = (tag, cls, txt) => { const n = document.createElement(tag); if (cls) n.className = cls; if (txt != null) n.textContent = txt; return n; };
+  // estado: ok | warn | alert | block | pend | na | pr | wait
+  const LABEL = { ok: "Cumple", warn: "A revisar", alert: "No cumple", block: "Bloqueado", pend: "En validación", na: "No aplica", pr: "En PR", wait: "Espera confirmación" };
+  const ICO = { ok: "🟢", alert: "🔴", warn: "🟡", pend: "⏳", block: "⛔", na: "—", wait: "↪", pr: "🔀" };
+  const ATTN = new Set(["alert", "warn", "block"]);
+  const amb = D.ambiente || "Ambiente";
+  const dmy = s => { const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(s || ""); return m ? `${m[3]}-${m[2]}-${m[1]}` : (s || ""); };
+
+  if (D.ejemplo) $("ejemplo").hidden = false;
+  const titulo = D.titulo || "Validaciones"; $("titulo").textContent = titulo; document.title = titulo;
+  $("eyb").textContent = [D.producto, D.sprint, amb].filter(Boolean).join(" · ");
+  $("intro").textContent = D.intro || `Estado de cada requerimiento en ${amb}, con su evidencia y el paso que falta.${D.fecha ? " Actualizado el " + dmy(D.fecha) + "." : ""}`;
+
+  const grupos = D.grupos || [];
+  const items = grupos.flatMap(g => g.items || []);
+  $("total").textContent = items.length;
+  const cuenta = {}; items.forEach(it => { cuenta[it.estado] = (cuenta[it.estado] || 0) + 1; });
+  for (const k of ["ok", "warn", "alert", "block", "pend", "pr", "wait", "na"]) if (cuenta[k]) {
+    const li = el("li"); li.append(el("span", "chip s-" + k, LABEL[k]), el("b", null, String(cuenta[k]))); $("tiles").append(li);
+  }
+
+  // bloqueos del ambiente y decisiones del PO
+  const bl = D.bloqueos || [], dc = D.decisiones || [];
+  if (bl.length || dc.length) {
+    $("avisos").hidden = false;
+    if (bl.length) { const a = el("div", "aviso bloq"), ul = el("ul"); a.append(el("h2", null, "Bloqueos"));
+      bl.forEach(b => { const li = el("li"); if (b.titulo) li.append(el("b", null, b.titulo + ": ")); li.append(b.detalle || ""); ul.append(li); }); a.append(ul); $("avisos").append(a); }
+    if (dc.length) { const a = el("div", "aviso dec"), ul = el("ul"); a.append(el("h2", null, D.tituloDecisiones || "Decisiones del PO"));
+      dc.forEach(d => ul.append(el("li", null, typeof d === "string" ? d : d.texto))); a.append(ul); $("avisos").append(a); }
+  }
+
+  const fuente = f => {
+    if (!f) return null;
+    const t = f.tipo === "observado" ? "dato observado" : f.tipo === "inferido" ? "inferido del código" : "";
+    const d = el("details", "src"); d.append(el("summary", null, "🔎 De dónde sale" + (t ? " · " + t : "")));
+    if (f.fuente) d.append(el("p", null, f.fuente));
+    if ((f.pasos || []).length) { const ol = el("ol"); f.pasos.forEach(p => ol.append(el("li", null, p))); d.append(ol); }
+    return d;
+  };
+  const urlDe = it => it.url || (D.repoUrl ? D.repoUrl.replace(/\/?$/, "/") + it.numero : "#");
+
+  function fila(it) {
+    const st = it.estado || "pend";
+    const art = el("article", "row" + (ATTN.has(st) ? " attn" : "")); art.id = "t" + it.numero; art.dataset.st = st;
+    // columna 1: ticket y descripcion de negocio
+    const is = el("div", "issue"), a = el("a", "num", "#" + it.numero);
+    a.href = urlDe(it); a.target = "_blank"; a.rel = "noopener"; is.append(a, el("h3", null, it.titulo || ""));
+    const ds = it.descripcion;
+    if (ds) {
+      if (ds.trata || ds.validar) { const dl = el("dl", "po");
+        if (ds.trata) dl.append(el("dt", null, "De qué trata"), el("dd", null, ds.trata));
+        if (ds.validar) dl.append(el("dt", null, "Qué se valida"), el("dd", null, ds.validar)); is.append(dl); }
+      if ((ds.criterios || []).length) { const d = el("details", "crit"), ul = el("ul"); d.append(el("summary", null, `Criterios del ticket (${ds.criterios.length})`));
+        ds.criterios.forEach(c => ul.append(el("li", null, c))); d.append(ul); is.append(d); }
+      if (ds.duda) { const d = el("details", "crit duda"); d.append(el("summary", null, "Dudas y definiciones"), el("p", null, ds.duda)); is.append(d); }
+    }
+    // columna 2: estado en el ambiente
+    const env = el("div", "env"); env.append(el("span", "envname", amb), el("span", "chip s-" + st, it.etiqueta || LABEL[st] || st));
+    if (it.nota) env.append(el("p", "note", it.nota));
+    // columna 3: siguiente paso y enlaces
+    const nx = el("div", "next"); nx.append(el("span", "envname", "Siguiente paso"));
+    if (it.siguiente) nx.append(el("p", null, it.siguiente));
+    if ((it.links || []).length) { const p = el("p", "links"); it.links.forEach(l => { const x = el("a", null, l.texto || l.url); x.href = l.url; x.target = "_blank"; x.rel = "noopener"; p.append(x); }); nx.append(p); }
+    art.append(is, env, nx);
+    // casos de prueba
+    const cs = it.casos || [];
+    if (cs.length) {
+      const d = el("details", "evid casos"); d.open = true; d.append(el("summary", null, `Casos de prueba (${cs.length})`));
+      const tw = el("div", "tw"), tb = el("table"), th = el("thead"), tr = el("tr");
+      ["Caso", "Qué se prueba", "Resultado", "Falta"].forEach(h => tr.append(el("th", null, h))); th.append(tr); tb.append(th);
+      const body = el("tbody");
+      cs.forEach(c => { const r = el("tr"), res = el("td", null, `${ICO[c.estado] || ""} ${c.resultado || ""}`.trim());
+        const f = fuente(c.fuente); if (f) res.append(f);
+        r.append(el("td", null, c.caso || ""), el("td", null, c.que || ""), res, el("td", null, c.falta || "—")); body.append(r); });
+      tb.append(body); tw.append(tb); d.append(tw); art.append(d);
+    }
+    // evidencia: capturas (abren en grande) y videos
+    const ev = it.evidencia || [];
+    if (ev.length) {
+      const d = el("details", "evid"); d.open = true; d.append(el("summary", null, `Evidencia (${ev.length})`));
+      const figs = el("div", "figs");
+      ev.forEach(e => {
+        const f = el("figure"), src = e.archivo || "";
+        if (/\.(webm|mp4)$/i.test(src)) { f.className = "vid"; const v = el("video"); v.src = src; v.controls = true; v.preload = "metadata"; v.playsInline = true; f.append(v, el("figcaption", null, "🎬 " + (e.leyenda || ""))); }
+        else { const a = el("a"); a.href = e.original || src; a.target = "_blank"; a.rel = "noopener"; const im = el("img"); im.src = src; im.alt = e.leyenda || ""; im.decoding = "async"; im.loading = "lazy"; a.append(im); f.append(a, el("figcaption", null, e.leyenda || "")); }
+        figs.append(f);
+      });
+      d.append(figs); art.append(d);
+    }
+    return art;
+  }
+
+  for (const g of grupos) {
+    const s = el("section", "group"); if (g.id) s.id = g.id;
+    const h = el("header", "ghead"); h.append(el("h2", null, g.nombre || ""), el("span", "count", String((g.items || []).length)));
+    if (g.descripcion) h.append(el("p", null, g.descripcion)); s.append(h);
+    const nav = el("nav", "idx"); nav.setAttribute("aria-label", "Índice"); nav.append(el("span", null, "Ir a:"));
+    (g.items || []).forEach(it => { const a = el("a"); a.href = "#t" + it.numero; a.title = it.titulo || ""; a.append(el("b", null, "#" + it.numero), " ", el("span", "chip s-" + (it.estado || "pend"), it.etiqueta || LABEL[it.estado] || "")); nav.append(a); });
+    s.append(nav);
+    const cols = el("div", "cols"); cols.setAttribute("aria-hidden", "true"); [D.columnaTicket || "Ticket", amb, "Siguiente paso"].forEach(c => cols.append(el("span", null, c))); s.append(cols);
+    (g.items || []).forEach(it => s.append(fila(it)));
+    $("grupos").append(s);
+  }
+
+  // bugs y riesgos encontrados: los del alcance cuentan en el veredicto, los de fuera se registran aparte
+  const bugs = D.bugs || [];
+  if (bugs.length) {
+    const s = el("section", "group bugs"); s.id = "bugs";
+    const h = el("header", "ghead"); h.append(el("h2", null, "Bugs y riesgos"), el("span", "count", String(bugs.length)),
+      el("p", null, D.notaBugs || "Los del alcance son parte del veredicto del ticket y vuelven al desarrollo; los de fuera del alcance (preexistentes o riesgos) no influyen en el veredicto y se registran aparte."));
+    s.append(h);
+    const c = el("div", "casos"), tw = el("div", "tw"), tb = el("table"), th = el("thead"), tr = el("tr");
+    ["Bug", "Alcance", "Detalle"].forEach(x => tr.append(el("th", null, x))); th.append(tr); tb.append(th);
+    const body = el("tbody");
+    bugs.forEach(b => { const r = el("tr"), t1 = el("td"); t1.append(el("b", null, b.titulo || ""), el("br"), el("span", "muted", b.ticket || ""));
+      const t2 = el("td"); t2.append(el("span", "chip " + (b.alcance === "en" ? "s-alert" : "s-na"), b.alcance === "en" ? "Del alcance" : "Fuera del alcance"));
+      const t3 = el("td", null, b.detalle || ""); const f = fuente(b.fuente); if (f) t3.append(f);
+      if (b.url) { t3.append(" "); const a = el("a", null, "ver ticket"); a.href = b.url; a.target = "_blank"; a.rel = "noopener"; t3.append(a); }
+      r.append(t1, t2, t3); body.append(r); });
+    tb.append(body); tw.append(tb); c.append(tw); s.append(c); $("grupos").append(s);
+  }
+})();
+</script>
+</body>
+</html>

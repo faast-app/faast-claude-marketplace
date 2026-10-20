@@ -1,0 +1,55 @@
+{
+  "org": "mi-organizacion",
+  "repo": "portal-clientes",
+  "repos": ["portal-clientes", "portal-clientes-web"],
+  "project": "Backlog Portal de Clientes",
+  "alias": "backlog",
+  "project_label": "BacklogPortal",
+  "campos": {
+    "puntos": "Puntos",
+    "sprint": "Sprint",
+    "prioridad": "Prioridad",
+    "fechaDemo": "Fecha Demo",
+    "fechaPreprod": "Fecha Preprod",
+    "fechaVB": "Fecha VB cliente"
+  },
+  "sprint": { "via": "iteration", "inicio": "2026-11-02", "duracion_dias": 14, "cantidad": 4 },
+  "vistas": true,
+  "agregar_abiertos": false,
+  "epicas": [
+    { "nombre": "Autogestión del cliente", "descripcion": "Lo que el cliente resuelve solo en el portal, sin llamar a su ejecutivo." }
+  ],
+  "items": [
+    {
+      "titulo": "Ver el resumen de mi cuenta al entrar al portal",
+      "tipo": "Historia",
+      "epica": "Autogestión del cliente",
+      "estado": "No iniciado",
+      "prio": "Alta",
+      "puntos": 3,
+      "sprint": 1,
+      "fechaDemo": "2026-11-13",
+      "body": "**Como** cliente\n**Quiero** ver el resumen de mi cuenta al entrar al portal\n**Para** conocer mi situación sin pedirla por correo\n\n## Contexto\nHoy el cliente pide por correo el estado de su cuenta y espera la respuesta de un ejecutivo.\nOrigen: pedido del PO\n\n## Criterios de aceptacion\n1. **Dado** que soy un cliente con usuario activo **cuando** ingreso al portal **entonces** veo el saldo y mis últimos movimientos\n2. **Dado** que soy un cliente nuevo sin movimientos **cuando** ingreso al portal **entonces** veo un mensaje que explica que aún no tengo movimientos\n\n## Alcance\n- Incluye: ingreso y pantalla de resumen.\n- No incluye: descarga de documentos.\n\n## Estimacion\n3 puntos — una pantalla nueva con datos que ya existen."
+    },
+    {
+      "titulo": "Descargar mis documentos desde el portal",
+      "tipo": "Historia",
+      "epica": "Autogestión del cliente",
+      "estado": "No iniciado",
+      "prio": "Media",
+      "puntos": 5,
+      "sprint": 2,
+      "body": "**Como** cliente\n**Quiero** descargar mis documentos desde el portal\n**Para** tenerlos cuando los necesito sin esperar a un ejecutivo\n\n## Criterios de aceptacion\n1. **Dado** que tengo documentos de los últimos 12 meses **cuando** elijo uno de la lista **entonces** se descarga una copia idéntica a la original\n2. **Dado** que no tengo documentos en el período **cuando** abro la sección **entonces** veo un aviso de que no hay documentos para mostrar"
+    },
+    {
+      "titulo": "El resumen de cuenta muestra montos sin separador de miles",
+      "tipo": "Bug",
+      "estado": "Observado",
+      "prio": "Alta",
+      "puntos": 1,
+      "sprint": 1,
+      "etiquetas": ["cliente:ACME"],
+      "body": "## Que pasa\nEn el resumen de cuenta los montos aparecen como 1500000 en vez de 1.500.000.\n\n## Que deberia pasar\nLos montos se muestran con separador de miles según el país del cliente.\n\n## Como se reproduce\n1. Entrar al portal con un cliente de Chile.\n2. Mirar el saldo en el resumen."
+    }
+  ]
+}

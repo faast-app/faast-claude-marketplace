@@ -14,7 +14,7 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from coord_root import repo_de, resolve  # noqa: E402
 
-EXCLUIR = [".coordination/", ".coordination-root", ".mesa/", ".mesa-root", ".marketing/", ".playwright-mcp/"]
+EXCLUIR = [".coordination/", ".coordination-root", ".mesa/", ".mesa-root", ".marketing/", ".po-team/", ".playwright-mcp/"]
 
 PROTOCOLO = """<mesa-servicios-protocolo>
 Este proyecto usa el plugin mesa-servicios. En esta sesion TU eres el coordinador operativo de la

@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tablero del PO</title>
+<!--
+  DASHBOARD DEL PO (po-team / seguimiento) — autocontenido, sin librerias externas.
+  Para generarlo: copiar este archivo y reemplazar el CONTENIDO del bloque script con
+  id="datos" (tipo application/json, mas abajo) por el tablero-datos.json real
+  (estructura en la skill dashboard-po; escapar la secuencia menor-que + barra como "<\/").
+  El JSON que trae por defecto es de EJEMPLO (ficticio) y se marca como tal en pantalla.
+-->
+<style>
+  :root{
+    --bg:#f6f7f9; --panel:#ffffff; --panel-2:#f1f3f6; --tinta:#17202c; --suave:#5d6776; --linea:#e2e6eb;
+    --marca:#123a5e; --foco:#2563eb;
+    --c-desarrollo:#2563eb; --c-qa:#7c3aed; --c-demo:#b45309; --c-validacion:#0f766e; --c-vb:#15803d;
+    --c-observado:#dc2626; --c-bloqueado:#475569; --c-sin:#94a3b8;
+    --chip-txt:#ffffff; --alto:#dc2626; --medio:#b45309; --bajo:#475569;
+    --sombra:0 1px 2px rgba(16,24,40,.06),0 1px 3px rgba(16,24,40,.08);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0f141b; --panel:#161d27; --panel-2:#1d2633; --tinta:#e6ebf2; --suave:#9aa6b6; --linea:#2a3442;
+      --marca:#9cc3ec; --foco:#60a5fa;
+      --c-desarrollo:#3b82f6; --c-qa:#8b5cf6; --c-demo:#d97706; --c-validacion:#14b8a6; --c-vb:#22c55e;
+      --c-observado:#ef4444; --c-bloqueado:#64748b; --c-sin:#64748b;
+      --chip-txt:#0b1016; --alto:#f87171; --medio:#fbbf24; --bajo:#94a3b8;
+      --sombra:0 1px 2px rgba(0,0,0,.4);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0f141b; --panel:#161d27; --panel-2:#1d2633; --tinta:#e6ebf2; --suave:#9aa6b6; --linea:#2a3442;
+    --marca:#9cc3ec; --foco:#60a5fa;
+    --c-desarrollo:#3b82f6; --c-qa:#8b5cf6; --c-demo:#d97706; --c-validacion:#14b8a6; --c-vb:#22c55e;
+    --c-observado:#ef4444; --c-bloqueado:#64748b; --c-sin:#64748b;
+    --chip-txt:#0b1016; --alto:#f87171; --medio:#fbbf24; --bajo:#94a3b8;
+    --sombra:0 1px 2px rgba(0,0,0,.4);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:var(--bg);color:var(--tinta);font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;overflow-x:hidden}
+  .wrap{max-width:1180px;margin:0 auto;padding:20px 16px 40px}
+  header{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:baseline;justify-content:space-between;margin-bottom:14px}
+  h1{font-size:22px;margin:0;color:var(--marca)}
+  .sub{color:var(--suave);font-size:13px}
+  .ejemplo{display:none;background:#fef3c7;color:#78350f;border-radius:8px;padding:6px 10px;font-size:13px;margin-bottom:12px}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:16px}
+  .kpi{background:var(--panel);border:1px solid var(--linea);border-radius:12px;padding:12px 14px;box-shadow:var(--sombra)}
+  .kpi .v{font-size:24px;font-weight:700;font-variant-numeric:tabular-nums}
+  .kpi .l{color:var(--suave);font-size:12px}
+  .kpi.alerta .v{color:var(--alto)}
+  .filtros{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 14px}
+  .filtro{border:1px solid var(--linea);background:var(--panel);color:var(--tinta);border-radius:999px;padding:4px 10px;font-size:12px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+  .filtro[aria-pressed="true"]{border-color:var(--foco);box-shadow:0 0 0 2px color-mix(in srgb,var(--foco) 25%,transparent)}
+  .dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+  .grid{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:16px}
+  @media (max-width:900px){ .grid{grid-template-columns:minmax(0,1fr)} }
+  .card{background:var(--panel);border:1px solid var(--linea);border-radius:14px;padding:14px 16px;box-shadow:var(--sombra);margin-bottom:16px;min-width:0}
+  .card h2{font-size:17px;margin:0;color:var(--tinta)}
+  .card .obj{color:var(--suave);font-size:13px;margin:2px 0 10px}
+  .card-head{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 12px;align-items:baseline}
+  .nums{font-size:13px;color:var(--suave);font-variant-numeric:tabular-nums}
+  .nums b{color:var(--tinta)}
+  .barra{height:8px;border-radius:999px;background:var(--panel-2);overflow:hidden;margin:8px 0 12px;display:flex}
+  .barra span{display:block;height:100%}
+  .stepper{display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));gap:0;margin:6px 0 14px;counter-reset:paso}
+  .step{position:relative;text-align:center;padding-top:30px;font-size:12px;color:var(--suave);min-width:0}
+  .step::before{content:"";position:absolute;top:12px;left:0;right:0;height:3px;background:var(--linea)}
+  .step:first-child::before{left:50%} .step:last-child::before{right:50%}
+  .step.hecho::before{background:var(--col)}
+  .step .bola{position:absolute;top:2px;left:50%;transform:translateX(-50%);width:24px;height:24px;border-radius:50%;background:var(--panel);border:3px solid var(--linea);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--suave)}
+  .step.hecho .bola{border-color:var(--col);background:var(--col);color:var(--chip-txt)}
+  .step.actual .bola{border-color:var(--col);color:var(--col);background:var(--panel)}
+  .step .nom{display:block;color:var(--tinta);font-weight:600;line-height:1.25;padding:0 2px;overflow-wrap:break-word;hyphens:auto}
+  .step .pts{font-variant-numeric:tabular-nums}
+  @media (max-width:520px){ .step{font-size:10.5px} .step .pts{display:block} .chip .t{max-width:200px} }
+  .fechas{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}
+  .fecha{font-size:12px;border:1px solid var(--linea);border-radius:8px;padding:3px 8px;background:var(--panel-2)}
+  .fecha.vencida{border-color:var(--alto);color:var(--alto);font-weight:600}
+  .fecha.ok{border-color:var(--c-vb)}
+  .grupo{margin:8px 0 4px;font-size:12px;color:var(--suave);font-weight:600}
+  .chips{display:flex;flex-wrap:wrap;gap:6px}
+  .chip{display:inline-flex;align-items:center;gap:6px;max-width:100%;border-radius:999px;padding:3px 4px 3px 10px;background:var(--col);color:var(--chip-txt);font-size:12px;text-decoration:none;border:2px solid transparent}
+  .chip .t{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:240px}
+  .chip .p{background:rgba(255,255,255,.85);color:#111827;border-radius:999px;padding:0 7px;font-weight:700;font-variant-numeric:tabular-nums}
+  .chip.observado{background:var(--panel);color:var(--c-observado);border-color:var(--c-observado)}
+  .chip.observado .p{background:var(--c-observado);color:#fff}
+  .chip.bloqueado{background:var(--panel);color:var(--tinta);border-color:var(--c-bloqueado);border-style:dashed}
+  .chip.bloqueado .p{background:var(--c-bloqueado);color:#fff}
+  .chip:focus-visible{outline:2px solid var(--foco);outline-offset:2px}
+  .chip .vb{font-weight:700}
+  .lado h3{font-size:14px;margin:0 0 8px}
+  .lista{list-style:none;margin:0;padding:0}
+  .lista li{padding:6px 0;border-bottom:1px solid var(--linea);font-size:13px}
+  .lista li:last-child{border-bottom:0}
+  .nivel{display:inline-block;font-size:11px;font-weight:700;border-radius:6px;padding:0 6px;margin-right:6px;color:#fff}
+  .nivel.alto{background:var(--alto)} .nivel.medio{background:var(--medio)} .nivel.bajo{background:var(--bajo)}
+  .flecha{color:var(--suave)}
+  details summary{cursor:pointer;font-weight:600}
+  .vacio{color:var(--suave);font-size:13px}
+  footer{color:var(--suave);font-size:12px;margin-top:10px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1 id="titulo">Tablero del PO</h1>
+      <div class="sub" id="sub"></div>
+    </div>
+    <div class="sub" id="fuente"></div>
+  </header>
+  <div class="ejemplo" id="ejemplo">Datos de ejemplo (ficticios). El agente de seguimiento reemplaza este bloque con los datos reales del Project.</div>
+  <section class="kpis" id="kpis" aria-label="Indicadores"></section>
+  <div class="filtros" id="filtros" role="group" aria-label="Filtrar por etapa"></div>
+  <div class="grid">
+    <main id="sprints"></main>
+    <aside class="lado">
+      <div class="card"><h3>Atencion</h3><ul class="lista" id="riesgos"></ul></div>
+      <div class="card"><h3>Cambios desde la revision anterior</h3><ul class="lista" id="cambios"></ul></div>
+      <div class="card" id="faltantes-card"><h3>Para corregir en el tablero</h3><ul class="lista" id="faltantes"></ul></div>
+    </aside>
+  </div>
+  <footer id="pie"></footer>
+</div>
+
+<script id="datos" type="application/json">
+{
+  "ejemplo": true,
+  "generado": "2026-10-16T12:00:00Z",
+  "equipo": "Producto de ejemplo",
+  "fuente": { "org": "org-ejemplo", "projects": [ { "numero": 1, "titulo": "Backlog de ejemplo" } ] },
+  "etapas": [
+    { "clave": "desarrollo", "nombre": "Desarrollo" },
+    { "clave": "qa", "nombre": "Validacion QA" },
+    { "clave": "demo", "nombre": "Pase a Demo" },
+    { "clave": "validacion", "nombre": "Validacion Demo / Preprod" },
+    { "clave": "vb", "nombre": "VB cliente" }
+  ],
+  "sprints": [
+    {
+      "nombre": "Sprint 12", "inicio": "2026-10-06", "fin": "2026-10-17",
+      "objetivo": "Que el ejecutivo pueda cursar una operacion con el nuevo calculo de gastos de punta a punta",
+      "fechas": { "demo": "2026-10-14", "preprod": { "Cliente A": "2026-10-21" }, "vb": "2026-10-28" },
+      "tickets": [
+        { "numero": 101, "titulo": "Filtrar operaciones por fecha de vencimiento", "tipo": "hu", "estado": "VB Cliente", "etapa": "vb", "puntos": 3, "veredictoPO": "vb", "url": "#" },
+        { "numero": 102, "titulo": "Mostrar el IVA de cada gasto en el resumen", "tipo": "hu", "estado": "En validacion", "etapa": "validacion", "puntos": 5, "veredictoPO": "vb", "url": "#" },
+        { "numero": 103, "titulo": "El total del resumen no suma el IVA del gasto", "tipo": "bug", "estado": "Observado", "etapa": "demo", "observado": true, "puntos": 2, "veredictoPO": "observado", "url": "#" },
+        { "numero": 104, "titulo": "Exportar a Excel el listado filtrado", "tipo": "hu", "estado": "Validado por QA", "etapa": "qa", "puntos": 3, "url": "#" },
+        { "numero": 105, "titulo": "Nueva aprobacion del Jefe Comercial para montos altos", "tipo": "hu", "estado": "In Progress", "etapa": "desarrollo", "puntos": 8, "url": "#", "diasEnEstado": 7 },
+        { "numero": 106, "titulo": "Aviso por correo al aprobar una operacion", "tipo": "hu", "estado": "Bloqueado", "etapa": "desarrollo", "bloqueado": true, "puntos": 3, "url": "#" }
+      ]
+    },
+    {
+      "nombre": "Sprint 13", "inicio": "2026-10-20", "fin": "2026-10-31",
+      "objetivo": "Que el cliente reciba el detalle de gastos en su liquidacion",
+      "fechas": { "demo": "2026-11-04", "vb": "2026-11-11" },
+      "tickets": [
+        { "numero": 110, "titulo": "Detalle de gastos en la liquidacion", "tipo": "hu", "estado": "Todo", "etapa": "desarrollo", "puntos": 5, "url": "#" },
+        { "numero": 111, "titulo": "Ordenar la bandeja por monto", "tipo": "hu", "estado": "Todo", "etapa": "desarrollo", "puntos": 2, "url": "#" }
+      ]
+    }
+  ],
+  "backlog": [
+    { "numero": 120, "titulo": "Reporte mensual de cesiones por cliente", "tipo": "hu", "estado": "Backlog", "etapa": "desarrollo", "puntos": 0, "url": "#" }
+  ],
+  "cambios": [
+    { "numero": 104, "titulo": "Exportar a Excel el listado filtrado", "de": "Desarrollo Completado", "a": "Validado por QA" },
+    { "numero": 103, "titulo": "El total del resumen no suma el IVA del gasto", "de": "Pase a Demo", "a": "Observado" }
+  ],
+  "riesgos": [
+    { "nivel": "medio", "texto": "#105 lleva 7 dias sin moverse en Desarrollo" }
+  ],
+  "sinEtapa": [],
+  "sinEstimar": [ { "numero": 120, "titulo": "Reporte mensual de cesiones por cliente" } ]
+}
+</script>
+
+<script>
+(function () {
+  "use strict";
+  var D;
+  try { D = JSON.parse(document.getElementById("datos").textContent); }
+  catch (e) { document.getElementById("sprints").innerHTML = '<div class="card">No se pudo leer el bloque de datos del tablero.</div>'; return; }
+
+  var ETAPAS = (D.etapas && D.etapas.length) ? D.etapas : [
+    { clave: "desarrollo", nombre: "Desarrollo" }, { clave: "qa", nombre: "Validacion QA" },
+    { clave: "demo", nombre: "Pase a Demo" }, { clave: "validacion", nombre: "Validacion Demo / Preprod" },
+    { clave: "vb", nombre: "VB cliente" }];
+  var N = ETAPAS.length;
+  var IDX = {}; ETAPAS.forEach(function (e, i) { IDX[e.clave] = i; });
+  var FECHA_ETAPA = { demo: "demo", preprod: "validacion", vb: "vb" };
+  var HOY = new Date(); HOY.setHours(0, 0, 0, 0);
+  var filtro = null;
+
+  function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+    return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+  function color(clave) { return "var(--c-" + (IDX[clave] != null ? clave : "sin") + ")"; }
+  function fmt(d) { if (!d) return ""; var p = String(d).slice(0, 10).split("-"); return p.length === 3 ? p[2] + "/" + p[1] : esc(d); }
+  function aFecha(d) { var p = String(d).slice(0, 10).split("-"); return new Date(+p[0], +p[1] - 1, +p[2]); }
+  function idx(t) { var i = IDX[t.etapa]; return i == null ? -1 : i; }
+  function pts(t) { var p = +t.puntos; return isFinite(p) ? p : 0; }
+
+  function calc(sp) {
+    var tk = sp.tickets || [], total = 0, porEtapa = [], alcanzado = [], pond = 0, obs = 0, blo = 0;
+    for (var i = 0; i < N; i++) { porEtapa[i] = 0; alcanzado[i] = 0; }
+    tk.forEach(function (t) {
+      var p = pts(t), k = idx(t); total += p;
+      if (t.observado) obs++; if (t.bloqueado) blo++;
+      if (k < 0) return;
+      porEtapa[k] += p; for (var j = 0; j <= k; j++) alcanzado[j] += p;
+      pond += p * (k + 1) / N;
+    });
+    var actual = 0; for (var a = 0; a < N; a++) if (alcanzado[a] > 0) actual = a;
+    return { total: total, porEtapa: porEtapa, alcanzado: alcanzado, vb: porEtapa[N - 1] || 0,
+             pctVb: total ? Math.round(100 * (porEtapa[N - 1] || 0) / total) : 0,
+             pctPond: total ? Math.round(100 * pond / total) : 0, obs: obs, blo: blo, actual: actual };
+  }
+
+  function fechasDe(sp) {
+    var out = [], f = sp.fechas || {};
+    Object.keys(f).forEach(function (k) {
+      var et = FECHA_ETAPA[k] || k;
+      var add = function (etq, val) {
+        if (!val) return;
+        var req = IDX[et], atras = (sp.tickets || []).filter(function (t) { return req != null && idx(t) < req; });
+        var vencida = aFecha(val) < HOY && atras.length > 0;
+        var lograda = req != null && atras.length === 0 && (sp.tickets || []).length > 0;
+        out.push({ etq: etq, fecha: val, vencida: vencida, lograda: lograda, atras: atras });
+      };
+      var nombre = { demo: "Demo", preprod: "Preprod", vb: "VB cliente" }[k] || k;
+      if (f[k] && typeof f[k] === "object") Object.keys(f[k]).forEach(function (c) { add(nombre + " " + c, f[k][c]); });
+      else add(nombre, f[k]);
+    });
+    return out;
+  }
+
+  function chip(t) {
+    var cls = "chip" + (t.observado ? " observado" : "") + (t.bloqueado ? " bloqueado" : "");
+    var et = ETAPAS[idx(t)] ? ETAPAS[idx(t)].nombre : "Sin etapa";
+    var marca = t.observado ? "⚠ " : t.bloqueado ? "⛔ " : (t.veredictoPO === "vb" ? '<span class="vb" title="VB PO">✓</span> ' : "");
+    var tip = "#" + t.numero + " · " + t.titulo + " · " + et + " · " + (t.estado || "") + " · " + pts(t) + " pts" +
+      (t.observado ? " · Observado" : "") + (t.bloqueado ? " · Bloqueado" : "") + (t.veredictoPO === "vb" ? " · VB PO" : "") +
+      (t.diasEnEstado ? " · " + t.diasEnEstado + " dias en el estado" : "");
+    var href = t.url && t.url !== "#" ? ' href="' + esc(t.url) + '" target="_blank" rel="noopener"' : ' href="#" onclick="return false"';
+    return '<a class="' + cls + '" style="--col:' + color(t.etapa) + '"' + href + ' title="' + esc(tip) + '">' +
+      marca + '<span class="t">#' + esc(t.numero) + " " + esc(t.titulo) + '</span><span class="p">' + pts(t) + "</span></a>";
+  }
+
+  function visible(t) {
+    if (!filtro) return true;
+    if (filtro === "observado") return !!t.observado;
+    if (filtro === "bloqueado") return !!t.bloqueado;
+    return t.etapa === filtro && !t.observado && !t.bloqueado;
+  }
+
+  function sprintCard(sp) {
+    var c = calc(sp), h = '<section class="card" aria-label="' + esc(sp.nombre) + '">';
+    h += '<div class="card-head"><h2>' + esc(sp.nombre) + '</h2><div class="nums">' + fmt(sp.inicio) + " – " + fmt(sp.fin) +
+      " · <b>" + c.total + "</b> pts · VB cliente <b>" + c.pctVb + "%</b> · avance <b>" + c.pctPond + "%</b>" +
+      (c.obs ? " · <b style=\"color:var(--c-observado)\">" + c.obs + " observado" + (c.obs > 1 ? "s" : "") + "</b>" : "") +
+      (c.blo ? " · <b>" + c.blo + " bloqueado" + (c.blo > 1 ? "s" : "") + "</b>" : "") + "</div></div>";
+    if (sp.objetivo) h += '<p class="obj">' + esc(sp.objetivo) + "</p>";
+    h += '<div class="barra" role="img" aria-label="Puntos por etapa">';
+    ETAPAS.forEach(function (e, i) { if (c.porEtapa[i]) h += '<span style="width:' + (100 * c.porEtapa[i] / (c.total || 1)) + "%;background:" + color(e.clave) + '" title="' + esc(e.nombre) + ": " + c.porEtapa[i] + ' pts"></span>'; });
+    h += "</div>";
+    h += '<ol class="stepper" style="--n:' + N + ';list-style:none;padding:0">';
+    ETAPAS.forEach(function (e, i) {
+      var st = c.alcanzado[i] > 0 && c.alcanzado[i] === c.total ? "hecho" : (i === c.actual && c.total ? "actual" : (c.alcanzado[i] > 0 ? "hecho" : ""));
+      h += '<li class="step ' + st + '" style="--col:' + color(e.clave) + '"><span class="bola">' + (i + 1) + '</span><span class="nom">' + esc(e.nombre) +
+        '</span><span class="pts">' + c.alcanzado[i] + " / " + c.total + " pts</span></li>";
+    });
+    h += "</ol>";
+    var fs = fechasDe(sp);
+    if (fs.length) {
+      h += '<div class="fechas">';
+      fs.forEach(function (f) {
+        h += '<span class="fecha' + (f.vencida ? " vencida" : f.lograda ? " ok" : "") + '" title="' +
+          esc(f.vencida ? f.atras.length + " ticket(s) no llegaron a tiempo" : f.lograda ? "Cumplido" : "Comprometida") + '">' +
+          (f.vencida ? "⚠ " : f.lograda ? "✓ " : "") + esc(f.etq) + " " + fmt(f.fecha) + "</span>";
+      });
+      h += "</div>";
+    }
+    var tk = (sp.tickets || []).filter(visible);
+    if (!tk.length) h += '<p class="vacio">Sin tickets para este filtro.</p>';
+    ETAPAS.slice().reverse().forEach(function (e) {
+      var g = tk.filter(function (t) { return t.etapa === e.clave; });
+      if (!g.length) return;
+      h += '<div class="grupo">' + esc(e.nombre) + " · " + g.reduce(function (s, t) { return s + pts(t); }, 0) + ' pts</div><div class="chips">' + g.map(chip).join("") + "</div>";
+    });
+    var sin = tk.filter(function (t) { return idx(t) < 0; });
+    if (sin.length) h += '<div class="grupo">Sin etapa</div><div class="chips">' + sin.map(chip).join("") + "</div>";
+    return h + "</section>";
+  }
+
+  function render() {
+    var sprints = D.sprints || [];
+    document.getElementById("titulo").textContent = "Tablero del PO" + (D.equipo ? " — " + D.equipo : "");
+    document.getElementById("sub").textContent = "Actualizado " + (D.generado ? new Date(D.generado).toLocaleString("es") : "—");
+    var src = D.fuente || {};
+    document.getElementById("fuente").textContent = (src.projects || []).map(function (p) { return (p.titulo || "Project") + " (#" + p.numero + ")"; }).join(" · ");
+    if (D.ejemplo) document.getElementById("ejemplo").style.display = "block";
+
+    var tot = 0, vb = 0, obs = 0, blo = 0, venc = 0, pond = 0;
+    sprints.forEach(function (sp) { var c = calc(sp); tot += c.total; vb += c.vb; obs += c.obs; blo += c.blo; pond += c.pctPond * c.total;
+      fechasDe(sp).forEach(function (f) { if (f.vencida) venc++; }); });
+    var k = [
+      { v: sprints.length, l: "Sprints en el tablero" },
+      { v: tot, l: "Puntos comprometidos" },
+      { v: (tot ? Math.round(100 * vb / tot) : 0) + "%", l: "Puntos con VB cliente" },
+      { v: (tot ? Math.round(pond / tot) : 0) + "%", l: "Avance ponderado" },
+      { v: obs, l: "Tickets observados", a: obs > 0 },
+      { v: venc, l: "Fechas vencidas", a: venc > 0 }
+    ];
+    document.getElementById("kpis").innerHTML = k.map(function (x) {
+      return '<div class="kpi' + (x.a ? " alerta" : "") + '"><div class="v">' + esc(x.v) + '</div><div class="l">' + esc(x.l) + "</div></div>"; }).join("");
+
+    var fl = [{ k: null, n: "Todas" }].concat(ETAPAS.map(function (e) { return { k: e.clave, n: e.nombre }; }),
+      [{ k: "observado", n: "Observados" }, { k: "bloqueado", n: "Bloqueados" }]);
+    document.getElementById("filtros").innerHTML = fl.map(function (f) {
+      var col = f.k === "observado" ? "var(--c-observado)" : f.k === "bloqueado" ? "var(--c-bloqueado)" : f.k ? color(f.k) : "transparent";
+      return '<button type="button" class="filtro" data-k="' + esc(f.k || "") + '" aria-pressed="' + (filtro === f.k) + '">' +
+        (f.k ? '<span class="dot" style="background:' + col + '"></span>' : "") + esc(f.n) + "</button>"; }).join("");
+
+    var html = sprints.map(sprintCard).join("");
+    if (D.backlog && D.backlog.length) {
+      html += '<details class="card"><summary>Backlog sin sprint (' + D.backlog.length + ")</summary><div class=\"chips\" style=\"margin-top:10px\">" +
+        D.backlog.filter(visible).map(chip).join("") + "</div></details>";
+    }
+    document.getElementById("sprints").innerHTML = html || '<div class="card vacio">No hay sprints con tickets.</div>';
+
+    var riesgos = (D.riesgos || []).slice();
+    sprints.forEach(function (sp) { fechasDe(sp).forEach(function (f) {
+      if (f.vencida) riesgos.unshift({ nivel: "alto", texto: sp.nombre + ": fecha " + f.etq + " (" + fmt(f.fecha) + ") vencida con " + f.atras.length + " ticket(s) sin llegar" }); }); });
+    var orden = { alto: 0, medio: 1, bajo: 2 };
+    var rk = function (r) { return r.nivel in orden ? orden[r.nivel] : 3; };
+    riesgos.sort(function (a, b) { return rk(a) - rk(b); });
+    document.getElementById("riesgos").innerHTML = riesgos.length ? riesgos.map(function (r) {
+      return '<li><span class="nivel ' + esc(r.nivel || "bajo") + '">' + esc((r.nivel || "info").toUpperCase()) + "</span>" + esc(r.texto) + "</li>"; }).join("")
+      : '<li class="vacio">Sin alertas.</li>';
+
+    var cambios = D.cambios || [];
+    document.getElementById("cambios").innerHTML = cambios.length ? cambios.map(function (c) {
+      return "<li><b>#" + esc(c.numero) + "</b> " + esc(c.titulo) + '<br><span class="flecha">' + esc(c.de || "nuevo") + " → </span>" + esc(c.a || "salio del tablero") + "</li>"; }).join("")
+      : '<li class="vacio">Sin cambios desde la revision anterior.</li>';
+
+    var falt = [];
+    (D.sinEtapa || []).forEach(function (t) { falt.push("<li><b>#" + esc(t.numero) + "</b> " + esc(t.titulo) + " — estado sin etapa en el config</li>"); });
+    (D.sinEstimar || []).forEach(function (t) { falt.push("<li><b>#" + esc(t.numero) + "</b> " + esc(t.titulo) + " — sin estimar</li>"); });
+    document.getElementById("faltantes").innerHTML = falt.join("") || '<li class="vacio">Nada pendiente.</li>';
+    document.getElementById("pie").textContent = "Avance ponderado: cada etapa alcanzada suma una parte igual de los puntos del ticket (VB cliente = 100%). " +
+      "Validacion funcional del PO (✓) no reemplaza la validacion de QA.";
+
+    Array.prototype.forEach.call(document.querySelectorAll(".filtro"), function (b) {
+      b.addEventListener("click", function () { var v = b.getAttribute("data-k") || null; filtro = (filtro === v) ? null : v; render(); });
+    });
+  }
+  render();
+})();
+</script>
+</body>
+</html>
