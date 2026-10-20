@@ -18,7 +18,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from coord_root import repo_de, resolve  # noqa: E402
 
 PLUGIN_ROOT = os.environ.get("CLAUDE_PLUGIN_ROOT") or os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-EXCLUIR = [".coordination/", ".coordination-root", ".mesa/", ".marketing/", ".playwright-mcp/"]
+EXCLUIR = [".coordination/", ".coordination-root", ".mesa/", ".marketing/", ".po-team/", ".playwright-mcp/"]
 DIAS_PENDIENTES = 21
 MAX_PENDIENTES = 12
 

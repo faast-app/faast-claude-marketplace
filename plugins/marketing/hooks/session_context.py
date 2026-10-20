@@ -17,7 +17,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from coord_root import repo_de, resolve  # noqa: E402
 
 EXCLUIR = [".coordination/", ".coordination-root", ".mesa/", ".mesa-root", ".marketing/",
-           ".marketing-root", ".playwright-mcp/"]
+           ".marketing-root", ".po-team/", ".po-team-root", ".playwright-mcp/"]
 
 PROTOCOLO = """<marketing-protocolo>
 Este proyecto usa el plugin marketing. En esta sesion TU eres el coordinador operativo del equipo

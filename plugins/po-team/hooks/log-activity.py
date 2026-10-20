@@ -1,31 +1,25 @@
 #!/usr/bin/env python3
 # po-team — logging AUTOMATICO de actividad de agentes (via hooks).
 # Recibe el payload del hook (SubagentStart/SubagentStop) por stdin y agrega una
-# linea JSON a .po-team/metrics/activity.jsonl. Nunca falla hacia afuera (exit 0).
+# linea JSON a .po-team/metrics/activity.jsonl de la carpeta CANONICA (coord_root.resolve).
+# Si la carpeta canonica esta dentro de un repo git, no escribe (la regla es que viva
+# fuera). Nunca falla hacia afuera (exit 0).
 import json, os, sys, datetime
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from coord_root import resolve  # noqa: E402
 
 PLUGIN = "po-team"
 TEAM = {"po-lead","refinador","planificador","seguimiento","validador-po",
         "documentador","manualista","setup"}
 
 def find_po(start):
-    # .po-team canonica = la que tiene config.json; se sube hasta 8 niveles.
     if not start:
         return None
-    d = os.path.abspath(start)
-    bare = None
-    for _ in range(8):
-        c = os.path.join(d, ".po-team")
-        if os.path.isdir(c):
-            if os.path.isfile(os.path.join(c, "config.json")):
-                return c
-            if bare is None:
-                bare = c
-        parent = os.path.dirname(d)
-        if parent == d:
-            break
-        d = parent
-    return bare
+    r = resolve(start)
+    if not r["path"] or r["en_repo"]:
+        return None
+    return r["path"]
 
 def main():
     try:
