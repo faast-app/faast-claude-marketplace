@@ -1,6 +1,6 @@
 ---
 name: manual-dual
-description: Manuales de usuario en DOS versiones del mismo flujo (po-team) - version QA (pasos numerados, precondiciones, ambiente, perfil, datos de prueba, resultado esperado por paso, checklist) y version para cualquier persona (lenguaje simple sin tecnicismos, capturas anotadas con marcadores numerados, consejos y preguntas frecuentes), mismo recorrido y mismas capturas base, reglas de captura y anotacion con el Playwright MCP, plantillas HTML, salida HTML + PDF (+ DOCX) con LibreOffice, nombres y versionado. Cargala al crear o actualizar un manual.
+description: Manuales de usuario en DOS versiones del mismo flujo (po-team), con recorrido repetible (steps.yaml con localizadores estables para actualizar el manual en la proxima version) - version QA (pasos numerados, precondiciones, ambiente, perfil, datos de prueba, resultado esperado por paso, checklist) y version para cualquier persona (lenguaje simple sin tecnicismos, capturas anotadas con marcadores numerados, consejos y preguntas frecuentes), mismo recorrido y mismas capturas base, reglas de captura y anotacion con el Playwright MCP, plantillas HTML, salida HTML + PDF (+ DOCX) con LibreOffice, nombres y versionado. Cargala al crear o actualizar un manual.
 ---
 
 # Manual dual (po-team)
@@ -27,6 +27,29 @@ Si falta algo, se pregunta UNA vez antes de recorrer.
 4. Redactar datos personales (skill `evidencia-po`). Nada de credenciales visibles.
 Si el flujo falla a mitad: se detiene, se informa al PO (lenguaje de negocio, sin buscar causas)
 y el manual queda en borrador con lo recorrido.
+
+## Recorrido repetible (`steps.yaml`)
+Junto a `recorrido.md` queda `manuales/{flujo}/steps.yaml`, para que la proxima version (o QA)
+repita el MISMO recorrido sin redescubrirlo:
+```yaml
+flujo: aprobar-operacion-jefe-comercial
+ambiente: demo-co            # clave del config; la clase se lee de ahi
+perfil: PO_DEMO_JEFE_COMERCIAL   # NOMBRE de variable, nunca el valor
+viewport: {width: 1280, height: 720}
+pasos:
+  - n: 1
+    pantalla: Bandeja de operaciones pendientes
+    accion: click
+    locator: "getByRole('button', { name: 'Aprobar' })"   # de browser_generate_locator
+    dato: null
+    registra: true            # crea o cambia algo: en productivo exige autorizacion por accion
+    espera: "La operacion pasa a estado Aprobada"
+    captura: 03-aprobar
+```
+Reglas: localizadores por rol/etiqueta/test-id (estables), nunca por posicion; datos de prueba,
+nunca reales; `registra: true` en todo paso que crea o cambia algo. Para actualizar el manual se
+ejecuta este archivo paso a paso; si un localizador ya no existe, se reporta "cambio de pantalla
+en el paso N" y se pregunta, sin inventar el camino nuevo.
 
 ## Version QA (`templates/manual/manual-qa.html`)
 - Portada: flujo, version del manual, fecha, ambiente, autor (del config).

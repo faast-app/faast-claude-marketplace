@@ -1,6 +1,6 @@
 ---
 name: evidencia-po
-description: Evidencia del equipo del Product Owner (po-team) - como se capturan pantallas con el Playwright MCP (resaltar, verificar, capturar, viewport declarado), nombres y carpetas por ticket, redaccion de secretos y datos personales en texto e imagenes, y la entrega EMBEBIDA en el ticket por la rama huerfana `evidence` del repo configurado (subida desde un worktree aparte, nunca en ramas de trabajo) con `![](…/raw/evidence/…)` + link blob de respaldo, o attachment + <img> en Azure DevOps. Cargala al validar, al documentar con capturas, al armar manuales o al comentar un ticket con evidencia.
+description: Evidencia del equipo del Product Owner (po-team) - como se capturan pantallas con el Playwright MCP (resaltar, verificar, capturar, viewport declarado), el video a tamaño real con capitulos (navegador limpio, size = viewport, traza despues del video, normalizar_video.py → MP4 + portada) para reproducir y revalidar, el par antes/despues, nombres y carpetas por ticket, redaccion de secretos y datos personales en texto e imagenes, y la entrega EMBEBIDA en el ticket por la rama huerfana `evidence` del repo configurado (subida desde un worktree aparte, nunca en ramas de trabajo) con `![](…/raw/evidence/…)` + link blob de respaldo, o attachment + <img> en Azure DevOps. Cargala al validar, al documentar con capturas, al armar manuales o al comentar un ticket con evidencia.
 ---
 
 # Evidencia del PO (po-team)
@@ -8,7 +8,7 @@ description: Evidencia del equipo del Product Owner (po-team) - como se capturan
 Una captura sin contexto no prueba nada. La evidencia del PO es liviana (una captura por criterio
 o por paso) pero **concluyente**: dice que mirar, afirma el resultado y se ve dentro del ticket.
 Si el plugin dev-team esta instalado, su skill `visual-evidence` aplica como referencia ampliada;
-esta skill es autosuficiente.
+esta skill es autosuficiente (trae su propio `scripts/normalizar_video.py`).
 
 ## Captura (Playwright MCP del plugin)
 1. Viewport declarado: `browser_resize` 1280x720 (375x812 si el criterio es movil).
@@ -20,10 +20,45 @@ esta skill es autosuficiente.
 El MCP escribe en `~/.faast-mcp/po-team/` (staging fuera de repos); al terminar se MUEVE todo a la carpeta del
 ticket y se vacia el staging.
 
+## Video a tamaño real (reproducir, revalidar, `--video`)
+No es obligatorio en una validacion normal; si se graba, se graba bien. Playwright comparte UNA
+captura de pantalla por pagina entre la traza y el video, y la fija quien la enciende primero: la
+traza la deja en 800 px. Si hubo una traza antes del video (aunque ya se haya detenido), el video
+sale chico en la esquina con el resto gris, y pasarle `size` no lo arregla. Secuencia obligatoria:
+1. **Navegador limpio**: si en la sesion ya se uso `browser_start_tracing` o
+   `browser_start_video`, `browser_close` y volver a entrar. Ante la duda, cerrar.
+2. `browser_resize` al viewport declarado (1280x720; 375x812 movil).
+3. `browser_start_video` con `size` **igual al viewport** (`{"width":1280,"height":720}`).
+4. `browser_video_show_actions` (los clics y tecleos se ven en el video).
+5. Traza solo si se pidio, y **siempre despues** del video (`browser_start_tracing`).
+6. Un `browser_video_chapter` por criterio o paso, con nombre de negocio ("Criterio 2 — total con
+   IVA"). No cambiar el viewport a mitad de grabacion.
+7. Al terminar: `browser_stop_tracing` (si hubo) y `browser_stop_video`.
+8. Un video por sesion de navegador; para otro, volver al paso 1.
+Verificacion y entrega de cada video, antes de darlo por bueno:
+```bash
+python3 "${CLAUDE_PLUGIN_ROOT}/skills/evidencia-po/scripts/normalizar_video.py" {carpeta}/video.webm
+```
+`OK` → deja `video.mp4` (se abre en QuickTime, Teams, el navegador y GitHub) y
+`video-portada.png`. `REPARADO` (codigo 2) → salio con relleno gris: el `.mp4` lo recorta y
+escala, pero la nitidez perdida no vuelve; si el video es la prueba principal de un bug o de un
+arreglo, se **regraba** con la secuencia. Requiere `ffmpeg`/`ffprobe` (`/po-team:setup
+playwright`); sin ellos se entrega el `.webm` y se avisa. El `.webm` original no se toca. Al
+ticket va la **portada embebida con link al `.mp4`**.
+
+## Par antes/despues (revalidar)
+Carpeta NUEVA `…-revalidacion/` con numeracion propia (nunca se pisa la original). Mismos pasos,
+perfil y datos equivalentes. Para el paso que fallaba: la captura original (obtenido incorrecto) y
+la nueva (esperado correcto), ambas resaltadas y con su `browser_verify_*`, lado a lado en el
+comentario. La verificacion que antes fallaba y ahora pasa ES la prueba del arreglo.
+
 ## Carpetas y nombres
 ```
 .po-team/tickets/{numero}/
 ├── validacion-{ambiente}-{YYYYMMDD}/   00-plan.md · caN-{resumen}.png · caN-OBSERVADO-*.png · validacion.md
+│                                       [video.webm · video.mp4 · video-portada.png]
+├── validacion-{ambiente}-{YYYYMMDD}-revalidacion/   misma estructura + antes-despues por criterio
+├── reproduccion-{ambiente}-{YYYYMMDD}/ reproduccion.md · NN-{paso}.png · video.* (siempre)
 └── capturas/                           capturas para documentos (NN-{resumen}.png)
 .po-team/manuales/{flujo}/capturas/     NN-{paso}.png (manualista)
 ```

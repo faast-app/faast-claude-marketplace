@@ -20,7 +20,7 @@ EXCLUIR = [".coordination/", ".coordination-root", ".mesa/", ".mesa-root", ".mar
            ".marketing-root", ".po-team/", ".po-team-root", ".playwright-mcp/"]
 
 SUBCARPETAS = ("tickets", "sprints", "handoffs", "metrics", "evidencia", "tablero/snapshots",
-               "tablero/informes", "documentos", "manuales", "validaciones")
+               "tablero/informes", "documentos", "manuales", "validaciones", "retros")
 
 PROTOCOLO = """<po-team-protocolo>
 Este proyecto usa el plugin po-team. En esta sesion TU eres el coordinador operativo del equipo

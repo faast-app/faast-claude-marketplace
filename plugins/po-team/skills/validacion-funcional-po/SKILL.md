@@ -1,6 +1,6 @@
 ---
 name: validacion-funcional-po
-description: Metodo de VALIDACION FUNCIONAL RAPIDA del Product Owner (po-team) - recorrer solo los criterios de aceptacion de la HU por el camino normal de uso (10-20 minutos por ticket) en Desa, Demo o Preprod con el Playwright MCP, una captura resaltada por criterio con su verificacion, veredicto VB PO u Observado, regla de la primera falla (se reporta en lenguaje de negocio y no se buscan causas ni se debuggea), modo lote (sprint o lista de tickets en serie con tabla cumple/observado por ticket), formato del informe y del comentario, y la diferencia explicita con la prueba de QA. Cargala al validar uno o varios tickets como PO.
+description: Metodo de VALIDACION FUNCIONAL RAPIDA del Product Owner (po-team) - recorrer solo los criterios de aceptacion de la HU por el camino normal de uso (10-20 minutos por ticket) en Desa, Demo o Preprod con el Playwright MCP, una captura resaltada por criterio con su verificacion, veredicto VB PO u Observado, regla de la primera falla (se reporta en lenguaje de negocio y no se buscan causas ni se debuggea), modo lote (sprint o lista de tickets en serie con tabla cumple/observado por ticket), reproducir antes de registrar un bug (REPRODUCIDO / NO REPRODUCIDO / BLOQUEADO) y revalidar un arreglo con par antes/despues, la clase del ambiente (pruebas vs productivo), formato del informe y del comentario, y la diferencia explicita con la prueba de QA. Cargala al validar uno o varios tickets como PO.
 ---
 
 # Validacion funcional rapida del PO (po-team)
@@ -39,7 +39,11 @@ observacion temprano.
   `caN-OBSERVADO-{resumen}.png`, se anota que se esperaba y que se vio, y se termina.
 - **Prohibido**: buscar la causa, leer codigo, revisar consola o red para explicar, consultar la
   base, reintentar con otro dato o camino, tocar configuracion. Si algo tienta a explicar, se omite.
-- Trazas y video NO son obligatorios (es rapido); se activan solo si el pedido lo indica.
+- Video: no es obligatorio en una validacion normal (es rapida); se graba con `--video` y SIEMPRE
+  en reproducir y revalidar (skill `evidencia-po`, "Video a tamaño real"). Traza solo si se pide.
+- **Clase del ambiente**: en `pruebas` las acciones de negocio de prueba son normales; en
+  `productivo` se para antes de cada accion que registra algo y se pide autorizacion para esa
+  accion (sin ella: "No evaluado — requiere autorizacion en productivo"); sin clase, se pregunta.
 
 ## Veredicto
 - **VB PO**: todos los criterios verificados con su captura.
@@ -63,6 +67,19 @@ observacion temprano.
 **Siguiente paso sugerido:** comentar en el ticket y devolver a desarrollo | dar VB PO y avisar al cliente
 ```
 Nota final fija: "Validacion funcional rapida del PO; no reemplaza la validacion de QA."
+
+## Reproducir y revalidar
+| | Reproducir | Revalidar |
+|---|---|---|
+| Para que | Confirmar un reporte ANTES de registrar el bug | Confirmar el arreglo de un bug u observado |
+| Recorrido | Los pasos del reporte, como usuario, + una segunda corrida limpia | El MISMO recorrido original, mismos pasos y perfil |
+| Carpeta | `reproduccion-{ambiente}-{fecha}/` | `validacion-{ambiente}-{fecha}-revalidacion/` (nueva, numeracion propia) |
+| Evidencia | Video desde el inicio + captura resaltada en el punto del problema | Video + par antes/despues por criterio |
+| Veredicto | REPRODUCIDO consistente / intermitente (n de m) · NO REPRODUCIDO · BLOQUEADO | Corregido · Corregido con observaciones · Sigue fallando |
+| Siguiente | REPRODUCIDO → el refinador registra el bug | El refinador comenta en el MISMO issue y se pregunta si cerrar |
+`reproduccion.md`: reporte original (citado), ambiente/fecha/perfil/version, tabla paso · accion ·
+esperado · visto · captura, veredicto y la nota "reproduccion funcional; no es diagnostico". Un
+NO REPRODUCIDO muestra lo que SI se vio; nunca se fuerza el fallo con otros datos.
 
 ## Modo lote
 Entrada: `--lote sprint {N}` (todos los tickets del sprint en la etapa validable) o una lista de

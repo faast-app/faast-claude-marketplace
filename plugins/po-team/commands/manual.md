@@ -20,9 +20,13 @@ Pedido: $ARGUMENTS (version por defecto: `ambas`)
   para los resultados esperados de la version QA.
 
 ## Paso 1 — Plan corto
-Mostrar: flujo, ambiente, perfil, versiones, pasos estimados y donde quedara. Generar el manual
-no escribe en el tracker; si el flujo incluye acciones que crean o cambian datos en el ambiente
-(aprobar, cursar, enviar), advertirlo y pedir el OK antes de recorrer.
+Mostrar: flujo, ambiente (con su clase), perfil, versiones, pasos estimados y donde quedara.
+Generar el manual no escribe en el tracker. Acciones que registran algo en el ambiente (aprobar,
+cursar, enviar): en un ambiente de **pruebas** son normales y se recorren sin pedir OK por paso;
+en uno **productivo** el manualista se detiene antes de cada una y pide autorizacion por accion
+(lo ideal es documentar en un ambiente de pruebas); sin clase declarada, se pregunta UNA vez.
+Si ya existe una version anterior con `steps.yaml`, se propone **repetir ese recorrido** (mismos
+pasos, ver que cambio en pantalla) y generar `v{N+1}` con "Cambios respecto a v{N}".
 
 ## Paso 2 — Manual (agente `manualista`)
 Invocar al `manualista`: un recorrido real con capturas y `recorrido.md`; redaccion de la(s)

@@ -21,14 +21,24 @@ y comparten capturas, asi nunca se contradicen. Cargas la skill `manual-dual` (s
   sus criterios.
 - `--version qa|general|ambas` (default `ambas`) y formato (PDF siempre; DOCX salvo que se pida
   solo PDF).
-Si falta el ambiente o el perfil, preguntar UNA vez.
+Si falta el ambiente o el perfil, preguntar UNA vez. La clase del ambiente manda (seccion
+"Reglas de equipo"): en pruebas las acciones de negocio son normales; en productivo, alto antes
+de cada accion que registra algo.
+- Si `brain.path` esta configurado: LEER (solo lectura) el glosario y el proceso del flujo en
+  faast-brain para nombrar las cosas como las nombra el negocio en la version general.
 
 ## Flujo
 1. **Recorrido** (una sola pasada, skill `manual-dual`): viewport 1280x720, login, por cada paso
    `browser_highlight` → `browser_take_screenshot` `NN-{paso}.png` (QA) → marcadores numerados en
    la pagina con `browser_evaluate` → `NN-{paso}-anotada.png` (general) → quitar marcadores;
    anotar en `recorrido.md` pantalla, accion, dato, resultado visto y que señala cada marcador.
-   Resultado final con `browser_verify_*`.
+   Resultado final con `browser_verify_*`. En paralelo dejas `steps.yaml` (skill `manual-dual`,
+   "Recorrido repetible"): un paso por accion con su localizador estable
+   (`browser_generate_locator`) para que la proxima version repita el mismo recorrido.
+   **Actualizar un manual** (`v{N+1}`): se re-ejecuta el `steps.yaml` de la version anterior, se
+   compara pantalla por pantalla y la nueva version lista "Cambios respecto a v{N}"; un paso que
+   ya no se puede ejecutar se informa como cambio de pantalla (no se adivina el nuevo camino:
+   se pregunta).
 2. **Si algo falla a mitad**: se detiene; se informa al po-lead en lenguaje de negocio ("en el
    paso 4 el boton Aprobar no aparece para el perfil Jefe Comercial en Demo CO"), sin buscar la
    causa; el manual queda en borrador con lo recorrido.

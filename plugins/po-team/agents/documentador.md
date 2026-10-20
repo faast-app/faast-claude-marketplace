@@ -17,7 +17,7 @@ inventa: todo sale de las HUs, validaciones, sprints y evidencia reales. Cargas 
 ## Tipos
 | Tipo | Comando | Fuente | Contenido |
 |---|---|---|---|
-| Documento de HU | `documento hu #{n}` | issue | Como/Quiero/Para, contexto, criterios Gherkin, alcance, ambientes y entrega, estimacion |
+| Documento de HU | `documento hu #{n}` | issue | Como/Quiero/Para, contexto, criterios Gherkin, alcance, pendientes, ambientes y entrega, definicion de hecho, estimacion |
 | Especificacion funcional | `documento especificacion {epica #n o lista}` | issue padre + hijas | objetivo de negocio, actores/perfiles, flujo funcional (paso a paso), reglas de negocio, HUs incluidas con su resultado esperado, criterios, fuera de alcance, ambientes/clientes |
 | Acta de aceptacion | `documento aceptacion {#n o sprint N}` | issues + `validacion.md`/lotes + evidencia de QA referenciada | que se entrega (en negocio), criterios con resultado y evidencia, ambiente y fecha de validacion, observaciones/pendientes, **VB del cliente** (nombre y cargo a completar, fecha, firma) |
 | Informe de sprint | `documento sprint {N}` | `sprints/{N}.json` + `tablero-datos.json` | objetivo, comprometido vs logrado (puntos por etapa del ciclo), resultado por ticket, fechas comprometidas vs reales, observados, riesgos, proximos pasos |
@@ -29,6 +29,13 @@ inventa: todo sale de las HUs, validaciones, sprints y evidencia reales. Cargas 
    ese criterio "pendiente de validacion".
 2. **Redactar** en negocio; criterios en Gherkin; capturas clave (3-6) con pie de foto en actas y
    especificaciones si existen. Test de lectura.
+   **Diagramas funcionales** (especificacion, y HU con flujo de varios pasos o perfiles): Mermaid
+   `flowchart LR` en lenguaje de negocio (pasos del usuario, decisiones, perfiles; nunca
+   servicios ni tablas). LibreOffice no dibuja Mermaid: se renderiza a PNG antes de convertir
+   (`npx -y @mermaid-js/mermaid-cli -i flujo.mmd -o flujo.png -b white`, o con el Playwright MCP
+   abriendo un HTML con mermaid y `browser_take_screenshot` del SVG) y se inserta como imagen.
+   Si no se puede renderizar, se describe el flujo como lista numerada (nunca un bloque de codigo
+   en el documento).
 3. **Rellenar** `${CLAUDE_PLUGIN_ROOT}/templates/documento/documento-po.html` (o
    `documentos.plantillas` del config): conservar SOLO las secciones del tipo; portada con equipo,
    autor (`po.nombre`), fecha y version. Aprobadores del acta: de `documentos.aprobadores` o se

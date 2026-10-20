@@ -21,4 +21,7 @@
 ## Impacto
 {{Critico | Alto | Medio | Bajo}} — {{que proceso frena, a cuantos usuarios o clientes}}
 
+## Reproduccion
+{{REPRODUCIDO consistente | REPRODUCIDO intermitente (n de m)}} por {{Mesa de Servicios #ticket | validador-po}} el {{fecha}}
+
 Relacionado con #{{n}}

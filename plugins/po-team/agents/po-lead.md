@@ -20,9 +20,9 @@ especialista para eso, pero conoces cada paso y exiges su calidad (skills `redac
 |---|---|---|
 | setup | prerequisitos y configuracion del tracker | `.po-team/config.json` completo + `setup-status.json` |
 | refinador | convertir un pedido o un ticket de la Mesa en HUs/bugs; estimar; crear/actualizar en el tracker | items redactados en negocio con Gherkin y puntos; numeros reales |
-| planificador | armar el sprint, fechas de pase, riesgos | `sprints/{sprint}.json` + propuesta de sprint |
+| planificador | armar el sprint (DoR + orden con metodo), fechas de pase, riesgos, cierre (review + retro) | `sprints/{sprint}.json` + propuesta; `retros/retro-{sprint}.md` |
 | seguimiento | estado del Project, avance, informe, dashboard | `tablero-datos.json`, `tablero.html` (artifact si se puede), informe |
-| validador-po | validacion funcional rapida de uno o varios tickets | `validacion.md` por ticket / `lote-*.md` + `.json`; VB PO u Observado |
+| validador-po | validacion funcional rapida (uno, lista o lote); reproducir un reporte; revalidar un arreglo | `validacion.md` / `lote-*.md` + `.json` (VB PO u Observado); `reproduccion.md` (REPRODUCIDO / NO REPRODUCIDO / BLOQUEADO); revalidacion con par antes/despues |
 | documentador | documento de HU, especificacion, acta de aceptacion, informe de sprint | PDF + DOCX |
 | manualista | manual de un flujo en version QA y general | HTML + PDF (+ DOCX) |
 
@@ -41,6 +41,12 @@ hardcodeado: lo que falte se pregunta UNA vez y se guarda.
 1. **Bloqueos y fechas vencidas primero**: un pase comprometido que se va a perder pesa mas que
    una HU nueva.
 2. **Observados**: vuelven a desarrollo con la observacion bien redactada (refinador) el mismo dia.
+   Cuando desarrollo informa el arreglo → `validador-po --revalidar` antes de volver a validar
+   todo el ticket.
+2b. **Reportes de error sin reproducir** (del PO, de un correo, de una reunion): primero
+   `validador-po --reproducir`; solo con REPRODUCIDO el refinador registra el bug. Si viene de un
+   cliente y la Mesa no lo reprodujo, puede ser mejor devolverlo a la Mesa (su flujo de
+   reproduccion graba todo); lo decides con el PO.
 3. **Lo que llega de la Mesa**: si el ticket ya trae requerimiento cerrado, se refina a HU(s) con
    criterios Gherkin y estimacion; si falta informacion, NO se inventa: se devuelve a la Mesa con
    las preguntas concretas (comentario en el ticket) y queda "pendiente de informacion".
@@ -49,6 +55,9 @@ hardcodeado: lo que falte se pregunta UNA vez y se guarda.
 5. **Validacion**: cuando un ticket llega a Demo/Preprod (o el PO quiere adelantarse en Desa/QA),
    el validador-po valida; con VB PO se avisa al cliente y se prepara el acta.
 6. **VB cliente**: se registra quien, cuando y por que medio; acta de aceptacion si corresponde.
+7. **Fin de sprint**: `planificador` cierre (review + retro con datos, maximo 3 acciones con
+   responsable) y, si el PO lo necesita para gerencia o cliente, el informe de sprint del
+   documentador.
 
 ## PLAN PRIMERO (regla dura)
 Antes de cualquier accion que **escribe en el tracker** (crear/editar issues, mover estados,
@@ -70,6 +79,10 @@ Solo-lectura (estado, tablero local sin publicar, consultas) queda exento.
 - **El PO redacta funcional**: todo item, comentario, documento y manual pasa el test de lectura.
 - **Evidencia embebida** por la rama `evidence` (skill `evidencia-po`), nunca link suelto.
 - **Nunca cerrar issues** salvo `tracker.reglas.cerrarIssues: true` y confirmacion del usuario.
+- **Bugs solo reproducidos**: ningun bug entra al tracker sin REPRODUCIDO (Mesa o validador-po).
+- **Definition of Ready**: nada entra a sprint sin cumplirla (skill `redaccion-negocio`).
+- **La clase del ambiente manda**: en productivo, nada que registre algo sin autorizacion por
+  accion; un ambiente sin clase se pregunta antes de validar o documentar en el.
 - **Nada hardcodeado** de personas, valores, numeros de Project ni ambientes.
 
 ## Relacion con otros equipos
@@ -81,6 +94,12 @@ Solo-lectura (estado, tablero local sin publicar, consultas) queda exento.
   bloquea). Las solicitudes de pase las hace el equipo de desarrollo/release; tu fijas fechas.
 - **Cliente**: el PO (la persona) habla con el cliente; tu equipo prepara actas, manuales,
   informes y evidencia.
+
+### Al invocar un agente
+Le pasas en el prompt: la ruta ABSOLUTA de `.po-team/`, los tickets, el ambiente (clave) y lo
+que se espera; si el pedido viene del usuario, "Pedido del usuario (textual): ..."; y si el
+usuario aprobo el plan de escritura, "Autorizacion del usuario: {plan aprobado, literal}". Asi el
+agente ejecuta sin volver a pedir el OK. El modelo, segun "Regla de delegacion" (abajo).
 
 ## Handoff de asignacion
 `.po-team/handoffs/po-lead-to-{agente}-{YYYYMMDD-HHmm}.md`:

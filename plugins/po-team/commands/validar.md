@@ -1,6 +1,6 @@
 ---
-description: El validador-po hace la VALIDACION FUNCIONAL RAPIDA del PO (no reemplaza a QA) - recorre solo los criterios de aceptacion de la HU por el camino normal en Desa, Demo o Preprod con el Playwright MCP, una captura verificada por criterio, y da VB PO u Observado; a la primera falla reporta en lenguaje de negocio sin buscar causas. Acepta un ticket, una lista o un sprint completo en modo lote (tabla cumple/observado con evidencia por ticket). Con tu OK publica la evidencia embebida y la etiqueta en cada ticket. Con --artifact arma ademas el informe de validaciones (por ticket - casos, evidencia, bloqueos, decisiones y bugs) y lo publica como artifact. Uso - /po-team:validar {#n | #n #m ... | --lote sprint N} [--ambiente clave] [--artifact]
-argument-hint: '{#n | #n #m … | --lote sprint N} [--ambiente {clave del config}] [--publicar] [--artifact]'
+description: El validador-po hace la VALIDACION FUNCIONAL RAPIDA del PO (no reemplaza a QA) - recorre solo los criterios de aceptacion de la HU por el camino normal en Desa, Demo o Preprod con el Playwright MCP, una captura verificada por criterio, y da VB PO u Observado; a la primera falla reporta en lenguaje de negocio sin buscar causas. Acepta un ticket, una lista o un sprint completo en modo lote (tabla cumple/observado con evidencia por ticket). Con tu OK publica la evidencia embebida y la etiqueta en cada ticket. Con --artifact arma ademas el informe de validaciones (por ticket - casos, evidencia, bloqueos, decisiones y bugs) y lo publica como artifact. Tambien reproduce un reporte antes de registrar un bug (--reproducir, veredicto REPRODUCIDO / NO REPRODUCIDO / BLOQUEADO con video) y revalida un arreglo con par antes/despues (--revalidar). Respeta la clase del ambiente (en productivo solo mira). Uso - /po-team:validar {#n | #n #m ... | --lote sprint N | --reproducir "reporte" | --revalidar #n} [--ambiente clave] [--video] [--artifact]
+argument-hint: '{#n | #n #m … | --lote sprint N | --reproducir "reporte" | --revalidar #n} [--ambiente {clave}] [--video] [--publicar] [--artifact]'
 ---
 
 > **Ejecucion INLINE obligatoria:** este es un COMANDO, no un agente. Ejecuta su
@@ -22,6 +22,15 @@ Pedido: $ARGUMENTS
 ## Paso 1 — Alcance
 - `#n` → un ticket. `#n #m …` → lista (modo lote). `--lote sprint N` → tickets del sprint en la
   etapa validable para ese ambiente (segun el ultimo tablero o el Project).
+- `--reproducir "{reporte}"` (o `#n` de un reporte sin reproducir) → reproduccion con veredicto
+  REPRODUCIDO / NO REPRODUCIDO / BLOQUEADO y video; es el requisito para que el refinador
+  registre un bug.
+- `--revalidar #n` → repite el recorrido original tras el arreglo, con par antes/despues.
+- `--video` → agrega video a tamaño real a una validacion normal (reproducir y revalidar lo
+  llevan siempre).
+- **Clase del ambiente**: si es `productivo`, avisar que el validador solo mirara y pedira
+  autorizacion por cada accion que registre algo; si no tiene clase, preguntarla UNA vez y
+  guardarla en el config antes de empezar.
 Mostrar: tickets, criterios a recorrer por ticket, ambiente, perfil, duracion estimada (~10-20 min
 por ticket). Si el lote supera ~8 tickets, confirmar antes de empezar. Validar es solo lectura
 sobre el tracker: no requiere el OK de escritura para empezar.
@@ -56,6 +65,15 @@ URL). Una URL por sprint y ambiente, guardada en `validacion.artifactUrls["{spri
 si ya existe, leerla y publicar encima. Sin el tool: entregar la ruta local. Publicar el artifact no
 escribe en el tracker y queda privado hasta que el PO lo comparta. Otra ronda de validacion
 actualiza el mismo JSON y la misma URL.
+
+## Paso 3c — Reproduccion o revalidacion
+- **Reproducir**: mostrar el veredicto y la tabla de pasos. REPRODUCIDO → ofrecer
+  `/po-team:refinar` para registrar el bug con esa evidencia. NO REPRODUCIDO / BLOQUEADO → no se
+  registra bug; ofrecer devolver a la Mesa con lo que se vio (o, si el PO insiste, registrarlo
+  como "No reproducible — requiere informacion").
+- **Revalidar**: mostrar el par antes/despues y el veredicto (Corregido / Corregido con
+  observaciones / Sigue fallando); el refinador comenta en el MISMO issue y se pregunta al PO si
+  cerrar.
 
 ## Paso 4 — Publicar (plan + OK)
 Proponer: subir capturas a la rama `evidence`, comentar cada ticket con su tabla y capturas
