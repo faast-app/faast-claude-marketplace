@@ -24,8 +24,9 @@ observacion temprano.
 ## Antes de empezar (2 minutos)
 1. Leer la HU del tracker: criterios de aceptacion numerados. Si no tiene criterios Gherkin
    verificables → no se valida: se devuelve al refinador ("HU sin criterios verificables").
-2. Ambiente: el pedido o la etapa del ticket (Demo del pais, Preprod del cliente, Desa). URL de
-   `ambientes.*` del config; cuenta por NOMBRE de variable de `.po-team/accesos.env`.
+2. Ambiente: el pedido o la etapa del ticket (Demo del pais, Preprod del cliente, Desa). URL y
+   clase de `ambientes.*` del config; cuenta por NOMBRE de variable de `.po-team/accesos.env`,
+   verificada con `scripts/accesos.py` y escrita como NOMBRE en el login (skill `evidencia-po`).
 3. Escribir `00-plan.md`: ticket, ambiente, perfil (variable), criterios a recorrer, fecha/hora.
 
 ## Recorrido

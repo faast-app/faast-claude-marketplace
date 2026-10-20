@@ -38,8 +38,11 @@ add --name azure-devops`), `az account show` (si falla: `az login`), `az devops 
 --defaults organization=… project=…`.
 
 ### Playwright MCP (validador-po y manualista)
-El MCP viene INCLUIDO en el plugin (`.mcp.json`, staging en `~/.faast-mcp/po-team/`, fuera de
-cualquier repo; los agentes mueven lo suyo a la carpeta del ticket al terminar).
+El MCP viene INCLUIDO en el plugin (`.mcp.json` → `scripts/playwright-mcp.sh`: staging en
+`~/.faast-mcp/po-team/`, fuera de cualquier repo, y las cuentas de `.po-team/accesos.env`
+cargadas como secretos del MCP). Como el MCP lee los secretos al arrancar, despues de crear o
+completar `accesos.env` el usuario debe reconectar el MCP (`/mcp`) o reiniciar la sesion: lo
+dices explicitamente al terminar.
 ```bash
 claude mcp list                  # debe aparecer el playwright del plugin
 npx playwright install chromium  # navegador (install-deps solo en Linux)
@@ -95,8 +98,10 @@ canonica y preguntas **UNA sola vez**, todo junto:
 Nada se adivina: lo que el PO no sabe queda vacio y se reporta como pendiente con su impacto.
 
 ### Archivos (todos en la carpeta canonica, fuera de repos)
-- `.po-team/accesos.env` (dotenv, permisos `chmod 600`): `NOMBRE_VARIABLE=` sin valores; los
-  completa el PO. El equipo usa solo los nombres; jamas lees ni muestras los valores.
+- `.po-team/accesos.env` (dotenv, permisos `chmod 600`): `NOMBRE_VARIABLE=` sin valores, una
+  variable por usuario y otra por clave de cada perfil (`PO_DEMO_CO_EJECUTIVO_USUARIO`,
+  `PO_DEMO_CO_EJECUTIVO_CLAVE`); los completa el PO en su editor. El equipo usa solo los nombres
+  (el MCP los reemplaza); para saber si estan cargadas, `scripts/accesos.py` (nunca cat/Read).
 - `.po-team/setup-status.json`: `lastCheck`, `os`, `tools`, `trackerAuth` (scopes),
   `playwright-mcp`, `soffice`, `ffmpeg`, `carpeta` (ruta canonica), `pendientes`.
 - No se escribe ningun `.gitignore` en repos: la carpeta no vive en uno, y el hook de sesion ya

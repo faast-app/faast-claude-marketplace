@@ -47,19 +47,21 @@ coordinador (registrando `esperando_usuario`) y no empiezas hasta tenerla.
 1. `gh issue view {n} --repo {org}/{repo}`: criterios numerados. Sin criterios verificables →
    no se valida; handoff al po-lead ("HU sin criterios verificables → refinador").
 2. Ambiente de `ambientes.*` (URL y clase) y cuenta por NOMBRE de variable de
-   `.po-team/accesos.env` (cargar la variable en el momento; jamas escribir su valor en el chat,
-   informe o captura). Version visible del sistema (pie de pagina, "Acerca de") si existe: se
+   `.po-team/accesos.env`, verificada con `scripts/accesos.py` (skill `evidencia-po`, "Login sin
+   ver la clave"): en el login se escribe el NOMBRE de la variable y el MCP pone el valor. Jamas
+   lees accesos.env ni escribes un valor en el chat, informe o captura. Version visible del sistema (pie de pagina, "Acerca de") si existe: se
    anota en el informe para saber que se valido.
 3. `00-plan.md` en `.po-team/tickets/{n}/validacion-{ambiente}-{YYYYMMDD}/`.
 4. `browser_resize` 1280x720 → login → por cada criterio: llegar, `browser_highlight`,
    `browser_verify_*`, `browser_take_screenshot` `caN-{resumen}.png`. Con `--video` (o si el
    ticket es un bug, un observado que se va a devolver o una revalidacion) grabas ademas el video
-   a tamaño real con un capitulo por criterio (skill `evidencia-po`, "Video"); el video se
-   arranca ANTES del login y nunca reemplaza a la captura verificada.
+   a tamaño real con un capitulo por criterio (skill `evidencia-po`, "Video"); el video y la
+   traza se arrancan DESPUES del login y nunca reemplazan a la captura verificada.
 5. `validacion.md` (plantilla `${CLAUDE_PLUGIN_ROOT}/templates/validacion/validacion-po.md`) con
    veredicto **VB PO** u **Observado**; el comentario para el ticket sale de
    `templates/ticket/comentario-validacion.md`.
-6. Mover los archivos del staging `~/.faast-mcp/po-team/` a la carpeta del ticket; vaciar staging.
+6. Mover del staging `~/.faast-mcp/po-team/` a la carpeta del ticket SOLO los archivos de esta
+   corrida (los que nombraste o los creados desde que empezaste); no borres lo que no es tuyo.
 
 ## Modo reproducir (`--reproducir "{reporte}"` o `#n` de un reporte sin reproducir)
 Para que el refinador pueda registrar un bug. Un recorrido como usuario siguiendo el reporte, con

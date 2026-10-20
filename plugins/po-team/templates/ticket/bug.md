@@ -15,8 +15,9 @@
 - Obtenido: {{en terminos de negocio}}
 
 ## Evidencia
-![{{descripcion}}](https://github.com/{{org}}/{{repo}}/raw/{{rama}}/{{carpeta}}/{{numero}}-{{slug}}/{{tema}}/{{archivo}}.png)
-[ver archivo](https://github.com/{{org}}/{{repo}}/blob/{{rama}}/{{carpeta}}/{{numero}}-{{slug}}/{{tema}}/{{archivo}}.png)
+<!-- subida ANTES de crear el issue con subir_evidencia.sh (destino REP-AAAAMMDD-slug); video: portada embebida + link al .mp4 -->
+![{{descripcion}}](https://github.com/{{org}}/{{repo}}/raw/{{rama}}/{{carpeta}}/{{REP-AAAAMMDD-slug}}/{{tema}}/{{archivo}}.png)
+[ver archivo](https://github.com/{{org}}/{{repo}}/blob/{{rama}}/{{carpeta}}/{{REP-AAAAMMDD-slug}}/{{tema}}/{{archivo}}.png)
 
 ## Impacto
 {{Critico | Alto | Medio | Bajo}} — {{que proceso frena, a cuantos usuarios o clientes}}

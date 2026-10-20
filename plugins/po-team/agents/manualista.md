@@ -28,7 +28,9 @@ de cada accion que registra algo.
   faast-brain para nombrar las cosas como las nombra el negocio en la version general.
 
 ## Flujo
-1. **Recorrido** (una sola pasada, skill `manual-dual`): viewport 1280x720, login, por cada paso
+1. **Recorrido** (una sola pasada, skill `manual-dual`): viewport 1280x720, login con el NOMBRE de
+   la variable (skill `evidencia-po`, "Login sin ver la clave"; la pantalla de login se captura
+   ANTES de escribir la clave, nunca con el campo lleno), por cada paso
    `browser_highlight` → `browser_take_screenshot` `NN-{paso}.png` (QA) → marcadores numerados en
    la pagina con `browser_evaluate` → `NN-{paso}-anotada.png` (general) → quitar marcadores;
    anotar en `recorrido.md` pantalla, accion, dato, resultado visto y que señala cada marcador.

@@ -20,6 +20,20 @@ esta skill es autosuficiente (trae su propio `scripts/normalizar_video.py`).
 El MCP escribe en `~/.faast-mcp/po-team/` (staging fuera de repos); al terminar se MUEVE todo a la carpeta del
 ticket y se vacia el staging.
 
+### Login sin ver la clave (regla dura)
+Las cuentas de prueba viven en `.po-team/accesos.env` y el Playwright MCP del plugin las carga
+como **secretos** (`scripts/playwright-mcp.sh` → `--secrets`). Para entrar:
+1. Verificar que la cuenta esta cargada, sin ver el valor:
+   `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/accesos.py" {ruta absoluta}/.po-team/accesos.env {VAR_USUARIO} {VAR_CLAVE}`
+   (`OK` / `VACIA` / `FALTA`). Si no esta OK → `esperando_usuario`: "completa {VAR} en
+   accesos.env y reconecta el MCP (/mcp) o reinicia la sesion" (los secretos se leen al arrancar).
+2. En `browser_type` / `browser_fill_form` se escribe el **NOMBRE de la variable** (p. ej.
+   `PO_DEMO_EJECUTIVO_CLAVE`), nunca un valor: el MCP lo reemplaza y lo redacta en sus respuestas.
+   Jamas leer `accesos.env` con cat/Read, ni pedir la clave en el chat.
+3. **Video y traza empiezan DESPUES del login** (el login no es evidencia). Si el login es parte
+   de lo que se reproduce, `browser_video_hide_actions` mientras se escribe la clave y
+   `browser_video_show_actions` despues; la traza nunca durante el login.
+
 ## Video a tamaño real (reproducir, revalidar, `--video`)
 No es obligatorio en una validacion normal; si se graba, se graba bien. Playwright comparte UNA
 captura de pantalla por pagina entre la traza y el video, y la fija quien la enciende primero: la
@@ -27,7 +41,7 @@ traza la deja en 800 px. Si hubo una traza antes del video (aunque ya se haya de
 sale chico en la esquina con el resto gris, y pasarle `size` no lo arregla. Secuencia obligatoria:
 1. **Navegador limpio**: si en la sesion ya se uso `browser_start_tracing` o
    `browser_start_video`, `browser_close` y volver a entrar. Ante la duda, cerrar.
-2. `browser_resize` al viewport declarado (1280x720; 375x812 movil).
+2. `browser_resize` al viewport declarado (1280x720; 375x812 movil) y login (arriba).
 3. `browser_start_video` con `size` **igual al viewport** (`{"width":1280,"height":720}`).
 4. `browser_video_show_actions` (los clics y tecleos se ven en el video).
 5. Traza solo si se pidio, y **siempre despues** del video (`browser_start_tracing`).
@@ -67,6 +81,7 @@ Todo vive en la carpeta canonica `.po-team/` (fuera de los repos; un hook bloque
 
 ## Redaccion de secretos y datos personales (antes de entregar)
 - Nunca en texto: contraseñas, tokens, valores de `accesos.env`, cookies, URLs con credenciales.
+  El login se hace con el NOMBRE de la variable (seccion "Login sin ver la clave").
   Las cuentas se nombran por variable (`PO_DEMO_EJECUTIVO`), jamas por su valor.
 - En imagenes: RUT/NIT/DNI, nombres de personas reales, correos, telefonos, numeros de cuenta.
   Opciones: usar datos de prueba; o antes de capturar, ocultar con `browser_evaluate` aplicando
@@ -77,17 +92,20 @@ Todo vive en la carpeta canonica `.po-team/` (fuera de los repos; un hook bloque
 **GitHub** — rama huerfana `evidence` (config `evidencia.repo`, `evidencia.rama`,
 `evidencia.carpeta`), unica y permanente, nunca se mergea ni se borra, subida desde un worktree
 aparte para no tocar ramas de trabajo:
+Se sube SIEMPRE con el script del plugin (rutas absolutas, worktree hermano del clon, verifica
+la rama antes de commitear y aborta si no es la de evidencia; nunca toca la rama del clon ni la
+de ningun repo de producto):
 ```bash
-REPO={evidencia.repo}; DIR=../$(basename $REPO)-evidence
-git -C {clon-local-del-repo} worktree add "$DIR" {evidencia.rama} 2>/dev/null || true
-# si la rama no existe: crearla huerfana UNA vez
-#   git -C {clon} worktree add --detach "$DIR" && cd "$DIR" && git checkout --orphan {rama} \
-#     && git rm -rf -q . ; echo "Evidencia — solo esta rama" > README.md && git add . \
-#     && git commit -q -m "chore(evidence): rama de evidencia" && git push -u origin {rama}
-mkdir -p "$DIR/{evidencia.carpeta}/{numero}-{slug}/{validacion-o-tema}"
-cp {carpeta-local}/*.png "$DIR/{evidencia.carpeta}/{numero}-{slug}/{validacion-o-tema}/"
-(cd "$DIR" && git add . && git commit -q -m "evidence(po): #{numero} {tema}" && git push -q)
+bash "${CLAUDE_PLUGIN_ROOT}/skills/evidencia-po/scripts/subir_evidencia.sh" \
+  --clon {ruta ABSOLUTA del clon local de evidencia.repo} --rama {evidencia.rama} \
+  --destino "{evidencia.carpeta}/{numero o REP-AAAAMMDD-slug}-{slug}/{validacion-o-tema}" \
+  --origen {ruta ABSOLUTA de la carpeta local del ticket} \
+  --mensaje "evidence(po): #{numero} {tema}"
 ```
+Imprime `RAW=` y `BLOB=` (bases para los enlaces). Codigo 1 = verificacion fallida (no escribio
+nada); 2 = git fallo (lo dice; nada queda commiteado en otra rama). Jamas se reemplaza el script
+por comandos sueltos. Para un bug que todavia no existe, el destino usa `REP-AAAAMMDD-slug` (el
+numero aun no existe); despues de crear el issue no se mueve nada: los enlaces ya apuntan bien.
 Si no hay clon local del repo de evidencia: `gh repo clone {evidencia.repo}` a una carpeta de
 trabajo del PO (fuera de cualquier repo de producto) y usarla solo para esto.
 En el comentario del issue, cada imagen embebida y su respaldo:
