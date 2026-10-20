@@ -15,7 +15,9 @@ Filtros: $ARGUMENTS
 SOLO LECTURA y sin llamadas al tracker (para datos frescos: `/po-team:tablero`). Lee
 `.po-team/tablero/tablero-datos.json`, `.po-team/sprints/*.json`, `.po-team/backlog.md`,
 `.po-team/tickets/lote-*.json`, `.po-team/handoffs/` (pendientes) y
-`.po-team/metrics/activity.jsonl`.
+`.po-team/metrics/activity.jsonl` (pendientes = `esperando_usuario` / `blocked` sin su
+`respondido` / `unblocked`), y `.po-team/retros/` (acciones abiertas). Usa la ruta absoluta de la
+carpeta canonica (la imprime el hook de sesion; si no, `hooks/coord_root.py`).
 
 ## Salida
 ```
@@ -27,10 +29,14 @@ Atender primero:
   - ⚠ Fecha de Demo {fecha} en riesgo: {n} tickets ({pts}) aun en QA
   - #130 observado en Demo CO hace 2 dias sin devolver → /po-team:refinar --observacion #130
   - #118 bloqueado: {motivo}
+  - Esperando respuesta: #131 (Mesa) — 2 preguntas desde el 14/10 (eventos esperando_usuario sin respondido)
+  - #152 arreglado por desarrollo, sin revalidar → /po-team:validar --revalidar #152
 Listo para el siguiente paso:
   - {n} tickets de la Mesa sin refinar → /po-team:refinar #{n}
   - {n} tickets en Demo sin VB PO → /po-team:validar --lote sprint {N}
   - {n} con VB PO sin acta → /po-team:documento aceptacion #{n}
+  - Sprint {N-1} terminado sin cierre → /po-team:sprint cierre {N-1}
+  - Acciones abiertas de la ultima retro: {n} ({responsable}: {accion})
 Ultima actividad del equipo: {agente} {evento} {hace cuanto}
 ```
 Con `--pendientes` solo la seccion "Atender primero". Si el tablero tiene mas de 24 h, decirlo y

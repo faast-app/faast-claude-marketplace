@@ -52,11 +52,16 @@ Interpretar $ARGUMENTS:
   (sin decir cual, el tablero pregunta: generico, Organizacion PO o validaciones)
 - "crear / armar un backlog o tablero nuevo en GitHub / no tengo Project" → `/po-team:tablero crear-backlog`
 - "validar / VB PO / probar rapido / revisar en demo / preprod / lote" → `/po-team:validar …`
+- "me reportaron un error / falla / no funciona X / registrar un bug" (sin reproducir) →
+  `/po-team:validar --reproducir "…"` (solo con REPRODUCIDO se registra el bug)
+- "ya lo arreglaron / revalidar / volver a probar el #n" → `/po-team:validar --revalidar #n`
+- "cerrar el sprint / review / retro / como nos fue" → `/po-team:sprint cierre {N}`
 - "documento / pdf / word / acta / aceptacion / especificacion / informe de sprint" → `/po-team:documento …`
 - "manual / instructivo / paso a paso para usuarios / para QA" → `/po-team:manual …`
 - "estado / que hay pendiente / que sigue" (rapido, sin regenerar) → `/po-team:estado`
 - "configurar / no funciona gh / falta soffice / navegador / ambiente nuevo" → `/po-team:setup …`
-- Vacio o "no se / que sigue" → recomendar lo mas util en este orden: fechas vencidas o en
-  riesgo → observados sin devolver → tickets de la Mesa sin refinar → sprint sin planificar →
-  tickets en Demo sin VB PO → tablero de mas de 24 h.
+- Vacio o "no se / que sigue" → recomendar lo mas util en este orden: pendientes que esperan
+  respuesta (los lista el hook de sesion) → fechas vencidas o en riesgo → observados sin devolver
+  → arreglos sin revalidar → tickets de la Mesa sin refinar → sprint sin planificar → tickets en
+  Demo sin VB PO → sprint terminado sin cierre → tablero de mas de 24 h.
 Ejecutar el flujo elegido directamente, sin pedir que escriba otro comando.
