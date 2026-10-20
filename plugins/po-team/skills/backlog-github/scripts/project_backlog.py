@@ -712,6 +712,22 @@ query($id:ID!,$after:String){ node(id:$id){ ... on ProjectV2 {
     } } } } }"""
 
 
+# Los items de un issue leidos desde el ISSUE: el listado items() del Project se indexa con
+# retraso (minutos) y un item recien agregado puede no aparecer ahi aunque ya exista.
+Q_ITEMS_DE_ISSUE = """
+query($id:ID!){ node(id:$id){ ... on Issue {
+  projectItems(first:20, includeArchived:false){ nodes{ id type isArchived project{ id }
+    content{ __typename
+      ... on Issue { id databaseId number title state url repository{ nameWithOwner }
+                     milestone{ title } labels(first:40){ nodes{ name } } } }
+    fieldValues(first:40){ nodes{
+      ... on ProjectV2ItemFieldSingleSelectValue { name field{ ... on ProjectV2SingleSelectField { name } } }
+      ... on ProjectV2ItemFieldNumberValue { number field{ ... on ProjectV2Field { name } } }
+      ... on ProjectV2ItemFieldDateValue { date field{ ... on ProjectV2Field { name } } }
+      ... on ProjectV2ItemFieldIterationValue { title field{ ... on ProjectV2IterationField { name } } } } }
+  } } } } }"""
+
+
 class Actual:
     """Lo que ya existe en GitHub (vacio en modo --offline)."""
 
@@ -757,6 +773,26 @@ def leer_detalle_project(gh: Gh, act: Actual) -> None:
     act.vistas = d["views"]["nodes"]
 
 
+def _registrar_nodo(act: Actual, n: dict) -> None:
+    valores = {}
+    for v in n["fieldValues"]["nodes"]:
+        if v and v.get("field") and v["field"].get("name"):
+            for k in ("name", "number", "date", "title"):
+                if k in v:
+                    valores[v["field"]["name"]] = v[k]
+                    break
+    c = n.get("content") or {}
+    if n["type"] == "DRAFT_ISSUE":
+        act.borradores.append({"item_id": n["id"], "titulo": c.get("title", ""), "valores": valores})
+    elif c.get("__typename") == "Issue":
+        act.items[c["id"]] = {
+            "item_id": n["id"], "valores": valores, "numero": c["number"], "titulo": c["title"],
+            "estado": c["state"], "url": c["url"], "repo": c["repository"]["nameWithOwner"],
+            "db_id": c.get("databaseId"), "etiquetas": [x["name"] for x in c["labels"]["nodes"]],
+            "milestone": (c.get("milestone") or {}).get("title"),
+        }
+
+
 def leer_items(gh: Gh, act: Actual) -> None:
     act.items, act.borradores, after = {}, [], None
     while True:
@@ -764,26 +800,28 @@ def leer_items(gh: Gh, act: Actual) -> None:
         for n in d["nodes"]:
             if not n or n.get("isArchived"):
                 continue
-            valores = {}
-            for v in n["fieldValues"]["nodes"]:
-                if v and v.get("field") and v["field"].get("name"):
-                    for k in ("name", "number", "date", "title"):
-                        if k in v:
-                            valores[v["field"]["name"]] = v[k]
-                            break
-            c = n.get("content") or {}
-            if n["type"] == "DRAFT_ISSUE":
-                act.borradores.append({"item_id": n["id"], "titulo": c.get("title", ""), "valores": valores})
-            elif c.get("__typename") == "Issue":
-                act.items[c["id"]] = {
-                    "item_id": n["id"], "valores": valores, "numero": c["number"], "titulo": c["title"],
-                    "estado": c["state"], "url": c["url"], "repo": c["repository"]["nameWithOwner"],
-                    "db_id": c.get("databaseId"), "etiquetas": [x["name"] for x in c["labels"]["nodes"]],
-                    "milestone": (c.get("milestone") or {}).get("title"),
-                }
+            _registrar_nodo(act, n)
         if not d["pageInfo"]["hasNextPage"]:
             break
         after = d["pageInfo"]["endCursor"]
+    completar_items_por_issue(gh, act)
+
+
+def completar_items_por_issue(gh: Gh, act: Actual) -> None:
+    """Issues del backlog que el listado del Project todavia no muestra (retraso de indexacion de
+    GitHub): se buscan desde el propio issue antes de darlos por 'fuera del Project'."""
+    if gh.offline or not act.project:
+        return
+    for i in list(act.issues.values()):
+        if i.get("node_id") in act.items:
+            continue
+        try:
+            d = gh.gql(Q_ITEMS_DE_ISSUE, {"id": i["node_id"]})
+        except Exception:
+            continue
+        for n in ((d.get("node") or {}).get("projectItems") or {}).get("nodes") or []:
+            if n and not n.get("isArchived") and (n.get("project") or {}).get("id") == act.project["id"]:
+                _registrar_nodo(act, n)
 
 
 def leer_issues(gh: Gh, spec: dict, act: Actual) -> None:
@@ -1524,7 +1562,12 @@ class Ejecutor:
 # Verificacion
 # ---------------------------------------------------------------------------
 
-def verificar(gh: Gh, spec: dict, cfg: dict, act: Actual, corregir: bool, ej: Ejecutor | None = None) -> dict:
+def verificar(gh: Gh, spec: dict, cfg: dict, act: Actual, corregir: bool, ej: Ejecutor | None = None,
+              solo_plan: bool = False) -> dict:
+    """corregir=True con solo_plan=True (lo que usa crear/agregar al terminar): completa SOLO lo que
+    el plan mostro (campos del ciclo, issues del spec, sus valores y sub-issues). Lo ajeno al spec
+    (borradores, items que no estan en el spec) se REPORTA y se deja para 'verificar --corregir',
+    que muestra su propio plan con --dry-run antes de escribir."""
     if not act.project:
         raise ErrorSpec(f"No existe el Project {spec['project']!r} en {spec['org']}; usar 'crear'.")
     leer_detalle_project(gh, act)
@@ -1557,7 +1600,7 @@ def verificar(gh: Gh, spec: dict, cfg: dict, act: Actual, corregir: bool, ej: Ej
     # 1) Borradores
     for b in act.borradores:
         hallazgos.append(f"BORRADOR (debe ser issue real): {b['titulo']}")
-        if corregir:
+        if corregir and not solo_plan:
             repo_id = act.repo_ids.get(spec["repo"].lower())
             d = gh.gql(M_CONVERTIR, {"i": b["item_id"], "r": repo_id}, escritura=True)
             nuevo = d["convertProjectV2DraftIssueItemToIssue"]["item"]["content"]
@@ -1584,7 +1627,9 @@ def verificar(gh: Gh, spec: dict, cfg: dict, act: Actual, corregir: bool, ej: Ej
             hallazgos.append(f"SIN ETAPA (Status {actual_st!r} fuera del ciclo): #{it['numero']} {it['titulo']}")
         deseado = ej.deseados(s) if s else {}
         if not actual_st and not s:
-            if it.get("estado") == "OPEN":
+            if solo_plan:
+                hallazgos.append(f"SIN STATUS (fuera del spec): #{it['numero']} {it['titulo']}")
+            elif it.get("estado") == "OPEN":
                 deseado = {"Status": spec["status"][0][0]}
             else:
                 hallazgos.append(f"SIN STATUS y cerrado: #{it['numero']} {it['titulo']} -> lo define el PO")
@@ -1616,7 +1661,10 @@ def verificar(gh: Gh, spec: dict, cfg: dict, act: Actual, corregir: bool, ej: Ej
     if hallazgos:
         for h in hallazgos:
             info(f"  - {h}")
-        info("  (corregido lo corregible)" if corregir else "  -> 'verificar --corregir' arregla lo corregible (sin borrar ni pisar)")
+        if corregir and solo_plan:
+            info("  (corregido lo del plan; lo ajeno al spec queda para 'verificar --corregir', que muestra su plan con --dry-run)")
+        else:
+            info("  (corregido lo corregible)" if corregir else "  -> 'verificar --corregir' arregla lo corregible (sin borrar ni pisar)")
     else:
         info("  Sin hallazgos: ciclo completo, campos presentes, items reales con Status.")
     info("\nConteos:")
@@ -1853,7 +1901,7 @@ def cmd_crear(args, modo: str = "crear") -> int:
         ej.cuerpos_epicas(epicas)
     ej.agregar_abiertos(args.masivo)
     ej.vistas()
-    resultado = verificar(gh, spec, cfg, act, corregir=True, ej=ej)
+    resultado = verificar(gh, spec, cfg, act, corregir=True, ej=ej, solo_plan=True)
     estado.datos["verificacion"] = resultado
     estado.guardar()
     st = act.campos.get("Status") or {}
