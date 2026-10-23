@@ -27,6 +27,18 @@ case "$DESTINO" in /*|*..*) err "--destino debe ser relativo dentro de la rama y
 CLON="$(cd "$CLON" 2>/dev/null && pwd)" || err "no existe el clon"
 ORIGEN="$(cd "$ORIGEN" 2>/dev/null && pwd)" || err "no existe el origen"
 git -C "$CLON" rev-parse --git-dir >/dev/null 2>&1 || err "$CLON no es un repo git"
+# identidad de git: este script crea commits por dentro (el hook de Bash no lo ve), asi que la revisa aqui
+id_ok() {
+  local ident n e
+  ident="$(git -C "$1" var "$2" 2>/dev/null)" || return 1
+  n="${ident%% <*}"; e="${ident#*<}"; e="${e%%>*}"
+  case "$(printf '%s' "$n" | tr 'A-Z' 'a-z')" in test|tester|root|user|admin|administrator|unknown|claude|"your name"|you|nobody|default|localhost|"") return 1;; esac
+  case "$(printf '%s' "$e" | tr 'A-Z' 'a-z')" in test@*|root@*|user@*|admin@*|unknown@*|nobody@*|noreply@anthropic.com|*@example.*|*@*.local|*@*.localhost|*@*.localdomain|*@local|*@localhost) return 1;; esac
+  case "$e" in *@*.*) return 0;; *) return 1;; esac
+}
+for k in GIT_AUTHOR_IDENT GIT_COMMITTER_IDENT; do
+  id_ok "$CLON" "$k" || err "identidad de git generica o sin definir ($k: $(git -C "$CLON" var "$k" 2>/dev/null)); configura la real con git config --global user.name y user.email antes de subir evidencia"
+done
 DIR="$(dirname "$CLON")/$(basename "$CLON")-evidence"
 
 if [ ! -d "$DIR" ]; then
