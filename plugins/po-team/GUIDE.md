@@ -262,6 +262,23 @@ comentarios repetidos):
 | El tablero en GitHub (crear o completar) | El comando del tablero, con tu OK |
 | Tablero, dashboard e informes | Nadie escribe en el tablero: solo se lee |
 
+### Como te habla el equipo y donde funciona
+
+Estas reglas tambien estan siempre activas:
+
+- **Te hablan claro y de a una cosa.** Cada mensaje tiene un solo proposito: contarte un
+  resultado, hacerte una pregunta o pedirte un permiso. Primero va lo importante en lenguaje
+  sencillo; las preguntas llegan aparte, al final, bajo "Necesito de ti", pocas (maximo tres)
+  y con opciones. Lo tecnico que el equipo puede resolver solo, lo resuelve y te lo cuenta en
+  una linea. Si quieres el detalle, lo pides.
+- **Hablas con uno solo.** Tu unica conversacion es la principal. Ningun integrante te pide
+  "escribeme a mi directamente": si necesita tu autorizacion, el coordinador te la pregunta y
+  se la pasa con tus palabras textuales. Funciona igual desde el telefono o con Remote Control.
+- **Si el sistema no deja hacer algo, no se rodea.** Cuando Claude Code le niega una accion a
+  un integrante, este sigue con lo demas y te lo reporta; tu decides si lo apruebas.
+- **Funciona en cualquier computador.** Windows, macOS o Linux, con la terminal que uses. Si
+  falta algo para trabajar (Python, Node.js), el equipo lo instala y te avisa.
+
 ---
 
 ## 6. Ambientes y cuentas de prueba
@@ -716,6 +733,23 @@ como ticket y lo sigue. No necesita que los otros equipos esten instalados.
 **¿Quien ve el panel publicado?** Solo tu, hasta que decidas compartirlo.
 
 ## Si algo no anda
+
+**En Windows aparece un error de "bash" o el equipo no carga sus reglas al abrir la sesion.**
+Las versiones anteriores necesitaban bash, que una terminal de Windows no trae. La version
+actual ya no lo necesita: actualiza el plugin y reinicia la sesion. Solo hacen falta
+**Node.js** y **Python 3**, y no tienes que instalarlos tu: si falta alguno, el equipo te
+avisa, lo instala (te aparecera una confirmacion para aprobar) y te pide cerrar y volver a
+abrir la terminal. Si no lo hace solo, escribe `/po-team:start`: su primer paso revisa e instala lo
+que falte.
+
+**Aparece "Only the auto-mode classifier can allow SubagentHandback".**
+Es un aviso de Claude Code, no una falla del trabajo: el informe del integrante llega igual.
+No escribas "intenta de nuevo" (solo repetiria el informe). Vuelve a la conversacion
+principal y pidele que te cuente lo que encontro.
+
+**Un integrante quedo bloqueado porque "no tiene permiso" o por el modo automatico.**
+Claude Code le nego una accion. El integrante te lo reporta y sigue con el resto; tu decides
+si la apruebas (en `/permissions`).
 
 - **"No puedo leer el tablero"** → `/po-team:setup tracker` (permiso de lectura de Projects).
 - **"Hay tickets 'sin etapa' en el panel"** → un estado del tablero no esta asignado a ninguna

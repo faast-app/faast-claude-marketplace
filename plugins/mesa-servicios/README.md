@@ -73,3 +73,15 @@ Todos corren en `sonnet` por defecto; se sube por agente en `.mesa/config.json` 
 - **Evidencia embebida** en el ticket, nunca link suelto; secretos y datos personales, jamas.
 - **Una cotizacion no es trabajo** hasta su aprobacion comercial.
 - Estado y memoria en `.mesa/` (separado de `.coordination/` del dev-team: pueden convivir).
+
+## Reglas comunes de los equipos FaaST
+
+- **Cualquier sistema y terminal:** Windows (PowerShell, cmd, Windows Terminal, Git Bash), macOS
+  y Linux. Los hooks no usan bash; solo requieren Node.js y Python 3, y si faltan el equipo los
+  instala (`/start`, Paso 0).
+- **Comunicacion clara:** un mensaje, un proposito; resultado primero en lenguaje sencillo;
+  preguntas aparte al final (maximo tres, con opciones).
+- **Un solo canal con el usuario:** ningun agente exige "escribeme en mi hilo"; la autorizacion
+  reenviada se verifica en el registro de mensajes del usuario (`hooks/pedidos_usuario.py`).
+- **Permisos:** una herramienta denegada no se reintenta ni se rodea; si `SubagentHandback` es
+  rechazada, el informe queda en el handoff y se escribe una sola vez.

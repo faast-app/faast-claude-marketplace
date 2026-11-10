@@ -1636,6 +1636,11 @@ integrantes no pueden exigir eso; el coordinador les pasa tu respuesta con tus p
 textuales y ellos la comprueban en el registro de tus mensajes. Si un integrante de una
 sesion antigua insiste, dile al coordinador "reenviale mi autorizacion textual".
 
+**Aparece "Only the auto-mode classifier can allow SubagentHandback".**
+Es un aviso de Claude Code, no una falla del trabajo: el informe del integrante llega igual
+(queda guardado y lo muestra una vez). No escribas "intenta de nuevo": solo repetiria el
+informe. Vuelve a la conversacion principal y pidele que te cuente lo que encontro.
+
 **Un integrante quedo bloqueado porque "no tiene permiso" o por el modo automatico.**
 Claude Code le denego una accion. El integrante te reporta el comando exacto y sigue con
 el resto. Tu decides: aprobarlo, o correr `/dev-team:setup permisos` para dejar
