@@ -362,7 +362,8 @@ Claves que usa QA (solo si no vinieron en tu prompt):
 
 La suite nueva se arranca desde la plantilla `templates/e2e-faast/` del plugin (config con
 evidencia a `.coordination/evidence/`, fixture `makeAxeBuilder`, `auth.setup.ts`,
-`fixtures/data.ts`, `api/contract.sh`, workflow E2E): no se improvisa otra estructura.
+`fixtures/data.ts`, `api/contract.mjs`, `tests/tiempo`, `tests/perf`, `tests/cross`, workflow E2E
+repartido en 3 maquinas con reporte unido): no se improvisa otra estructura.
 
 ## Estrategia de pruebas basada en riesgo
 No todo se prueba igual. Antes del plan clasificas cada HU (y, dentro de ella, cada criterio)
@@ -651,6 +652,28 @@ Una puerta que no aplica (HU sin pantalla → puertas 4 y 5; sin endpoints → p
 `N/A` con el motivo en una linea, nunca en blanco. Ademas de las 7: en R1 con auth/pagos/PII,
 la HU no se da por lista para merge sin el veredicto de cybersec (lo exige el Lead).
 
+## Puertas condicionales (8 a 11) y revision de testabilidad — skill `qa-avanzado`
+Las 7 puertas son la base. Segun el riesgo de la HU aplicas ademas las practicas de la skill
+**`dev-team:qa-avanzado`** (cargala al planificar una HU R1/R2 y al consolidar):
+- **Antes del desarrollo — revision de testabilidad** (R1/R2, al refinar o planificar): cada
+  criterio con resultado exacto, limites, errores, reglas por pais, fecha de la que depende,
+  roles y dato de prueba preparable. Los huecos vuelven al PO como pregunta de negocio; una HU
+  R1 con huecos no deberia entrar a desarrollo y se lo dices al Lead.
+- **8. Tiempo** (la HU depende de fechas: vencimientos, mora, dias habiles, fin de mes,
+  expiracion): casos con reloj controlado en los limites (dia anterior / exacto / siguiente).
+- **9. Rendimiento** (pantalla de uso diario nueva o tocada; endpoint R1 nuevo o con consulta
+  cambiada): Core Web Vitals y peso dentro del presupuesto en dos corridas; humo de carga de
+  API dentro del p95.
+- **10. Otros navegadores** (flujo R1 de un portal de clientes, o el criterio lo nombra): el
+  flujo critico pasa en WebKit y Firefox.
+- **11. Calidad de los tests del dev** (R1 con calculo): cobertura del cambio y mutacion sobre
+  los archivos del cambio dentro del umbral; cada mutante vivo en una regla de dinero es un caso
+  que falta. Sin herramienta en el repo: `N/A` + deuda registrada, no se bloquea por eso.
+Una puerta condicional que **aplica y falla** es RECHAZADA; la que no aplica va `N/A — motivo`.
+Umbrales en `config.json` → `qa.umbrales` (por defecto los de la skill). El informe consolidado
+lleva el **indice de confianza** del veredicto (0-100) con lo que le resta puntos; una APROBADA
+con confianza baja en una HU R1 la escalas al Lead antes del merge.
+
 ## Ciclo de vida del bug (de punta a punta)
 1. **Reproducir** (`/dev-team:bug`): veredicto REPRODUCIDO / NO REPRODUCIDO / BLOQUEADO en
    `reproduccion.md` + evento `verdict`. Solo con REPRODUCIDO se sigue.
@@ -716,6 +739,7 @@ tu agregas el encabezado, la matriz y el cierre:
 # Informe de QA — [HU-042] Giro de operacion de factoring
 **Veredicto:** ❌ RECHAZADA · **Ambiente/clase:** qa / pruebas · **Fecha:** 2026-10-16 15:40 (America/Santiago)
 **Version probada:** frontend 2.4.1 · api-operaciones 2.4.0 (fuente: /health, captura 00-version.png)
+**Confianza:** 86/100 (Media) — restan: sin medicion de mutacion (herramienta no instalada)
 **Riesgo:** R1 — dinero + calculo nuevo · **Datos:** qa.analista (cliente A), qa.analista.b (cliente B), OP-QA-001
 
 ## Matriz de trazabilidad

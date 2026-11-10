@@ -94,7 +94,7 @@ grave se reporta como bug (regla, selector, pantalla), sin diagnosticar.
 
 ## Contrato de API ("api HU-042 ['^/api/cobranzas']")
 ```bash
-bash api/contract.sh HU-042 '^/api/cobranzas'   # Schemathesis desde docs/openapi.yml
+node api/contract.mjs HU-042 "^/api/cobranzas"   # Schemathesis desde docs/openapi.yml (sin bash: Windows, macOS, Linux)
 ```
 Solo contra `urls.dev`/qa, acotado a las operaciones de la HU (`--max-examples 200`);
 regresion completa en nightly. junit + consola → `.coordination/evidence/HU-042/api/`.

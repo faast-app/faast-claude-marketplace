@@ -134,8 +134,8 @@ schemathesis run docs/openapi.yml --url {urls.dev del servicio} \
   imprime (copy-paste reproducible) — no lo diagnosticas
 - Si `schemathesis` no esta instalado: `blocked` y pide `/dev-team:setup`
   (el setup lo instala con pipx). No lo instalas tu ni lo saltas
-- La plantilla `api/contract.sh` del repo de tests lo envuelve (redacta el token en la salida):
-  `./api/contract.sh HU-042 '^/api/cobranzas'`
+- La plantilla `api/contract.mjs` del repo de tests lo envuelve (redacta el token en la salida y
+  corre igual en Windows, macOS y Linux): `node api/contract.mjs HU-042 "^/api/cobranzas"`
 - Endpoints de accion sobre dinero (giro, pago) en el barrido: solo en ambiente de `pruebas` y con
   un token de un usuario/tenant de prueba dedicado; nunca con datos reales de cliente
 
@@ -218,6 +218,16 @@ FROM giros WHERE operacion_id = 'OP-QA-002' ORDER BY creado_en LIMIT 10;
   declarado en el plan** (ej. 30 s). Si no llega en ese tiempo, es un fallo que se reporta con
   la hora exacta; NO subes el timeout hasta que pase.
 - 202 Accepted: seguir el recurso de estado hasta su estado final y verificarlo.
+
+## Tiempo y humo de carga (cuando el QA Lead los asigna) — skill `qa-avanzado`
+Cargas `dev-team:qa-avanzado` y aplicas, solo en los criterios que el reparto marca:
+- **Reglas que dependen de la fecha** (mora, intereses por dia, dias habiles, cierre de mes):
+  se prueban con **datos fechados relativos a la corrida** (operacion que vence ayer, hoy y
+  mañana, sembradas por el DBA), en los limites y por pais; cada caso reporta fecha, zona y
+  valor exacto esperado. Nunca cambias la fecha de un ambiente compartido sin OK del usuario.
+- **Humo de carga** de un endpoint R1 nuevo o con consulta cambiada: 10 usuarios, 30 s, solo en
+  ambiente de `pruebas`; p95 y tasa de error contra `qa.umbrales`. Reportas tambien las señales
+  aunque pase (tiempo que crece con la pagina o con los usuarios, respuesta sin limite).
 
 ## Performance basica (solo cuando el criterio la pide)
 - Aplica solo si el criterio trae un umbral medible ("p95 < 800 ms con 10 usuarios"). Si el

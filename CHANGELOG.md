@@ -8,6 +8,11 @@ Que trae cada version de los plugins. Una entrada por subida de version, lo mas 
   hooks y scripts de los cuatro equipos (`tests/`) y revision en Windows, macOS y Linux en cada
   PR (`.github/workflows/ci.yml`).
 - **Los hooks ya no fallan en silencio:** cualquier error queda en `~/.faast-mcp/logs/hooks.log`.
+- **QA avanzado (dev-team):** skill `qa-avanzado` con puertas condicionales 8-11 (tiempo,
+  rendimiento, otros navegadores, calidad de los tests del desarrollador), revision de
+  testabilidad antes del desarrollo e indice de confianza del veredicto. La plantilla de pruebas
+  trae reloj controlado, presupuesto de Core Web Vitals, WebKit y Firefox para flujos criticos,
+  foto de la estructura accesible, barrido de contrato sin bash y suite repartida en 3 maquinas.
 - **`/diagnostico` en los cuatro equipos:** revisa la maquina, los hooks, la carpeta y la
   configuracion del proyecto y los ultimos fallos, y lo cuenta en lenguaje claro.
 

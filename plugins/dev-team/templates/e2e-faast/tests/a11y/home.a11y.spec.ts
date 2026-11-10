@@ -14,3 +14,15 @@ test.describe('[A11Y] Pantallas clave', () => {
     expect(seriousViolations(results), 'violaciones critical/serious').toEqual([]);
   });
 });
+
+// Estructura accesible (lo que escucha un lector de pantalla): se fija como "foto" de roles y
+// nombres. Si un cambio rompe un encabezado, un nombre de boton o el orden de lectura, falla
+// aunque visualmente se vea igual. Actualizar con --update-snapshots solo con OK de diseño.
+test.describe('[A11Y] Estructura accesible', () => {
+  test.skip(true, 'Ejemplo: activar cuando la pantalla tenga su estructura definitiva');
+
+  test('home mantiene su arbol de accesibilidad', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.getByRole('main')).toMatchAriaSnapshot({ name: 'home-main.aria.yml' });
+  });
+});

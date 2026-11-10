@@ -16,6 +16,10 @@ HU o alcance: $ARGUMENTS
 
 Invoca al agente `qa` para ejecutar este flujo:
 
+0. **Revision de testabilidad** (HU de riesgo alto o medio, skill `dev-team:qa-avanzado`,
+   `references/shift-left.md`): antes de diseñar casos, revisa que cada criterio tenga resultado
+   exacto, limites, errores, reglas por pais, fecha de la que depende, roles y dato de prueba
+   preparable. Los huecos van al plan como "Falta definir" y al PO como pregunta de negocio.
 1. **Leer la HU** en el tracker o `.coordination/backlog.md` — extraer los criterios
    de aceptacion. Si la HU no tiene criterios verificables, devolverla al PO
    (handoff) en vez de inventarlos.

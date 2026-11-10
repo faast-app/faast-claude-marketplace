@@ -79,7 +79,7 @@ Escribir `.coordination/config.json` — la fuente de verdad para todos los agen
     "desa":   { "clase": "pruebas",    "url": "http://localhost:{puerto}" },
     "qa":     { "clase": "pruebas",    "url": "{url}" }
   },
-  "qa": { "conformidad": "opcional" }
+  "qa": { "conformidad": "opcional", "umbrales": { "lcpMs": 2500, "cls": 0.1, "pesoKb": 1500, "apiP95Ms": 800, "mutacion": 60 } }
 }
 ```
 

@@ -415,6 +415,13 @@ Estas reglas estan siempre activas. No hay que pedirlas.
 22. **El equipo aprende de cada correccion.** Lo que corriges, eliges o rechazas queda
     como leccion y el integrante que corresponda la recibe la proxima vez, sin que la
     repitas. Las lecciones que demuestran servir se te proponen como regla permanente.
+25. **QA prueba segun el riesgo, y dice con cuanta base aprueba.** Ademas de sus siete
+    controles de siempre, cuando la historia lo amerita QA revisa los criterios **antes** de
+    que se programe, prueba las reglas que dependen de fechas (vencimientos, mora, fin de
+    mes) adelantando el reloj, mide que la pantalla cargue rapido, repite los flujos
+    criticos en Safari y Firefox, y revisa que las pruebas del desarrollador de verdad
+    detecten errores. Cada veredicto trae un indice de confianza de 0 a 100 con lo que le
+    resta puntos.
 24. **Te hablan claro y de a una cosa.** Cada mensaje del equipo tiene un solo proposito:
     contarte un resultado, hacerte una pregunta o pedirte un permiso. Primero va lo
     importante en lenguaje sencillo; las preguntas llegan aparte, al final, bajo "Necesito

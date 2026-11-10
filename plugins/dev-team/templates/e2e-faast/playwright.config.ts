@@ -5,6 +5,8 @@ import 'dotenv/config';
 // mono: e2e/ en la raiz del repo -> ../.coordination ; multi: repo {proyecto}-e2e -> ../.coordination
 const EVIDENCE_DIR = process.env.EVIDENCE_DIR ?? '../.coordination/evidence/_suite';
 const IS_CI = !!process.env.CI;
+// Otros navegadores: solo con CROSS_BROWSER=1 y solo para los flujos criticos (*.cross.spec.ts).
+const CROSS = process.env.CROSS_BROWSER === '1';
 
 export default defineConfig({
   testDir: './tests',
@@ -21,7 +23,8 @@ export default defineConfig({
     // Regresion visual: baselines en git, generados/actualizados SOLO en CI (Linux)
     toHaveScreenshot: { maxDiffPixelRatio: 0.01, animations: 'disabled', caret: 'hide' },
   },
-  reporter: [
+  // En CI con shards cada maquina emite un reporte 'blob' y el job final los une (merge-reports).
+  reporter: process.env.PW_SHARD ? [['blob'], ['list']] : [
     ['list'],
     ['html', { outputFolder: `${EVIDENCE_DIR}/playwright-report`, open: 'never' }],
     ['json', { outputFile: `${EVIDENCE_DIR}/results.json` }],
@@ -44,6 +47,8 @@ export default defineConfig({
     {
       name: 'chromium',
       dependencies: ['setup'],
+      // Rendimiento solo cuando se pide (npm run test:perf): medir en cada PR daria falsos rojos.
+      grepInvert: process.env.PERF === '1' ? undefined : /@perf/,
       use: { ...devices['Desktop Chrome'], storageState: '.auth/user.json' },
     },
     // 3) Movil (criterios responsive)
@@ -53,5 +58,22 @@ export default defineConfig({
       testMatch: /.*\.(mobile|visual)\.spec\.ts/,
       use: { ...devices['iPhone 13'], storageState: '.auth/user.json' },
     },
+    // 4) Otros navegadores (puerta condicional, flujos R1): WebKit = Safari, y Firefox
+    ...(CROSS
+      ? [
+          {
+            name: 'webkit',
+            dependencies: ['setup'],
+            testMatch: /.*\.cross\.spec\.ts/,
+            use: { ...devices['Desktop Safari'], storageState: '.auth/user.json' },
+          },
+          {
+            name: 'firefox',
+            dependencies: ['setup'],
+            testMatch: /.*\.cross\.spec\.ts/,
+            use: { ...devices['Desktop Firefox'], storageState: '.auth/user.json' },
+          },
+        ]
+      : []),
   ],
 });
