@@ -94,3 +94,15 @@ viene con el plugin para capturar el producto (salida en `~/.faast-mcp/marketing
 - **dev-team**: el equipo lee su `.coordination/` (wiki, backlog, diseño) para conocer el producto.
 - **mesa-servicios**: lee su `.mesa/` (lo que piden los clientes, maquetas, propuestas).
 Solo lee; nunca escribe en las carpetas de otros equipos.
+
+## Reglas comunes de los equipos FaaST
+
+- **Cualquier sistema y terminal:** Windows (PowerShell, cmd, Windows Terminal, Git Bash), macOS
+  y Linux. Los hooks no usan bash; solo requieren Node.js y Python 3, y si faltan el equipo los
+  instala (`/start`, Paso 0).
+- **Comunicacion clara:** un mensaje, un proposito; resultado primero en lenguaje sencillo;
+  preguntas aparte al final (maximo tres, con opciones).
+- **Un solo canal con el usuario:** ningun agente exige "escribeme en mi hilo"; la autorizacion
+  reenviada se verifica en el registro de mensajes del usuario (`hooks/pedidos_usuario.py`).
+- **Permisos:** una herramienta denegada no se reintenta ni se rodea; si `SubagentHandback` es
+  rechazada, el informe queda en el handoff y se escribe una sola vez.

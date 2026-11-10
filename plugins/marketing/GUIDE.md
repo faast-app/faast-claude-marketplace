@@ -361,6 +361,23 @@ Estan siempre activas. No hay que pedirlas.
 16. **Los pendientes no se pierden.** Lo que espera tu respuesta o tu aprobacion queda registrado
     y aparece al iniciar cada sesion hasta que lo resuelvas.
 
+### Como te habla el equipo y donde funciona
+
+Estas reglas tambien estan siempre activas:
+
+- **Te hablan claro y de a una cosa.** Cada mensaje tiene un solo proposito: contarte un
+  resultado, hacerte una pregunta o pedirte un permiso. Primero va lo importante en lenguaje
+  sencillo; las preguntas llegan aparte, al final, bajo "Necesito de ti", pocas (maximo tres)
+  y con opciones. Lo tecnico que el equipo puede resolver solo, lo resuelve y te lo cuenta en
+  una linea. Si quieres el detalle, lo pides.
+- **Hablas con uno solo.** Tu unica conversacion es la principal. Ningun integrante te pide
+  "escribeme a mi directamente": si necesita tu autorizacion, el coordinador te la pregunta y
+  se la pasa con tus palabras textuales. Funciona igual desde el telefono o con Remote Control.
+- **Si el sistema no deja hacer algo, no se rodea.** Cuando Claude Code le niega una accion a
+  un integrante, este sigue con lo demas y te lo reporta; tu decides si lo apruebas.
+- **Funciona en cualquier computador.** Windows, macOS o Linux, con la terminal que uses. Si
+  falta algo para trabajar (Python, Node.js), el equipo lo instala y te avisa.
+
 ---
 
 ## 5. Que puedes pedir (lista de comandos)
@@ -1173,6 +1190,23 @@ investigar, solo el desglose, solo revisar un video.
 
 ## Si algo no anda
 
+**En Windows aparece un error de "bash" o el equipo no carga sus reglas al abrir la sesion.**
+Las versiones anteriores necesitaban bash, que una terminal de Windows no trae. La version
+actual ya no lo necesita: actualiza el plugin y reinicia la sesion. Solo hacen falta
+**Node.js** y **Python 3**, y no tienes que instalarlos tu: si falta alguno, el equipo te
+avisa, lo instala (te aparecera una confirmacion para aprobar) y te pide cerrar y volver a
+abrir la terminal. Si no lo hace solo, escribe `/marketing:start`: su primer paso revisa e instala lo
+que falte.
+
+**Aparece "Only the auto-mode classifier can allow SubagentHandback".**
+Es un aviso de Claude Code, no una falla del trabajo: el informe del integrante llega igual.
+No escribas "intenta de nuevo" (solo repetiria el informe). Vuelve a la conversacion
+principal y pidele que te cuente lo que encontro.
+
+**Un integrante quedo bloqueado porque "no tiene permiso" o por el modo automatico.**
+Claude Code le nego una accion. El integrante te lo reporta y sigue con el resto; tu decides
+si la apruebas (en `/permissions`).
+
 - **"No aparecen los comandos `/marketing:`"** → reinicia Claude Code (`/exit` y `claude`). Si
   siguen sin aparecer, revisa la instalacion (ver [Antes de empezar](#antes-de-empezar-instalacion-paso-a-paso)).
 - **"El equipo me dice que primero haga el desglose"** → es la regla de la casa: sin mapa y fichas
@@ -1220,7 +1254,7 @@ claude plugin update marketing@faast-marketplace
 
 | Herramienta | Para que | Nota |
 |---|---|---|
-| `python3` | hooks del plugin y scripts de video (`normalizar_video.py`, `qa_video.py`) | — |
+| Python 3 y Node.js | hooks del plugin y scripts de video (`normalizar_video.py`, `qa_video.py`) | — |
 | Node.js ≥ 22 | HyperFrames y el Playwright MCP | `node -v` |
 | FFmpeg / ffprobe | video: mediciones, loudness, fotogramas | `ffmpeg -version` |
 | HyperFrames (skills `hyperframes`, `product-launch-video`) | produccion de video | `claude plugin marketplace add heygen-com/hyperframes && claude plugin install core-skills@hyperframes`; verificar con `npx hyperframes --version` |

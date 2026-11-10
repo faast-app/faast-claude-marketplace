@@ -94,3 +94,15 @@ dev-team ni mesa-servicios esten instalados.
   evidencia; no hace falta uno personal.
 
 Manual completo en lenguaje de negocio: [GUIDE.md](GUIDE.md).
+
+## Reglas comunes de los equipos FaaST
+
+- **Cualquier sistema y terminal:** Windows (PowerShell, cmd, Windows Terminal, Git Bash), macOS
+  y Linux. Los hooks no usan bash; solo requieren Node.js y Python 3, y si faltan el equipo los
+  instala (`/start`, Paso 0).
+- **Comunicacion clara:** un mensaje, un proposito; resultado primero en lenguaje sencillo;
+  preguntas aparte al final (maximo tres, con opciones).
+- **Un solo canal con el usuario:** ningun agente exige "escribeme en mi hilo"; la autorizacion
+  reenviada se verifica en el registro de mensajes del usuario (`hooks/pedidos_usuario.py`).
+- **Permisos:** una herramienta denegada no se reintenta ni se rodea; si `SubagentHandback` es
+  rechazada, el informe queda en el handoff y se escribe una sola vez.
