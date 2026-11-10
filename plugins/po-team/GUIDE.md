@@ -1,6 +1,6 @@
 # Equipo del Product Owner (po-team) — Manual de Usuario
 
-**Version del plugin:** 1.1.x · **Integrantes del equipo:** 8 · **Comandos:** 10
+**Version del plugin:** 1.2.x · **Integrantes del equipo:** 8 · **Comandos:** 10
 
 El equipo del Product Owner es un **grupo de asistentes de inteligencia artificial que acompaña
 al PO** desde que la Mesa de Servicios deja registrado un requerimiento cerrado hasta que el

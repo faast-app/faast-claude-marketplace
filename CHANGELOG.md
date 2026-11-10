@@ -4,6 +4,8 @@ Que trae cada version de los plugins. Una entrada por subida de version, lo mas 
 
 ## Sin publicar
 
+## dev-team 2.20.0 · mesa-servicios 1.3.0 · po-team 1.2.0 · marketing 1.2.0
+
 - **Calidad del repo:** validador estructural (`tools/validar.py`), pruebas automaticas de los
   hooks y scripts de los cuatro equipos (`tests/`) y revision en Windows, macOS y Linux en cada
   PR (`.github/workflows/ci.yml`).
@@ -15,6 +17,8 @@ Que trae cada version de los plugins. Una entrada por subida de version, lo mas 
   foto de la estructura accesible, barrido de contrato sin bash y suite repartida en 3 maquinas.
 - **`/diagnostico` en los cuatro equipos:** revisa la maquina, los hooks, la carpeta y la
   configuracion del proyecto y los ultimos fallos, y lo cuenta en lenguaje claro.
+- **Guardia de repos en Windows:** reconoce rutas con unidad y barra invertida en comandos, y
+  deja de bloquear la lectura de archivos `.md`.
 
 ## dev-team 2.19.0 · mesa-servicios 1.2.0 · po-team 1.1.0 · marketing 1.1.0
 

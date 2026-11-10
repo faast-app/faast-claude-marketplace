@@ -1,6 +1,6 @@
 # Mesa de Servicios — Manual de Usuario
 
-**Version del plugin:** 1.2.x · **Integrantes del equipo:** 10 · **Comandos:** 13
+**Version del plugin:** 1.3.x · **Integrantes del equipo:** 10 · **Comandos:** 13
 
 > **Manual general de todos los equipos.** Existe un manual que explica juntos a todos los
 > equipos de FAAST y como se pasan el trabajo: [`GUIDE.md` en la raiz del
@@ -161,7 +161,7 @@ claude plugin list
 *Que ves:* la lista de plugins instalados. Debe aparecer algo asi:
 ```
 ❯ mesa-servicios@faast-marketplace
-  Version: 1.2.0
+  Version: 1.3.0
   Scope: user
   Status: ✔ enabled
 ```
