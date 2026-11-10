@@ -21,6 +21,11 @@ EQUIPOS = {
 }
 
 
+def leer(ruta):
+    with open(ruta, encoding="utf-8") as f:
+        return f.read()
+
+
 def hooks(plugin):
     return os.path.join(RAIZ, "plugins", plugin, "hooks")
 
@@ -93,7 +98,7 @@ class HooksDeLosCuatroEquipos(unittest.TestCase):
                 self.assertIn("pedidos_usuario.py", ctx)
                 actividad = os.path.join(pr.equipo, "metrics", "activity.jsonl")
                 self.assertTrue(os.path.exists(actividad), "debe registrar task_start")
-                self.assertEqual(json.loads(open(actividad, encoding="utf-8").readline())["event"], "task_start")
+                self.assertEqual(json.loads(leer(actividad).splitlines()[0])["event"], "task_start")
 
     def test_agente_de_otro_plugin_no_se_registra(self):
         for plugin, pr in self.proyectos.items():
@@ -110,7 +115,7 @@ class HooksDeLosCuatroEquipos(unittest.TestCase):
                 rc, _, _ = correr_hook(plugin, "pedidos_usuario.py",
                                        {"hook_event_name": "UserPromptSubmit", "cwd": pr.repo, "prompt": texto}, pr)
                 self.assertEqual(rc, 0)
-                registro = open(os.path.join(pr.equipo, "metrics", "pedidos-usuario.jsonl"), encoding="utf-8").read()
+                registro = leer(os.path.join(pr.equipo, "metrics", "pedidos-usuario.jsonl"))
                 self.assertNotIn("hunter2", registro)
                 self.assertNotIn("s3cr3t", registro)
                 script = os.path.join(hooks(plugin), "pedidos_usuario.py")
@@ -142,7 +147,14 @@ class HooksDeLosCuatroEquipos(unittest.TestCase):
                 ({"tool_name": "Bash", "tool_input": {"command": f"mkdir -p {pr.repo}/{carpeta}/x".replace(chr(92), "/")}}, True),
                 ({"tool_name": "PowerShell", "tool_input": {"command": f"New-Item -ItemType Directory {pr.repo}/{carpeta}/x".replace(chr(92), "/")}}, True),
                 ({"tool_name": "Bash", "tool_input": {"command": "git status"}}, False),
+                ({"tool_name": "Bash", "tool_input": {"command": f"cat {pr.repo}/{carpeta}/x.md".replace(chr(92), "/")}}, False),
             ]
+            if os.name == "nt":  # rutas nativas de Windows, con unidad y barra invertida
+                casos += [
+                    ({"tool_name": "PowerShell", "tool_input": {"command": f"New-Item -ItemType Directory {pr.repo}\\{carpeta}\\x"}}, True),
+                    ({"tool_name": "PowerShell", "tool_input": {"command": f'Set-Content "{pr.repo}\\{carpeta}\\y.md" 1'}}, True),
+                    ({"tool_name": "PowerShell", "tool_input": {"command": f"New-Item -ItemType Directory {pr.equipo}\\x"}}, False),
+                ]
             for payload, debe_bloquear in casos:
                 with self.subTest(plugin=plugin, payload=payload):
                     payload["cwd"] = pr.repo
@@ -175,7 +187,7 @@ class HooksDeLosCuatroEquipos(unittest.TestCase):
                 self.assertEqual(r.stdout, b"")
                 registro = os.path.join(pr.home, ".faast-mcp", "logs", "hooks.log")
                 self.assertTrue(os.path.exists(registro), "el fallo debe quedar en el registro")
-                self.assertEqual(json.loads(open(registro, encoding="utf-8").readline())["plugin"], plugin)
+                self.assertEqual(json.loads(leer(registro).splitlines()[0])["plugin"], plugin)
 
     def test_script_inexistente_no_falla(self):
         pr = self.proyectos["dev-team"]
@@ -237,7 +249,7 @@ class MemoriaDelEquipo(unittest.TestCase):
         rc, out, _ = self.mem("consolidar")
         self.assertEqual(rc, 0)
         manual = os.path.join(self.pr.equipo, "memoria", "aprendizajes", "ui-designer.md")
-        self.assertIn("tabla como protagonista", open(manual, encoding="utf-8").read())
+        self.assertIn("tabla como protagonista", leer(manual))
 
     def test_leccion_rechazada_tres_veces_se_retira(self):
         _, out, _ = self.mem("aprender", "--tipo", "bd", "--texto", "En Puente los scripts se corren dos veces siempre")
@@ -300,7 +312,7 @@ class HerenciaDeLaLibreria(unittest.TestCase):
         buena = self.pagina("b.html", "", '<button class="faast-button">x</button>')
         rc, out, _ = correr_py(self.KIT, ["incrustar", buena, "--kit", self.kit], self.pr)
         self.assertEqual(rc, 0, out)
-        unico = open(os.path.join(self.ui, "b.autocontenido.html"), encoding="utf-8").read()
+        unico = leer(os.path.join(self.ui, "b.autocontenido.html"))
         self.assertNotIn('rel="stylesheet"', unico)
         self.assertIn("--faast-text-primary", unico)
 
@@ -320,7 +332,7 @@ class Permisos(unittest.TestCase):
             with open(ajustes, "w", encoding="utf-8") as f:
                 json.dump({"permissions": {"deny": ["Bash(git log *)"], "allow": ["Bash(mi regla)"]}}, f)
             correr_py(script, ["aplicar", "--proyecto", pr.repo], pr)
-            p = json.load(open(ajustes, encoding="utf-8"))["permissions"]
+            p = json.loads(leer(ajustes))["permissions"]
             self.assertIn("Bash(mi regla)", p["allow"])
             self.assertIn("Bash(git status *)", p["allow"])
             self.assertNotIn("Bash(git log *)", p["allow"], "una regla en deny no pasa a allow")
@@ -347,8 +359,9 @@ class EvidenciaDelPO(unittest.TestCase):
             g("config", "user.name", "t", cwd=clon)
             g("config", "user.email", "t@example.com", cwd=clon)
             rama = subprocess.run(["git", "branch", "--show-current"], cwd=clon, capture_output=True, text=True).stdout.strip()
-            open(os.path.join(origen, "captura.png"), "w").write("x")
-            open(os.path.join(origen, "notas.txt"), "w").write("no se sube")
+            for nombre, texto in (("captura.png", "x"), ("notas.txt", "no se sube")):
+                with open(os.path.join(origen, nombre), "w", encoding="utf-8") as f:
+                    f.write(texto)
             script = os.path.join(RAIZ, "plugins", "po-team", "skills", "evidencia-po", "scripts", "subir_evidencia.py")
             rc, out, errtxt = correr_py(script, ["--clon", clon, "--destino", "evidence/po/1-x/v1", "--origen", origen,
                                                  "--mensaje", "evidence(po): #1"], pr)

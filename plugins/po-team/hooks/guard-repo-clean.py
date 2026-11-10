@@ -33,7 +33,8 @@ LECTURA = re.compile(r"^\s*(cat|ls|head|tail|grep|rg|egrep|wc|less|more|stat|fil
                      r"Get-Content|Get-ChildItem|Get-Item|Select-String|Test-Path|Resolve-Path|dir|type|gc|gci)\b", re.I)
 COPIA = re.compile(r"^\s*(mv|cp|rsync|Move-Item|Copy-Item|move|copy)\b", re.I)
 CD = re.compile(r"^\s*cd\s+(\"[^\"]*\"|'[^']*'|[^\s;&|]+)\s*$")
-REF = re.compile(r"(?:(?<=\s)|(?<=^)|(?<=[\"'=(>:]))((?:[~\w./-]*/)?" + re.escape(CARPETA) + r")(?=/|\s|$|[\"')>])")
+# Acepta rutas de Windows: unidad opcional (C:) y separador / o \\.
+REF = re.compile(r"(?:(?<=\s)|(?<=^)|(?<=[\"'=(>:]))((?:[A-Za-z]:)?(?:[~\w.\\/-]*[\\/])?" + re.escape(CARPETA) + r")(?=[\\/]|\s|$|[\"')>])")
 
 
 def exento(path):
