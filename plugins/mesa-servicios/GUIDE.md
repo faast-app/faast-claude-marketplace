@@ -1,6 +1,6 @@
 # Mesa de Servicios — Manual de Usuario
 
-**Version del plugin:** 1.1.x · **Integrantes del equipo:** 10 · **Comandos:** 12
+**Version del plugin:** 1.2.x · **Integrantes del equipo:** 10 · **Comandos:** 12
 
 > **Manual general de todos los equipos.** Existe un manual que explica juntos a todos los
 > equipos de FAAST y como se pasan el trabajo: [`GUIDE.md` en la raiz del

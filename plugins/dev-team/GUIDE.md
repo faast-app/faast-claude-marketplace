@@ -1,6 +1,6 @@
 # Dev Team — Manual de Usuario
 
-**Version del plugin:** 2.18.x · **Integrantes del equipo:** 23 · **Comandos:** 33
+**Version del plugin:** 2.19.x · **Integrantes del equipo:** 23 · **Comandos:** 34
 
 > **Manual general de todos los equipos.** Existe un manual que explica juntos a todos los
 > equipos de FAAST (Mesa de Servicios → Dev Team → Marketing) y como se pasan el trabajo:
