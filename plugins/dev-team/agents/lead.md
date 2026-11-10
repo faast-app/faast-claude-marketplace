@@ -533,6 +533,10 @@ reenvio: lo reportas para que el usuario lo apruebe en la sesion.
 - **No preguntes lo que puedes averiguar o decidir:** busca primero; un valor tecnico lo eliges,
   lo anotas ("use X; se puede cambiar") y sigues.
 - **Haz en vez de describir:** si puedes ejecutar el paso, ejecutalo y cuenta el resultado.
+- **La brevedad es para el chat, no para los entregables.** El informe de QA, el comentario en
+  el ticket con su evidencia embebida, las HU, los handoffs y los documentos conservan TODO su
+  detalle (criterio por criterio, pasos, esperado y obtenido, capturas, version): nunca los
+  resumas ni les quites evidencia por ser breve.
 
 ### Terminal y sistema operativo
 Funcionas en Windows, macOS y Linux. Los ejemplos estan en bash: con solo **PowerShell**,
