@@ -6,6 +6,13 @@
 # Los comandos /marketing:* corren INLINE, nunca como subagente. Nunca falla hacia afuera.
 import json, sys
 
+# Windows: la consola no es UTF-8 por defecto; sin esto los acentos y simbolos rompen la salida.
+for _flujo in (sys.stdin, sys.stdout, sys.stderr):
+    try:
+        _flujo.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+
 TEAM = {"director-marketing","investigador-mercado","analista-producto","estratega-comercial",
         "redactor-publicitario","disenador-presentaciones","director-motion","disenador-grafico"}
 CHEAP_OK = {"explore"}

@@ -403,6 +403,28 @@ Estas reglas estan siempre activas. No hay que pedirlas.
     de datos, siempre pide tu OK**, sea el ambiente que sea.
 19. **Los pendientes no se pierden.** Lo que espera tu respuesta queda registrado y
     aparece al iniciar cada sesion hasta que lo resuelvas.
+20. **Hablas con uno solo.** Tu unica conversacion es la principal: ningun integrante te
+    pide "escribeme a mi directamente". Si un integrante necesita tu autorizacion, el
+    coordinador te la pregunta y se la pasa con tus palabras textuales; como tus mensajes
+    quedan registrados, el integrante comprueba ahi que de verdad lo dijiste y sigue. Esto
+    funciona igual desde el telefono o con Remote Control.
+21. **El diseño hereda de la libreria de FaaST.** Toda propuesta, prototipo y pantalla usa
+    los colores, la tipografia y los componentes de la libreria oficial (`@faast-app`), en
+    claro y en oscuro. El estudio decide como se organiza la pantalla; no inventa otra
+    paleta ni otro boton. Si falta una pieza, se agrega a la libreria para todos.
+22. **El equipo aprende de cada correccion.** Lo que corriges, eliges o rechazas queda
+    como leccion y el integrante que corresponda la recibe la proxima vez, sin que la
+    repitas. Las lecciones que demuestran servir se te proponen como regla permanente.
+24. **Te hablan claro y de a una cosa.** Cada mensaje del equipo tiene un solo proposito:
+    contarte un resultado, hacerte una pregunta o pedirte un permiso. Primero va lo
+    importante en lenguaje sencillo; las preguntas llegan aparte, al final, bajo "Necesito
+    de ti", pocas (maximo tres) y con opciones. El equipo no te pregunta cosas tecnicas
+    que puede resolver solo: elige un valor razonable, te lo dice y sigue. Si quieres el
+    detalle tecnico, lo pides.
+23. **Si el sistema no deja hacer algo, no se rodea.** Cuando Claude Code deniega una
+    accion a un integrante, este sigue con lo demas y te lo reporta con el comando exacto;
+    tu decides si lo apruebas. `/dev-team:setup permisos` deja pre-aprobado lo rutinario y
+    seguro para que el equipo no se detenga por eso.
 
 ---
 
@@ -482,6 +504,9 @@ exactamente que quieres.
 | Escribes | Que consigues |
 |---|---|
 | `/dev-team:wiki query {pregunta}` | Preguntarle a la memoria del proyecto |
+| `/dev-team:memoria buscar {tema}` | Lo que el equipo ya aprendio sobre un tema (lecciones, decisiones, wiki) |
+| `/dev-team:memoria consolidar` | Resumen de lo aprendido y las lecciones que ya merecen ser regla permanente |
+| `/dev-team:setup permisos` | Pre-aprobar lo rutinario y seguro para que el equipo no se bloquee |
 | `/dev-team:team-office` | Ver al equipo trabajar en vivo (oficina virtual) |
 | `/dev-team:team-metrics` | Quien hizo que, cuanto tardo, cuanto consumio |
 
@@ -821,6 +846,18 @@ visual coherentes, y cero "no era asi como lo imaginaba".
 /dev-team:design review https://...      # revision de diseño de lo que ya existe, con fotos
 /dev-team:design video lanzamiento v2    # video de producto o lanzamiento
 ```
+
+> **Se ve como el producto, porque esta hecho con el producto.** Antes de dibujar, el
+> estudio trae la **libreria de diseño de FaaST** (colores, tipografia, botones, tablas,
+> formularios, modo claro y oscuro) y arma todas las propuestas con esas mismas piezas.
+> Las direcciones que te muestra no cambian el estilo: cambian **como se organiza la
+> pantalla** (que es lo que hay que decidir). Cada entrega pasa tres controles: que todo
+> salga de la libreria, que se vea profesional en computador y celular, y que cumpla las
+> buenas practicas de interfaz. Si tu pedido necesita una pieza que la libreria no tiene,
+> el estudio la marca como "nueva para la libreria" y se construye ahi, para que quede
+> disponible en todos los productos. Y lo que elijas o rechaces queda como leccion: la
+> siguiente propuesta parte de tus gustos, no de cero.
+> `/dev-team:design libreria actualizar` trae la ultima version de la libreria.
 
 > El estudio trabaja con herramientas de ultima generacion (Pencil, Figma, Penpot,
 > generadores de imagenes, HyperFrames para video) **si las tienes**. Si no tienes
@@ -1593,7 +1630,37 @@ Automatico: al abrir una sesion el plugin compara tu version con la publicada (u
 vez cada 6 horas) y te avisa, preguntando si quieres actualizar. Para hacerlo a mano, ver
 "Como actualizar" en [Antes de empezar](#antes-de-empezar-instalacion-paso-a-paso).
 
+**Un integrante me pide que le escriba "en su hilo" o que le de el OK directamente. ¿Que hago?**
+Nada especial: responde en tu conversacion de siempre. Desde la version actual los
+integrantes no pueden exigir eso; el coordinador les pasa tu respuesta con tus palabras
+textuales y ellos la comprueban en el registro de tus mensajes. Si un integrante de una
+sesion antigua insiste, dile al coordinador "reenviale mi autorizacion textual".
+
+**Un integrante quedo bloqueado porque "no tiene permiso" o por el modo automatico.**
+Claude Code le denego una accion. El integrante te reporta el comando exacto y sigue con
+el resto. Tu decides: aprobarlo, o correr `/dev-team:setup permisos` para dejar
+pre-aprobado lo rutinario (consultar git, ver registros, leer el tablero) y que siempre se
+te pregunte lo delicado (publicar, desplegar, borrar). En modo automatico, tras tres
+denegaciones seguidas Claude Code vuelve a pedirte confirmacion: es normal.
+
+**¿El equipo "se entrena"? ¿Como aprende?**
+No se modifica el modelo de IA. Lo que mejora es lo que cada integrante lee antes de
+trabajar: tus correcciones, los rechazos de QA y las decisiones tomadas se guardan como
+lecciones, se le entregan al integrante que corresponde y se ordenan segun si sirvieron
+o no. `/dev-team:memoria consolidar` te muestra que se aprendio y que conviene volver
+regla permanente.
+
 ## Si algo no anda
+
+**En Windows aparece un error de "bash" o el equipo no carga sus reglas al abrir la sesion.**
+Las versiones anteriores necesitaban bash, que una terminal de Windows (PowerShell, cmd,
+Windows Terminal) no trae. La version actual ya no lo necesita: actualiza el plugin y
+reinicia la sesion. Funciona en cualquier terminal (PowerShell, cmd, Windows Terminal,
+Git Bash, macOS, Linux). Solo hacen falta **Node.js** y **Python 3**, y **no tienes que
+instalarlos tu**: si falta alguno, el equipo te avisa en una linea, lo instala (te
+aparecera una confirmacion para aprobar) y te pide cerrar y volver a abrir la terminal.
+Si no lo hace solo, escribe `/dev-team:start`: su primer paso revisa e instala lo que
+falte. Esto vale igual para la Mesa, el Equipo del PO y Marketing.
 
 **Actualice el plugin pero el equipo sigue igual.**
 Cierra y abre la sesion (escribe `/exit` y vuelve a abrir Claude Code). Todo lo nuevo se

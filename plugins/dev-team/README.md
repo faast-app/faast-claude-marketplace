@@ -57,6 +57,24 @@ comandos y flujos, ver **[GUIDE.md](GUIDE.md)**.
 
 ## Principios
 
+- **El diseño hereda de la libreria UI de FaaST** (`@faast-app/tokens|themes|ui`, rama
+  `develop`): toda propuesta trae el kit de la libreria (una hoja CSS, markup real de los
+  componentes, tokens DTCG) y pasa tres puertas — herencia (`HERENCIA: PASA`), criterio
+  (`taste-faast`, adaptacion de tasteskill) y Web Interface Guidelines de Vercel. Lo que
+  falta se pide a la libreria, no se improvisa (skills `libreria-faast`, `taste-faast`,
+  `web-interface-guidelines`, `vercel-react-patterns`; `/dev-team:design`)
+- **Un solo canal con el usuario**: ningun agente exige "escribeme en mi hilo" (imposible con
+  Remote Control o en segundo plano). El coordinador reenvia la autorizacion con la cita
+  textual y el agente la verifica en el registro de mensajes del usuario que guarda un hook
+  (`hooks/pedidos_usuario.py`)
+- **Sin bloqueos por permisos**: una herramienta denegada no se reintenta ni se rodea — el
+  agente sigue con lo demas y la reporta; `/dev-team:setup permisos` propone reglas `allow`
+  angostas, `ask` para lo delicado y el entorno del modo automatico
+- **Memoria con retroalimentacion (RAG)**: indice local sobre lecciones, wiki, handoffs,
+  decisiones y retros; cada correccion del usuario o rechazo de QA es una leccion, el
+  feedback util/no-util reordena la recuperacion, y lo validado se inyecta al iniciar cada
+  agente y se propone como regla permanente (`/dev-team:memoria`, skill `memoria-equipo`)
+
 - Las HUs son de **negocio** (las escribe el PO); lo tecnico vive en las tareas
 - **QA y Cybersec son gates de merge** — nada llega a main sin validacion
 - **QA no debuggea**: reproduce, documenta y reporta con evidencia (screenshots/clips)

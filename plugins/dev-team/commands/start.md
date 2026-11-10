@@ -17,6 +17,43 @@ Pedido del usuario (puede venir vacio): $ARGUMENTS
 Este comando existe para que NADIE tenga que memorizar los demas comandos.
 Detecta el contexto y guia al usuario al flujo correcto.
 
+## Como le hablas a la persona (siempre)
+Quien escribe puede no ser tecnico. **Un mensaje, un proposito** (informar, preguntar o pedir
+permiso; nunca todo junto). Abre con 1-2 frases en llano sobre que paso o que haras, sin
+archivos, comandos, puertos ni siglas. **Las preguntas van aparte, al final, bajo "Necesito de
+ti"**: maximo 3 (ideal 1), respondibles con una palabra, con opciones y tu recomendacion; usa la
+herramienta de preguntas con opciones si existe. **No preguntes lo que puedes averiguar o
+decidir**: los valores tecnicos los eliges tu y lo dices en una linea. **Haz en vez de
+describir**: instalas y ejecutas, y cuentas el resultado en una linea. Un mensaje cabe en una
+pantalla. Lo que reporten los agentes lo traduces a este formato antes de mostrarlo.
+
+## Paso 0 — Entorno (solo si el equipo no cargo; funciona en cualquier terminal y sistema)
+Si en el contexto de esta sesion **no aparece** el bloque de protocolo de este equipo, o aparece
+"ENTORNO INCOMPLETO", los hooks del plugin no pudieron correr. Necesitan **Node.js** y
+**Python 3** — no bash: sirven PowerShell, cmd, Windows Terminal, Git Bash, zsh o bash. Arreglalo
+TU antes de seguir, sin pedirle al usuario que lo haga a mano:
+1. Comprueba que hay: `node --version` y `python --version` (si falla: `python3 --version`,
+   y en Windows tambien `py -3 --version`). En Windows, un `python` que abre la Microsoft Store
+   o no imprime version **no** es Python: cuenta como ausente.
+2. Dile al usuario en UNA linea que falta y que lo vas a instalar, e instala lo que falte:
+
+   | Sistema | Python 3 | Node.js |
+   |---|---|---|
+   | Windows | `winget install -e --id Python.Python.3.12 --accept-source-agreements --accept-package-agreements` | `winget install -e --id OpenJS.NodeJS.LTS --accept-source-agreements --accept-package-agreements` |
+   | macOS | `brew install python@3.12` | `brew install node` |
+   | Debian / Ubuntu | `sudo apt-get update && sudo apt-get install -y python3` | `sudo apt-get install -y nodejs npm` |
+   | Fedora / RHEL | `sudo dnf install -y python3` | `sudo dnf install -y nodejs` |
+
+   Sin `winget` (Windows antiguo) o sin `brew` (macOS): usa el instalador oficial de
+   python.org / nodejs.org y guia al usuario en ese unico paso. Si la instalacion pide
+   confirmacion de Claude Code o del sistema, es normal: el usuario la aprueba una vez.
+3. Verifica de nuevo las versiones. En Windows el PATH nuevo solo lo ve una terminal nueva:
+   pide al usuario **cerrar y volver a abrir** la terminal y la sesion. Al reabrir, el equipo
+   carga completo (protocolo, pendientes, memoria).
+4. Mientras tanto NO te detengas: sigue con el pedido en modo reducido y dilo. Para cargar el
+   protocolo sin reiniciar: `node "${CLAUDE_PLUGIN_ROOT}/hooks/run.mjs" session_context.py`.
+En Windows los procedimientos que digan `python3 archivo.py` se ejecutan como `python archivo.py`.
+
 ## Paso 1: Detectar contexto (resolucion CANONICA)
 
 Resolver la coordinacion del proyecto en este orden, subiendo desde el directorio
@@ -53,7 +90,7 @@ funciona.
 Si NO tienes ya en contexto el bloque `<dev-team-protocolo-sesion-principal>`
 (pasa cuando la sesion se abrio fuera de la carpeta del proyecto), cargalo ahora:
 ```bash
-CLAUDE_PROJECT_DIR="{ruta-del-proyecto-detectado}" "${CLAUDE_PLUGIN_ROOT}/hooks/inject-team-protocol.sh"
+node "${CLAUDE_PLUGIN_ROOT}/hooks/run.mjs" session_context.py --proyecto "{ruta-del-proyecto-detectado}"
 ```
 Adopta TODA su salida como reglas vigentes de esta sesion (plan primero, gates,
 delegacion, etc.) y aplica lo que indique el bloque de mantenimiento si aparece.
@@ -85,6 +122,9 @@ delegacion, etc.) y aplica lo que indique el bloque de mantenimiento si aparece.
    - "urgente / se cayo produccion / hotfix" → `/dev-team:hotfix {incidente}` (rapido, con gates intactos)
    - "como venimos hoy / standup / que hizo cada uno" → `/dev-team:standup`
    - "retrospectiva / que mejorar del sprint" → `/dev-team:retro`
+   - "que aprendimos / recuerda que / de ahora en adelante / no vuelvas a" →
+     `/dev-team:memoria {buscar|aprender|consolidar}`
+   - "los agentes se bloquean / piden permiso / modo automatico" → `/dev-team:setup permisos`
    - "no se / que sigue" → recomendar la accion mas util segun el estado
      (handoffs pendientes → /inbox; HUs sin asignar → /assign-task; nada pendiente → /sync pull)
 4. Ejecutar el flujo elegido directamente — no pedir al usuario que escriba otro comando

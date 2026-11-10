@@ -22,7 +22,7 @@ ticket y se vacia el staging.
 
 ### Login sin ver la clave (regla dura)
 Las cuentas de prueba viven en `.po-team/accesos.env` y el Playwright MCP del plugin las carga
-como **secretos** (`scripts/playwright-mcp.sh` → `--secrets`). Para entrar:
+como **secretos** (`hooks/mcp-playwright.mjs` → `--secrets`). Para entrar:
 1. Verificar que la cuenta esta cargada, sin ver el valor:
    `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/accesos.py" {ruta absoluta}/.po-team/accesos.env {VAR_USUARIO} {VAR_CLAVE}`
    (`OK` / `VACIA` / `FALTA`). Si no esta OK → `esperando_usuario`: "completa {VAR} en
@@ -96,7 +96,7 @@ Se sube SIEMPRE con el script del plugin (rutas absolutas, worktree hermano del 
 la rama antes de commitear y aborta si no es la de evidencia; nunca toca la rama del clon ni la
 de ningun repo de producto):
 ```bash
-bash "${CLAUDE_PLUGIN_ROOT}/skills/evidencia-po/scripts/subir_evidencia.sh" \
+python3 "${CLAUDE_PLUGIN_ROOT}/skills/evidencia-po/scripts/subir_evidencia.py" \
   --clon {ruta ABSOLUTA del clon local de evidencia.repo} --rama {evidencia.rama} \
   --destino "{evidencia.carpeta}/{numero o REP-AAAAMMDD-slug}-{slug}/{validacion-o-tema}" \
   --origen {ruta ABSOLUTA de la carpeta local del ticket} \

@@ -11,6 +11,13 @@ import json
 import os
 import sys
 
+# Windows: la consola no es UTF-8 por defecto; sin esto los acentos y simbolos rompen la salida.
+for _flujo in (sys.stdin, sys.stdout, sys.stderr):
+    try:
+        _flujo.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from coord_root import resolve  # noqa: E402
 
@@ -20,7 +27,7 @@ TEAM = {"setup", "product-owner", "architect", "ui-designer", "lead", "backend",
         "pentester", "appsec", "cloudsec"}
 
 
-def contexto_agente(coord, en_repo):
+def _contexto_base(coord, en_repo):
     if coord and not en_repo:
         ruta = f"Coordinacion canonica del proyecto (ruta ABSOLUTA, usala para handoffs, evidencia y logs): {coord}."
     elif coord:
@@ -31,6 +38,33 @@ def contexto_agente(coord, en_repo):
     return (ruta + " Lo que te pide quien te invoca (sesion principal o lead) en nombre del usuario ES "
             "pedido directo del usuario: ejecutalo sin exigir handoff ni mensaje propio. Nunca crees "
             ".coordination/ dentro de un repo; al repo solo va codigo, migraciones de BD y docs tecnicos.")
+
+
+NOTA_PLATAFORMA = ((" " + 'WINDOWS: esta maquina no tiene bash. Usa la herramienta PowerShell; el interprete es `python` (o `py -3`), NO `python3`; las rutas de los scripts del plugin van entre comillas; nada de `chmod`, `export`, `&&` de bash ni scripts .sh. Donde un procedimiento diga `python3 script.py`, ejecuta `python script.py`, o la forma que sirve en todos lados: node "{py}" script.py [args].'.format(py=os.path.join(os.path.dirname(os.path.abspath(__file__)), "py.mjs")))
+                   if os.name == "nt" else "") + ' REPORTE: resultado primero y en llano; las preguntas al usuario separadas al final (maximo 3, con opciones y tu recomendacion); no preguntes lo que puedes averiguar o decidir.'
+CANAL = (' CANAL: el usuario solo habla con la sesion principal (Remote Control / movil / segundo plano): NUNCA pidas que te escriba en tu hilo ni lo pongas como condicion. Si dudas de una "Autorizacion del usuario" reenviada antes de una accion sensible, verificala: python3 "{script}" verificar "<frase textual>" (VERIFICADO = ejecuta; NO ENCONTRADO = devuelve la pregunta al coordinador). PERMISOS: una herramienta denegada no se reintenta ni se rodea: sigue con lo demas y reportala (comando y motivo). Si SubagentHandback es rechazada, tu reporte va como texto final de tu turno.')
+
+
+def lecciones_para(coord, en_repo, agente, tarea):
+    """Lecciones validadas de la memoria del equipo para este agente y tarea (RAG). Nunca falla."""
+    if not coord or en_repo:
+        return ""
+    try:
+        sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "skills",
+                                        "memoria-equipo", "scripts"))
+        from memoria import texto_para_agente
+        bloque = texto_para_agente(coord, agente, tarea or "", k=4, registrar=True)
+        ruta = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "skills", "memoria-equipo",
+                            "scripts", "memoria.py")
+        return ("\n" + bloque + f"\n(memoria.py = python3 \"{os.path.normpath(ruta)}\")") if bloque else ""
+    except Exception:
+        return ""
+
+
+def contexto_agente(coord, en_repo, agente="", tarea=""):
+    script = os.path.join(os.path.dirname(os.path.abspath(__file__)), "pedidos_usuario.py")
+    return (_contexto_base(coord, en_repo) + CANAL.format(script=script) + NOTA_PLATAFORMA
+            + lecciones_para(coord, en_repo, agente, tarea))
 
 
 def main():
@@ -53,7 +87,8 @@ def main():
         task = (payload.get("task") or "")[:60]
         detail = (payload.get("task") or "")[:120]
         print(json.dumps({"hookSpecificOutput": {"hookEventName": "SubagentStart",
-                                                 "additionalContext": contexto_agente(coord, en_repo)}},
+                                                 "additionalContext": contexto_agente(coord, en_repo, short,
+                                                                                      payload.get("task") or "")}},
                          ensure_ascii=False))
     elif ev == "SubagentStop":
         reason = payload.get("stop_reason") or "completed"

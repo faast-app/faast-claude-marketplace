@@ -5,6 +5,19 @@ description: Como definir design tokens en el formato W3C DTCG (Design Tokens Co
 
 # Design tokens DTCG (dev-team)
 
+> **En un proyecto FaaST los tokens no se escriben: se heredan.** `@faast-app/tokens/tokens.json`
+> (primitivos) y `@faast-app/themes/themes.json` (roles claro/oscuro, con alias a los
+> primitivos) ya estan en formato DTCG y llegan con el kit (`dev-team:libreria-faast`). El
+> `tokens.json` de una propuesta es una copia citada de esos archivos. Esta skill se usa
+> para **leerlos**, para llevarlos a Figma/Penpot/Pencil y para construir tokens propios solo
+> en un proyecto ajeno a FaaST o en una identidad nueva.
+>
+> **Dos formas de valor.** La libreria usa la del formato estable 2025.10: color
+> `{"colorSpace":"srgb","components":[r,g,b],"hex":"#rrggbb","alpha":0.45}`, dimension
+> `{"value":1,"unit":"rem"}` (solo `px` y `rem`), duracion `{"value":120,"unit":"ms"}`,
+> sombra como lista de capas. Los ejemplos de abajo usan la forma abreviada anterior
+> (cadenas), que muchas herramientas siguen aceptando; en un sistema nuevo usa la 2025.10.
+
 ## 1. Formato (W3C DTCG)
 ```json
 {

@@ -55,6 +55,9 @@ Un hotfix toca lo justo. Si aparece deuda relacionada, se registra como item apa
   lo confirma el usuario.
 - Anotar el incidente para la **retro** (`/dev-team:retro`): que lo causo y que accion evita que se
   repita. Un hotfix sin aprendizaje es medio trabajo.
+- Registrar la causa como leccion para que el proximo agente la reciba al iniciar:
+  `memoria.py aprender --fuente qa --tipo {codigo|bd|infra|proceso} --agente {rol} --ref {BUG}
+  --texto "que lo causo + como se detecta + que hacer para que no vuelva"`.
 
 ## Reglas
 - Rapido nunca es saltarse gates: QA revalida con evidencia, cybersec si es sensible, el Lead mergea.

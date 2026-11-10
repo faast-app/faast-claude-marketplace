@@ -6,6 +6,13 @@
 # artifact se suben con `files` (ver skill validacion-funcional-po).
 import json, os, re, sys
 
+# Windows: la consola no es UTF-8 por defecto; sin esto los acentos y simbolos rompen la salida.
+for _flujo in (sys.stdin, sys.stdout, sys.stderr):
+    try:
+        _flujo.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+
 ESTADOS = {"ok", "warn", "alert", "block", "pend", "na", "pr", "wait"}
 
 def main():

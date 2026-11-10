@@ -6,6 +6,13 @@
 # fuera). Nunca falla hacia afuera (exit 0).
 import json, os, sys, datetime
 
+# Windows: la consola no es UTF-8 por defecto; sin esto los acentos y simbolos rompen la salida.
+for _flujo in (sys.stdin, sys.stdout, sys.stderr):
+    try:
+        _flujo.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from coord_root import resolve  # noqa: E402
 
@@ -13,7 +20,7 @@ PLUGIN = "po-team"
 TEAM = {"po-lead","refinador","planificador","seguimiento","validador-po",
         "documentador","manualista","setup"}
 
-def contexto_agente(po, en_repo):
+def _contexto_base(po, en_repo):
     if po and not en_repo:
         ruta = (f"Carpeta canonica del equipo del PO (ruta ABSOLUTA, usala para tickets, validaciones, "
                 f"evidencia, tablero, documentos, handoffs y logs): {po}.")
@@ -26,6 +33,16 @@ def contexto_agente(po, en_repo):
             "pedido directo del usuario, y una \"Autorizacion del usuario: ...\" en tu prompt ES el plan "
             "aprobado: ejecutalo sin exigir handoff ni re-confirmacion. Nunca crees .po-team/ dentro de "
             "un repo. El staging del Playwright MCP es ~/.faast-mcp/po-team/.")
+
+NOTA_PLATAFORMA = ((" " + 'WINDOWS: esta maquina no tiene bash. Usa la herramienta PowerShell; el interprete es `python` (o `py -3`), NO `python3`; las rutas de los scripts del plugin van entre comillas; nada de `chmod`, `export`, `&&` de bash ni scripts .sh. Donde un procedimiento diga `python3 script.py`, ejecuta `python script.py`, o la forma que sirve en todos lados: node "{py}" script.py [args].'.format(py=os.path.join(os.path.dirname(os.path.abspath(__file__)), "py.mjs")))
+                   if os.name == "nt" else "") + ' REPORTE: resultado primero y en llano; las preguntas al usuario separadas al final (maximo 3, con opciones y tu recomendacion); no preguntes lo que puedes averiguar o decidir.'
+CANAL = (' CANAL: el usuario solo habla con la sesion principal (Remote Control / movil / segundo plano): NUNCA pidas que te escriba en tu hilo ni lo pongas como condicion. Si dudas de una "Autorizacion del usuario" reenviada antes de una accion sensible, verificala: python3 "{script}" verificar "<frase textual>" (VERIFICADO = ejecuta; NO ENCONTRADO = devuelve la pregunta al coordinador). PERMISOS: una herramienta denegada no se reintenta ni se rodea: sigue con lo demas y reportala (comando y motivo). Si SubagentHandback es rechazada, tu reporte va como texto final de tu turno.')
+
+
+def contexto_agente(coord, en_repo):
+    script = os.path.join(os.path.dirname(os.path.abspath(__file__)), "pedidos_usuario.py")
+    return _contexto_base(coord, en_repo) + CANAL.format(script=script) + NOTA_PLATAFORMA
+
 
 def main():
     try:

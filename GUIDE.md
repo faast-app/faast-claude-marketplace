@@ -499,6 +499,28 @@ como las aplica su equipo.
     de registrarlo o de hablar de la correccion. Un arreglo se vuelve a probar con el mismo
     recorrido y fotos **antes / despues**, y nadie cierra un ticket sin tu confirmacion.
 
+13. **Hablas con uno solo, desde donde estes.** Tu unica conversacion es la principal. Ningun
+    integrante te pide "escribeme a mi directamente": si necesita tu autorizacion, el coordinador
+    te la pregunta y se la pasa con tus palabras textuales, y el integrante comprueba en el
+    registro de tus mensajes que de verdad lo dijiste. Funciona igual desde el telefono o con
+    Remote Control.
+
+16. **Te hablan claro y de a una cosa.** Cada mensaje tiene un solo proposito (un resultado, una
+    pregunta o un permiso). Primero lo importante en lenguaje sencillo; las preguntas llegan
+    aparte, al final, bajo "Necesito de ti", pocas y con opciones. Lo tecnico que el equipo puede
+    resolver solo, lo resuelve y te lo cuenta en una linea.
+
+17. **Funciona en cualquier computador.** Windows, macOS o Linux, con la terminal que uses. Si
+    falta algo para trabajar (Python, Node), el equipo lo instala y te avisa.
+
+14. **Si el sistema no deja hacer algo, no se rodea.** Cuando Claude Code deniega una accion a un
+    integrante, este sigue con lo demas y te lo reporta con el comando exacto; tu decides. En el
+    Dev Team, `/dev-team:setup permisos` deja pre-aprobado lo rutinario y seguro.
+
+15. **El diseño hereda de la libreria de FaaST y el equipo aprende** (Dev Team). Las propuestas
+    de diseño se arman con los colores, la tipografia y los componentes de la libreria oficial
+    (`@faast-app`); y lo que corriges, eliges o rechazas queda como leccion para la proxima vez.
+
 ---
 
 ## 7. Donde esta cada manual

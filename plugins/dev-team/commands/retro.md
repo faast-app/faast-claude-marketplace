@@ -45,6 +45,13 @@ Cada mejora se convierte en una ACCION con responsable, no en un deseo:
 - Las de proceso tecnico (CI, gates, ramas) las toma el rol dueño via handoff.
 - Guardar la retro en `.coordination/retros/retro-sprint-{n}.md` y registrar los acuerdos como
   handoffs a sus responsables. Opcional: el tech-writer la ingiere a la wiki (`decisiones/`).
+- **Cada accion entra a la memoria del equipo** para que se aplique sola desde la proxima
+  tarea: `memoria.py aprender --fuente retro --tipo {proceso|qa|codigo|…} --agente {rol}
+  --ref retro-sprint-{n} --texto "…"` (skill `dev-team:memoria-equipo`).
+- **Cierra el ciclo de aprendizaje del sprint:** `memoria.py consolidar` + `metricas` +
+  `evaluar`. Presenta al usuario el % de lecciones utiles, la recuperacion y las
+  **candidatas a regla permanente** con tu recomendacion; lo que apruebe se incorpora (prompt
+  del agente / skill via PR al marketplace, o `CLAUDE.md` del proyecto) y se retira de la memoria.
 
 ## Salida al usuario
 ```

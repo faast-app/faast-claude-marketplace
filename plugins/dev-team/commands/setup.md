@@ -1,6 +1,6 @@
 ---
-description: Valida e instala todos los prerequisitos del proyecto - git, gh/az CLI, Docker, SDKs, clientes de BD, Playwright. Configura conexiones de BD y autenticacion del tracker. Ejecutalo si algo falla o antes de empezar.
-argument-hint: (opcional) que validar - "db", "tracker", "playwright", "design" o vacio para todo
+description: Valida e instala todos los prerequisitos del proyecto - git, gh/az CLI, Docker, SDKs, clientes de BD, Playwright. Configura conexiones de BD y autenticacion del tracker, y con `permisos` propone las reglas que evitan que los agentes se bloqueen por confirmaciones o por el modo automatico. Ejecutalo si algo falla o antes de empezar.
+argument-hint: (opcional) que validar - "db", "tracker", "playwright", "design", "permisos" o vacio para todo
 ---
 
 > **Ejecucion INLINE obligatoria:** este es un COMANDO, no un agente. Ejecuta su
@@ -25,10 +25,64 @@ Invoca al agente `setup` para que ejecute su flujo completo:
    - **playwright**: solo Playwright/browsers para el agente QA
    - **design**: herramientas del equipo de diseño (lienzo Pencil/Figma/Penpot, generador
      de imagenes, HyperFrames para video, gltf-transform) → `config.json` `design.tools`
+   - **permisos**: NO se delega (ver abajo)
 4. Mostrar tabla de resultados (OK / Falta / Sin configurar)
 5. Ofrecer instalar lo que falta (UNA confirmacion, lista explicita)
 6. Re-verificar y guardar estado en `.coordination/setup-status.json`
 7. Reportar el OK final o el impacto de lo pendiente
+
+## Paso 0 — Entorno (solo si el equipo no cargo; funciona en cualquier terminal y sistema)
+Si en el contexto de esta sesion **no aparece** el bloque de protocolo de este equipo, o aparece
+"ENTORNO INCOMPLETO", los hooks del plugin no pudieron correr. Necesitan **Node.js** y
+**Python 3** — no bash: sirven PowerShell, cmd, Windows Terminal, Git Bash, zsh o bash. Arreglalo
+TU antes de seguir, sin pedirle al usuario que lo haga a mano:
+1. Comprueba que hay: `node --version` y `python --version` (si falla: `python3 --version`,
+   y en Windows tambien `py -3 --version`). En Windows, un `python` que abre la Microsoft Store
+   o no imprime version **no** es Python: cuenta como ausente.
+2. Dile al usuario en UNA linea que falta y que lo vas a instalar, e instala lo que falte:
+
+   | Sistema | Python 3 | Node.js |
+   |---|---|---|
+   | Windows | `winget install -e --id Python.Python.3.12 --accept-source-agreements --accept-package-agreements` | `winget install -e --id OpenJS.NodeJS.LTS --accept-source-agreements --accept-package-agreements` |
+   | macOS | `brew install python@3.12` | `brew install node` |
+   | Debian / Ubuntu | `sudo apt-get update && sudo apt-get install -y python3` | `sudo apt-get install -y nodejs npm` |
+   | Fedora / RHEL | `sudo dnf install -y python3` | `sudo dnf install -y nodejs` |
+
+   Sin `winget` (Windows antiguo) o sin `brew` (macOS): usa el instalador oficial de
+   python.org / nodejs.org y guia al usuario en ese unico paso. Si la instalacion pide
+   confirmacion de Claude Code o del sistema, es normal: el usuario la aprueba una vez.
+3. Verifica de nuevo las versiones. En Windows el PATH nuevo solo lo ve una terminal nueva:
+   pide al usuario **cerrar y volver a abrir** la terminal y la sesion. Al reabrir, el equipo
+   carga completo (protocolo, pendientes, memoria).
+4. Mientras tanto NO te detengas: sigue con el pedido en modo reducido y dilo. Para cargar el
+   protocolo sin reiniciar: `node "${CLAUDE_PLUGIN_ROOT}/hooks/run.mjs" session_context.py`.
+En Windows los procedimientos que digan `python3 archivo.py` se ejecutan como `python archivo.py`.
+
+## `permisos` — que el equipo no se bloquee (lo ejecutas TU, sesion principal)
+Los agentes se frenan cuando una accion rutinaria necesita una confirmacion que nadie ve
+(segundo plano, Remote Control) o cuando el modo automatico la deniega. Un plugin no puede
+traer reglas de permisos; se proponen para el proyecto y el usuario decide:
+
+```bash
+python3 "${CLAUDE_PLUGIN_ROOT}/hooks/permisos_equipo.py" proponer    # muestra el plan, no cambia nada
+python3 "${CLAUDE_PLUGIN_ROOT}/hooks/permisos_equipo.py" aplicar     # SOLO tras el OK explicito del usuario
+python3 "${CLAUDE_PLUGIN_ROOT}/hooks/permisos_equipo.py" estado
+```
+
+1. Corre `proponer` y muestra al usuario el plan completo: reglas `allow` **angostas** de solo
+   lectura (git status/diff/log, gh view/list, docker ps/logs…) y de los scripts del equipo;
+   reglas `ask` para lo que siempre debe confirmarse (push, merge, `gh workflow run`,
+   `docker compose down`…); y el texto de `autoMode.environment` armado con los ambientes
+   declarados del proyecto.
+2. Con su OK, `aplicar` fusiona `allow`/`ask` en `.claude/settings.local.json` del proyecto
+   (local, no se commitea; jamas toca `deny` ni reglas existentes).
+3. El bloque `autoMode` va en `~/.claude/settings.json` del usuario (Claude Code lo ignora en
+   archivos del proyecto): ofrecele agregarlo con la skill `update-config` o que lo pegue el.
+4. Explicale lo que NO resuelven las reglas: el modo automatico descarta reglas amplias
+   (`Bash(*)`, interpretes con comodin), se pausa tras 3 denegaciones seguidas o 20 en la
+   sesion y vuelve a pedir confirmacion; y una accion sensible en un ambiente productivo
+   siempre pide su autorizacion.
+Un subagente NUNCA cambia permisos: si uno lo pide, es un hallazgo para el usuario.
 
 Reglas: nunca instalar sin confirmacion; nunca guardar credenciales en archivos
 trackeados por git; siempre re-verificar despues de instalar.

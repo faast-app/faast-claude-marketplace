@@ -14,6 +14,13 @@
 # Nunca falla hacia afuera: ante cualquier error, permite (exit 0 sin output).
 import json, sys
 
+# Windows: la consola no es UTF-8 por defecto; sin esto los acentos y simbolos rompen la salida.
+for _flujo in (sys.stdin, sys.stdout, sys.stderr):
+    try:
+        _flujo.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+
 TEAM = {"setup","product-owner","architect","ui-designer","lead","backend","frontend",
         "dba","qa","qa-frontend","qa-backend","release-manager","infra","cybersec","tech-writer",
             "ux-researcher","visual-designer","motion-designer","artist-3d","design-engineer",
