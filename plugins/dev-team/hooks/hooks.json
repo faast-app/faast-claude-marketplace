@@ -61,6 +61,17 @@
           }
         ]
       }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/pedidos_usuario.py\"",
+            "timeout": 10
+          }
+        ]
+      }
     ]
   }
 }

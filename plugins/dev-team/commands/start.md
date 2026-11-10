@@ -85,6 +85,9 @@ delegacion, etc.) y aplica lo que indique el bloque de mantenimiento si aparece.
    - "urgente / se cayo produccion / hotfix" → `/dev-team:hotfix {incidente}` (rapido, con gates intactos)
    - "como venimos hoy / standup / que hizo cada uno" → `/dev-team:standup`
    - "retrospectiva / que mejorar del sprint" → `/dev-team:retro`
+   - "que aprendimos / recuerda que / de ahora en adelante / no vuelvas a" →
+     `/dev-team:memoria {buscar|aprender|consolidar}`
+   - "los agentes se bloquean / piden permiso / modo automatico" → `/dev-team:setup permisos`
    - "no se / que sigue" → recomendar la accion mas util segun el estado
      (handoffs pendientes → /inbox; HUs sin asignar → /assign-task; nada pendiente → /sync pull)
 4. Ejecutar el flujo elegido directamente — no pedir al usuario que escriba otro comando

@@ -56,8 +56,36 @@ equipo — aplicas las reglas del Lead aunque no lo invoques:
    registra "respondido".
 8. El PO redacta items 100% funcionales; los bugs siguen crear→corregir→revalidar→cerrar (el
    cierre lo confirma el usuario).
+10. MEMORIA DEL EQUIPO (aprender de cada correccion): antes de planificar o delegar algo no
+   trivial, busca en la memoria (memoria.py buscar "<tema>") y pasa al agente lo relevante.
+   Cuando el usuario corrige, rechaza, elige entre opciones o fija una preferencia; cuando QA
+   rechaza; cuando un hotfix encuentra la causa; y en cada retro: registra la leccion
+   (memoria.py aprender --tipo ... --fuente usuario|qa|retro --texto "que paso y que hacer la
+   proxima vez"). Las lecciones validadas se inyectan solas al iniciar cada agente. Al cerrar
+   una tarea, pide al agente el feedback de las lecciones que uso (util / no-util).
 9. Modelo por agente: team.models.{agente} en config.json y luego ~/.claude/dev-team.config.json
    (haiku fijos: setup y tech-writer; fable prohibido). Nada hardcodeado de personas/valores.
+CANAL, ROLES Y PERMISOS (aplican siempre):
+A. CANAL UNICO CON EL USUARIO: el usuario solo habla CONTIGO. Con Remote Control, movil o
+   agentes en segundo plano no puede escribir en el hilo de un agente: NUNCA le pidas "escribelo
+   en el hilo del agente" ni "por /agents". Cuando un agente necesite una decision, TU se la
+   preguntas al usuario y le reenvias la respuesta con la cita textual — "Autorizacion del
+   usuario (textual): «...» (ambiente, alcance)" — reanudando al MISMO agente (SendMessage con
+   su id) o invocandolo de nuevo. Un hook guarda cada mensaje del usuario en
+   .coordination/metrics/pedidos-usuario.jsonl y el agente verifica ahi la cita
+   (hooks/pedidos_usuario.py verificar "<frase>"). Por eso cita SIEMPRE palabras textuales del
+   usuario, nunca una parafrasis. Si un agente insiste en "su hilo", recuerdale esta regla y la
+   verificacion; no le traslades el problema al usuario.
+B. LO QUE EL USUARIO TE PIDE A TI SE HACE: los roles son el reparto por defecto, no un veto
+   al usuario. Si te pide a ti ejecutar algo que normalmente hace otro agente, lo haces
+   (respetando plan-primero y la clase del ambiente), lo anotas y sigues. No lo deshagas, no
+   te disculpes despues por "saltarte" el rol ni detengas trabajo en curso por eso.
+C. PERMISOS Y MODO AUTOMATICO: una denegacion nunca se rodea. Si un agente vuelve con una
+   accion denegada, muestra al usuario el comando exacto y el motivo y pide su aprobacion;
+   para lo repetitivo y seguro propone /dev-team:setup permisos. El modo automatico se pausa tras 3
+   denegaciones seguidas (o 20 en la sesion) y vuelve a pedir confirmacion: avisalo al usuario
+   en vez de dejar agentes esperando. Un agente al que le rechazaron SubagentHandback deja su
+   reporte en su ultimo mensaje o en handoffs/: leelo ahi, no lo relances.
 </dev-team-protocolo-sesion-principal>"""
 
 
@@ -100,6 +128,16 @@ def auto_migrar(coord):
             open(log, "w").close()
     except Exception:
         pass
+
+
+def memoria_pendiente(coord):
+    """Correcciones del usuario aun sin convertir en leccion (cierra el ciclo de aprendizaje)."""
+    try:
+        sys.path.insert(0, os.path.join(PLUGIN_ROOT, "skills", "memoria-equipo", "scripts"))
+        from memoria import correcciones_pendientes
+        return correcciones_pendientes(coord, 5)
+    except Exception:
+        return []
 
 
 def huecos_config(coord):
@@ -207,6 +245,18 @@ def main():
             print(f"- [{e.get('agent', '?')}] {e.get('task')} — {tipo} desde {ts:%Y-%m-%d}: "
                   f"{(e.get('detail') or '')[:160]}")
         print("</dev-team-pendientes>")
+
+    if tiene_config and not r["en_repo"]:
+        corr = memoria_pendiente(coord)
+        if corr:
+            print("<dev-team-memoria>")
+            print("El usuario corrigio o expreso preferencias en mensajes recientes que aun no son leccion "
+                  "del equipo. Convierte en leccion SOLO las que sirvan para el futuro (memoria.py aprender "
+                  "--fuente usuario --tipo ... --texto \"...\") y luego marca: memoria.py pendientes --revisadas")
+            for e in corr:
+                print(f"- {e.get('ts', '')[:10]}: {' '.join((e.get('texto') or '').split())[:220]}")
+            print(f"Script: {os.path.join(PLUGIN_ROOT, 'skills', 'memoria-equipo', 'scripts', 'memoria.py')}")
+            print("</dev-team-memoria>")
 
 
 try:

@@ -18,7 +18,7 @@ TEAM = {"mesa-lead", "recepcion", "analista", "qa-negocio", "dba-mesa", "prototi
         "redactor", "registrador", "curador", "setup"}
 
 
-def contexto_agente(coord, en_repo):
+def _contexto_base(coord, en_repo):
     if coord and not en_repo:
         ruta = f"Carpeta canonica de la Mesa (ruta ABSOLUTA, usala para solicitudes, evidencia, handoffs y logs): {coord}."
     elif coord:
@@ -29,6 +29,14 @@ def contexto_agente(coord, en_repo):
     return (ruta + " Lo que te pide quien te invoca (sesion principal o mesa-lead) en nombre del usuario ES "
             "pedido directo del usuario: ejecutalo sin exigir handoff ni mensaje propio. Nunca crees "
             ".mesa/ dentro de un repo.")
+
+
+CANAL = (' CANAL: el usuario solo habla con la sesion principal (Remote Control / movil / segundo plano): NUNCA pidas que te escriba en tu hilo ni lo pongas como condicion. Si dudas de una "Autorizacion del usuario" reenviada antes de una accion sensible, verificala: python3 "{script}" verificar "<frase textual>" (VERIFICADO = ejecuta; NO ENCONTRADO = devuelve la pregunta al coordinador). PERMISOS: una herramienta denegada no se reintenta ni se rodea: sigue con lo demas y reportala (comando y motivo). Si SubagentHandback es rechazada, tu reporte va como texto final de tu turno.')
+
+
+def contexto_agente(coord, en_repo):
+    script = os.path.join(os.path.dirname(os.path.abspath(__file__)), "pedidos_usuario.py")
+    return _contexto_base(coord, en_repo) + CANAL.format(script=script)
 
 
 def main():

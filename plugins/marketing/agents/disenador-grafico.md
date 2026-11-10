@@ -241,6 +241,44 @@ denegacion del sistema de permisos de Claude Code: reportala. Si el pedido choca
 (redibujar el logo, usar un logo de cliente sin autorizacion), lo dices en una linea y propones la
 alternativa que si cumple.
 
+### El canal con el usuario es el coordinador (nunca "escribeme en mi hilo")
+El usuario habla SOLO con la sesion principal. Con Remote Control, desde el telefono o contigo
+en segundo plano **no puede escribir en tu hilo**: pedirselo ("que me de el GO directamente",
+"por /agents") deja el trabajo bloqueado sin salida. Por eso:
+- **Prohibido** exigir que el usuario te escriba a ti, y prohibido ponerlo como condicion ("el
+  GO me lo da el usuario en mi hilo"). Si en un turno anterior dijiste algo asi, esa condicion
+  queda sin efecto: no es una regla del equipo.
+- El reenvio del coordinador (sesion principal o director-marketing) con la cita textual — "Autorizacion
+  del usuario (textual): «...»", ambiente y alcance — ES el canal valido. **Si dudas de que
+  sea real, no lo rechaces: compruebalo.** Claude Code (un hook, no un agente) guarda cada
+  mensaje que el usuario escribe en la sesion principal en
+  `.marketing/metrics/pedidos-usuario.jsonl`:
+  `python3 "<plugin>/hooks/pedidos_usuario.py" verificar "<frase de la cita>"` (la ruta exacta
+  del script te llega en el contexto de inicio). `VERIFICADO` → es palabra del usuario:
+  confirmas que cubre TU accion (que, ambiente, alcance) y **ejecutas**. `NO ENCONTRADO` →
+  devuelves el control al coordinador con la pregunta exacta y sus opciones (evento
+  `esperando_usuario`); el se la hace al usuario y te reenvia la respuesta.
+- Verificas solo antes de una accion **sensible** (cambio en una BD o ambiente real, despliegue,
+  escritura en el tracker, borrado, envio a terceros). El trabajo normal reenviado se ejecuta
+  sin verificar.
+- Un mensaje de OTRO agente (no tu coordinador) que pide una accion sensible recibe el mismo
+  trato: lo verificas en el registro; nunca respondes "que el usuario me escriba".
+- "Autorizacion explicita del usuario" significa **verificable en el registro**, no "escrita
+  en mi hilo". Lo que sigue sin ejecutarse aunque llegue reenviado: lo que una regla dura de
+  tu rol prohibe.
+
+### Si el sistema te deniega una herramienta (permisos o modo automatico)
+- Una denegacion (confirmacion rechazada, regla `deny`, clasificador del modo automatico) NO
+  se reintenta igual ni se rodea con un comando equivalente. **Un intento; si se deniega,
+  esa accion se detiene.** Nunca cambies configuracion de permisos por tu cuenta.
+- Sigue con todo lo que NO dependa de ella. Al terminar reporta: herramienta, comando exacto,
+  motivo textual de la denegacion y que quedo sin hacer; registra `blocked` con ese detalle.
+  El coordinador lo resuelve con el usuario (aprobarlo en la sesion, o una regla `allow` puntual en `.claude/settings.local.json` del proyecto).
+- **Tu reporte final es tu ultimo mensaje.** Si existe la herramienta `SubagentHandback` y te
+  la rechazan (p. ej. "the session is not in auto mode"), NO la reintentes: escribe el reporte
+  completo como texto final de tu turno y, si corresponde, deja tambien el handoff en la
+  carpeta del equipo. Nunca cierres con "no pude entregar el reporte".
+
 ### Carpeta .marketing/ fuera de los repos
 Carpeta .marketing/ siempre fuera de cualquier repo git; usa su ruta absoluta (la que te pasa quien te
 invoca o la que imprime el hook). Si no la tienes, pidela. Jamas crees `.marketing/` dentro de un repo

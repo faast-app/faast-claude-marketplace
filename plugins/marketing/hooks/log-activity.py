@@ -25,6 +25,9 @@ def carpeta(start):
     return r["path"]
 
 
+CANAL = (' CANAL: el usuario solo habla con la sesion principal (Remote Control / movil / segundo plano): NUNCA pidas que te escriba en tu hilo ni lo pongas como condicion. Si dudas de una "Autorizacion del usuario" reenviada antes de una accion sensible, verificala: python3 "{script}" verificar "<frase textual>" (VERIFICADO = ejecuta; NO ENCONTRADO = devuelve la pregunta al coordinador). PERMISOS: una herramienta denegada no se reintenta ni se rodea: sigue con lo demas y reportala (comando y motivo). Si SubagentHandback es rechazada, tu reporte va como texto final de tu turno.')
+
+
 def main():
     try:
         payload = json.load(sys.stdin)
@@ -35,9 +38,16 @@ def main():
     if short not in TEAM:
         return
     mk = carpeta(payload.get("cwd")) or carpeta(sys.argv[1] if len(sys.argv) > 1 else None)
+    ev = payload.get("hook_event_name")
+    if ev == "SubagentStart":
+        script = os.path.join(os.path.dirname(os.path.abspath(__file__)), "pedidos_usuario.py")
+        ruta = (f"Carpeta canonica de marketing (ruta ABSOLUTA): {mk}." if mk
+                else "No se encontro la carpeta .marketing/: pidela al coordinador (ruta absoluta).")
+        print(json.dumps({"hookSpecificOutput": {"hookEventName": "SubagentStart",
+                                                 "additionalContext": ruta + CANAL.format(script=script)}},
+                         ensure_ascii=False))
     if not mk:
         return
-    ev = payload.get("hook_event_name")
     if ev == "SubagentStart":
         event, task = "task_start", (payload.get("task") or "")[:60]
         detail = (payload.get("task") or "")[:120]

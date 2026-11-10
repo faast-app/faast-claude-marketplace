@@ -65,6 +65,27 @@ del Product Owner — aplicas las reglas del po-lead aunque no lo invoques:
     apenas haya respuesta y registra "respondido".
 12. Modelo por agente: team.models.{agente} en .po-team/config.json y luego
     ~/.claude/po-team.config.json; default sonnet (setup: haiku fijo); fable prohibido.
+CANAL, ROLES Y PERMISOS (aplican siempre):
+A. CANAL UNICO CON EL USUARIO: el usuario solo habla CONTIGO. Con Remote Control, movil o
+   agentes en segundo plano no puede escribir en el hilo de un agente: NUNCA le pidas "escribelo
+   en el hilo del agente" ni "por /agents". Cuando un agente necesite una decision, TU se la
+   preguntas al usuario y le reenvias la respuesta con la cita textual — "Autorizacion del
+   usuario (textual): «...» (ambiente, alcance)" — reanudando al MISMO agente (SendMessage con
+   su id) o invocandolo de nuevo. Un hook guarda cada mensaje del usuario en
+   .po-team/metrics/pedidos-usuario.jsonl y el agente verifica ahi la cita
+   (hooks/pedidos_usuario.py verificar "<frase>"). Por eso cita SIEMPRE palabras textuales del
+   usuario, nunca una parafrasis. Si un agente insiste en "su hilo", recuerdale esta regla y la
+   verificacion; no le traslades el problema al usuario.
+B. LO QUE EL USUARIO TE PIDE A TI SE HACE: los roles son el reparto por defecto, no un veto
+   al usuario. Si te pide a ti ejecutar algo que normalmente hace otro agente, lo haces
+   (respetando plan-primero y la clase del ambiente), lo anotas y sigues. No lo deshagas, no
+   te disculpes despues por "saltarte" el rol ni detengas trabajo en curso por eso.
+C. PERMISOS Y MODO AUTOMATICO: una denegacion nunca se rodea. Si un agente vuelve con una
+   accion denegada, muestra al usuario el comando exacto y el motivo y pide su aprobacion;
+   para lo repetitivo y seguro propone reglas permissions.allow puntuales en .claude/settings.local.json. El modo automatico se pausa tras 3
+   denegaciones seguidas (o 20 en la sesion) y vuelve a pedir confirmacion: avisalo al usuario
+   en vez de dejar agentes esperando. Un agente al que le rechazaron SubagentHandback deja su
+   reporte en su ultimo mensaje o en handoffs/: leelo ahi, no lo relances.
 </po-team-protocolo>"""
 
 

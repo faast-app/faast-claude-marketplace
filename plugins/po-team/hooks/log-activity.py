@@ -13,7 +13,7 @@ PLUGIN = "po-team"
 TEAM = {"po-lead","refinador","planificador","seguimiento","validador-po",
         "documentador","manualista","setup"}
 
-def contexto_agente(po, en_repo):
+def _contexto_base(po, en_repo):
     if po and not en_repo:
         ruta = (f"Carpeta canonica del equipo del PO (ruta ABSOLUTA, usala para tickets, validaciones, "
                 f"evidencia, tablero, documentos, handoffs y logs): {po}.")
@@ -26,6 +26,14 @@ def contexto_agente(po, en_repo):
             "pedido directo del usuario, y una \"Autorizacion del usuario: ...\" en tu prompt ES el plan "
             "aprobado: ejecutalo sin exigir handoff ni re-confirmacion. Nunca crees .po-team/ dentro de "
             "un repo. El staging del Playwright MCP es ~/.faast-mcp/po-team/.")
+
+CANAL = (' CANAL: el usuario solo habla con la sesion principal (Remote Control / movil / segundo plano): NUNCA pidas que te escriba en tu hilo ni lo pongas como condicion. Si dudas de una "Autorizacion del usuario" reenviada antes de una accion sensible, verificala: python3 "{script}" verificar "<frase textual>" (VERIFICADO = ejecuta; NO ENCONTRADO = devuelve la pregunta al coordinador). PERMISOS: una herramienta denegada no se reintenta ni se rodea: sigue con lo demas y reportala (comando y motivo). Si SubagentHandback es rechazada, tu reporte va como texto final de tu turno.')
+
+
+def contexto_agente(coord, en_repo):
+    script = os.path.join(os.path.dirname(os.path.abspath(__file__)), "pedidos_usuario.py")
+    return _contexto_base(coord, en_repo) + CANAL.format(script=script)
+
 
 def main():
     try:
