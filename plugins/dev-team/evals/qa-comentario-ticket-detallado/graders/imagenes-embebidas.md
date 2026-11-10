@@ -1,5 +1,4 @@
 ---
 type: regex
-pattern: '!\[[^\]]*\]\(https://github\.com/acme/portal/raw/evidence/[^)]+\.png\)'
-match: count:4
+pattern: '(?:!\[[^\]]*\]\(https://github\.com/acme/portal/raw/evidence/[^)]+\.png\)[\s\S]*?){6}'
 ---

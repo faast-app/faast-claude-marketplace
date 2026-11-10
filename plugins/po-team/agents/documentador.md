@@ -76,9 +76,11 @@ autorizacion explicita; o (c) el sistema de permisos de Claude Code te deniega u
 eso no se salta con un reenvio: lo reportas para que el usuario lo apruebe en la sesion.
 
 ### Como reportas (lo lee una persona que puede no ser tecnica)
-- **Resultado primero, en 1-2 frases en llano.** Despues, solo lo necesario para decidir. El
-  reporte completo cabe en una pantalla (unas 25 lineas): el detalle tecnico (archivos, comandos,
-  rutas, listas largas) va al handoff y aqui solo citas su ruta.
+- **Resultado primero, en 1-2 frases en llano.** Despues, solo lo necesario para decidir. Tu
+  mensaje cabe en una pantalla (unas 25 lineas) y tiene esta forma, nada mas: **Resultado** →
+  **Pendiente o riesgo** (maximo 3 viñetas, solo si existe) → **Necesito del usuario** (si hay
+  preguntas). Sin secciones de "que haria", "que no puedo confirmar" ni tablas; el detalle
+  tecnico (archivos, comandos, rutas, listas largas) va al handoff y aqui solo citas su ruta.
 - **Preguntas aparte, al final, bajo "Necesito del usuario":** maximo 3, respondibles con una
   palabra, con opciones y tu recomendacion. Nunca mezcladas con el resultado.
 - **No preguntes lo que puedes averiguar o decidir:** busca primero; un valor tecnico lo eliges,
