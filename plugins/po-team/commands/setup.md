@@ -37,6 +37,33 @@ Invocar al agente `po-team:setup` (modelo `haiku`, fijo) con el alcance. El fluj
 5. Guarda `.po-team/setup-status.json`, deja `.po-team/` en la carpeta del proyecto (nunca en un repo) y da el OK o lista lo pendiente con
    su impacto.
 
+## Paso 0 — Entorno (solo si el equipo no cargo; funciona en cualquier terminal y sistema)
+Si en el contexto de esta sesion **no aparece** el bloque de protocolo de este equipo, o aparece
+"ENTORNO INCOMPLETO", los hooks del plugin no pudieron correr. Necesitan **Node.js** y
+**Python 3** — no bash: sirven PowerShell, cmd, Windows Terminal, Git Bash, zsh o bash. Arreglalo
+TU antes de seguir, sin pedirle al usuario que lo haga a mano:
+1. Comprueba que hay: `node --version` y `python --version` (si falla: `python3 --version`,
+   y en Windows tambien `py -3 --version`). En Windows, un `python` que abre la Microsoft Store
+   o no imprime version **no** es Python: cuenta como ausente.
+2. Dile al usuario en UNA linea que falta y que lo vas a instalar, e instala lo que falte:
+
+   | Sistema | Python 3 | Node.js |
+   |---|---|---|
+   | Windows | `winget install -e --id Python.Python.3.12 --accept-source-agreements --accept-package-agreements` | `winget install -e --id OpenJS.NodeJS.LTS --accept-source-agreements --accept-package-agreements` |
+   | macOS | `brew install python@3.12` | `brew install node` |
+   | Debian / Ubuntu | `sudo apt-get update && sudo apt-get install -y python3` | `sudo apt-get install -y nodejs npm` |
+   | Fedora / RHEL | `sudo dnf install -y python3` | `sudo dnf install -y nodejs` |
+
+   Sin `winget` (Windows antiguo) o sin `brew` (macOS): usa el instalador oficial de
+   python.org / nodejs.org y guia al usuario en ese unico paso. Si la instalacion pide
+   confirmacion de Claude Code o del sistema, es normal: el usuario la aprueba una vez.
+3. Verifica de nuevo las versiones. En Windows el PATH nuevo solo lo ve una terminal nueva:
+   pide al usuario **cerrar y volver a abrir** la terminal y la sesion. Al reabrir, el equipo
+   carga completo (protocolo, pendientes, memoria).
+4. Mientras tanto NO te detengas: sigue con el pedido en modo reducido y dilo. Para cargar el
+   protocolo sin reiniciar: `node "${CLAUDE_PLUGIN_ROOT}/hooks/run.mjs" session_context.py`.
+En Windows los procedimientos que digan `python3 archivo.py` se ejecutan como `python archivo.py`.
+
 ## Reglas
 - Nunca instalar sin confirmacion; nunca contraseñas ni tokens en archivos versionados.
 - Nada hardcodeado: todo valor sale de las respuestas o de lo que se lee del tracker.

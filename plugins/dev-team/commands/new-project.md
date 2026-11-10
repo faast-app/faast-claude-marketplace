@@ -139,7 +139,7 @@ Invocar al agente `product-owner` para:
    `/dev-team:team-office` para ver al equipo trabajando en vivo
 
 ## Paso 7.9: Adoptar el protocolo del equipo
-Ejecuta `CLAUDE_PROJECT_DIR="{ruta-del-proyecto}" "${CLAUDE_PLUGIN_ROOT}/hooks/inject-team-protocol.sh"`
+Ejecuta `node "${CLAUDE_PLUGIN_ROOT}/hooks/run.mjs" session_context.py --proyecto "{ruta-del-proyecto}"`
 y adopta su salida como reglas vigentes de la sesion.
 
 ## Paso 8: Resumen final

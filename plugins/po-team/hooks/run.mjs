@@ -10,7 +10,8 @@
 //     alias de la Microsoft Store, que no es un Python real;
 //   - pasa el stdin del hook (el payload JSON) y devuelve stdout, stderr y el codigo de salida;
 //   - fuerza UTF-8 para que acentos y simbolos no rompan la salida en la consola de Windows;
-//   - `@project` en los argumentos se reemplaza por la carpeta del proyecto;
+//   - `@project` en los argumentos se reemplaza por la carpeta del proyecto, y
+//     `--proyecto <carpeta>` la fija (sirve igual en bash, PowerShell y cmd);
 //   - nunca rompe la sesion: si no hay Python sale con 0, y con --avisar (hooks de inicio de
 //     sesion) deja UNA linea en el contexto para que el usuario sepa que falta.
 import { spawnSync } from 'node:child_process'
@@ -21,6 +22,11 @@ import { fileURLToPath } from 'node:url'
 const aqui = dirname(fileURLToPath(import.meta.url))
 const args = process.argv.slice(2)
 const avisar = args.includes('--avisar')
+const iProyecto = args.indexOf('--proyecto')
+if (iProyecto >= 0 && args[iProyecto + 1]) {
+  process.env.CLAUDE_PROJECT_DIR = args[iProyecto + 1]
+  args.splice(iProyecto, 2)
+}
 const [script, ...resto] = args.filter((a) => a !== '--avisar')
 const ruta = script ? join(aqui, script) : ''
 if (!script || !existsSync(ruta)) process.exit(0)
@@ -68,12 +74,20 @@ for (const candidato of candidatos) {
 }
 
 if (avisar) {
+  const instalar =
+    process.platform === 'win32'
+      ? 'winget install -e --id Python.Python.3.12 --accept-source-agreements --accept-package-agreements'
+      : process.platform === 'darwin'
+        ? 'brew install python@3.12   (sin Homebrew: instalador de https://www.python.org/downloads/macos/)'
+        : 'sudo apt-get install -y python3   (Fedora/RHEL: sudo dnf install -y python3 · Arch: sudo pacman -S --noconfirm python)'
   process.stdout.write(
-    'AVISO DEL PLUGIN: no se encontro Python 3 en esta maquina, asi que el protocolo del equipo, ' +
-      'los pendientes y el registro de actividad NO se cargaron. Dile al usuario, en una linea, que ' +
-      'instale Python 3 (en Windows: `winget install Python.Python.3.12`, marcando "Add python.exe ' +
-      'to PATH") y reinicie la sesion; o que defina la variable de entorno FAAST_PYTHON con la ruta ' +
-      'de su python.exe.\n',
+    'ENTORNO INCOMPLETO (plugin FaaST): no hay Python 3 en esta maquina, asi que el protocolo del ' +
+      'equipo, los pendientes, la memoria y el registro de actividad NO se cargaron. ANTES de cualquier ' +
+      'otra cosa: dile al usuario en una linea que vas a instalar Python 3 porque el equipo lo necesita, ' +
+      'e instalalo con: ' + instalar + ' . Luego verifica (`python --version` o `python3 --version`) y ' +
+      'pidele reiniciar la sesion para que el equipo cargue completo. Si la instalacion falla o el ' +
+      'usuario no quiere, sigue trabajando y avisale que el equipo esta en modo reducido. (Si Python ' +
+      'esta instalado en una ruta fuera del PATH: variable de entorno FAAST_PYTHON con la ruta de python.exe.)\n',
   )
 }
 process.exit(0)

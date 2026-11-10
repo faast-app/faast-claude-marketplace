@@ -1649,10 +1649,12 @@ regla permanente.
 **En Windows aparece un error de "bash" o el equipo no carga sus reglas al abrir la sesion.**
 Las versiones anteriores necesitaban bash, que una terminal de Windows (PowerShell, cmd,
 Windows Terminal) no trae. La version actual ya no lo necesita: actualiza el plugin y
-reinicia la sesion. Solo hacen falta **Node.js** y **Python 3** instalados. Si falta
-Python, al abrir la sesion el equipo te lo dice en una linea; se instala con
-`winget install Python.Python.3.12` (marca "Add python.exe to PATH") y se reinicia la
-sesion. Esto vale igual para la Mesa, el Equipo del PO y Marketing.
+reinicia la sesion. Funciona en cualquier terminal (PowerShell, cmd, Windows Terminal,
+Git Bash, macOS, Linux). Solo hacen falta **Node.js** y **Python 3**, y **no tienes que
+instalarlos tu**: si falta alguno, el equipo te avisa en una linea, lo instala (te
+aparecera una confirmacion para aprobar) y te pide cerrar y volver a abrir la terminal.
+Si no lo hace solo, escribe `/dev-team:start`: su primer paso revisa e instala lo que
+falte. Esto vale igual para la Mesa, el Equipo del PO y Marketing.
 
 **Actualice el plugin pero el equipo sigue igual.**
 Cierra y abre la sesion (escribe `/exit` y vuelve a abrir Claude Code). Todo lo nuevo se
