@@ -5,6 +5,13 @@ description: Fundamentos de diseño UI de nivel estudio para el equipo de diseñ
 
 # Design foundations (dev-team)
 
+> **Primero la libreria.** En un proyecto FaaST el sistema visual (color, tipografia,
+> espaciado, radios, sombras, movimiento, claro/oscuro) y los componentes se **heredan** de
+> la libreria UI (`dev-team:libreria-faast`); el criterio lo da `dev-team:taste-faast`. Las
+> secciones 3 (tipografia), 4 (color) y la escala de la 5 describen como se construye un
+> sistema y aplican tal cual SOLO a una identidad nueva o a un proyecto ajeno a FaaST. Las
+> secciones 1, 2, 6, 7 y 8 aplican siempre.
+
 ## 1. Lectura de diseño (antes de cualquier pixel)
 Escribe UNA linea: "Leo esto como: {landing | dashboard | formulario | editorial | portal
 | app movil} para {audiencia}, con lenguaje {vibe en 2-3 palabras}, modo {Persuadir |
@@ -52,11 +59,13 @@ nombres y montos plausibles.
 
 ## 7. Lista anti-generico (rechazo automatico)
 Gradiente purpura/azul neon · hero centrado sobre malla oscura · tres tarjetas iguales ·
-glass en todo · Inter + slate-900 por reflejo · pills/etiquetas decorativas con jerga
+glass en todo · una fuente o paleta elegida por reflejo (en FaaST: cualquiera que no sea la de la libreria) · pills/etiquetas decorativas con jerga
 falsa · iconos en circulos de color por defecto · sombras pesadas + radios enormes ·
 micro-animaciones infinitas · mockup 3D flotante sin motivo · texto en imagen.
 
 ## 8. Puertas de calidad del entregable
 Lectura de diseño explicita · direcciones que divergen en un eje nombrado · contraste
 calculado · foco/targets/reduced-motion · 4 estados · 3 breakpoints · textos reales ·
-captura 1280 y 375 · presupuesto de rendimiento · cero anti-generico.
+capturas 1440/1024/768/390 en claro y oscuro · presupuesto de rendimiento · cero
+anti-generico · `HERENCIA: PASA` (`dev-team:libreria-faast`) · puerta final de
+`dev-team:taste-faast` · revision `dev-team:web-interface-guidelines`.

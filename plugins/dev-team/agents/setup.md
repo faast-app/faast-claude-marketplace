@@ -198,8 +198,26 @@ npx skills add tt-a1i/archify           # archify (diagramas de arquitectura com
 ```
 Guarda en `config.json`:
 ```json
-"design": { "tools": { "canvas": "none", "imagegen": "none", "video": "hyperframes" } }
+"design": {
+  "tools": { "canvas": "none", "imagegen": "none", "video": "hyperframes" },
+  "libreria": { "usar": true, "fuente": "npm", "version": "latest" }
+}
 ```
+**Libreria UI de FaaST (de ella heredan todas las propuestas).** Verifica que el kit se
+puede traer y registra el resultado en `setup-status.json` → `"design-libreria"`:
+```bash
+python3 "${CLAUDE_PLUGIN_ROOT}/skills/libreria-faast/scripts/kit_libreria.py" obtener \
+  --destino "$(mktemp -d)/faast-kit"        # npm: lo publicado desde develop
+```
+- Si el usuario tiene un clon de `faast-app/faast-ui-library`, pregunta su ruta y guardala
+  en `design.libreria.fuente` (debe estar en `develop` y compilado: `pnpm install && pnpm
+  run build`); asi el equipo usa lo mas nuevo aunque no este publicado.
+- Si la version publicada es anterior a 0.8.0 (sin `markup.json`), reportalo: el equipo
+  trabajara con la hoja compuesta hasta que se publique una version con kit.
+- `"usar": false` SOLO si el usuario declara que el proyecto no usa la marca FaaST.
+Las skills de diseño del plugin (`libreria-faast`, `taste-faast`, `web-interface-guidelines`,
+`vercel-react-patterns`) no se instalan: ya vienen. `Leonxlnx/taste-skill` (abajo) es
+opcional y solo aporta en landings publicas.
 y en `setup-status.json`: `"design-canvas"`, `"design-imagegen"`, `"design-video"`.
 Agrega `.coordination/design/_media/` al `.gitignore` (videos y raster pesado).
 

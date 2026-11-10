@@ -1,0 +1,157 @@
+<!doctype html>
+<!--
+  PLANTILLA BASE de una direccion de pantalla (dev-team, equipo de diseño).
+  Hereda de la libreria UI de FaaST: la UNICA hoja de estilos de producto es faast-kit/faast-kit.css
+  (traida con skills/libreria-faast/scripts/kit_libreria.py obtener). El <style> de abajo solo
+  compone el layout de ESTA propuesta con variables var(--faast-*): sin colores, fuentes ni
+  tamaños literales. El markup de componentes se copia de faast-kit/markup.json.
+  Antes de entregar: kit_libreria.py verificar propuesta-A.html --kit faast-kit  → HERENCIA: PASA
+-->
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{DSN}} · Direccion {{A}} · {{Pantalla}}</title>
+    <link rel="stylesheet" href="../faast-kit/faast-kit.css" />
+    <style>
+      /* Barra de la propuesta (no es producto): estado, tema y version de la libreria. */
+      .dsn-bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--faast-space-3);
+        align-items: center;
+        justify-content: space-between;
+        padding: var(--faast-space-2) var(--faast-space-4);
+        background: var(--faast-bg-brand);
+        color: var(--faast-text-on-brand);
+        font-size: var(--faast-font-size-xs);
+      }
+      .dsn-bar__meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--faast-space-3);
+        align-items: center;
+      }
+      .dsn-bar [data-theme='light'] {
+        display: contents;
+      }
+      /* Lienzo del producto: lo que queda bajo la barra es la pantalla propuesta. */
+      .dsn-screen {
+        max-width: var(--faast-breakpoint-xl);
+        margin: 0 auto;
+        padding: var(--faast-space-6) var(--faast-space-4) var(--faast-space-16);
+        display: grid;
+        gap: var(--faast-space-6);
+      }
+      .dsn-head {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--faast-space-4);
+        align-items: end;
+        justify-content: space-between;
+      }
+      .dsn-head h1 {
+        margin: 0;
+        font-size: var(--faast-font-size-2xl);
+        font-weight: var(--faast-font-weight-semibold);
+        letter-spacing: var(--faast-letter-spacing-tight);
+        line-height: var(--faast-line-height-tight);
+      }
+      .dsn-head p {
+        margin: var(--faast-space-1) 0 0;
+        color: var(--faast-text-secondary);
+        font-size: var(--faast-font-size-sm);
+      }
+      [data-estado] {
+        display: none;
+      }
+      :root[data-ver='success'] [data-estado='success'],
+      :root[data-ver='loading'] [data-estado='loading'],
+      :root[data-ver='empty'] [data-estado='empty'],
+      :root[data-ver='error'] [data-estado='error'] {
+        display: grid;
+        gap: var(--faast-space-6);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="dsn-bar" role="region" aria-label="Controles de la propuesta">
+      <div class="dsn-bar__meta">
+        <strong>{{DSN}} · Direccion {{A}}</strong>
+        <span>Libreria @faast-app/ui {{version}}</span>
+      </div>
+      <div data-theme="light">
+        <div class="faast-segmented" role="radiogroup" aria-label="Estado de la pantalla" id="dsn-estado">
+          <!-- Reemplaza por el markup de "segmented-control" de markup.json si cambia en la libreria. -->
+        </div>
+        <button type="button" class="faast-button faast-button--secondary faast-button--sm" id="dsn-tema">
+          Cambiar Tema
+        </button>
+      </div>
+    </div>
+
+    <main class="dsn-screen">
+      <header class="dsn-head">
+        <div>
+          <h1>{{Titulo de la pantalla}}</h1>
+          <p>{{Una linea: que ve y que decide aqui el usuario}}</p>
+        </div>
+        <!-- UNA accion primaria por vista (markup.json → "button"). -->
+        <button type="button" class="faast-button faast-button--primary">{{Accion Principal}}</button>
+      </header>
+
+      <!-- Los 4 estados de la pantalla. Pega dentro el markup de markup.json y cambia SOLO el contenido. -->
+      <section data-estado="success" aria-label="Con datos">
+        <!-- kpi-strip / stat-tiles / table / pagination … -->
+      </section>
+      <section data-estado="loading" aria-label="Cargando">
+        <!-- states → LoadingState + Skeleton con la forma del contenido real -->
+      </section>
+      <section data-estado="empty" aria-label="Vacio">
+        <!-- states → EmptyState: que esta vacio y cual es el siguiente paso -->
+      </section>
+      <section data-estado="error" aria-label="Error">
+        <!-- states → ErrorState / alert danger: que paso y como se recupera -->
+      </section>
+    </main>
+
+    <script>
+      // Selector de estado y de tema de la PROPUESTA (no es codigo de producto).
+      const estados = [
+        ['success', 'Con datos'],
+        ['loading', 'Cargando'],
+        ['empty', 'Vacio'],
+        ['error', 'Error'],
+      ]
+      const raiz = document.documentElement
+      const grupo = document.getElementById('dsn-estado')
+      const ver = (estado) => {
+        raiz.dataset.ver = estado
+        for (const b of grupo.children) {
+          const activo = b.dataset.valor === estado
+          b.setAttribute('aria-checked', String(activo))
+          b.tabIndex = activo ? 0 : -1
+        }
+      }
+      for (const [valor, texto] of estados) {
+        const b = document.createElement('button')
+        b.type = 'button'
+        b.className = 'faast-segmented__option'
+        b.setAttribute('role', 'radio')
+        b.dataset.valor = valor
+        b.textContent = texto
+        b.addEventListener('click', () => ver(valor))
+        grupo.append(b)
+      }
+      ver(new URLSearchParams(location.search).get('estado') || 'success')
+      const tema = new URLSearchParams(location.search).get('tema')
+      if (tema) raiz.dataset.theme = tema
+      document.getElementById('dsn-tema').addEventListener('click', () => {
+        const oscuro = raiz.dataset.theme
+          ? raiz.dataset.theme === 'dark'
+          : matchMedia('(prefers-color-scheme: dark)').matches
+        raiz.dataset.theme = oscuro ? 'light' : 'dark'
+      })
+    </script>
+  </body>
+</html>
