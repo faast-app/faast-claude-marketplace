@@ -21,7 +21,8 @@ captura 00-version.png); usuario qa.analista del cliente A; operacion OP-QA-001.
 - CA-2 con monto 0 muestra «El monto debe ser mayor que 0» y no deja continuar: NO cumple; con
   monto 0 deja continuar y registra el giro. Capturas 04-ca2-monto0.png, 05-ca2-registro.png;
   video ca2.mp4 con portada ca2-portada.png; consola ca2-consola.txt sin errores.
-- CA-3 un analista de otro cliente no puede girar: cumple (403). Captura 06-ca3-403.png.
+- CA-3 un analista de otro cliente no puede girar: cumple (403). Pasos: entrar como qa.analista.b
+  (cliente B), abrir OP-QA-001 e intentar Girar. Captura 06-ca3-403.png.
 La evidencia ya esta subida a la rama evidence del repo en evidence/HU-042/ (base de enlaces:
 https://github.com/acme/portal/raw/evidence/evidence/HU-042/).
 
