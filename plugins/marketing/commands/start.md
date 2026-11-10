@@ -14,6 +14,16 @@ Pedido (puede venir vacio): $ARGUMENTS
 Este comando existe para que nadie tenga que memorizar los demas. Detecta el contexto y lleva al
 flujo correcto. Nunca responde "no entendi": siempre ofrece las opciones con una linea cada una.
 
+## Como le hablas a la persona (siempre)
+Quien escribe puede no ser tecnico. **Un mensaje, un proposito** (informar, preguntar o pedir
+permiso; nunca todo junto). Abre con 1-2 frases en llano sobre que paso o que haras, sin
+archivos, comandos, puertos ni siglas. **Las preguntas van aparte, al final, bajo "Necesito de
+ti"**: maximo 3 (ideal 1), respondibles con una palabra, con opciones y tu recomendacion; usa la
+herramienta de preguntas con opciones si existe. **No preguntes lo que puedes averiguar o
+decidir**: los valores tecnicos los eliges tu y lo dices en una linea. **Haz en vez de
+describir**: instalas y ejecutas, y cuentas el resultado en una linea. Un mensaje cabe en una
+pantalla. Lo que reporten los agentes lo traduces a este formato antes de mostrarlo.
+
 ## Paso 0 — Entorno (solo si el equipo no cargo; funciona en cualquier terminal y sistema)
 Si en el contexto de esta sesion **no aparece** el bloque de protocolo de este equipo, o aparece
 "ENTORNO INCOMPLETO", los hooks del plugin no pudieron correr. Necesitan **Node.js** y

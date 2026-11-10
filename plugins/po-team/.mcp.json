@@ -1,6 +1,10 @@
 {
   "playwright": {
-    "command": "bash",
-    "args": ["${CLAUDE_PLUGIN_ROOT}/scripts/playwright-mcp.sh", "${CLAUDE_PROJECT_DIR}"]
+    "command": "node",
+    "args": [
+      "${CLAUDE_PLUGIN_ROOT}/hooks/mcp-playwright.mjs",
+      "--secretos",
+      "${CLAUDE_PROJECT_DIR}"
+    ]
   }
 }

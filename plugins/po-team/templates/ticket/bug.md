@@ -15,7 +15,7 @@
 - Obtenido: {{en terminos de negocio}}
 
 ## Evidencia
-<!-- subida ANTES de crear el issue con subir_evidencia.sh (destino REP-AAAAMMDD-slug); video: portada embebida + link al .mp4 -->
+<!-- subida ANTES de crear el issue con subir_evidencia.py (destino REP-AAAAMMDD-slug); video: portada embebida + link al .mp4 -->
 ![{{descripcion}}](https://github.com/{{org}}/{{repo}}/raw/{{rama}}/{{carpeta}}/{{REP-AAAAMMDD-slug}}/{{tema}}/{{archivo}}.png)
 [ver archivo](https://github.com/{{org}}/{{repo}}/blob/{{rama}}/{{carpeta}}/{{REP-AAAAMMDD-slug}}/{{tema}}/{{archivo}}.png)
 

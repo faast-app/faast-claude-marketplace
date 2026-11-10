@@ -415,6 +415,12 @@ Estas reglas estan siempre activas. No hay que pedirlas.
 22. **El equipo aprende de cada correccion.** Lo que corriges, eliges o rechazas queda
     como leccion y el integrante que corresponda la recibe la proxima vez, sin que la
     repitas. Las lecciones que demuestran servir se te proponen como regla permanente.
+24. **Te hablan claro y de a una cosa.** Cada mensaje del equipo tiene un solo proposito:
+    contarte un resultado, hacerte una pregunta o pedirte un permiso. Primero va lo
+    importante en lenguaje sencillo; las preguntas llegan aparte, al final, bajo "Necesito
+    de ti", pocas (maximo tres) y con opciones. El equipo no te pregunta cosas tecnicas
+    que puede resolver solo: elige un valor razonable, te lo dice y sigue. Si quieres el
+    detalle tecnico, lo pides.
 23. **Si el sistema no deja hacer algo, no se rodea.** Cuando Claude Code deniega una
     accion a un integrante, este sigue con lo demas y te lo reporta con el comando exacto;
     tu decides si lo apruebas. `/dev-team:setup permisos` deja pre-aprobado lo rutinario y

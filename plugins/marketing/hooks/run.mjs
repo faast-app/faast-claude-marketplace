@@ -18,6 +18,7 @@ import { spawnSync } from 'node:child_process'
 import { existsSync, readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { buscarPython, comandoInstalarPython, entornoPython } from './_python.mjs'
 
 const aqui = dirname(fileURLToPath(import.meta.url))
 const args = process.argv.slice(2)
@@ -41,30 +42,12 @@ try {
   entrada = '' // sin stdin (algunos eventos no envian payload)
 }
 
-const windows = process.platform === 'win32'
-const candidatos = [
-  ...(process.env.FAAST_PYTHON ? [[process.env.FAAST_PYTHON]] : []),
-  ...(windows ? [['python'], ['py', '-3'], ['python3']] : [['python3'], ['python']]),
-]
-const env = { ...process.env, PYTHONUTF8: '1', PYTHONIOENCODING: 'utf-8' }
-
-function esPython3([cmd, ...previos]) {
-  const r = spawnSync(cmd, [...previos, '-c', 'import sys; print(sys.version_info[0])'], {
-    encoding: 'utf8',
-    env,
-    timeout: 4000,
-    windowsHide: true,
-  })
-  // El alias de la Microsoft Store existe en PATH pero no ejecuta nada (sale distinto de 0).
-  return !r.error && r.status === 0 && r.stdout.trim() === '3'
-}
-
-for (const candidato of candidatos) {
-  if (!esPython3(candidato)) continue
-  const [cmd, ...previos] = candidato
+const python = buscarPython()
+if (python) {
+  const [cmd, ...previos] = python
   const r = spawnSync(cmd, [...previos, ruta, ...extra], {
     input: entrada,
-    env,
+    env: entornoPython,
     windowsHide: true,
     maxBuffer: 16 * 1024 * 1024,
   })
@@ -74,12 +57,7 @@ for (const candidato of candidatos) {
 }
 
 if (avisar) {
-  const instalar =
-    process.platform === 'win32'
-      ? 'winget install -e --id Python.Python.3.12 --accept-source-agreements --accept-package-agreements'
-      : process.platform === 'darwin'
-        ? 'brew install python@3.12   (sin Homebrew: instalador de https://www.python.org/downloads/macos/)'
-        : 'sudo apt-get install -y python3   (Fedora/RHEL: sudo dnf install -y python3 · Arch: sudo pacman -S --noconfirm python)'
+  const instalar = comandoInstalarPython()
   process.stdout.write(
     'ENTORNO INCOMPLETO (plugin FaaST): no hay Python 3 en esta maquina, asi que el protocolo del ' +
       'equipo, los pendientes, la memoria y el registro de actividad NO se cargaron. ANTES de cualquier ' +

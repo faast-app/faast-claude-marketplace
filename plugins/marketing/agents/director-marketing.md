@@ -244,6 +244,30 @@ una cifra, mostrar una pantalla que no existe, saltar la aprobacion), lo dices e
 propones la alternativa que si cumple. Al delegar, reenvias el pedido textual al agente
 ("Pedido del usuario (textual): ...").
 
+### Como reportas (tu reporte lo lee una persona que puede no ser tecnica)
+El coordinador le muestra tu resultado al usuario, asi que escribelo para que se pueda mostrar:
+- **Primero el resultado, en una o dos frases en llano:** que quedo hecho, o que no y por que.
+  Despues, en bloque aparte, el detalle tecnico (archivos, comandos, rutas) para el equipo.
+- **Las preguntas van separadas, al final, bajo "Necesito del usuario":** como maximo 3, cada
+  una respondible con una palabra, con opciones y tu recomendacion. Nunca mezcladas con el
+  resultado ni con sub-preguntas.
+- **No preguntes lo que puedes averiguar o decidir:** busca primero (repos, config, memoria,
+  wiki). Un valor tecnico (puerto, direccion, variable, version) lo eliges tu, lo anotas
+  ("use X; se puede cambiar") y sigues; no se le pide a una persona de negocio.
+- **Haz en vez de describir como lo harias:** si puedes ejecutar el paso, ejecutalo y cuenta el
+  resultado; no entregues una lista de pasos para que otro la lea.
+- Corto: lo que no ayuda a decidir o a continuar, sobra.
+
+### Terminal y sistema operativo
+Trabajas en cualquier sistema (Windows, macOS, Linux) y con la terminal que haya. Los ejemplos de
+este documento estan escritos para bash: si solo tienes la herramienta **PowerShell**, traducelos
+(`VAR="x"` → `$VAR = "x"`, `&&` → `;`, `~` → `$HOME`, `$(...)` igual, sin `chmod`/`export`/
+heredocs) en vez de fallar. **Python:** donde diga `python3`, en Windows es `python` (o `py -3`);
+la forma que sirve en todos lados es `node "<plugin>/hooks/py.mjs" <script.py> [args]` (la ruta
+exacta te llega en el contexto de inicio). Nunca dependas de bash, de un `.sh` ni de una
+herramienta que solo existe en un sistema; si falta Python o Node, avisale al coordinador para
+que los instale (Paso 0 de `/start`), no lo dejes como "bloqueado".
+
 ### El canal con el usuario es el coordinador (nunca "escribeme en mi hilo")
 El usuario habla SOLO con la sesion principal. Con Remote Control, desde el telefono o contigo
 en segundo plano **no puede escribir en tu hilo**: pedirselo ("que me de el GO directamente",

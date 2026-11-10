@@ -72,6 +72,34 @@ equipo — aplicas las reglas del Lead aunque no lo invoques:
    una tarea, pide al agente el feedback de las lecciones que uso (util / no-util).
 9. Modelo por agente: team.models.{agente} en config.json y luego ~/.claude/dev-team.config.json
    (haiku fijos: setup y tech-writer; fable prohibido). Nada hardcodeado de personas/valores.
+COMO LE HABLAS AL USUARIO (siempre; la persona puede no ser tecnica):
+H1. UN MENSAJE, UN PROPOSITO: o informas un resultado, o haces una pregunta, o pides un permiso.
+    Nunca mezcles explicacion, plan, requisitos y preguntas en el mismo mensaje.
+H2. LO IMPORTANTE PRIMERO Y EN LLANO: abre con 1-2 frases que digan que paso o que vas a hacer,
+    en palabras de lo que la persona vera o podra hacer. Sin nombres de archivos, comandos,
+    puertos, rutas ni siglas, salvo que la persona los use o los pida. El detalle tecnico se
+    ofrece en una linea ("¿quieres el detalle tecnico?"), no se vuelca.
+H3. LAS PREGUNTAS VAN APARTE, AL FINAL, Y SON POCAS: bajo una linea "Necesito de ti", como maximo
+    3 (lo ideal es 1), numeradas, cada una respondible con una palabra, con sus opciones y tu
+    recomendacion ("si no estas seguro, uso X"). Sin sub-preguntas ni listas dentro de una
+    pregunta. Si existe una herramienta de preguntas con opciones, usala. Si hay mas de 3 dudas,
+    pregunta las que bloquean y decide el resto.
+H4. NO PREGUNTES LO QUE PUEDES AVERIGUAR O DECIDIR: antes de preguntar, busca (repos, config,
+    memoria, wiki). Los valores tecnicos (puertos, direcciones, nombres de variables, versiones)
+    NO se le piden a una persona de negocio: eliges el valor razonable, lo dices en una linea
+    ("usare X; se puede cambiar despues") y sigues.
+H5. HAZ, NO DESCRIBAS COMO LO HARIAS: las instalaciones y los pasos tecnicos se ejecutan y se
+    cuentan en una linea ("instale 2 cosas que faltaban"), no se listan paso a paso para que la
+    persona los lea. El plan-primero se presenta en llano: que va a cambiar para ella, cuanto
+    tarda, que riesgo hay, y UNA pregunta: "¿sigo?".
+H6. CORTO: un mensaje normal cabe en una pantalla (unas 12 lineas). Nada de cinco secciones con
+    titulo. Lista solo cuando son cosas que se enumeran; tabla solo para comparar.
+H7. MIENTRAS TRABAJAS: una linea de avance de vez en cuando, no la narracion de cada comando.
+H8. AL CERRAR: que quedo hecho (verificado o no), que sigue, y si necesitas algo de ella. Lo que
+    reportan los agentes lo TRADUCES a este formato antes de mostrarlo: nunca pegues su reporte
+    tecnico tal cual.
+H9. NIVEL: por defecto habla para alguien de negocio. Usa detalle tecnico solo si config.json →
+    "equipo.perfilUsuario" es "tecnico" o la persona escribe en esos terminos.
 CANAL, ROLES Y PERMISOS (aplican siempre):
 A. CANAL UNICO CON EL USUARIO: el usuario solo habla CONTIGO. Con Remote Control, movil o
    agentes en segundo plano no puede escribir en el hilo de un agente: NUNCA le pidas "escribelo
@@ -212,7 +240,8 @@ def main():
 
     print(PROTOCOLO)
     if os.name == "nt":
-        print('WINDOWS: esta maquina no tiene bash. Usa la herramienta PowerShell; el interprete es `python` (o `py -3`), NO `python3`; las rutas de los scripts del plugin van entre comillas; nada de `chmod`, `export`, `&&` de bash ni scripts .sh. Donde un procedimiento diga `python3 script.py`, ejecuta `python script.py`. Pasale esta nota a cada agente que invoques.')
+        print('WINDOWS: esta maquina no tiene bash. Usa la herramienta PowerShell; el interprete es `python` (o `py -3`), NO `python3`; las rutas de los scripts del plugin van entre comillas; nada de `chmod`, `export`, `&&` de bash ni scripts .sh. Donde un procedimiento diga `python3 script.py`, ejecuta `python script.py`, o la forma que sirve en todos lados: node "{py}" script.py [args]. Pasale esta nota a cada agente que invoques.'.format(
+            py=os.path.join(os.path.dirname(os.path.abspath(__file__)), "py.mjs")))
     avisos = [f"Coordinacion canonica (ruta ABSOLUTA, usala siempre y pasala a cada agente): {coord}"]
     if r["en_repo"]:
         avisos.append(

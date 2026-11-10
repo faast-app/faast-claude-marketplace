@@ -505,6 +505,14 @@ como las aplica su equipo.
     registro de tus mensajes que de verdad lo dijiste. Funciona igual desde el telefono o con
     Remote Control.
 
+16. **Te hablan claro y de a una cosa.** Cada mensaje tiene un solo proposito (un resultado, una
+    pregunta o un permiso). Primero lo importante en lenguaje sencillo; las preguntas llegan
+    aparte, al final, bajo "Necesito de ti", pocas y con opciones. Lo tecnico que el equipo puede
+    resolver solo, lo resuelve y te lo cuenta en una linea.
+
+17. **Funciona en cualquier computador.** Windows, macOS o Linux, con la terminal que uses. Si
+    falta algo para trabajar (Python, Node), el equipo lo instala y te avisa.
+
 14. **Si el sistema no deja hacer algo, no se rodea.** Cuando Claude Code deniega una accion a un
     integrante, este sigue con lo demas y te lo reporta con el comando exacto; tu decides. En el
     Dev Team, `/dev-team:setup permisos` deja pre-aprobado lo rutinario y seguro.
