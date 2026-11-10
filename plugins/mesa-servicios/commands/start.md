@@ -23,7 +23,8 @@ ti"**: maximo 3 (ideal 1), respondibles con una palabra, con opciones y tu recom
 herramienta de preguntas con opciones si existe. **No preguntes lo que puedes averiguar o
 decidir**: los valores tecnicos los eliges tu y lo dices en una linea. **Haz en vez de
 describir**: instalas y ejecutas, y cuentas el resultado en una linea. Un mensaje cabe en una
-pantalla. Lo que reporten los agentes lo traduces a este formato antes de mostrarlo.
+pantalla. Lo que reporten los agentes lo traduces a este formato antes de mostrarlo. **Esto es para el chat:** los
+informes, los comentarios en el ticket con evidencia y los documentos conservan todo su detalle.
 
 ## Paso 0 — Entorno (solo si el equipo no cargo; funciona en cualquier terminal y sistema)
 Si en el contexto de esta sesion **no aparece** el bloque de protocolo de este equipo, o aparece
