@@ -1,6 +1,6 @@
 # Marketing, Ventas y Publicidad — Manual de Usuario
 
-**Version del plugin:** 1.1.x · **Integrantes del equipo:** 8 · **Comandos:** 11
+**Version del plugin:** 1.2.x · **Integrantes del equipo:** 8 · **Comandos:** 11
 
 Marketing es un **equipo de asistentes de inteligencia artificial que prepara todo lo necesario
 para vender** lo que FAAST construye: la propuesta comercial para el CEO de una financiera, el
