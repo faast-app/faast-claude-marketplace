@@ -29,8 +29,9 @@ for _flujo in (sys.stdin, sys.stdout, sys.stderr):
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from coord_root import CARPETA, repo_de, resolve  # noqa: E402
 
-LECTURA = re.compile(r"^\s*(cat|ls|head|tail|grep|rg|egrep|wc|less|more|stat|file|du|test|\[|diff|jq|realpath|readlink)\b")
-COPIA = re.compile(r"^\s*(mv|cp|rsync)\b")
+LECTURA = re.compile(r"^\s*(cat|ls|head|tail|grep|rg|egrep|wc|less|more|stat|file|du|test|\[|diff|jq|realpath|readlink|"
+                     r"Get-Content|Get-ChildItem|Get-Item|Select-String|Test-Path|Resolve-Path|dir|type|gc|gci)\b", re.I)
+COPIA = re.compile(r"^\s*(mv|cp|rsync|Move-Item|Copy-Item|move|copy)\b", re.I)
 CD = re.compile(r"^\s*cd\s+(\"[^\"]*\"|'[^']*'|[^\s;&|]+)\s*$")
 REF = re.compile(r"(?:(?<=\s)|(?<=^)|(?<=[\"'=(>:]))((?:[~\w./-]*/)?" + re.escape(CARPETA) + r")(?=/|\s|$|[\"')>])")
 
@@ -92,7 +93,7 @@ def main():
                 deny(mensaje(repo, cwd))
         return
 
-    if tool == "Bash":
+    if tool in ("Bash", "PowerShell"):
         cmd = ti.get("command") or ""
         if CARPETA not in cmd:
             return

@@ -32,6 +32,7 @@ def carpeta(start):
     return r["path"]
 
 
+NOTA_PLATAFORMA = (" " + 'WINDOWS: esta maquina no tiene bash. Usa la herramienta PowerShell; el interprete es `python` (o `py -3`), NO `python3`; las rutas de los scripts del plugin van entre comillas; nada de `chmod`, `export`, `&&` de bash ni scripts .sh. Donde un procedimiento diga `python3 script.py`, ejecuta `python script.py`.') if os.name == "nt" else ""
 CANAL = (' CANAL: el usuario solo habla con la sesion principal (Remote Control / movil / segundo plano): NUNCA pidas que te escriba en tu hilo ni lo pongas como condicion. Si dudas de una "Autorizacion del usuario" reenviada antes de una accion sensible, verificala: python3 "{script}" verificar "<frase textual>" (VERIFICADO = ejecuta; NO ENCONTRADO = devuelve la pregunta al coordinador). PERMISOS: una herramienta denegada no se reintenta ni se rodea: sigue con lo demas y reportala (comando y motivo). Si SubagentHandback es rechazada, tu reporte va como texto final de tu turno.')
 
 
@@ -51,7 +52,7 @@ def main():
         ruta = (f"Carpeta canonica de marketing (ruta ABSOLUTA): {mk}." if mk
                 else "No se encontro la carpeta .marketing/: pidela al coordinador (ruta absoluta).")
         print(json.dumps({"hookSpecificOutput": {"hookEventName": "SubagentStart",
-                                                 "additionalContext": ruta + CANAL.format(script=script)}},
+                                                 "additionalContext": ruta + CANAL.format(script=script) + NOTA_PLATAFORMA}},
                          ensure_ascii=False))
     if not mk:
         return

@@ -211,6 +211,8 @@ def main():
         auto_migrar(coord)
 
     print(PROTOCOLO)
+    if os.name == "nt":
+        print('WINDOWS: esta maquina no tiene bash. Usa la herramienta PowerShell; el interprete es `python` (o `py -3`), NO `python3`; las rutas de los scripts del plugin van entre comillas; nada de `chmod`, `export`, `&&` de bash ni scripts .sh. Donde un procedimiento diga `python3 script.py`, ejecuta `python script.py`. Pasale esta nota a cada agente que invoques.')
     avisos = [f"Coordinacion canonica (ruta ABSOLUTA, usala siempre y pasala a cada agente): {coord}"]
     if r["en_repo"]:
         avisos.append(

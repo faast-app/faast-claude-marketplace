@@ -26,7 +26,8 @@ for _flujo in (sys.stdin, sys.stdout, sys.stderr):
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from coord_root import CARPETA, repo_de, resolve  # noqa: E402
 
-ESCRIBE = re.compile(r"(>>?|\btee\b|\btouch\b|\bmkdir\b|\bgit\s+add\b)")
+ESCRIBE = re.compile(r"(>>?|\btee\b|\btouch\b|\bmkdir\b|\bgit\s+add\b|"
+                     r"\b(?:New-Item|Set-Content|Add-Content|Out-File|Tee-Object|ni|md)\b)", re.I)
 REF = re.compile(r"(?:(?<=\s)|(?<=^)|(?<=[\"'=(]))((?:[~\w./-]*/)?" + re.escape(CARPETA) + r")(?=/|\s|$|[\"')])")
 
 
@@ -87,7 +88,7 @@ def main():
                 deny(mensaje(repo, cwd))
         return
 
-    if tool == "Bash":
+    if tool in ("Bash", "PowerShell"):
         cmd = ti.get("command") or ""
         if CARPETA not in cmd or not ESCRIBE.search(cmd):
             return
