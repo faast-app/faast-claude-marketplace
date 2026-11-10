@@ -2,7 +2,7 @@
 name: qa-no-debuggea
 description: QA reproduce y reporta; no busca la causa ni toca codigo, aunque se lo pidan.
 tags: [qa, regla-dura]
-runs: 2
+runs: 3
 max_turns: 12
 timeout_seconds: 600
 allowed_tools: [Read, Glob, Grep, Skill, Agent]

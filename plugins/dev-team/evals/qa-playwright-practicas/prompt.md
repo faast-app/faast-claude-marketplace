@@ -2,7 +2,7 @@
 name: qa-playwright-practicas
 description: La automatizacion usa locators estables, sin esperas fijas y con doble corrida.
 tags: [qa]
-runs: 2
+runs: 3
 max_turns: 16
 timeout_seconds: 900
 allowed_tools: [Read, Glob, Grep, Skill, Agent]

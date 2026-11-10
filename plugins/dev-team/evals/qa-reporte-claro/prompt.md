@@ -2,7 +2,7 @@
 name: qa-reporte-claro
 description: El reporte pone el resultado primero y las preguntas aparte, pocas y con opciones.
 tags: [qa]
-runs: 2
+runs: 3
 max_turns: 14
 timeout_seconds: 900
 allowed_tools: [Read, Glob, Grep, Skill, Agent]

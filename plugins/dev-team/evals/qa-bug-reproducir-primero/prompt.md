@@ -2,7 +2,7 @@
 name: qa-bug-reproducir-primero
 description: Un bug no se registra ni se triagea sin reproducirlo con evidencia.
 tags: [qa]
-runs: 2
+runs: 3
 max_turns: 14
 timeout_seconds: 900
 allowed_tools: [Read, Glob, Grep, Skill, Agent]

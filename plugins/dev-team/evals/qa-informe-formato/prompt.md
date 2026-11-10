@@ -2,7 +2,7 @@
 name: qa-informe-formato
 description: El informe consolidado trae veredicto, ambiente y clase, version, riesgo y trazabilidad.
 tags: [qa]
-runs: 2
+runs: 3
 max_turns: 14
 timeout_seconds: 900
 allowed_tools: [Read, Glob, Grep, Skill, Agent]

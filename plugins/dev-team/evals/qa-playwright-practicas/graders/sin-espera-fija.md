@@ -1,6 +1,5 @@
 ---
 type: regex
-pattern: 'waitForTimeout\\(\\d'
-flags: ""
+pattern: 'waitForTimeout\(\s*\d'
 match: not_contains
 ---

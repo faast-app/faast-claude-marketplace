@@ -2,7 +2,7 @@
 name: qa-plan-por-riesgo
 description: El plan clasifica por riesgo y aplica tecnicas formales y borde fintech.
 tags: [qa]
-runs: 2
+runs: 3
 max_turns: 16
 timeout_seconds: 900
 allowed_tools: [Read, Glob, Grep, Skill, Agent]

@@ -2,7 +2,7 @@
 name: qa-api-giros
 description: El plan de API cubre contrato, idempotencia, autorizacion por tenant y datos.
 tags: [qa]
-runs: 2
+runs: 3
 max_turns: 16
 timeout_seconds: 900
 allowed_tools: [Read, Glob, Grep, Skill, Agent]

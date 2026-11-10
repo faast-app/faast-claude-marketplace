@@ -2,7 +2,7 @@
 name: qa-evidencia-video
 description: El video de evidencia sigue la secuencia verificada a tamaño real.
 tags: [qa]
-runs: 2
+runs: 3
 max_turns: 14
 timeout_seconds: 900
 allowed_tools: [Read, Glob, Grep, Skill, Agent]
