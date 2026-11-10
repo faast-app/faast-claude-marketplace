@@ -9,6 +9,13 @@
 # Nunca falla hacia afuera: ante cualquier error, permite (exit 0 sin output).
 import json, sys
 
+# Windows: la consola no es UTF-8 por defecto; sin esto los acentos y simbolos rompen la salida.
+for _flujo in (sys.stdin, sys.stdout, sys.stderr):
+    try:
+        _flujo.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+
 PLUGIN = "po-team"
 TEAM = {"po-lead","refinador","planificador","seguimiento","validador-po",
         "documentador","manualista","setup"}

@@ -32,6 +32,13 @@ import shutil
 import subprocess
 import sys
 
+# Windows: la consola no es UTF-8 por defecto; sin esto los acentos y simbolos rompen la salida.
+for _flujo in (sys.stdin, sys.stdout, sys.stderr):
+    try:
+        _flujo.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+
 TOLERANCIA = 6          # diferencia maxima de luminancia para considerar un pixel "gris de relleno"
 MUESTRAS = 6            # cuadros a analizar por video
 MARGEN_MINIMO = 8       # px de relleno minimos para considerarlo relleno real

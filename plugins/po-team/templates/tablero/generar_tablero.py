@@ -4,6 +4,13 @@
 # Valida el JSON, quita la marca de "ejemplo" y escapa "</" para que no cierre el bloque script.
 import json, os, re, sys
 
+# Windows: la consola no es UTF-8 por defecto; sin esto los acentos y simbolos rompen la salida.
+for _flujo in (sys.stdin, sys.stdout, sys.stderr):
+    try:
+        _flujo.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+
 def main():
     if len(sys.argv) < 3:
         print("uso: generar_tablero.py {datos.json} {salida.html} [plantilla.html]", file=sys.stderr)
