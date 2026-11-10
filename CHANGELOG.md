@@ -5,7 +5,7 @@ Que trae cada version de los plugins. Una entrada por subida de version, lo mas 
 ## Sin publicar
 
 - **Agentes mas livianos, medidos:** las reglas comunes de los 49 agentes se reescribieron mas
-  cortas (de 1.403 a 1.310 kB en total) y el agente lider de QA paso su catalogo de borde fintech y
+  cortas (unos 80 kB menos en total) y el agente lider de QA paso su catalogo de borde fintech y
   el instructivo de Playwright a referencias que lee cuando las necesita. Comprobado con las
   evaluaciones de comportamiento de QA antes y despues: ninguna regla dura bajo.
 - **La brevedad es para el chat:** el mensaje del agente tiene forma fija y cabe en una pantalla;
