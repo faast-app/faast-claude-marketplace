@@ -1,6 +1,6 @@
 # Equipo del Product Owner (po-team) — Manual de Usuario
 
-**Version del plugin:** 1.1.x · **Integrantes del equipo:** 8 · **Comandos:** 9
+**Version del plugin:** 1.1.x · **Integrantes del equipo:** 8 · **Comandos:** 10
 
 El equipo del Product Owner es un **grupo de asistentes de inteligencia artificial que acompaña
 al PO** desde que la Mesa de Servicios deja registrado un requerimiento cerrado hasta que el
@@ -733,6 +733,11 @@ como ticket y lo sigue. No necesita que los otros equipos esten instalados.
 **¿Quien ve el panel publicado?** Solo tu, hasta que decidas compartirlo.
 
 ## Si algo no anda
+
+**Lo primero: pide el diagnostico.** Escribe `/po-team:diagnostico`. El equipo revisa esta
+maquina (lo que hace falta para trabajar, si sus reglas cargan, la carpeta y la configuracion
+del proyecto, y los ultimos fallos), te dice en sencillo que encontro y arregla lo que falte
+con tu OK.
 
 **En Windows aparece un error de "bash" o el equipo no carga sus reglas al abrir la sesion.**
 Las versiones anteriores necesitaban bash, que una terminal de Windows no trae. La version

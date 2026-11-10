@@ -1,6 +1,6 @@
 # Marketing, Ventas y Publicidad — Manual de Usuario
 
-**Version del plugin:** 1.1.x · **Integrantes del equipo:** 8 · **Comandos:** 10
+**Version del plugin:** 1.1.x · **Integrantes del equipo:** 8 · **Comandos:** 11
 
 Marketing es un **equipo de asistentes de inteligencia artificial que prepara todo lo necesario
 para vender** lo que FAAST construye: la propuesta comercial para el CEO de una financiera, el
@@ -1189,6 +1189,11 @@ nada se publique por error ni se llene el historial con archivos pesados.
 investigar, solo el desglose, solo revisar un video.
 
 ## Si algo no anda
+
+**Lo primero: pide el diagnostico.** Escribe `/marketing:diagnostico`. El equipo revisa esta
+maquina (lo que hace falta para trabajar, si sus reglas cargan, la carpeta y la configuracion
+del proyecto, y los ultimos fallos), te dice en sencillo que encontro y arregla lo que falte
+con tu OK.
 
 **En Windows aparece un error de "bash" o el equipo no carga sus reglas al abrir la sesion.**
 Las versiones anteriores necesitaban bash, que una terminal de Windows no trae. La version

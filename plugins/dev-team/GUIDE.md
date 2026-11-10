@@ -1,6 +1,6 @@
 # Dev Team — Manual de Usuario
 
-**Version del plugin:** 2.19.x · **Integrantes del equipo:** 23 · **Comandos:** 34
+**Version del plugin:** 2.19.x · **Integrantes del equipo:** 23 · **Comandos:** 35
 
 > **Manual general de todos los equipos.** Existe un manual que explica juntos a todos los
 > equipos de FAAST (Mesa de Servicios → Dev Team → Marketing) y como se pasan el trabajo:
@@ -1656,6 +1656,11 @@ o no. `/dev-team:memoria consolidar` te muestra que se aprendio y que conviene v
 regla permanente.
 
 ## Si algo no anda
+
+**Lo primero: pide el diagnostico.** Escribe `/dev-team:diagnostico`. El equipo revisa esta
+maquina (lo que hace falta para trabajar, si sus reglas cargan, la carpeta y la configuracion
+del proyecto, y los ultimos fallos), te dice en sencillo que encontro y arregla lo que falte
+con tu OK.
 
 **En Windows aparece un error de "bash" o el equipo no carga sus reglas al abrir la sesion.**
 Las versiones anteriores necesitaban bash, que una terminal de Windows (PowerShell, cmd,

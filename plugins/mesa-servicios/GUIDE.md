@@ -1,6 +1,6 @@
 # Mesa de Servicios — Manual de Usuario
 
-**Version del plugin:** 1.2.x · **Integrantes del equipo:** 10 · **Comandos:** 12
+**Version del plugin:** 1.2.x · **Integrantes del equipo:** 10 · **Comandos:** 13
 
 > **Manual general de todos los equipos.** Existe un manual que explica juntos a todos los
 > equipos de FAAST y como se pasan el trabajo: [`GUIDE.md` en la raiz del
@@ -945,6 +945,11 @@ fotos, documentos y accesos son trabajo de la mesa, no codigo. Viven fuera de lo
 para que nada interno se publique por error.
 
 ## Si algo no anda
+
+**Lo primero: pide el diagnostico.** Escribe `/mesa-servicios:diagnostico`. El equipo revisa esta
+maquina (lo que hace falta para trabajar, si sus reglas cargan, la carpeta y la configuracion
+del proyecto, y los ultimos fallos), te dice en sencillo que encontro y arregla lo que falte
+con tu OK.
 
 **En Windows aparece un error de "bash" o el equipo no carga sus reglas al abrir la sesion.**
 Las versiones anteriores necesitaban bash, que una terminal de Windows no trae. La version

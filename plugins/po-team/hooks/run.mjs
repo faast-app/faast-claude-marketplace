@@ -15,12 +15,32 @@
 //   - nunca rompe la sesion: si no hay Python sale con 0, y con --avisar (hooks de inicio de
 //     sesion) deja UNA linea en el contexto para que el usuario sepa que falta.
 import { spawnSync } from 'node:child_process'
-import { existsSync, readFileSync } from 'node:fs'
+import { appendFileSync, existsSync, mkdirSync, readFileSync, renameSync, statSync } from 'node:fs'
+import { homedir } from 'node:os'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { buscarPython, comandoInstalarPython, entornoPython } from './_python.mjs'
 
 const aqui = dirname(fileURLToPath(import.meta.url))
+
+// Registro de fallos de hooks: un hook nunca rompe la sesion, pero tampoco falla en silencio.
+// `node hooks/doctor.mjs` (comando /diagnostico) muestra las ultimas entradas.
+const REGISTRO = join(homedir(), '.faast-mcp', 'logs', 'hooks.log')
+function registrar(script, estado, detalle) {
+  try {
+    mkdirSync(dirname(REGISTRO), { recursive: true })
+    try {
+      if (statSync(REGISTRO).size > 512 * 1024) renameSync(REGISTRO, REGISTRO + '.1')
+    } catch {
+      // aun no existe
+    }
+    const plugin = aqui.split(/[\\/]/).slice(-2, -1)[0]
+    const linea = { ts: new Date().toISOString(), plugin, script, estado, detalle: String(detalle).slice(-2000) }
+    appendFileSync(REGISTRO, JSON.stringify(linea) + '\n')
+  } catch {
+    // sin disco o sin permisos: no hay donde registrar
+  }
+}
 const args = process.argv.slice(2)
 const avisar = args.includes('--avisar')
 const iProyecto = args.indexOf('--proyecto')
@@ -52,10 +72,13 @@ if (python) {
     maxBuffer: 16 * 1024 * 1024,
   })
   if (r.stdout?.length) process.stdout.write(r.stdout)
-  if (r.stderr?.length) process.stderr.write(r.stderr)
+  // stderr no se reenvia (ensuciaria la sesion): queda en el registro para el diagnostico.
+  if (r.error) registrar(script, 'no-ejecuto', r.error.message)
+  else if (r.status !== 0 || r.stderr?.length) registrar(script, `salida ${r.status}`, r.stderr.toString('utf8'))
   process.exit(r.error ? 0 : (r.status ?? 0))
 }
 
+registrar(script, 'sin-python', 'no se encontro Python 3')
 if (avisar) {
   const instalar = comandoInstalarPython()
   process.stdout.write(

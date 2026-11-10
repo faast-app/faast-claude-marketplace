@@ -86,5 +86,6 @@ def main():
 try:
     main()
 except Exception:
-    pass
+    import traceback
+    traceback.print_exc()  # run.mjs lo guarda en ~/.faast-mcp/logs/hooks.log; nunca rompe la sesion
 sys.exit(0)
