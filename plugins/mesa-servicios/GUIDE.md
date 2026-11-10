@@ -161,7 +161,7 @@ claude plugin list
 *Que ves:* la lista de plugins instalados. Debe aparecer algo asi:
 ```
 ❯ mesa-servicios@faast-marketplace
-  Version: 1.3.0
+  Version: 1.3.1
   Scope: user
   Status: ✔ enabled
 ```

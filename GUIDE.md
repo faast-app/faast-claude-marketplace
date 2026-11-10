@@ -6,10 +6,10 @@ una herramienta tecnica. No necesitas saber programar.
 
 | Equipo (plugin) | Version | Integrantes | Comandos | Primer paso |
 |---|---|---|---|---|
-| **Mesa de Servicios** (`mesa-servicios`) | 1.3.0 | 10 | 13 | `/mesa-servicios:start` |
-| **Equipo del Product Owner** (`po-team`) | 1.2.0 | 8 | 10 | `/po-team:start` |
-| **Dev Team** (`dev-team`) | 2.20.0 | 23 | 35 | `/dev-team:start` |
-| **Marketing, Ventas y Publicidad** (`marketing`) | 1.2.0 | 8 | 11 | `/marketing:start` |
+| **Mesa de Servicios** (`mesa-servicios`) | 1.3.1 | 10 | 13 | `/mesa-servicios:start` |
+| **Equipo del Product Owner** (`po-team`) | 1.2.1 | 8 | 10 | `/po-team:start` |
+| **Dev Team** (`dev-team`) | 2.21.0 | 23 | 35 | `/dev-team:start` |
+| **Marketing, Ventas y Publicidad** (`marketing`) | 1.2.1 | 8 | 11 | `/marketing:start` |
 | **Arquitecto Senior Backend** (`senior-backend-architect`) | sin numero de version declarado | 1 | 1 | `/architect` |
 
 FaaST tiene **cinco equipos de asistentes de inteligencia artificial**, cada uno con sus

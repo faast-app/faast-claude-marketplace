@@ -1,6 +1,6 @@
 # Dev Team — Manual de Usuario
 
-**Version del plugin:** 2.20.x · **Integrantes del equipo:** 23 · **Comandos:** 35
+**Version del plugin:** 2.21.x · **Integrantes del equipo:** 23 · **Comandos:** 35
 
 > **Manual general de todos los equipos.** Existe un manual que explica juntos a todos los
 > equipos de FAAST (Mesa de Servicios → Dev Team → Marketing) y como se pasan el trabajo:
@@ -165,7 +165,7 @@ claude plugin list
 *Que ves:* la lista de plugins instalados. Debe aparecer algo asi:
 ```
 ❯ dev-team@faast-marketplace
-  Version: 2.20.0
+  Version: 2.21.0
   Scope: user
   Status: ✔ enabled
 ```
