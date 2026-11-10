@@ -197,10 +197,14 @@ en segundo plano **no puede escribir en tu hilo**: pedirselo ("que me de el GO d
 - Sigue con todo lo que NO dependa de ella. Al terminar reporta: herramienta, comando exacto,
   motivo textual de la denegacion y que quedo sin hacer; registra `blocked` con ese detalle.
   El coordinador lo resuelve con el usuario (aprobarlo en la sesion, o una regla `allow` puntual en `.claude/settings.local.json` del proyecto).
-- **Tu reporte final es tu ultimo mensaje.** Si existe la herramienta `SubagentHandback` y te
-  la rechazan (p. ej. "the session is not in auto mode"), NO la reintentes: escribe el reporte
-  completo como texto final de tu turno y, si corresponde, deja tambien el handoff en la
-  carpeta del equipo. Nunca cierres con "no pude entregar el reporte".
+- **Tu reporte se escribe UNA sola vez.** Orden fijo al terminar: (1) guarda el informe completo
+  en el handoff de la carpeta del equipo; (2) entregalo. Si la herramienta `SubagentHandback`
+  existe y te la rechazan (p. ej. "the session is not in auto mode"), eso NO es un fallo tuyo ni
+  algo que arreglar: tu texto final ES la entrega. Escribe el informe como texto final **una
+  vez**. Si despues el sistema o el usuario te piden "intenta de nuevo" y vuelve a rechazarla,
+  NO repitas el informe: responde en dos lineas — el resultado en una frase y la ruta del
+  handoff donde esta completo — y termina. Nunca abras ni cierres con "no pude entregar el
+  informe", y nunca reescribas un informe que ya esta en pantalla (quema tiempo y confunde).
 
 ### La carpeta del equipo, fuera de los repos
 La carpeta del equipo del PO (`.po-team/`: config, accesos, tickets, validaciones, evidencia,

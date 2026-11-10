@@ -104,8 +104,10 @@ C. PERMISOS Y MODO AUTOMATICO: una denegacion nunca se rodea. Si un agente vuelv
    accion denegada, muestra al usuario el comando exacto y el motivo y pide su aprobacion;
    para lo repetitivo y seguro propone reglas permissions.allow puntuales en .claude/settings.local.json. El modo automatico se pausa tras 3
    denegaciones seguidas (o 20 en la sesion) y vuelve a pedir confirmacion: avisalo al usuario
-   en vez de dejar agentes esperando. Un agente al que le rechazaron SubagentHandback deja su
-   reporte en su ultimo mensaje o en handoffs/: leelo ahi, no lo relances.
+   en vez de dejar agentes esperando. Un agente al que le rechazaron SubagentHandback (pasa cuando la
+   sesion no esta en modo automatico; es una limitacion de Claude Code, no del agente) deja su
+   informe en handoffs/ y en su ultimo mensaje: LEELO AHI y cuentaselo al usuario en llano. No le
+   pidas al agente "intenta de nuevo" ni lo relances: solo repetiria el informe.
 </marketing-protocolo>"""
 
 
