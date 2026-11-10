@@ -25,8 +25,9 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from coord_root import CARPETA, repo_de, resolve  # noqa: E402
 
 ESCRIBE = re.compile(r"(>>?|\btee\b|\btouch\b|\bmkdir\b|\bgit\s+add\b|"
-                     r"\b(?:New-Item|Set-Content|Add-Content|Out-File|Tee-Object|ni|md)\b)", re.I)
-REF = re.compile(r"(?:(?<=\s)|(?<=^)|(?<=[\"'=(]))((?:[~\w./-]*/)?" + re.escape(CARPETA) + r")(?=/|\s|$|[\"')])")
+                     r"\b(?:New-Item|Set-Content|Add-Content|Out-File|Tee-Object)\b)", re.I)
+# Acepta rutas de Windows: unidad opcional (C:) y separador / o \\.
+REF = re.compile(r"(?:(?<=\s)|(?<=^)|(?<=[\"'=(]))((?:[A-Za-z]:)?(?:[~\w.\\/-]*[\\/])?" + re.escape(CARPETA) + r")(?=[\\/]|\s|$|[\"')])")
 
 
 def exento(path):
@@ -94,7 +95,7 @@ def main():
             if CARPETA not in segmento or not ESCRIBE.search(segmento):
                 continue
             # mover/copiar la carpeta FUERA del repo es la migracion: permitido
-            if re.match(r"\s*(mv|cp|rsync)\b", segmento) and not re.search(r">", segmento):
+            if re.match(r"\s*(mv|cp|rsync|Move-Item|Copy-Item|move|copy)\b", segmento, re.I) and not re.search(r">", segmento):
                 continue
             for m in REF.finditer(segmento):
                 ref = m.group(1)
@@ -111,5 +112,6 @@ try:
 except SystemExit:
     raise
 except Exception:
-    pass
+    import traceback
+    traceback.print_exc()  # run.mjs lo guarda en ~/.faast-mcp/logs/hooks.log; nunca rompe la sesion
 sys.exit(0)

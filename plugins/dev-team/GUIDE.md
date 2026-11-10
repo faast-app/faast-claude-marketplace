@@ -1,6 +1,6 @@
 # Dev Team — Manual de Usuario
 
-**Version del plugin:** 2.19.x · **Integrantes del equipo:** 23 · **Comandos:** 34
+**Version del plugin:** 2.19.x · **Integrantes del equipo:** 23 · **Comandos:** 35
 
 > **Manual general de todos los equipos.** Existe un manual que explica juntos a todos los
 > equipos de FAAST (Mesa de Servicios → Dev Team → Marketing) y como se pasan el trabajo:
@@ -415,6 +415,13 @@ Estas reglas estan siempre activas. No hay que pedirlas.
 22. **El equipo aprende de cada correccion.** Lo que corriges, eliges o rechazas queda
     como leccion y el integrante que corresponda la recibe la proxima vez, sin que la
     repitas. Las lecciones que demuestran servir se te proponen como regla permanente.
+25. **QA prueba segun el riesgo, y dice con cuanta base aprueba.** Ademas de sus siete
+    controles de siempre, cuando la historia lo amerita QA revisa los criterios **antes** de
+    que se programe, prueba las reglas que dependen de fechas (vencimientos, mora, fin de
+    mes) adelantando el reloj, mide que la pantalla cargue rapido, repite los flujos
+    criticos en Safari y Firefox, y revisa que las pruebas del desarrollador de verdad
+    detecten errores. Cada veredicto trae un indice de confianza de 0 a 100 con lo que le
+    resta puntos.
 24. **Te hablan claro y de a una cosa.** Cada mensaje del equipo tiene un solo proposito:
     contarte un resultado, hacerte una pregunta o pedirte un permiso. Primero va lo
     importante en lenguaje sencillo; las preguntas llegan aparte, al final, bajo "Necesito
@@ -1656,6 +1663,11 @@ o no. `/dev-team:memoria consolidar` te muestra que se aprendio y que conviene v
 regla permanente.
 
 ## Si algo no anda
+
+**Lo primero: pide el diagnostico.** Escribe `/dev-team:diagnostico`. El equipo revisa esta
+maquina (lo que hace falta para trabajar, si sus reglas cargan, la carpeta y la configuracion
+del proyecto, y los ultimos fallos), te dice en sencillo que encontro y arregla lo que falte
+con tu OK.
 
 **En Windows aparece un error de "bash" o el equipo no carga sus reglas al abrir la sesion.**
 Las versiones anteriores necesitaban bash, que una terminal de Windows (PowerShell, cmd,

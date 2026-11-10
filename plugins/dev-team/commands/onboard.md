@@ -314,7 +314,7 @@ Segun la topologia detectada:
   "ambientes": {
     "{nombre}": { "clase": "pruebas|productivo", "url": "{url}" }
   },
-  "qa": { "conformidad": "opcional" }
+  "qa": { "conformidad": "opcional", "umbrales": { "lcpMs": 2500, "cls": 0.1, "pesoKb": 1500, "apiP95Ms": 800, "mutacion": 60 } }
 }
 ```
 `ambientes`: preguntar al usuario la clase de CADA ambiente que el proyecto usa (no

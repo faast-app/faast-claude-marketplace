@@ -167,6 +167,21 @@ El snapshot de accesibilidad (`.txt`) es la evidencia de estas verificaciones.
   solo se compara. Un diff no aprobado = puerta 4 en rojo, no se "actualiza para que pase".
 - `animations: 'disabled'` y `caret: 'hide'` (ya en la config de la plantilla).
 
+## Tiempo, rendimiento y otros navegadores (cuando el QA Lead los asigna) — skill `qa-avanzado`
+Cargas `dev-team:qa-avanzado` y aplicas, solo en los criterios que el reparto marca:
+- **Tiempo controlado** (`tests/tiempo`): fijas y adelantas el reloj del navegador
+  (`page.clock.install` / `fastForward`) para vencimientos, mora, fin de mes y expiracion de
+  sesion, probando dia anterior, dia exacto y dia siguiente. Cada caso reporta la fecha simulada
+  y la zona. Lo que calcula el servidor se prueba con datos fechados (qa-backend), no con el reloj.
+- **Rendimiento percibido** (`npm run test:perf`): LCP, CLS y peso contra el presupuesto, con
+  datos de volumen real y **dos corridas**; el `web-vitals.json` es la evidencia. Si falla
+  reportas metrica, valor, presupuesto y lo que se ve; no buscas la causa.
+- **Otros navegadores** (`npm run test:cross`): el flujo critico en WebKit y Firefox; lo que
+  difiere se reporta por navegador con su captura.
+- **Estructura accesible como foto** (`toMatchAriaSnapshot` en `tests/a11y`): despues de axe,
+  fijas roles y nombres de la pantalla; un cambio en encabezados, nombres de botones u orden de
+  lectura falla aunque se vea igual.
+
 ## Flakiness: doble corrida y cuarentena
 - Antes de entregar: `npx playwright test tests/hu-{nnn}* --repeat-each=2` en local con
   `retries: 0`. Debe pasar 2/2.

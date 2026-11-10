@@ -4,7 +4,7 @@ on:
   pull_request:
     branches: [develop, main]
   schedule:
-    - cron: '0 6 * * 1-5'      # nightly: visual + a11y + contrato
+    - cron: '0 6 * * 1-5'      # nightly: visual + a11y + contrato + tiempo + rendimiento + otros navegadores
   workflow_dispatch:
     inputs:
       update_snapshots:
@@ -24,19 +24,49 @@ jobs:
   e2e:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3]        # la suite se reparte en 3 maquinas: mismo resultado, un tercio del tiempo
+    env:
+      PW_SHARD: ${{ matrix.shard }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-        with: { node-version: 20, cache: npm }
+        with: { node-version: 22, cache: npm }
       - run: npm ci
       - run: npx playwright install --with-deps chromium
       # Puerta 2: doble corrida — lo intermitente falla aqui, no en produccion
-      - run: npx playwright test --repeat-each=2 --project=chromium
+      - run: npx playwright test --repeat-each=2 --project=chromium --shard=${{ matrix.shard }}/3
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: evidencia-e2e-${{ github.run_number }}
+          name: blob-${{ matrix.shard }}
+          path: blob-report/
+          retention-days: 3
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: evidencia-e2e-${{ github.run_number }}-${{ matrix.shard }}
           path: .evidence/
+          retention-days: 30
+
+  reporte:
+    if: always() && github.event_name == 'pull_request'
+    needs: e2e
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - uses: actions/download-artifact@v4
+        with: { path: blobs, pattern: blob-*, merge-multiple: true }
+      - run: npx playwright merge-reports --reporter html ./blobs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: reporte-e2e-${{ github.run_number }}
+          path: playwright-report/
           retention-days: 30
 
   nightly:
@@ -45,16 +75,26 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-        with: { node-version: 20, cache: npm }
+        with: { node-version: 22, cache: npm }
       - run: npm ci
-      - run: npx playwright install --with-deps chromium
+      - run: npx playwright install --with-deps chromium webkit firefox
       - run: pipx install schemathesis
       - name: Visual (puerta 4)
         run: npx playwright test tests/visual ${{ inputs.update_snapshots && '--update-snapshots' || '' }}
       - name: Accesibilidad (puerta 5)
         run: npx playwright test tests/a11y
       - name: Contrato OpenAPI (puerta 6)
-        run: bash api/contract.sh regresion
+        run: node api/contract.mjs regresion
+      - name: Tiempo controlado (vencimientos, mora, fin de mes)
+        run: npx playwright test tests/tiempo
+      - name: Rendimiento percibido (Core Web Vitals contra presupuesto)
+        run: npx playwright test tests/perf --project=chromium
+        env:
+          PERF: '1'
+      - name: Otros navegadores (flujos criticos en WebKit y Firefox)
+        run: npx playwright test tests/cross
+        env:
+          CROSS_BROWSER: '1'
       - name: Regresion (puerta 3)
         run: npx playwright test tests/regression --repeat-each=2
       - uses: actions/upload-artifact@v4

@@ -2,7 +2,7 @@
   "name": "{{ProjectName}}-e2e",
   "version": "1.0.0",
   "private": true,
-  "description": "Suite E2E de QA de {{ProjectName}} — Playwright + axe + Schemathesis (dev-team e2e-faast)",
+  "description": "Suite E2E de QA de {{ProjectName}} — Playwright + axe + Schemathesis + Web Vitals + reloj controlado (dev-team e2e-faast)",
   "scripts": {
     "test": "playwright test",
     "test:hu": "playwright test --grep",
@@ -11,15 +11,19 @@
     "test:visual": "playwright test tests/visual",
     "test:visual:update": "playwright test tests/visual --update-snapshots",
     "test:a11y": "playwright test tests/a11y",
-    "test:api": "bash api/contract.sh",
+    "test:api": "node api/contract.mjs",
     "report": "playwright show-report ../.coordination/evidence/_suite/playwright-report",
-    "agents:init": "playwright init-agents --loop=claude"
+    "agents:init": "playwright init-agents --loop=claude",
+    "test:tiempo": "playwright test tests/tiempo",
+    "test:perf": "cross-env PERF=1 playwright test tests/perf --project=chromium",
+    "test:cross": "cross-env CROSS_BROWSER=1 playwright test tests/cross"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.10.0",
     "@playwright/test": "^1.56.0",
     "@types/node": "^22.0.0",
     "dotenv": "^16.4.0",
-    "typescript": "^5.5.0"
+    "typescript": "^5.5.0",
+    "cross-env": "^7.0.3"
   }
 }

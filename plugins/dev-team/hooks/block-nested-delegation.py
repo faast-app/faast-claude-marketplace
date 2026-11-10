@@ -29,7 +29,7 @@ CHEAP_OK = {"explore"}  # agentes de busqueda solo-lectura, baratos: permitidos
 # comandos del plugin (NO son agentes): correrlos como subagente recarga todo el
 # contexto y quema tokens — se ejecutan inline con el Skill tool. "setup" no esta
 # aqui porque tambien existe el AGENTE setup (legitimo).
-SKILLS_NOT_AGENTS = {"assign-task","db-health","deploy","deploy-check","doc","document","e2e",
+SKILLS_NOT_AGENTS = {"assign-task","bug","design","diagnostico","memoria","project","db-health","deploy","deploy-check","doc","document","e2e",
         "flow","git-check","handoff","hotfix","inbox","new-project","onboard","pase","refine",
         "retro","review-pr","security-audit","pentest","security-report","standup","start",
         "status","sync","team-metrics","team-office","test-plan","wiki"}
@@ -85,5 +85,6 @@ def main():
 try:
     main()
 except Exception:
-    pass
+    import traceback
+    traceback.print_exc()  # run.mjs lo guarda en ~/.faast-mcp/logs/hooks.log; nunca rompe la sesion
 sys.exit(0)
