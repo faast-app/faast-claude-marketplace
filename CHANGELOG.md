@@ -4,6 +4,8 @@ Que trae cada version de los plugins. Una entrada por subida de version, lo mas 
 
 ## Sin publicar
 
+## dev-team 2.21.0 · mesa-servicios 1.3.1 · po-team 1.2.1 · marketing 1.2.1
+
 - **Agentes mas livianos, medidos:** las reglas comunes de los 49 agentes se reescribieron mas
   cortas (unos 80 kB menos en total) y el agente lider de QA paso su catalogo de borde fintech y
   el instructivo de Playwright a referencias que lee cuando las necesita. Comprobado con las
